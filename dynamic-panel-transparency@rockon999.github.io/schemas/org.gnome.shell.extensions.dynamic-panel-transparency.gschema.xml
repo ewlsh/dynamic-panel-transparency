@@ -1,0 +1,14 @@
+<schemalist>
+  <schema id="org.gnome.shell.extensions.dynamic-panel-transparency" path="/org/gnome/shell/extensions/dynamic-panel-transparency/">
+    <key name="transition-speed" type="i">
+      <default>1000</default>
+      <summary>Transition Speed</summary>
+      <description>How fast the panel fades in and out.</description>
+    </key>
+    <key name="hide-corners" type="b">
+      <default>true</default>
+      <summary>Hide Corners</summary>
+      <description>Hides the rounded corners of the panel. (improves fade aesthetic)</description>
+    </key>
+  </schema>
+</schemalist>

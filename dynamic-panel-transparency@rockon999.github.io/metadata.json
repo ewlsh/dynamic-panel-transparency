@@ -1,0 +1,11 @@
+{ 
+  "description": "The panel fades to black when a there is a maximized window and fades to nothing when not.", 
+  "name": "Dynamic Panel Transparency", 
+  "shell-version": [
+    "3.16",
+    "3.18"
+  ],  
+  "uuid": "dynamic-panel-transparency@rockon999.github.io", 
+  "settings-schema": "org.gnome.shell.extensions.dynamic-panel-transparency",
+  "version": 1
+}
