@@ -1,0 +1,12 @@
+.panel-transparency {
+    background-color: rgba(0,0,0,0);
+}
+
+.corner-transparency {
+    -panel-corner-background-color: rgba(0,0,0,0);
+    -panel-corner-border-color: transparent;
+}
+
+
+
+
