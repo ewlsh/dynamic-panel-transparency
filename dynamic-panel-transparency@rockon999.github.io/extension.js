@@ -9,6 +9,10 @@ const Lang = imports.lang;
 const DEFAULT_TRANSITION_SPEED = 1000;
 const DEFAULT_HIDE_CORNERS = true;
 
+// GNOME version
+const MAJOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[0]);
+const MINOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[1]);
+
 // initialize variables
 function init() {
     this._transparent = false;
@@ -23,9 +27,12 @@ let settings;
 
 function enable() {
     settings = Convenience.getSettings('org.gnome.shell.extensions.dynamic-panel-transparency');
-    // hacky, but gnome got rid of max/unmax
-    this._sizeChangeSig1 = global.window_manager.connect('size-change', Lang.bind(this, this._windowSizeChanged));
-    this._sizeChangeSig2 = global.window_manager.connect('hide-tile-preview', Lang.bind(this, this._windowSizeChanged));
+    // add support for 3.16 & 3.14
+    if (MAJOR_VERSION == 3 && MINOR_VERSION < 17) {
+      register_old();
+    } else {
+      register();
+    }
     // always occurs AFTER the workspace is fully switched
     this._sizeChangeSig3 = global.screen.connect('workspace-switched', Lang.bind(this, this._workspaceSwitched));
     // manage overview
@@ -43,6 +50,17 @@ function enable() {
     // simulate window change to check for maximized windows
     _windowSizeChanged();
 
+}
+
+function register_old() {
+    this._sizeChangeSig1 = global.window_manager.connect('maximize', Lang.bind(this, this._windowSizeChanged));
+    this._sizeChangeSig2 = global.window_manager.connect('unmaximize', Lang.bind(this, this._windowSizeChanged));
+}
+
+function register() {
+    // hacky, but gnome got rid of max/unmax
+    this._sizeChangeSig1 = global.window_manager.connect('size-change', Lang.bind(this, this._windowSizeChanged));
+    this._sizeChangeSig2 = global.window_manager.connect('hide-tile-preview', Lang.bind(this, this._windowSizeChanged));
 }
 
 function disable() {
