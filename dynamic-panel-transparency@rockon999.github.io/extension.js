@@ -4,6 +4,7 @@ const Clutter = imports.gi.Clutter;
 const Main = imports.ui.main;
 const Tweener = imports.ui.tweener;
 const Lang = imports.lang;
+const Config = imports.misc.config;
 
 // defaults
 const DEFAULT_TRANSITION_SPEED = 1000;
