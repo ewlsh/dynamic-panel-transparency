@@ -10,6 +10,7 @@ const Convenience = Me.imports.convenience;
 // keys
 const SETTINGS_HIDE_CORNERS = "hide-corners";
 const SETTINGS_TRANSITION_SPEED = "transition-speed";
+const SETTINGS_FORCE_ANIMATION = "force-animation";
 
 // settings ui
 const DPTSettingsWidget = new GObject.Class({
@@ -81,6 +82,17 @@ const DPTSettingsWidget = new GObject.Class({
             this._settings.set_boolean(SETTINGS_HIDE_CORNERS, value.get_active());
         }));
         this.add(check);
+
+        // force animation
+        let check_2 = new Gtk.CheckButton({
+            label: "Force Animation (override 'gtk-enable-animations')" ,
+            margin_top: 6
+        });
+        check_2.set_active(this._settings.get_boolean(SETTINGS_FORCE_ANIMATION));
+        check_2.connect('toggled', Lang.bind(this, function(value) {
+            this._settings.set_boolean(SETTINGS_FORCE_ANIMATION, value.get_active());
+        }));
+        this.add(check_2);
     },
 });
 
