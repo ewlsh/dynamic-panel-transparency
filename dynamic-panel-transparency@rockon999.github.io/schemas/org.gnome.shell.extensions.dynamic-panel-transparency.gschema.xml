@@ -10,5 +10,10 @@
       <summary>Hide Corners</summary>
       <description>Hides the rounded corners of the panel. (improves fade aesthetic)</description>
     </key>
+     <key name="force-animation" type="b">
+      <default>false</default>
+      <summary>Force Animation</summary>
+      <description>Overrides 'gtk-enable-animations' on installations where animations are disabled.</description>
+    </key>
   </schema>
 </schemalist>
