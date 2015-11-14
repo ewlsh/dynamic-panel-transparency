@@ -17,7 +17,7 @@ const MINOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[1]);
 /* Initialize */
 function init() {
     /* Global Variables */
-    this.tweener = imports.ui.tweener;
+    this.tweener = null;
     this.settings = null;
     this.transparent = false;
 
@@ -39,15 +39,17 @@ function enable() {
     /* Set the appropriate tweener */
     if (force_animation()) {
         this.tweener = imports.tweener.tweener;
+    } else {
+        this.tweener = imports.ui.tweener;
     }
 
     /* Add support for older Gnome Shell versions (most likely down to 3.12) */
     if (MAJOR_VERSION == 3 && MINOR_VERSION < 17) {
-        this._maximizeSig = global.window_manager.connect('maximize', Lang.bind(this, this._windowUpdate));
-        this._unmaximizeSig = global.window_manager.connect('unmaximize', Lang.bind(this, this._windowUpdate));
+        this._maximizeSig = global.window_manager.connect('maximize', Lang.bind(this, this._windowUpdated));
+        this._unmaximizeSig = global.window_manager.connect('unmaximize', Lang.bind(this, this._windowUpdated));
     } else {
-        this._maximizeSig = global.window_manager.connect('hide-tile-preview', Lang.bind(this, this._windowUpdate));
-        this._unmaximizeSig = global.window_manager.connect('size-change', Lang.bind(this, this._windowUpdate));
+        this._maximizeSig = global.window_manager.connect('hide-tile-preview', Lang.bind(this, this._windowUpdated));
+        this._unmaximizeSig = global.window_manager.connect('size-change', Lang.bind(this, this._windowUpdated));
     }
 
     /* Signal Connections 
@@ -59,16 +61,20 @@ function enable() {
      * minimize: occurs as the window is minimized
      * destroy: occurs as the window is destroyed
      */
-    this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, this._windowUpdate));
-    this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, this._overviewOpened));
-    this._lockScreenSig = Main.screenShield.connect('locked-changed', Lang.bind(this, function() {
-        this._screenLocked(Main.screenShield._isLocked);
+    this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, this._windowUpdated));
+    this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function() {
+        if (!this.transparent)
+          fade_out();
     }));
-    this._workspaceSwitchSig = global.screen.connect('workspace-switched', Lang.bind(this, this._workspaceSwitched));
-    this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdate));
-    this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdate));
+    this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, function() {
+        if(!Main.screenShield._isActive)
+          _windowUpdated();
+    }));
+    this._workspaceSwitchSig = global.screen.connect('workspace-switched', Lang.bind(this, this._windowUpdated));
+    this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdated));
+    this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
     this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, function(wm, window_actor) {
-        this._windowUpdate(window_actor.get_meta_window());
+        this._windowUpdated_exclude(window_actor.get_meta_window());
     }));
 
 
@@ -82,7 +88,7 @@ function enable() {
         Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
     }
     /* Simulate Window Changes */
-    _windowUpdate();
+    _windowUpdated();
 
 }
 
@@ -98,7 +104,9 @@ function disable() {
     global.window_manager.disconnect(this._maximizeSig);
     global.window_manager.disconnect(this._unmaximizeSig);
     global.screen.disconnect(this._workspaceSwitchSig);
+    /* Cleanup Signals */
     this._lockScreenSig = null;
+    this._lockScreenShownSig = null;
     this._overviewShowingSig = null;
     this._overviewHiddenSig = null;
     this._windowMapSig = null;
@@ -112,12 +120,16 @@ function disable() {
     Main.panel._leftCorner.actor.remove_style_class_name('corner-transparency');
     Main.panel._rightCorner.actor.remove_style_class_name('corner-transparency');
     /* Remove Transparency */
-    set_transparency(false);
-    /* Cleanup */
+    fade_out();
+    /* Cleanup Global Variables */
     this.transparent = null;
     this.settings = null;
     this.tweener = null;
 }
+
+
+
+/* Animation Controls */
 
 function fade_in() {
     var time = (transition_speed() / 1000);
@@ -153,6 +165,38 @@ function fade_out() {
     });
 }
 
+function _in() {
+    if (Main.overview._shown)
+        return;
+     var ccolor = new Clutter.Color({
+        red: 0,
+        green: 0,
+        blue: 0,
+        alpha: 255
+    });
+    Main.panel.actor.set_background_color(ccolor);
+    fade_in_completed();
+}
+
+
+
+function _out() {
+    this.transparent = true;
+    /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
+    if (!hide_corners()) {
+        Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
+        Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
+    }
+     var ccolor = new Clutter.Color({
+     red: 0,
+       green: 0,
+        blue: 0,
+        alpha: 0
+    });
+    Main.panel.actor.set_background_color(ccolor);
+    fade_out_completed();
+}
+
 function fade_in_completed() {
     this.transparent = false;
     /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
@@ -165,53 +209,15 @@ function fade_in_completed() {
 
 function fade_out_completed() {}
 
-function cc_alpha_get(actor) {
-    return actor.get_background_color().alpha;
-};
-
-function cc_alpha_set(actor, alpha) {
-    var ccolor = new Clutter.Color({
-        red: 0,
-        green: 0,
-        blue: 0,
-        alpha: alpha
-    });
-    actor.set_background_color(ccolor);
-};
 
 
-function set_transparency(status) {
-    /* check current transparency first */
-    if (status && !this.transparent) {
-        fade_out();
-    } else if (this.transparent) {
-        fade_in();
-    }
+/* Event Handlers */
+ 
+function _windowUpdated() {
+    _windowUpdated_exclude(null);
 }
 
-function _overviewOpened() {
-    if (!this.transparent) {
-        fade_out();
-    }
-}
-
-function _workspaceSwitched() {
-    _windowUpdate();
-}
-
-function _screenLocked(locked) {
-    if (locked) {
-        fade_out();
-    } else {
-        fade_in();
-    }
-}
-
-function _windowUpdate() {
-    _windowUpdate(null);
-}
-
-function _windowUpdate(window) {
+function _windowUpdated_exclude(window) {
     let workspace = global.screen.get_active_workspace();
     let windows = workspace.list_windows();
 
@@ -233,9 +239,11 @@ function _windowUpdate(window) {
     }
     /* only change if the transparency isn't already correct */
     if (this.transparent != _transparency) {
-        set_transparency(_transparency);
+        if(_transparency) fade_out(); else fade_in();
     }
 }
+
+
 
 /* Settings Accessors */
 
@@ -258,4 +266,22 @@ function transition_speed() {
         return settings.get_int('transition-speed');
     else
         return DEFAULT_TRANSITION_SPEED;
+}
+
+
+
+/* Special Property Methods */
+
+function cc_alpha_get(actor) {
+    return actor.get_background_color().alpha;
+}
+
+function cc_alpha_set(actor, alpha) {
+    var ccolor = new Clutter.Color({
+        red: 0,
+        green: 0,
+        blue: 0,
+        alpha: alpha
+    });
+    actor.set_background_color(ccolor);
 }
