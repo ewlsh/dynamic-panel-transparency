@@ -1,21 +1,29 @@
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
-const GObject = imports.gi.GObject;
 const Lang = imports.lang;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
-// keys
+/* Settings Keys */
 const SETTINGS_HIDE_CORNERS = "hide-corners";
 const SETTINGS_TRANSITION_SPEED = "transition-speed";
 const SETTINGS_FORCE_ANIMATION = "force-animation";
 
-// settings ui
-const DPTSettingsWidget = new GObject.Class({
-    Name: 'DynamicPanelTransparency.Prefs.DPTSettingsWidget',
-    GTypeName: 'DPTSettingsWidget',
+function init() {}
+
+function buildPrefsWidget() {
+    let widget = new SettingsUI();
+    widget.show_all();
+
+    return widget;
+}
+
+/* UI Setup */
+const SettingsUI = new Lang.Class({
+    Name: 'DynamicPanelTransparency.Prefs.SettingsUI',
+    GTypeName: 'SettingsUI',
     Extends: Gtk.Grid,
 
     _init: function(params) {
@@ -51,16 +59,16 @@ const DPTSettingsWidget = new GObject.Class({
         align.add(grid);
 
 
-        // control transition speed
+        /* control transition speed */
         let slider = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 5000, 100);
         slider.adjustment.set_value(this._settings.get_int(SETTINGS_TRANSITION_SPEED));
-        // show the user where they're at
+        /* show the user where they're at */
         slider.set_draw_value(true);
-        // lets add some color
+        /* lets add some color */
         slider.set_has_origin(true);
-        // make it legible
+        /* make it legible */
         slider.set_size_request(400, 10);
-        // add a tick at the default
+        /* add a tick at the default */
         slider.add_mark(1000, Gtk.PositionType.BOTTOM, "default");
 
         slider.connect('format-value', Lang.bind(this, function(scale, value) {
@@ -72,7 +80,7 @@ const DPTSettingsWidget = new GObject.Class({
         }));
         grid.add(slider);
 
-        // control corners
+        /* control corners */
         let check = new Gtk.CheckButton({
             label: "Hide Corners",
             margin_top: 6
@@ -83,9 +91,9 @@ const DPTSettingsWidget = new GObject.Class({
         }));
         this.add(check);
 
-        // force animation
+        /* force animation */
         let check_2 = new Gtk.CheckButton({
-            label: "Force Animation (override 'gtk-enable-animations')" ,
+            label: "Force Animation (override 'gtk-enable-animations')",
             margin_top: 6
         });
         check_2.set_active(this._settings.get_boolean(SETTINGS_FORCE_ANIMATION));
@@ -95,14 +103,3 @@ const DPTSettingsWidget = new GObject.Class({
         this.add(check_2);
     },
 });
-
-function init() {
-
-}
-
-function buildPrefsWidget() {
-    let widget = new DPTSettingsWidget();
-    widget.show_all();
-
-    return widget;
-}
