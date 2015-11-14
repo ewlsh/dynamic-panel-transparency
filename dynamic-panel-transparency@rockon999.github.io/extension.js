@@ -64,11 +64,11 @@ function enable() {
     this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, this._windowUpdated));
     this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function() {
         if (!this.transparent)
-          fade_out();
+            fade_out();
     }));
     this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, function() {
-        if(!Main.screenShield._isActive)
-          _windowUpdated();
+        if (!Main.screenShield._isActive)
+            _windowUpdated();
     }));
     this._workspaceSwitchSig = global.screen.connect('workspace-switched', Lang.bind(this, this._windowUpdated));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdated));
@@ -168,7 +168,7 @@ function fade_out() {
 function _in() {
     if (Main.overview._shown)
         return;
-     var ccolor = new Clutter.Color({
+    var ccolor = new Clutter.Color({
         red: 0,
         green: 0,
         blue: 0,
@@ -187,9 +187,9 @@ function _out() {
         Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
         Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
     }
-     var ccolor = new Clutter.Color({
-     red: 0,
-       green: 0,
+    var ccolor = new Clutter.Color({
+        red: 0,
+        green: 0,
         blue: 0,
         alpha: 0
     });
@@ -212,7 +212,7 @@ function fade_out_completed() {}
 
 
 /* Event Handlers */
- 
+
 function _windowUpdated() {
     _windowUpdated_exclude(null);
 }
@@ -239,7 +239,11 @@ function _windowUpdated_exclude(window) {
     }
     /* only change if the transparency isn't already correct */
     if (this.transparent != _transparency) {
-        if(_transparency) fade_out(); else fade_in();
+        if (_transparency) {
+            fade_out();
+        } else {
+            fade_in();
+        }
     }
 }
 
