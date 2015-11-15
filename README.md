@@ -2,7 +2,7 @@
 [![Demo](https://github.com/rockon999/dynamic-panel-transparency/raw/master/media/demo.gif)](https://www.youtube.com/watch?v=P5Eqf65uVhs)
 
 ## Classy transparency for your panel
-This extension *fades* your top panel to nothingness when there are no maximized windows present. Never again will the panel be abruptly turned black!
+This extension *fades* your top panel to nothingness when there are no maximized windows present. Never again will the panel be abruptly darkened!
 
 ## Installing from source
 
