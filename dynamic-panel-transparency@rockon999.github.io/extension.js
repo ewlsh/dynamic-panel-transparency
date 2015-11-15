@@ -83,13 +83,12 @@ function enable() {
     /* Get Rid of Panel's CSS Background */
     Main.panel.actor.add_style_class_name('panel-transparency');
     /* Corners :( */
-    if (hide_corners()) {
+    if (!hide_corners()) {
         Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
         Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
     }
     /* Simulate Window Changes */
     _windowUpdated();
-
 }
 
 
@@ -227,7 +226,8 @@ function _windowUpdated_exclude(window) {
     /* check that the focused window is in the right workspace */
     let focused_window = global.display.focus_window;
 
-    if (focused_window != null && focused_window != window && focused_window.get_workspace() == workspace && focused_window.maximized_vertically && !focused_window.is_hidden() && !focused_window.minimized && focused_window.get_monitor() == primary_monitor) {
+    if (focused_window != null && focused_window != window && focused_window.get_workspace() == workspace && focused_window.maximized_vertically 
+         && !focused_window.is_hidden() && !focused_window.minimized && focused_window.get_monitor() == primary_monitor) {
         _transparency = false;
     } else {
         for (let i = 0; i < windows.length; ++i) {
