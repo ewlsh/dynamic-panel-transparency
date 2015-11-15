@@ -2,7 +2,7 @@
 The panel fades to black when a there is a maximized window and fades to nothing when not.
 
 # True Transparency
-[![Demo CountPages alpha](https://github.com/rockon999/raw/master/media/demo.gif)](https://www.youtube.com/watch?v=P5Eqf65uVhs)
+[![Demo](https://github.com/rockon999/dynamic-panel-transparency/raw/master/media/demo.gif)](https://www.youtube.com/watch?v=P5Eqf65uVhs)
 
 ## Classy transparency for your panel
 This extension fades your top panel to nothingness when there are no maximized windows on your primary display. Never again will the panel be abruptly turned black. Animation! 
