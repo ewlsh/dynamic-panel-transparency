@@ -70,11 +70,13 @@ function enable() {
         if (!Main.screenShield._isActive)
             _windowUpdated();
     }));
-    this._workspaceSwitchSig = global.screen.connect('workspace-switched', Lang.bind(this, this._windowUpdated));
+    this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdated));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
     this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, function(wm, window_actor) {
-        this._windowUpdated_exclude(window_actor.get_meta_window());
+        this._windowUpdated({
+            excluded_window: window_actor.get_meta_window()
+        });
     }));
 
 
@@ -211,29 +213,31 @@ function fade_out_completed() {}
 
 
 /* Event Handlers */
-
-function _windowUpdated() {
-    _windowUpdated_exclude(null);
-}
-
-function _windowUpdated_exclude(window) {
+function _windowUpdated(params) {
     let workspace = global.screen.get_active_workspace();
+    if (params != null && params.workspace != null) {
+        workspace = params.workspace;
+    }
+    let excluded_window = null;
+    if (params != null && params.excluded_window != null)
+        excluded_window = params.excluded_window;
     let windows = workspace.list_windows();
     let primary_monitor = global.screen.get_primary_monitor();
-    
+
     let _transparency = true;
     /* save processing by checking the current window (most likely to be maximized) */
     /* check that the focused window is in the right workspace */
     let focused_window = global.display.focus_window;
 
-    if (focused_window != null && focused_window != window && focused_window.get_workspace() == workspace && focused_window.maximized_vertically 
-         && !focused_window.is_hidden() && !focused_window.minimized && focused_window.get_monitor() == primary_monitor) {
+    if (focused_window != null && focused_window != excluded_window && focused_window.get_workspace() == workspace && focused_window.maximized_vertically && !focused_window.is_hidden() && !focused_window.minimized && focused_window.get_monitor() == primary_monitor) {
         _transparency = false;
     } else {
         for (let i = 0; i < windows.length; ++i) {
             let currentWindow = windows[i];
-            if (currentWindow != window && currentWindow.maximized_vertically && !currentWindow.is_hidden() && !currentWindow.minimized && currentWindow.get_monitor() == primary_monitor) {
+            if (currentWindow != excluded_window && currentWindow.maximized_vertically //&& !currentWindow.is_hidden() 
+                && !currentWindow.minimized && currentWindow.get_monitor() == primary_monitor) {
                 _transparency = false;
+
                 break;
             }
         }
@@ -245,6 +249,19 @@ function _windowUpdated_exclude(window) {
         } else {
             fade_in();
         }
+    }
+}
+
+function _workspaceSwitched(wm, from, to, direction) {
+    let workspace_to = global.screen.get_workspace_by_index(to);
+    if (workspace_to != null) {
+        log('found workspace: ' + to);
+        this._windowUpdated({
+            workspace: workspace_to
+        });
+    } else {
+        // maybe this will do something?
+        this._windowUpdated();
     }
 }
 
