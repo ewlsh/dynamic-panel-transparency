@@ -85,7 +85,7 @@ function enable() {
     /* Get Rid of Panel's CSS Background */
     Main.panel.actor.add_style_class_name('panel-transparency');
     /* Corners :( */
-    if (!hide_corners()) {
+    if (hide_corners()) {
         Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
         Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
     }
