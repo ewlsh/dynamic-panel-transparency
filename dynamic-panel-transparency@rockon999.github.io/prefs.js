@@ -100,7 +100,6 @@ const SettingsUI = new Lang.Class({
         /* make it legible */
         slider.set_size_request(400, 10);
 
-
         slider.connect('value-changed', Lang.bind(this, function(range) {
             this._settings.set_int(SETTINGS_MAXIMIZED_OPACITY, range.get_value());
         }));

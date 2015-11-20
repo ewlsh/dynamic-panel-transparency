@@ -234,7 +234,7 @@ function _out() {
     /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
     if (!hide_corners()) {
         Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
-        Main.pazznel._rightCorner.actor.add_style_class_name('corner-transparency');
+        Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
     }
     var pcolor = panel_color();
     var ccolor = new Clutter.Color({
@@ -252,7 +252,7 @@ function blank_out() {
     /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
     if (!hide_corners()) {
         Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
-        Main.pazznel._rightCorner.actor.add_style_class_name('corner-transparency');
+        Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
     }
     var pcolor = panel_color();
     var ccolor = new Clutter.Color({
