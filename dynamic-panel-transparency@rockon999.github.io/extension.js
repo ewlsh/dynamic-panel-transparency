@@ -7,8 +7,16 @@ const Config = imports.misc.config;
 
 /* Default Settings Values */
 const DEFAULT_TRANSITION_SPEED = 1000;
+const DEFAULT_MAXIMIZED_OPACITY = 255;
+const DEFAULT_UNMAXIMIZED_OPACITY = 0;
+const DEFAULT_PANEL_COLOR = [0, 0, 0];
 const DEFAULT_HIDE_CORNERS = true;
 const DEFAULT_FORCE_ANIMATION = false;
+
+/* Color Array Indices */
+const RED = 0;
+const GREEN = 1;
+const BLUE = 2;
 
 /* Gnome Versioning */
 const MAJOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[0]);
@@ -22,15 +30,16 @@ function init() {
     this.transparent = false;
 
     /* Signal IDs */
-    this._sizeChangeSig1 = null;
-    this._sizeChangeSig2 = null;
-    this._sizeChangeSig3 = null;
-    this._overviewChangeSig1 = null;
-    this._overviewChangeSig2 = null;
-    this._windowCreateSig = null;
+    this._lockScreenSig = null;
+    this._lockScreenShownSig = null;
+    this._overviewShowingSig = null;
+    this._overviewHiddenSig = null;
+    this._windowMapSig = null;
     this._windowDestroySig = null;
     this._windowMinimizeSig = null;
-    this._lockScreenSig = null;
+    this._maximizeSig = null;
+    this._unmaximizeSig = null;
+    this._workspaceSwitchSig = null;
 }
 
 function enable() {
@@ -64,7 +73,7 @@ function enable() {
     this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, this._windowUpdated));
     this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function() {
         if (!this.transparent)
-            fade_out();
+            blank_fade_out();
     }));
     this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, function() {
         if (!Main.screenShield._isActive)
@@ -89,6 +98,9 @@ function enable() {
         Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
         Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
     }
+    update_color({
+        opacity: 0.0
+    });
     /* Simulate Window Changes */
     _windowUpdated();
 }
@@ -122,6 +134,13 @@ function disable() {
     Main.panel._rightCorner.actor.remove_style_class_name('corner-transparency');
     /* Remove Transparency */
     fade_out();
+    /* Remove Color */
+    update_color({
+        r: 0,
+        g: 0,
+        b: 0,
+        opacity: 0.0
+    });
     /* Cleanup Global Variables */
     this.transparent = null;
     this.settings = null;
@@ -136,13 +155,16 @@ function fade_in() {
     var time = (transition_speed() / 1000);
     if (Main.overview._shown)
         return;
+    update_color({
+        opacity: unmaximized_opacity()
+    });
     tweener.addTween(Main.panel.actor, {
-        ccAlpha: 0
+        ccAlpha: unmaximized_opacity()
     });
     tweener.addTween(Main.panel.actor, {
         time: time,
         transition: 'linear',
-        ccAlpha: 255,
+        ccAlpha: maximized_opacity(),
         onComplete: fade_in_completed()
     });
 }
@@ -155,8 +177,33 @@ function fade_out() {
         Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
         Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
     }
+    update_color({
+        opacity: maximized_opacity()
+    });
     tweener.addTween(Main.panel.actor, {
-        ccAlpha: 255
+        ccAlpha: maximized_opacity()
+    });
+    tweener.addTween(Main.panel.actor, {
+        time: time,
+        transition: 'linear',
+        ccAlpha: unmaximized_opacity(),
+        onComplete: fade_out_completed()
+    });
+}
+
+function blank_fade_out() {
+    var time = (transition_speed() / 1000);
+    this.transparent = true;
+    /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
+    if (!hide_corners()) {
+        Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
+        Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
+    }
+    update_color({
+        opacity: maximized_opacity()
+    });
+    tweener.addTween(Main.panel.actor, {
+        ccAlpha: maximized_opacity()
     });
     tweener.addTween(Main.panel.actor, {
         time: time,
@@ -169,11 +216,12 @@ function fade_out() {
 function _in() {
     if (Main.overview._shown)
         return;
+    var pcolor = panel_color();
     var ccolor = new Clutter.Color({
-        red: 0,
-        green: 0,
-        blue: 0,
-        alpha: 255
+        red: pcolor[RED],
+        green: pcolor[GREEN],
+        blue: pcolor[BLUE],
+        alpha: maximized_opacity()
     });
     Main.panel.actor.set_background_color(ccolor);
     fade_in_completed();
@@ -186,12 +234,31 @@ function _out() {
     /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
     if (!hide_corners()) {
         Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
-        Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
+        Main.pazznel._rightCorner.actor.add_style_class_name('corner-transparency');
     }
+    var pcolor = panel_color();
     var ccolor = new Clutter.Color({
-        red: 0,
-        green: 0,
-        blue: 0,
+        red: pcolor[RED],
+        green: pcolor[GREEN],
+        blue: pcolor[BLUE],
+        alpha: unmaximized_opacity()
+    });
+    Main.panel.actor.set_background_color(ccolor);
+    fade_out_completed();
+}
+
+function blank_out() {
+    this.transparent = true;
+    /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
+    if (!hide_corners()) {
+        Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
+        Main.pazznel._rightCorner.actor.add_style_class_name('corner-transparency');
+    }
+    var pcolor = panel_color();
+    var ccolor = new Clutter.Color({
+        red: pcolor[RED],
+        green: pcolor[GREEN],
+        blue: pcolor[BLUE],
         alpha: 0
     });
     Main.panel.actor.set_background_color(ccolor);
@@ -209,6 +276,17 @@ function fade_in_completed() {
 
 
 function fade_out_completed() {}
+
+function update_color(param) {
+    var pcolor = panel_color();
+    var ccolor = new Clutter.Color({
+        red: (param.r != null ? param.r : pcolor[RED]),
+        green: (param.g != null ? param.g : pcolor[GREEN]),
+        blue: (param.b != null ? param.b : pcolor[BLUE]),
+        alpha: (param.opacity != null ? param.opacity : 1.0)
+    });
+    Main.panel.actor.set_background_color(ccolor);
+}
 
 
 
@@ -229,7 +307,7 @@ function _windowUpdated(params) {
     /* check that the focused window is in the right workspace */
     let focused_window = global.display.focus_window;
 
-    if (focused_window != null && focused_window != excluded_window && focused_window.get_workspace() == workspace && focused_window.maximized_vertically && !focused_window.is_hidden() && !focused_window.minimized && focused_window.get_monitor() == primary_monitor) {
+    if (focused_window != null && focused_window != excluded_window && focused_window.get_workspace() == workspace && focused_window.maximized_vertically /*&& !focused_window.is_hidden()*/ && !focused_window.minimized && focused_window.get_monitor() == primary_monitor) {
         _transparency = false;
     } else {
         for (let i = 0; i < windows.length; ++i) {
@@ -255,7 +333,6 @@ function _windowUpdated(params) {
 function _workspaceSwitched(wm, from, to, direction) {
     let workspace_to = global.screen.get_workspace_by_index(to);
     if (workspace_to != null) {
-        log('found workspace: ' + to);
         this._windowUpdated({
             workspace: workspace_to
         });
@@ -283,6 +360,28 @@ function hide_corners() {
         return DEFAULT_HIDE_CORNERS;
 }
 
+function maximized_opacity() {
+    if (settings != null)
+        return settings.get_int('maximized-opacity');
+    else
+        return DEFAULT_MAXIMIZED_OPACITY;
+}
+
+function unmaximized_opacity() {
+    if (settings != null)
+        return settings.get_int('unmaximized-opacity');
+    else
+        return DEFAULT_UNMAXIMIZED_OPACITY;
+}
+
+function panel_color() {
+    if (settings != null) {
+        let pcolor = settings.get_value('panel-color').deep_unpack();
+        return pcolor;
+    } else
+        return DEFAULT_PANEL_COLOR;
+}
+
 function transition_speed() {
     if (settings != null)
         return settings.get_int('transition-speed');
@@ -299,10 +398,11 @@ function cc_alpha_get(actor) {
 }
 
 function cc_alpha_set(actor, alpha) {
+    var bcolor = actor.get_background_color();
     var ccolor = new Clutter.Color({
-        red: 0,
-        green: 0,
-        blue: 0,
+        red: bcolor.red,
+        green: bcolor.green,
+        blue: bcolor.blue,
         alpha: alpha
     });
     actor.set_background_color(ccolor);
