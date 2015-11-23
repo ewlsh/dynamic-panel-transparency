@@ -23,7 +23,12 @@ const BLUE = 2;
 
 const SCALE_FACTOR = 255.9999999;
 
-function init() {}
+const Gettext = imports.gettext.domain('dynamic-panel-transparency');
+const _ = Gettext.gettext;
+
+function init() {
+    Convenience.initTranslations("dynamic-panel-transparency");
+}
 
 function buildPrefsWidget() {
     let widget = new SettingsUI();
@@ -50,7 +55,7 @@ const SettingsUI = new Lang.Class({
 
         this._settings = Convenience.getSettings('org.gnome.shell.extensions.dynamic-panel-transparency');
 
-        let presentLabel = '<b>' + "Transition Speed" + '</b>';
+        let presentLabel = '<b>' + _("Transition Speed") + '</b>';
         this.add(new Gtk.Label({
             label: presentLabel,
             use_markup: true,
@@ -67,7 +72,7 @@ const SettingsUI = new Lang.Class({
         /* make it legible */
         slider.set_size_request(400, 10);
         /* add a tick at the default */
-        slider.add_mark(1000, Gtk.PositionType.BOTTOM, "default");
+        slider.add_mark(1000, Gtk.PositionType.BOTTOM, _("default"));
         /* right margin */
         slider.margin_right = 20;
 
@@ -82,7 +87,7 @@ const SettingsUI = new Lang.Class({
 
 
 
-        presentLabel = '<b>' + "Maximum Opacity" + '</b>';
+        presentLabel = '<b>' + _("Maximum Opacity") + '</b>';
         let label = new Gtk.Label({
             label: presentLabel,
             use_markup: true,
@@ -113,7 +118,7 @@ const SettingsUI = new Lang.Class({
         max_opacity.pack_start(label, false, false, 0);
         max_opacity.pack_end(slider, true, true, 20);
         this.add(max_opacity);
-        presentLabel = '<b>' + "Minimum Opacity" + '</b>';
+        presentLabel = '<b>' + _("Minimum Opacity") + '</b>';
         label = new Gtk.Label({
             label: presentLabel,
             use_markup: true,
@@ -147,7 +152,7 @@ const SettingsUI = new Lang.Class({
         this.add(min_opacity);
 
 
-        presentLabel = '<b>' + "Panel Color" + '</b>';
+        presentLabel = '<b>' + _("Panel Color") + '</b>';
         this.add(new Gtk.Label({
             label: presentLabel,
             use_markup: true,
@@ -200,7 +205,7 @@ const SettingsUI = new Lang.Class({
 
         /* control corners */
         let check = new Gtk.CheckButton({
-            label: "Hide Corners",
+            label: _("Hide Corners"),
             margin_top: 6
         });
         check.set_active(this._settings.get_boolean(SETTINGS_HIDE_CORNERS));
@@ -211,7 +216,7 @@ const SettingsUI = new Lang.Class({
 
         /* force animation */
         check = new Gtk.CheckButton({
-            label: "Force Animation (override 'gtk-enable-animations')",
+            label: _("Force Animation (override 'gtk-enable-animations')"),
             margin_top: 6
         });
         check.set_active(this._settings.get_boolean(SETTINGS_FORCE_ANIMATION));
