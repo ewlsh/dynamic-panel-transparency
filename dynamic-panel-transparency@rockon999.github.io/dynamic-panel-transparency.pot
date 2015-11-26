@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-23 11:55-0200\n"
+"POT-Creation-Date: 2015-11-26 12:19-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,23 +17,23 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: prefs.js:58
+#: prefs.js:62
 msgid "Transition Speed"
 msgstr ""
 
-#: prefs.js:75
+#: prefs.js:79
 msgid "default"
 msgstr ""
 
-#: prefs.js:90
+#: prefs.js:95
 msgid "Maximum Opacity"
 msgstr ""
 
-#: prefs.js:121
+#: prefs.js:126
 msgid "Minimum Opacity"
 msgstr ""
 
-#: prefs.js:155
+#: prefs.js:160
 msgid "Panel Color"
 msgstr ""
 
@@ -41,6 +41,14 @@ msgstr ""
 msgid "Hide Corners"
 msgstr ""
 
-#: prefs.js:219
-msgid "Force Animation (override 'gtk-enable-animations')"
+#: prefs.js:209
+msgid "Some shell themes already do this."
+msgstr ""
+
+#: prefs.js:220
+msgid "Force Animation"
+msgstr ""
+
+#: prefs.js:221
+msgid "Overrides 'gtk-enable-animations'."
 msgstr ""
