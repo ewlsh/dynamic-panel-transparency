@@ -1,0 +1,47 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: GNOME Shell Extension Dynamic Panel Transparency\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-11-23 11:55-0200\n"
+"PO-Revision-Date: 2015-11-23 11:59-0200\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: Jonatan Zeidler <jonatan_zeidler@gmx.de>\n"
+"Language-Team: Jonatan Zeidler <jonatan_zeidler@gmx.de>\n"
+"X-Generator: Poedit 1.8.4\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: prefs.js:58
+msgid "Transition Speed"
+msgstr "Übergangszeit"
+
+#: prefs.js:75
+msgid "default"
+msgstr "Vorgabe"
+
+#: prefs.js:90
+msgid "Maximum Opacity"
+msgstr "Maximale Deckkraft"
+
+#: prefs.js:121
+msgid "Minimum Opacity"
+msgstr "Minimale Deckkraft"
+
+#: prefs.js:155
+msgid "Panel Color"
+msgstr "Hintergrundfarbe"
+
+#: prefs.js:208
+msgid "Hide Corners"
+msgstr "Abgerundete Ecken deaktivieren"
+
+#: prefs.js:219
+msgid "Force Animation (override 'gtk-enable-animations')"
+msgstr "Animation erzwingen (überschreibt 'gtk-enable-animations')"
