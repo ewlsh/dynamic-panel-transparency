@@ -85,6 +85,7 @@ const SettingsUI = new Lang.Class({
         }));
         slider.connect('value-changed', Lang.bind(this, function(range) {
             this.settings.set_int(SETTINGS_TRANSITION_SPEED, range.get_value());
+            this.emit('changed');
         }));
 
         this.add(slider);
@@ -205,6 +206,7 @@ const SettingsUI = new Lang.Class({
         /* control corners */
         let check = new Gtk.CheckButton({
             label: _("Hide Corners"),
+            tooltip_text: _("Some shell themes already do this."),
             margin_top: 6
         });
         check.set_active(this.settings.get_boolean(SETTINGS_HIDE_CORNERS));
@@ -215,7 +217,8 @@ const SettingsUI = new Lang.Class({
 
         /* force animation */
         check = new Gtk.CheckButton({
-            label: _("Force Animation (override 'gtk-enable-animations')"),
+            label: _("Force Animation"),
+            tooltip_text:  _("Overrides 'gtk-enable-animations'."),
             margin_top: 6
         });
         check.set_active(this.settings.get_boolean(SETTINGS_FORCE_ANIMATION));

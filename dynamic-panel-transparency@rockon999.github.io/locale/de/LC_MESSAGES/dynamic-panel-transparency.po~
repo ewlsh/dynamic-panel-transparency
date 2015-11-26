@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNOME Shell Extension Dynamic Panel Transparency\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-26 12:19-0600\n"
+"POT-Creation-Date: 2015-11-26 12:16-0600\n"
 "PO-Revision-Date: 2015-11-23 11:59-0200\n"
 "Last-Translator: Jonatan Zeidler <jonatan_zeidler@gmx.de>\n"
 "Language-Team: Jonatan Zeidler <jonatan_zeidler@gmx.de>\n"
@@ -42,10 +42,6 @@ msgstr "Hintergrundfarbe"
 msgid "Hide Corners"
 msgstr "Abgerundete Ecken deaktivieren"
 
-#: prefs.js:209
-msgid "Some shell themes already do this."
-msgstr ""
-
 #: prefs.js:220
 msgid "Force Animation"
 msgstr "Animation erzwingen"
@@ -53,4 +49,4 @@ msgstr "Animation erzwingen"
 #: prefs.js:221
 #, fuzzy
 msgid "Overrides 'gtk-enable-animations'."
-msgstr "Überschreibt 'gtk-enable-animations'."
+msgstr "überschreibt 'gtk-enable-animations'."
