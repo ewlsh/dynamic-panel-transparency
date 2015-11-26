@@ -6,14 +6,16 @@ const Lang = imports.lang;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
+const Gettext = imports.gettext.domain('dynamic-panel-transparency');
+const _ = Gettext.gettext;
 
 /* Settings Keys */
-const SETTINGS_HIDE_CORNERS = "hide-corners";
-const SETTINGS_TRANSITION_SPEED = "transition-speed";
-const SETTINGS_FORCE_ANIMATION = "force-animation";
-const SETTINGS_UNMAXIMIZED_OPACITY = "unmaximized-opacity";
-const SETTINGS_MAXIMIZED_OPACITY = "maximized-opacity";
-const SETTINGS_PANEL_COLOR = "panel-color";
+const SETTINGS_HIDE_CORNERS = 'hide-corners';
+const SETTINGS_TRANSITION_SPEED = 'transition-speed';
+const SETTINGS_FORCE_ANIMATION = 'force-animation';
+const SETTINGS_UNMAXIMIZED_OPACITY = 'unmaximized-opacity';
+const SETTINGS_MAXIMIZED_OPACITY = 'maximized-opacity';
+const SETTINGS_PANEL_COLOR = 'panel-color';
 
 /* Settings Schema */
 const SETTINGS_SCHEMA = 'org.gnome.shell.extensions.dynamic-panel-transparency';
@@ -26,11 +28,10 @@ const BLUE = 2;
 /* Color Scaling Factor (Byte to Decimal) */
 const SCALE_FACTOR = 255.9999999;
 
-const Gettext = imports.gettext.domain('dynamic-panel-transparency');
-const _ = Gettext.gettext;
+
 
 function init() {
-    Convenience.initTranslations("dynamic-panel-transparency");
+    Convenience.initTranslations();
 }
 
 function buildPrefsWidget() {
@@ -112,7 +113,7 @@ const SettingsUI = new Lang.Class({
             this.settings.set_int(SETTINGS_MAXIMIZED_OPACITY, range.get_value());
         }));
         slider.connect('format-value', Lang.bind(this, function(scale, value) {
-            return ((value / SCALE_FACTOR) * 100).toFixed(0) + "%";
+            return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
         }));
 
         let max_opacity = new Gtk.Box(Gtk.Orientation.HORIZTONAL);
@@ -143,7 +144,7 @@ const SettingsUI = new Lang.Class({
             this.settings.set_int(SETTINGS_UNMAXIMIZED_OPACITY, range.get_value());
         }));
         slider.connect('format-value', Lang.bind(this, function(scale, value) {
-            return ((value / SCALE_FACTOR) * 100).toFixed(0) + "%";
+            return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
         }));
 
         let min_opacity = new Gtk.Box(Gtk.Orientation.HORIZTONAL);
