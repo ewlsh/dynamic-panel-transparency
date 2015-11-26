@@ -1,12 +1,11 @@
-const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
 const Lang = imports.lang;
 
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
+
 
 /* Settings Keys */
 const SETTINGS_HIDE_CORNERS = "hide-corners";
@@ -16,11 +15,15 @@ const SETTINGS_UNMAXIMIZED_OPACITY = "unmaximized-opacity";
 const SETTINGS_MAXIMIZED_OPACITY = "maximized-opacity";
 const SETTINGS_PANEL_COLOR = "panel-color";
 
+/* Settings Schema */
+const SETTINGS_SCHEMA = 'org.gnome.shell.extensions.dynamic-panel-transparency';
+
 /* Color Array Indices */
 const RED = 0;
 const GREEN = 1;
 const BLUE = 2;
 
+/* Color Scaling Factor (Byte to Decimal) */
 const SCALE_FACTOR = 255.9999999;
 
 function init() {}
@@ -48,7 +51,7 @@ const SettingsUI = new Lang.Class({
 
         this.orientation = Gtk.Orientation.VERTICAL;
 
-        this._settings = Convenience.getSettings('org.gnome.shell.extensions.dynamic-panel-transparency');
+        this.settings = Convenience.getSettings(SETTINGS_SCHEMA);
 
         let presentLabel = '<b>' + "Transition Speed" + '</b>';
         this.add(new Gtk.Label({
@@ -59,7 +62,7 @@ const SettingsUI = new Lang.Class({
 
         /* control transition speed */
         let slider = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 5000, 100);
-        slider.adjustment.set_value(this._settings.get_int(SETTINGS_TRANSITION_SPEED));
+        slider.adjustment.set_value(this.settings.get_int(SETTINGS_TRANSITION_SPEED));
         /* show the user where they're at */
         slider.set_draw_value(true);
         /* lets add some color */
@@ -72,12 +75,12 @@ const SettingsUI = new Lang.Class({
         slider.margin_right = 20;
 
         slider.connect('format-value', Lang.bind(this, function(scale, value) {
-            return value + "ms";
+            return value + 'ms';
         }));
         slider.connect('value-changed', Lang.bind(this, function(range) {
-            this._settings.set_int(SETTINGS_TRANSITION_SPEED, range.get_value());
+            this.settings.set_int(SETTINGS_TRANSITION_SPEED, range.get_value());
         }));
-        
+
         this.add(slider);
 
 
@@ -92,7 +95,7 @@ const SettingsUI = new Lang.Class({
 
 
         slider = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 255, 1);
-        slider.adjustment.set_value(this._settings.get_int(SETTINGS_MAXIMIZED_OPACITY));
+        slider.adjustment.set_value(this.settings.get_int(SETTINGS_MAXIMIZED_OPACITY));
         /* show the user where they're at */
         slider.set_draw_value(true);
         /* lets add some color */
@@ -101,7 +104,7 @@ const SettingsUI = new Lang.Class({
         slider.set_size_request(400, 10);
 
         slider.connect('value-changed', Lang.bind(this, function(range) {
-            this._settings.set_int(SETTINGS_MAXIMIZED_OPACITY, range.get_value());
+            this.settings.set_int(SETTINGS_MAXIMIZED_OPACITY, range.get_value());
         }));
         slider.connect('format-value', Lang.bind(this, function(scale, value) {
             return ((value / SCALE_FACTOR) * 100).toFixed(0) + "%";
@@ -122,7 +125,7 @@ const SettingsUI = new Lang.Class({
         label.set_size_request(20, -1);
 
         slider = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 255, 1);
-        slider.adjustment.set_value(this._settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY));
+        slider.adjustment.set_value(this.settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY));
         /* show the user where they're at */
         slider.set_draw_value(true);
         /* lets add some color */
@@ -132,7 +135,7 @@ const SettingsUI = new Lang.Class({
 
 
         slider.connect('value-changed', Lang.bind(this, function(range) {
-            this._settings.set_int(SETTINGS_UNMAXIMIZED_OPACITY, range.get_value());
+            this.settings.set_int(SETTINGS_UNMAXIMIZED_OPACITY, range.get_value());
         }));
         slider.connect('format-value', Lang.bind(this, function(scale, value) {
             return ((value / SCALE_FACTOR) * 100).toFixed(0) + "%";
@@ -154,58 +157,53 @@ const SettingsUI = new Lang.Class({
             halign: Gtk.Align.START
         }));
 
+        let color_btn = new Gtk.ColorButton();
+        color_btn.halign = Gtk.Align.START;
+        color_btn.set_use_alpha(false);
 
+        let panel_color = this.settings.get_value('panel-color').deep_unpack();
 
+        let scaled_red = panel_color[RED];
+        scaled_red = scaled_red / SCALE_FACTOR;
 
-        let color = new Gtk.ColorButton();
-        color.halign = Gtk.Align.START;
-        let pcolor = this._settings.get_value('panel-color').deep_unpack();
+        let scaled_blue = panel_color[BLUE];
+        scaled_blue = scaled_blue / SCALE_FACTOR;
 
+        let scaled_green = panel_color[GREEN];
+        scaled_green = scaled_green / SCALE_FACTOR;
 
-        let r_display = pcolor[RED];
-        r_display = r_display / SCALE_FACTOR;
-
-        let b_display = pcolor[BLUE];
-        b_display = b_display / SCALE_FACTOR;
-
-        let g_display = pcolor[GREEN];
-        g_display = g_display / SCALE_FACTOR;
-
-
-        let c = new Gdk.RGBA({
-            red: r_display,
-            green: g_display,
-            blue: b_display,
+        let scaled_color = new Gdk.RGBA({
+            red: scaled_red,
+            green: scaled_green,
+            blue: scaled_blue,
             alpha: 1.0
         });
 
+        color_btn.set_rgba(scaled_color);
 
-        color.connect('color-set', Lang.bind(this, function(c) {
-            let rgba = c.rgba.to_string();
-
-            let r = parseInt(rgba.split('(')[1].split(')')[0].split(',')[RED], 10);
-            let g = parseInt(rgba.split('(')[1].split(')')[0].split(',')[GREEN], 10);
-            let b = parseInt(rgba.split('(')[1].split(')')[0].split(',')[BLUE], 10);
+        color_btn.connect('color-set', Lang.bind(this, function(color) {
+            let rgba = color.rgba.to_string();
+            let parsed_red = parseInt(rgba.split('(')[1].split(')')[0].split(',')[RED], 10);
+            let parsed_green = parseInt(rgba.split('(')[1].split(')')[0].split(',')[GREEN], 10);
+            let parsed_blue = parseInt(rgba.split('(')[1].split(')')[0].split(',')[BLUE], 10);
 
             let rgb = [];
-            rgb[RED] = r;
-            rgb[GREEN] = g;
-            rgb[BLUE] = b;
-            let done = this._settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
+            rgb[RED] = parsed_red;
+            rgb[GREEN] = parsed_green;
+            rgb[BLUE] = parsed_blue;
+            this.settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
         }));
 
-        color.set_use_alpha(false);
-        color.set_rgba(c);
-        this.add(color);
+        this.add(color_btn);
 
         /* control corners */
         let check = new Gtk.CheckButton({
             label: "Hide Corners",
             margin_top: 6
         });
-        check.set_active(this._settings.get_boolean(SETTINGS_HIDE_CORNERS));
+        check.set_active(this.settings.get_boolean(SETTINGS_HIDE_CORNERS));
         check.connect('toggled', Lang.bind(this, function(value) {
-            this._settings.set_boolean(SETTINGS_HIDE_CORNERS, value.get_active());
+            this.settings.set_boolean(SETTINGS_HIDE_CORNERS, value.get_active());
         }));
         this.add(check);
 
@@ -214,9 +212,9 @@ const SettingsUI = new Lang.Class({
             label: "Force Animation (override 'gtk-enable-animations')",
             margin_top: 6
         });
-        check.set_active(this._settings.get_boolean(SETTINGS_FORCE_ANIMATION));
+        check.set_active(this.settings.get_boolean(SETTINGS_FORCE_ANIMATION));
         check.connect('toggled', Lang.bind(this, function(value) {
-            this._settings.set_boolean(SETTINGS_FORCE_ANIMATION, value.get_active());
+            this.settings.set_boolean(SETTINGS_FORCE_ANIMATION, value.get_active());
         }));
         this.add(check);
     },

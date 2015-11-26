@@ -4,6 +4,7 @@ const Clutter = imports.gi.Clutter;
 const Main = imports.ui.main;
 const Lang = imports.lang;
 const Config = imports.misc.config;
+const Panel = Main.panel;
 
 /* Default Settings Values */
 const DEFAULT_TRANSITION_SPEED = 1000;
@@ -13,10 +14,16 @@ const DEFAULT_PANEL_COLOR = [0, 0, 0];
 const DEFAULT_HIDE_CORNERS = true;
 const DEFAULT_FORCE_ANIMATION = false;
 
+/* Settings Schema */
+const SETTINGS_SCHEMA = 'org.gnome.shell.extensions.dynamic-panel-transparency';
+
 /* Color Array Indices */
 const RED = 0;
 const GREEN = 1;
 const BLUE = 2;
+
+/* Color Scaling Factor (Byte to Decimal) */
+const SCALE_FACTOR = 255.9999999;
 
 /* Gnome Versioning */
 const MAJOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[0]);
@@ -37,16 +44,17 @@ function init() {
     this._windowMapSig = null;
     this._windowDestroySig = null;
     this._windowMinimizeSig = null;
+    this._windowUnminimizeSig = null;
     this._maximizeSig = null;
     this._unmaximizeSig = null;
     this._workspaceSwitchSig = null;
 }
 
 function enable() {
-    this.settings = Convenience.getSettings('org.gnome.shell.extensions.dynamic-panel-transparency');
+    this.settings = Convenience.getSettings(SETTINGS_SCHEMA);
 
     /* Set the appropriate tweener */
-    if (force_animation()) {
+    if (get_force_animation()) {
         this.tweener = imports.tweener.tweener;
     } else {
         this.tweener = imports.ui.tweener;
@@ -61,26 +69,30 @@ function enable() {
         this._unmaximizeSig = global.window_manager.connect('size-change', Lang.bind(this, this._windowUpdated));
     }
 
-    /* Signal Connections 
+    /* Signal Connections
      * hidden: occurs after the overview is hidden
      * showing: occurs as the overview is opening
-     * locked-changed: occurs when the lock screen is toggled
+     * active-changed: occurs when the screen shield is toggled
      * workspace-switched: occurs after a workspace is switched
      * map: monitors both new windows and unminimizing windows
      * minimize: occurs as the window is minimized
+     * unminimize: occurs as the window is unminimized
      * destroy: occurs as the window is destroyed
      */
     this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, this._windowUpdated));
     this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function() {
-        if (!this.transparent)
-            blank_fade_out();
+        blank_fade_out();
     }));
     this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, function() {
         if (!Main.screenShield._isActive)
-            _windowUpdated();
+            _windowUpdated({
+                /* make sure we don't have any odd coloring on the screenShield */
+                blank: true
+            });
     }));
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdated));
+    this._windowUnminimizeSig = global.window_manager.connect('unminimize', Lang.bind(this, this._windowUpdated));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
     this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, function(wm, window_actor) {
         this._windowUpdated({
@@ -90,17 +102,21 @@ function enable() {
 
 
     /* Register Proxy Property With Tweener */
-    tweener.registerSpecialProperty("ccAlpha", cc_alpha_get, cc_alpha_set);
+    tweener.registerSpecialProperty('background_alpha', get_background_alpha, set_background_alpha);
     /* Get Rid of Panel's CSS Background */
-    Main.panel.actor.add_style_class_name('panel-transparency');
-    /* Corners :( */
-    if (hide_corners()) {
-        Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
-        Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
-    }
-    update_color({
+    strip_panel_css();
+    /* Initial Coloring */
+    set_panel_color({
         opacity: 0.0
     });
+    set_corner_color({
+        opacity: 0.0
+    });
+
+    /* Corners :( */
+    if (get_hide_corners()) {
+        hide_corners();
+    }
     /* Simulate Window Changes */
     _windowUpdated();
 }
@@ -114,6 +130,7 @@ function disable() {
     global.window_manager.disconnect(this._windowMapSig);
     global.window_manager.disconnect(this._windowDestroySig);
     global.window_manager.disconnect(this._windowMinimizeSig);
+    global.window_manager.disconnect(this._windowUnminimizeSig);
     global.window_manager.disconnect(this._maximizeSig);
     global.window_manager.disconnect(this._unmaximizeSig);
     global.screen.disconnect(this._workspaceSwitchSig);
@@ -125,22 +142,31 @@ function disable() {
     this._windowMapSig = null;
     this._windowDestroySig = null;
     this._windowMinimizeSig = null;
+    this._windowUnminimizeSig = null;
     this._maximizeSig = null;
     this._unmaximizeSig = null;
     this._workspaceSwitchSig = null;
-    /* Remove Styling */
-    Main.panel.actor.remove_style_class_name('panel-transparency');
-    Main.panel._leftCorner.actor.remove_style_class_name('corner-transparency');
-    Main.panel._rightCorner.actor.remove_style_class_name('corner-transparency');
+
+
     /* Remove Transparency */
     fade_out();
-    /* Remove Color */
-    update_color({
-        r: 0,
-        g: 0,
-        b: 0,
+
+    /* Remove Our Panel Coloring */
+    set_panel_color({
+        red: 0,
+        green: 0,
+        blue: 0,
         opacity: 0.0
     });
+    /* Remove Our Corner Coloring */
+    set_corner_color({
+        red: 0,
+        green: 0,
+        blue: 0,
+        opacity: 255
+    });
+    /* Remove Our Styling */
+    reapply_panel_css();
     /* Cleanup Global Variables */
     this.transparent = null;
     this.settings = null;
@@ -151,179 +177,204 @@ function disable() {
 
 /* Animation Controls */
 
+function strip_panel_css() {
+    Panel.actor.add_style_class_name('panel-transparency');
+}
+
+function reapply_panel_css() {
+    Panel.actor.remove_style_class_name('panel-transparency');
+}
+
 function fade_in() {
-    var time = (transition_speed() / 1000);
-    if (Main.overview._shown)
-        return;
-    update_color({
-        opacity: unmaximized_opacity()
-    });
-    tweener.addTween(Main.panel.actor, {
-        ccAlpha: unmaximized_opacity()
-    });
-    tweener.addTween(Main.panel.actor, {
-        time: time,
-        transition: 'linear',
-        ccAlpha: maximized_opacity(),
-        onComplete: fade_in_completed()
-    });
-}
-
-function fade_out() {
-    var time = (transition_speed() / 1000);
-    this.transparent = true;
-    /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
-    if (!hide_corners()) {
-        Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
-        Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
-    }
-    update_color({
-        opacity: maximized_opacity()
-    });
-    tweener.addTween(Main.panel.actor, {
-        ccAlpha: maximized_opacity()
-    });
-    tweener.addTween(Main.panel.actor, {
-        time: time,
-        transition: 'linear',
-        ccAlpha: unmaximized_opacity(),
-        onComplete: fade_out_completed()
-    });
-}
-
-function blank_fade_out() {
-    var time = (transition_speed() / 1000);
-    this.transparent = true;
-    /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
-    if (!hide_corners()) {
-        Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
-        Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
-    }
-    update_color({
-        opacity: maximized_opacity()
-    });
-    tweener.addTween(Main.panel.actor, {
-        ccAlpha: maximized_opacity()
-    });
-    tweener.addTween(Main.panel.actor, {
-        time: time,
-        transition: 'linear',
-        ccAlpha: 0,
-        onComplete: fade_out_completed()
-    });
-}
-
-function _in() {
-    if (Main.overview._shown)
-        return;
-    var pcolor = panel_color();
-    var ccolor = new Clutter.Color({
-        red: pcolor[RED],
-        green: pcolor[GREEN],
-        blue: pcolor[BLUE],
-        alpha: maximized_opacity()
-    });
-    Main.panel.actor.set_background_color(ccolor);
-    fade_in_completed();
-}
-
-
-
-function _out() {
-    this.transparent = true;
-    /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
-    if (!hide_corners()) {
-        Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
-        Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
-    }
-    var pcolor = panel_color();
-    var ccolor = new Clutter.Color({
-        red: pcolor[RED],
-        green: pcolor[GREEN],
-        blue: pcolor[BLUE],
-        alpha: unmaximized_opacity()
-    });
-    Main.panel.actor.set_background_color(ccolor);
-    fade_out_completed();
-}
-
-function blank_out() {
-    this.transparent = true;
-    /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
-    if (!hide_corners()) {
-        Main.panel._leftCorner.actor.add_style_class_name('corner-transparency');
-        Main.panel._rightCorner.actor.add_style_class_name('corner-transparency');
-    }
-    var pcolor = panel_color();
-    var ccolor = new Clutter.Color({
-        red: pcolor[RED],
-        green: pcolor[GREEN],
-        blue: pcolor[BLUE],
-        alpha: 0
-    });
-    Main.panel.actor.set_background_color(ccolor);
-    fade_out_completed();
-}
-
-function fade_in_completed() {
     this.transparent = false;
+    let time = (get_transition_speed() / 1000);
+    if (Main.overview._shown)
+        return;
+    set_panel_color({
+        opacity: get_minimum_opacity()
+    });
+    tweener.addTween(Panel.actor, {
+        background_alpha: get_minimum_opacity()
+    });
+    tweener.addTween(Panel.actor, {
+        time: time,
+        transition: 'linear',
+        background_alpha: get_maximum_opacity(),
+        onComplete: fade_in_complete
+    });
+}
+
+function fade_in_complete() {
+    if (!get_hide_corners()) {
+        show_corners();
+    }
+}
+
+function fade_out(params = null) {
+    if (params === null || is_undef(params.time))
+        params = {
+            time: get_transition_speed()
+        };
+    let time = params.time / 1000;
+    this.transparent = true;
     /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
-    if (!hide_corners()) {
-        Main.panel._leftCorner.actor.remove_style_class_name('corner-transparency');
-        Main.panel._rightCorner.actor.remove_style_class_name('corner-transparency');
+    /* always hide to update preference changes */
+    if (!get_hide_corners()) {
+        hide_corners();
+    } else {
+        hide_corners({
+            opacity: 0
+        });
+    }
+    set_panel_color({
+        opacity: get_maximum_opacity()
+    });
+    if (time <= 0) {
+        set_background_alpha(Panel.actor, get_minimum_opacity());
+    } else {
+        tweener.addTween(Panel.actor, {
+            background_alpha: get_maximum_opacity()
+        });
+        tweener.addTween(Panel.actor, {
+            time: time,
+            transition: 'linear',
+            background_alpha: get_minimum_opacity(),
+        });
     }
 }
 
 
-function fade_out_completed() {}
-
-function update_color(param) {
-    var pcolor = panel_color();
-    var ccolor = new Clutter.Color({
-        red: (param.r != null ? param.r : pcolor[RED]),
-        green: (param.g != null ? param.g : pcolor[GREEN]),
-        blue: (param.b != null ? param.b : pcolor[BLUE]),
-        alpha: (param.opacity != null ? param.opacity : 1.0)
+/* Doesn't adhere to opacity settings. For overview and screenShield. */
+function blank_fade_out(params = null) {
+    if (params === null || is_undef(params.time))
+        params = {
+            time: get_transition_speed()
+        };
+    let time = params.time / 1000;
+    this.transparent = true;
+    /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
+    /* always hide to update preference changes */
+    if (!get_hide_corners()) {
+        hide_corners();
+    } else {
+        hide_corners({
+            opacity: 0
+        });
+    }
+    set_panel_color({
+        opacity: get_maximum_opacity()
     });
-    Main.panel.actor.set_background_color(ccolor);
+    tweener.addTween(Panel.actor, {
+        background_alpha: get_maximum_opacity()
+    });
+    tweener.addTween(Panel.actor, {
+        time: time,
+        transition: 'linear',
+        background_alpha: 0,
+    });
 }
+
+/* Sadly, the current corner/panel overlap is very awkward */
+function hide_corners(params = null) {
+    if (params === null || is_undef(params.opacity))
+        params = {
+            opacity: get_minimum_opacity()
+        };
+    set_corner_color({
+        opacity: params.opacity
+    });
+}
+
+function show_corners(params = null) {
+    if (params === null || is_undef(params.opacity))
+        params = {
+            opacity: get_maximum_opacity()
+        };
+    set_corner_color({
+        opacity: params.opacity
+    });
+}
+
+function set_panel_color(params = null) {
+    let panel_color = get_panel_color();
+    if (params === null)
+        params = {
+            red: panel_color[RED],
+            green: panel_color[GREEN],
+            blue: panel_color[BLUE],
+            opacity: get_maximum_opacity()
+        };
+    Panel.actor.set_background_color(new Clutter.Color({
+        red: validate(params.red, panel_color[RED]),
+        green: validate(params.green, panel_color[GREEN]),
+        blue: validate(params.blue, panel_color[BLUE]),
+        alpha: validate(params.opacity, get_maximum_opacity())
+    }));
+}
+
+function set_corner_color(params = null) {
+    let panel_color = get_panel_color();
+    if (params === null)
+        params = {
+            red: panel_color[RED],
+            green: panel_color[GREEN],
+            blue: panel_color[BLUE],
+            opacity: get_maximum_opacity()
+        };
+    let opacity = validate(params.opacity, ((get_hide_corners() && this.transparent) ? get_minimum_opacity() : get_maximum_opacity));
+    let red = validate(params.red, panel_color[RED]);
+    let green = validate(params.green, panel_color[GREEN]);
+    let blue = validate(params.blue, panel_color[BLUE]);
+    let coloring = '-panel-corner-background-color: rgba(' + red + ', ' + green + ', ' + blue + ', ' + (opacity / SCALE_FACTOR) + ');' +
+        '' + '-panel-corner-border-color: transparent;';
+    Panel._leftCorner.actor.set_style(coloring);
+    Panel._rightCorner.actor.set_style(coloring);
+}
+
+
 
 
 
 /* Event Handlers */
-function _windowUpdated(params) {
+function _windowUpdated(params = null) {
     let workspace = global.screen.get_active_workspace();
-    if (params != null && params.workspace != null) {
-        workspace = params.workspace;
-    }
     let excluded_window = null;
-    if (params != null && params.excluded_window != null)
-        excluded_window = params.excluded_window;
-    let windows = workspace.list_windows();
-    let primary_monitor = global.screen.get_primary_monitor();
+    if (params !== null) {
+        if (!is_undef(params.workspace)) {
+            workspace = params.workspace;
+        }
+        if (!is_undef(params.excluded_window)) {
+            excluded_window = params.excluded_window;
+        }
+    }
 
-    let _transparency = true;
+    let primary_monitor = global.screen.get_primary_monitor();
+    let focused_window = global.display.focus_window;
+    let windows = workspace.list_windows();
+
+    let add_transparency = true;
+
     /* save processing by checking the current window (most likely to be maximized) */
     /* check that the focused window is in the right workspace */
-    let focused_window = global.display.focus_window;
-
-    if (focused_window != null && focused_window != excluded_window && focused_window.get_workspace() == workspace && focused_window.maximized_vertically /*&& !focused_window.is_hidden()*/ && !focused_window.minimized && focused_window.get_monitor() == primary_monitor) {
-        _transparency = false;
+    if (!is_undef(focused_window) && focused_window !== excluded_window && focused_window.maximized_vertically && focused_window.get_monitor() === primary_monitor && focused_window.get_workspace() === workspace && !focused_window.minimized) {
+        add_transparency = false;
     } else {
         for (let i = 0; i < windows.length; ++i) {
-            let currentWindow = windows[i];
-            if (currentWindow != excluded_window && currentWindow.maximized_vertically //&& !currentWindow.is_hidden() 
-                && !currentWindow.minimized && currentWindow.get_monitor() == primary_monitor) {
-                _transparency = false;
-
+            let current_window = windows[i];
+            if (current_window !== excluded_window && current_window.maximized_vertically && current_window.get_monitor() === primary_monitor && !current_window.minimized) {
+                add_transparency = false;
                 break;
             }
         }
     }
     /* only change if the transparency isn't already correct */
-    if (this.transparent != _transparency) {
-        if (_transparency) {
-            fade_out();
+    if (this.transparent !== add_transparency) {
+        if (add_transparency) {
+            if (params !== null && !is_undef(params.blank) && params.blank) {
+                blank_fade_out();
+            } else {
+                fade_out();
+            }
         } else {
             fade_in();
         }
@@ -332,12 +383,12 @@ function _windowUpdated(params) {
 
 function _workspaceSwitched(wm, from, to, direction) {
     let workspace_to = global.screen.get_workspace_by_index(to);
-    if (workspace_to != null) {
+    if (workspace_to !== null) {
         this._windowUpdated({
             workspace: workspace_to
         });
     } else {
-        // maybe this will do something?
+        /* maybe this will do something? */
         this._windowUpdated();
     }
 }
@@ -346,64 +397,83 @@ function _workspaceSwitched(wm, from, to, direction) {
 
 /* Settings Accessors */
 
-function force_animation() {
-    if (settings != null)
+function get_force_animation() {
+    if (!is_undef(settings)) {
         return settings.get_boolean('force-animation');
-    else
+    } else {
         return DEFAULT_FORCE_ANIMATION;
+    }
 }
 
-function hide_corners() {
-    if (settings != null)
+function get_hide_corners() {
+    if (!is_undef(settings)) {
         return settings.get_boolean('hide-corners');
-    else
+    } else {
+        log('Failed to access setting: ' + 'hide-corners');
         return DEFAULT_HIDE_CORNERS;
+    }
 }
 
-function maximized_opacity() {
-    if (settings != null)
+function get_maximum_opacity() {
+    if (!is_undef(settings)) {
         return settings.get_int('maximized-opacity');
-    else
+    } else {
+        log('Failed to access setting: ' + 'maximized-opacity');
         return DEFAULT_MAXIMIZED_OPACITY;
+    }
 }
 
-function unmaximized_opacity() {
-    if (settings != null)
+function get_minimum_opacity() {
+    if (!is_undef(settings)) {
         return settings.get_int('unmaximized-opacity');
-    else
+    } else {
+        log('Failed to access setting: ' + 'unmaximized-opacity');
         return DEFAULT_UNMAXIMIZED_OPACITY;
+    }
 }
 
-function panel_color() {
-    if (settings != null) {
-        let pcolor = settings.get_value('panel-color').deep_unpack();
-        return pcolor;
-    } else
+function get_panel_color() {
+    if (!is_undef(settings)) {
+        return settings.get_value('panel-color').deep_unpack();
+    } else {
+        log('Failed to access setting: ' + 'panel-color');
         return DEFAULT_PANEL_COLOR;
+    }
 }
 
-function transition_speed() {
-    if (settings != null)
+function get_transition_speed() {
+    if (!is_undef(settings)) {
         return settings.get_int('transition-speed');
-    else
+    } else {
+        log('Failed to access setting: ' + 'transition-speed');
         return DEFAULT_TRANSITION_SPEED;
+    }
 }
 
 
 
 /* Special Property Methods */
 
-function cc_alpha_get(actor) {
+function get_background_alpha(actor) {
     return actor.get_background_color().alpha;
 }
 
-function cc_alpha_set(actor, alpha) {
-    var bcolor = actor.get_background_color();
-    var ccolor = new Clutter.Color({
-        red: bcolor.red,
-        green: bcolor.green,
-        blue: bcolor.blue,
+function set_background_alpha(actor, alpha) {
+    let background_color = actor.get_background_color();
+    actor.set_background_color(new Clutter.Color({
+        red: background_color.red,
+        green: background_color.green,
+        blue: background_color.blue,
         alpha: alpha
-    });
-    actor.set_background_color(ccolor);
+    }));
+}
+
+/* Utilities */
+
+function validate(a, b) {
+    return (!is_undef(a) ? a : b);
+}
+
+function is_undef(a) {
+    return (typeof(a) === 'undefined' || a === null);
 }
