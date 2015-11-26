@@ -85,7 +85,6 @@ const SettingsUI = new Lang.Class({
         }));
         slider.connect('value-changed', Lang.bind(this, function(range) {
             this.settings.set_int(SETTINGS_TRANSITION_SPEED, range.get_value());
-            this.emit('changed');
         }));
 
         this.add(slider);
