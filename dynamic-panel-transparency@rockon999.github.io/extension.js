@@ -92,7 +92,13 @@ function enable() {
      */
     this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, this._windowUpdated));
     this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function() {
-        blank_fade_out();
+        if (!this.transparent) {
+            blank_fade_out();
+        } else {
+            blank_fade_out({
+                time: 0
+            });
+        }
     }));
     this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, function() {
         if (!Main.screenShield._isActive)
