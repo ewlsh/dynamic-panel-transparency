@@ -280,10 +280,10 @@ function reapply_panel_css() {
 }
 
 function fade_in() {
-    this.transparent = false;
-    let time = (get_transition_speed() / 1000);
     if (Main.overview._shown)
         return;
+    this.transparent = false;
+    let time = (get_transition_speed() / 1000);
     set_panel_color({
         opacity: get_minimum_opacity()
     });
@@ -320,10 +320,8 @@ function fade_out(params = null) {
             opacity: 0
         });
     }
-    set_panel_color({
-        opacity: get_maximum_opacity()
-    });
-    if (time <= 0) {
+    set_panel_color();
+    if (time <= 0 || Main.overview._shown) {
         set_background_alpha(Panel.actor, get_minimum_opacity());
     } else {
         this.tweener.addTween(Panel.actor, {
@@ -355,17 +353,19 @@ function blank_fade_out(params = null) {
             opacity: 0
         });
     }
-    set_panel_color({
-        opacity: get_maximum_opacity()
-    });
-    this.tweener.addTween(Panel.actor, {
-        background_alpha: get_maximum_opacity()
-    });
-    this.tweener.addTween(Panel.actor, {
-        time: time,
-        transition: 'linear',
-        background_alpha: 0,
-    });
+    set_panel_color();
+    if (time <= 0) {
+        set_background_alpha(Panel.actor, 0);
+    } else {
+        this.tweener.addTween(Panel.actor, {
+            background_alpha: get_maximum_opacity()
+        });
+        this.tweener.addTween(Panel.actor, {
+            time: time,
+            transition: 'linear',
+            background_alpha: 0,
+        });
+    }
 }
 
 /* Sadly, the current corner/panel overlap is very awkward */
@@ -391,6 +391,7 @@ function show_corners(params = null) {
 
 function set_panel_color(params = null) {
     let panel_color = get_panel_color();
+    let current_alpha = get_background_alpha(Panel.actor);
     if (params === null)
         params = {
             red: panel_color[RED],
@@ -402,12 +403,13 @@ function set_panel_color(params = null) {
         red: validate(params.red, panel_color[RED]),
         green: validate(params.green, panel_color[GREEN]),
         blue: validate(params.blue, panel_color[BLUE]),
-        alpha: (is_undef(params.opacity) ? get_maximum_opacity() : params.opacity)
+        alpha: (is_undef(params.opacity) ? current_alpha : params.opacity)
     }));
 }
 
 function set_corner_color(params = null) {
     let panel_color = get_panel_color();
+    let current_alpha = get_background_alpha(Panel._leftCorner.actor);
     if (params === null)
         params = {
             red: panel_color[RED],
@@ -415,7 +417,7 @@ function set_corner_color(params = null) {
             blue: panel_color[BLUE],
             opacity: get_maximum_opacity()
         };
-    let opacity = is_undef(params.opacity) ? ((get_hide_corners() && this.transparent) ? get_minimum_opacity() : get_maximum_opacity) : params.opacity;
+    let opacity = is_undef(params.opacity) ? current_alpha : params.opacity;
     let red = validate(params.red, panel_color[RED]);
     let green = validate(params.green, panel_color[GREEN]);
     let blue = validate(params.blue, panel_color[BLUE]);
