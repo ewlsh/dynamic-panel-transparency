@@ -14,15 +14,13 @@ const DEFAULT_PANEL_COLOR = [0, 0, 0];
 const DEFAULT_HIDE_CORNERS = true;
 const DEFAULT_FORCE_ANIMATION = false;
 
+/* Settings Keys */
 const SETTINGS_HIDE_CORNERS = 'hide-corners';
 const SETTINGS_TRANSITION_SPEED = 'transition-speed';
 const SETTINGS_FORCE_ANIMATION = 'force-animation';
 const SETTINGS_UNMAXIMIZED_OPACITY = 'unmaximized-opacity';
 const SETTINGS_MAXIMIZED_OPACITY = 'maximized-opacity';
 const SETTINGS_PANEL_COLOR = 'panel-color';
-
-/* Settings Schema */
-const SETTINGS_SCHEMA = 'org.gnome.shell.extensions.dynamic-panel-transparency';
 
 /* Color Array Indices */
 const RED = 0;
@@ -44,6 +42,7 @@ function init() {
     this.settings = null;
     this.settings_manager = null;
     this.transparent = false;
+    this.blank = false;
 
     /* Signal IDs */
     this._lockScreenSig = null;
@@ -60,8 +59,9 @@ function init() {
 }
 
 function enable() {
-    this.settings = Convenience.getSettings(SETTINGS_SCHEMA);
+    this.settings = Convenience.getSettings();
 
+    /* Get settings... */
     bind_settings();
 
     /* Set the appropriate tweener */
@@ -90,11 +90,13 @@ function enable() {
      * unminimize: occurs as the window is unminimized
      * destroy: occurs as the window is destroyed
      */
-    this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, this._windowUpdated));
+    this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, function() {
+        _windowUpdated();
+    }));
     this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function() {
-        if (!this.transparent) {
+        if (!this.transparent && !this.blank) {
             blank_fade_out();
-        } else {
+        } else if (this.transparent && !this.blank) {
             blank_fade_out({
                 time: 0
             });
@@ -126,6 +128,7 @@ function enable() {
     set_panel_color({
         opacity: 0.0
     });
+    /* Initial Coloring */
     set_corner_color({
         opacity: 0.0
     });
@@ -164,6 +167,7 @@ function disable() {
     this._unmaximizeSig = null;
     this._workspaceSwitchSig = null;
 
+    /* Cleanup Settings */
     unbind_settings();
 
     /* Remove Transparency */
@@ -174,7 +178,7 @@ function disable() {
         red: 0,
         green: 0,
         blue: 0,
-        opacity: 0.0
+        opacity: 0
     });
     /* Remove Our Corner Coloring */
     set_corner_color({
@@ -187,92 +191,10 @@ function disable() {
     reapply_panel_css();
     /* Cleanup Global Variables */
     this.transparent = null;
+    this.blank = null;
     this.settings = null;
     this.tweener = null;
 }
-
-function bind_settings() {
-    let transition_speed = this.settings.get_int(SETTINGS_TRANSITION_SPEED);
-    let maximized_opacity = this.settings.get_int(SETTINGS_MAXIMIZED_OPACITY);
-    let unmaximized_opacity = this.settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY);
-    let panel_color = this.settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack();
-    let hide_corners = this.settings.get_boolean(SETTINGS_HIDE_CORNERS);
-    let force_animation = this.settings.get_boolean(SETTINGS_FORCE_ANIMATION);
-
-    this.settings_manager = new SettingsManager(this.settings, transition_speed, maximized_opacity, unmaximized_opacity, panel_color, hide_corners, force_animation);
-
-    this.settingsBoundIds = [];
-
-    this.settingsBoundIds.push(this.settings.connect('changed::' + SETTINGS_TRANSITION_SPEED, Lang.bind(this, function() {
-            this.settings_manager.update({
-                transition_speed: this.settings.get_int(SETTINGS_TRANSITION_SPEED)
-            });
-        })),
-        this.settings.connect('changed::' + SETTINGS_MAXIMIZED_OPACITY, Lang.bind(this, function() {
-            this.settings_manager.update({
-                maximized_opacity: this.settings.get_int(SETTINGS_MAXIMIZED_OPACITY)
-            });
-        })),
-        this.settings.connect('changed::' + SETTINGS_UNMAXIMIZED_OPACITY, Lang.bind(this, function() {
-            this.settings_manager.update({
-                unmaximized_opacity: this.settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY)
-            });
-        })),
-        this.settings.connect('changed::' + SETTINGS_PANEL_COLOR, Lang.bind(this, function() {
-            this.settings_manager.update({
-                panel_color: this.settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack()
-            });
-        })),
-        this.settings.connect('changed::' + SETTINGS_HIDE_CORNERS, Lang.bind(this, function() {
-            this.settings_manager.update({
-                hide_corners: this.settings.get_boolean(SETTINGS_HIDE_CORNERS)
-            });
-        })),
-        this.settings.connect('changed::' + SETTINGS_FORCE_ANIMATION, Lang.bind(this, function() {
-            this.settings_manager.update({
-                force_animation: this.settings.get_boolean(SETTINGS_FORCE_ANIMATION)
-            });
-        })));
-
-}
-
-function unbind_settings() {
-    for (let i = 0; i < this.settingsBoundIds.length; ++i) {
-        this.settings.disconnect(this.settingsBoundIds[i]);
-    }
-}
-
-
-const SettingsManager = new Lang.Class({
-    Name: 'SettingsManager',
-    _init: function(settings, transition_speed, maximized_opacity, unmaximized_opacity, panel_color, hide_corners, force_animation) {
-        this.settings = settings;
-        this.transition_speed = transition_speed;
-        this.maximized_opacity = maximized_opacity;
-        this.unmaximized_opacity = unmaximized_opacity;
-        this.panel_color = panel_color;
-        this.hide_corners = hide_corners;
-        this.force_animation = force_animation;
-    },
-    update: function(params = null) {
-        if (params === null)
-            params = {
-                transition_speed: this.settings.get_int(SETTINGS_TRANSITION_SPEED),
-                maximized_opacity: this.settings.get_int(SETTINGS_MAXIMIZED_OPACITY),
-                unmaximized_opacity: this.settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY),
-                panel_color: this.settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack(),
-                hide_corners: this.settings.get_boolean(SETTINGS_HIDE_CORNERS),
-                force_animation: this.settings.get_boolean(SETTINGS_FORCE_ANIMATION)
-            };
-
-        this.transition_speed = is_undef(params.transition_speed) ? this.settings.get_int(SETTINGS_TRANSITION_SPEED) : params.transition_speed;
-        this.maximized_opacity = is_undef(params.maximized_opacity) ? this.settings.get_int(SETTINGS_MAXIMIZED_OPACITY) : params.maximized_opacity;
-        this.unmaximized_opacity = is_undef(params.unmaximized_opacity) ? this.settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY) : params.unmaximized_opacity;
-        this.panel_color = is_undef(params.panel_color) ? this.settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack() : params.panel_color;
-        this.hide_corners = is_undef(params.hide_corners) ? this.settings.get_boolean(SETTINGS_HIDE_CORNERS) : params.hide_corners;
-        this.force_animation = is_undef(params.force_animation) ? this.settings.get_boolean(SETTINGS_FORCE_ANIMATION) : params.force_animation;
-    }
-});
 
 
 /* Animation Controls */
@@ -285,14 +207,19 @@ function reapply_panel_css() {
     Panel.actor.remove_style_class_name('panel-transparency');
 }
 
-function fade_in() {
+function fade_in(params = null) {
+    if (Main.overview.visible)
+        return;
     if (Main.overview._shown)
         return;
+    if (params === null || is_undef(params.time))
+        params = {
+            time: get_transition_speed()
+        };
+    let time = params.time / 1000;
     this.transparent = false;
-    let time = (get_transition_speed() / 1000);
-    set_panel_color({
-        opacity: get_minimum_opacity()
-    });
+    this.blank = false;
+    set_panel_color();
     this.tweener.addTween(Panel.actor, {
         background_alpha: get_minimum_opacity()
     });
@@ -310,6 +237,45 @@ function fade_in_complete() {
     }
 }
 
+
+function fade_in_from_blank(params = null) {
+    if (Main.overview._shown)
+        return;
+    if (params === null || is_undef(params.time))
+        params = {
+            time: get_transition_speed()
+        };
+    let time = params.time / 1000;
+    this.transparent = true;
+    this.blank = false;
+
+    set_panel_color();
+    this.tweener.addTween(Panel.actor, {
+        background_alpha: 0
+    });
+    this.tweener.addTween(Panel.actor, {
+        time: time,
+        transition: 'linear',
+        background_alpha: get_minimum_opacity(),
+        onComplete: fade_in_from_blank_complete
+    });
+}
+
+function fade_in_from_blank_complete() {
+    if (Main.overview._shown && get_minimum_opacity() > 0) {
+        blank_fade_out_from_minimum();
+        return;
+    }
+    if (!get_hide_corners()) {
+        hide_corners();
+    } else {
+        hide_corners({
+            opacity: 0
+        });
+    }
+}
+
+
 function fade_out(params = null) {
     if (params === null || is_undef(params.time))
         params = {
@@ -317,6 +283,7 @@ function fade_out(params = null) {
         };
     let time = params.time / 1000;
     this.transparent = true;
+    this.blank = false;
     /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
     /* always hide to update preference changes */
     if (!get_hide_corners()) {
@@ -327,8 +294,14 @@ function fade_out(params = null) {
         });
     }
     set_panel_color();
-    if (time <= 0 || Main.overview._shown) {
-        set_background_alpha(Panel.actor, get_minimum_opacity());
+    if (time <= 0 && !Main.overview._shown) {
+        fade_out({
+            time: 0
+        });
+    } else if (Main.overview._shown) {
+        blank_fade_out({
+            time: 0
+        });
     } else {
         this.tweener.addTween(Panel.actor, {
             background_alpha: get_maximum_opacity()
@@ -350,21 +323,53 @@ function blank_fade_out(params = null) {
         };
     let time = params.time / 1000;
     this.transparent = true;
+    this.blank = true;
+
     /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
     /* always hide to update preference changes */
-    if (!get_hide_corners()) {
-        hide_corners();
-    } else {
-        hide_corners({
-            opacity: 0
-        });
-    }
+
+    hide_corners({
+        opacity: 0
+    });
+
     set_panel_color();
     if (time <= 0) {
         set_background_alpha(Panel.actor, 0);
     } else {
         this.tweener.addTween(Panel.actor, {
             background_alpha: get_maximum_opacity()
+        });
+        this.tweener.addTween(Panel.actor, {
+            time: time,
+            transition: 'linear',
+            background_alpha: 0,
+        });
+    }
+}
+
+/* Doesn't adhere to opacity settings. For overview and screenShield. */
+function blank_fade_out_from_minimum(params = null) {
+    if (params === null || is_undef(params.time))
+        params = {
+            time: get_transition_speed()
+        };
+    let time = params.time / 1000;
+    this.transparent = true;
+    this.blank = true;
+
+    /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
+    /* always hide to update preference changes */
+
+    hide_corners({
+        opacity: 0
+    });
+
+    set_panel_color();
+    if (time <= 0) {
+        set_background_alpha(Panel.actor, 0);
+    } else {
+        this.tweener.addTween(Panel.actor, {
+            background_alpha: get_minimum_opacity()
         });
         this.tweener.addTween(Panel.actor, {
             time: time,
@@ -435,10 +440,11 @@ function set_corner_color(params = null) {
 
 
 
-
-
 /* Event Handlers */
+
 function _windowUpdated(params = null) {
+    if (Main.overview._shown)
+        return;
     let workspace = global.screen.get_active_workspace();
     let excluded_window = null;
     if (params !== null) {
@@ -480,6 +486,9 @@ function _windowUpdated(params = null) {
         } else {
             fade_in();
         }
+    }
+    if (this.blank) {
+        fade_in_from_blank();
     }
 }
 
@@ -579,3 +588,88 @@ function validate(a, b) {
 function is_undef(a) {
     return (typeof(a) === 'undefined' || a === null);
 }
+
+/* Settings Management */
+
+function bind_settings() {
+    let transition_speed = this.settings.get_int(SETTINGS_TRANSITION_SPEED);
+    let maximized_opacity = this.settings.get_int(SETTINGS_MAXIMIZED_OPACITY);
+    let unmaximized_opacity = this.settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY);
+    let panel_color = this.settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack();
+    let hide_corners = this.settings.get_boolean(SETTINGS_HIDE_CORNERS);
+    let force_animation = this.settings.get_boolean(SETTINGS_FORCE_ANIMATION);
+
+    this.settings_manager = new SettingsManager(this.settings, transition_speed, maximized_opacity, unmaximized_opacity, panel_color, hide_corners, force_animation);
+
+    this.settingsBoundIds = [];
+
+    this.settingsBoundIds.push(this.settings.connect('changed::' + SETTINGS_TRANSITION_SPEED, Lang.bind(this, function() {
+            this.settings_manager.update({
+                transition_speed: this.settings.get_int(SETTINGS_TRANSITION_SPEED)
+            });
+        })),
+        this.settings.connect('changed::' + SETTINGS_MAXIMIZED_OPACITY, Lang.bind(this, function() {
+            this.settings_manager.update({
+                maximized_opacity: this.settings.get_int(SETTINGS_MAXIMIZED_OPACITY)
+            });
+        })),
+        this.settings.connect('changed::' + SETTINGS_UNMAXIMIZED_OPACITY, Lang.bind(this, function() {
+            this.settings_manager.update({
+                unmaximized_opacity: this.settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY)
+            });
+        })),
+        this.settings.connect('changed::' + SETTINGS_PANEL_COLOR, Lang.bind(this, function() {
+            this.settings_manager.update({
+                panel_color: this.settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack()
+            });
+        })),
+        this.settings.connect('changed::' + SETTINGS_HIDE_CORNERS, Lang.bind(this, function() {
+            this.settings_manager.update({
+                hide_corners: this.settings.get_boolean(SETTINGS_HIDE_CORNERS)
+            });
+        })),
+        this.settings.connect('changed::' + SETTINGS_FORCE_ANIMATION, Lang.bind(this, function() {
+            this.settings_manager.update({
+                force_animation: this.settings.get_boolean(SETTINGS_FORCE_ANIMATION)
+            });
+        })));
+
+}
+
+function unbind_settings() {
+    for (let i = 0; i < this.settingsBoundIds.length; ++i) {
+        this.settings.disconnect(this.settingsBoundIds[i]);
+    }
+}
+
+/* Basic class to hold settings values */
+const SettingsManager = new Lang.Class({
+    Name: 'SettingsManager',
+    _init: function(settings, transition_speed, maximized_opacity, unmaximized_opacity, panel_color, hide_corners, force_animation) {
+        this.settings = settings;
+        this.transition_speed = transition_speed;
+        this.maximized_opacity = maximized_opacity;
+        this.unmaximized_opacity = unmaximized_opacity;
+        this.panel_color = panel_color;
+        this.hide_corners = hide_corners;
+        this.force_animation = force_animation;
+    },
+    update: function(params = null) {
+        if (params === null)
+            params = {
+                transition_speed: this.settings.get_int(SETTINGS_TRANSITION_SPEED),
+                maximized_opacity: this.settings.get_int(SETTINGS_MAXIMIZED_OPACITY),
+                unmaximized_opacity: this.settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY),
+                panel_color: this.settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack(),
+                hide_corners: this.settings.get_boolean(SETTINGS_HIDE_CORNERS),
+                force_animation: this.settings.get_boolean(SETTINGS_FORCE_ANIMATION)
+            };
+
+        this.transition_speed = is_undef(params.transition_speed) ? this.settings.get_int(SETTINGS_TRANSITION_SPEED) : params.transition_speed;
+        this.maximized_opacity = is_undef(params.maximized_opacity) ? this.settings.get_int(SETTINGS_MAXIMIZED_OPACITY) : params.maximized_opacity;
+        this.unmaximized_opacity = is_undef(params.unmaximized_opacity) ? this.settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY) : params.unmaximized_opacity;
+        this.panel_color = is_undef(params.panel_color) ? this.settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack() : params.panel_color;
+        this.hide_corners = is_undef(params.hide_corners) ? this.settings.get_boolean(SETTINGS_HIDE_CORNERS) : params.hide_corners;
+        this.force_animation = is_undef(params.force_animation) ? this.settings.get_boolean(SETTINGS_FORCE_ANIMATION) : params.force_animation;
+    }
+});
