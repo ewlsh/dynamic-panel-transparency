@@ -17,9 +17,6 @@ const SETTINGS_UNMAXIMIZED_OPACITY = 'unmaximized-opacity';
 const SETTINGS_MAXIMIZED_OPACITY = 'maximized-opacity';
 const SETTINGS_PANEL_COLOR = 'panel-color';
 
-/* Settings Schema */
-const SETTINGS_SCHEMA = 'org.gnome.shell.extensions.dynamic-panel-transparency';
-
 /* Color Array Indices */
 const RED = 0;
 const GREEN = 1;
@@ -57,7 +54,7 @@ const SettingsUI = new Lang.Class({
 
         this.orientation = Gtk.Orientation.VERTICAL;
 
-        this.settings = Convenience.getSettings(SETTINGS_SCHEMA);
+        this.settings = Convenience.getSettings();
 
         let presentLabel = '<b>' + _("Transition Speed") + '</b>';
         this.add(new Gtk.Label({
