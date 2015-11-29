@@ -105,11 +105,17 @@ function enable() {
     /* Check to see if the screenShield exists (doesn't if user can't lock) */
     if (Main.screenShield !== null) {
         this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, function() {
-            if (!Main.screenShield._isActive)
+            if (!Main.screenShield._isActive) {
                 _windowUpdated({
-                    /* make sure we don't have any odd coloring on the screenShield */
-                    blank: true
+                    blank: true,
+                    time: 0
                 });
+            } else {
+                /* make sure we don't have any odd coloring on the screenShield */
+                blank_fade_out({
+                    time: 0
+                });
+            }
         }));
     }
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
@@ -175,7 +181,7 @@ function disable() {
     unbind_settings();
 
     /* Remove Transparency */
-    fade_out();
+    blank_fade_out();
 
     /* Remove Our Panel Coloring */
     set_panel_color({
@@ -479,20 +485,23 @@ function _windowUpdated(params = null) {
             }
         }
     }
+    let time = (params !== null && !is_undef(params.time)) ? {
+        time: params.time
+    } : null;
     /* only change if the transparency isn't already correct */
     if (this.transparent !== add_transparency) {
         if (add_transparency) {
             if (params !== null && !is_undef(params.blank) && params.blank) {
-                blank_fade_out();
+                blank_fade_out(time);
             } else {
-                fade_out();
+                fade_out(time);
             }
         } else {
-            fade_in();
+            fade_in(time);
+
         }
-    }
-    if (this.blank) {
-        fade_in_from_blank();
+    } else if (this.blank) {
+        fade_in_from_blank(time);
     }
 }
 
