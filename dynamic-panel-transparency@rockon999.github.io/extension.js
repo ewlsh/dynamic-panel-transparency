@@ -103,21 +103,8 @@ function enable() {
         }
     }));
     /* Check to see if the screenShield exists (doesn't if user can't lock) */
-    if (Main.screenShield !== null) {
-        this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, function() {
-            if (!Main.screenShield._isActive) {
-                _windowUpdated({
-                    blank: true,
-                    time: 0
-                });
-            } else {
-                /* make sure we don't have any odd coloring on the screenShield */
-                blank_fade_out({
-                    time: 0
-                });
-            }
-        }));
-    }
+    if (Main.screenShield !== null)
+        this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, this._screenShieldActivated));
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdated));
     this._windowUnminimizeSig = global.window_manager.connect('unminimize', Lang.bind(this, this._windowUpdated));
@@ -138,14 +125,9 @@ function enable() {
         opacity: 0.0
     });
     /* Initial Coloring */
-    set_corner_color({
+    hide_corners({
         opacity: 0.0
     });
-
-    /* Corners :( */
-    if (get_hide_corners()) {
-        hide_corners();
-    }
     /* Simulate Window Changes */
     _windowUpdated();
 }
@@ -515,6 +497,24 @@ function _workspaceSwitched(wm, from, to, direction) {
         /* maybe this will do something? */
         this._windowUpdated();
     }
+}
+
+function _screenShieldActivated() {
+    if (Main.screenShield !== null && !Main.screenShield._isActive) {
+        _windowUpdated({
+            blank: true,
+            time: 0
+        });
+        hide_corners({
+            opacity: 0
+        });
+    } else {
+        /* make sure we don't have any odd coloring on the screenShield */
+        blank_fade_out({
+            time: 0
+        });
+    }
+
 }
 
 
