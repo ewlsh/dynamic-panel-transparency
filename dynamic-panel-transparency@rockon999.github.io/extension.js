@@ -102,13 +102,16 @@ function enable() {
             });
         }
     }));
-    this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, function() {
-        if (!Main.screenShield._isActive)
-            _windowUpdated({
-                /* make sure we don't have any odd coloring on the screenShield */
-                blank: true
-            });
-    }));
+    /* Check to see if the screenShield exists (doesn't if user can't lock) */
+    if (Main.screenShield !== null) {
+        this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, function() {
+            if (!Main.screenShield._isActive)
+                _windowUpdated({
+                    /* make sure we don't have any odd coloring on the screenShield */
+                    blank: true
+                });
+        }));
+    }
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdated));
     this._windowUnminimizeSig = global.window_manager.connect('unminimize', Lang.bind(this, this._windowUpdated));
@@ -144,7 +147,8 @@ function enable() {
 
 function disable() {
     /* Disconnect & Null Signals */
-    Main.screenShield.disconnect(this._lockScreenSig);
+    if (Main.screenShield !== null)
+        Main.screenShield.disconnect(this._lockScreenSig);
     Main.overview.disconnect(this._overviewShowingSig);
     Main.overview.disconnect(this._overviewHiddenSig);
     global.window_manager.disconnect(this._windowMapSig);
