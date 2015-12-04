@@ -1,3 +1,5 @@
+const MAXIMIZED_WIDTH_BUFFER = 5;
+
 /* Utilities */
 
 function validate(a, b) {
@@ -21,7 +23,7 @@ function is_maximized(window) {
     log(window.get_screen().get_size()[0]);
     log('--end')*/
     if (frame.y <= imports.ui.main.panel.actor.get_height()) {
-        return (window.maximized_horizontally || frame.width >= (window.get_screen().get_size()[0] - 5))
+        return (window.maximized_horizontally || frame.width >= (window.get_screen().get_size()[0] - MAXIMIZED_WIDTH_BUFFER))
     }
     return false;
 }
