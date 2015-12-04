@@ -220,7 +220,7 @@ function _windowUpdated(params = null) {
     } else {
         for (let i = 0; i < windows.length; ++i) {
             let current_window = windows[i];
-            if (current_window !== excluded_window && Util.is_maximized(focused_window)/*current_window.maximized_vertically*/ && current_window.get_monitor() === primary_monitor && !current_window.minimized) {
+            if (current_window !== excluded_window && Util.is_maximized(current_window)/*current_window.maximized_vertically*/ && current_window.get_monitor() === primary_monitor && !current_window.minimized) {
                 add_transparency = false;
                 break;
             }
