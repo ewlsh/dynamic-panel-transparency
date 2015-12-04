@@ -215,12 +215,12 @@ function _windowUpdated(params = null) {
 
     /* save processing by checking the current window (most likely to be maximized) */
     /* check that the focused window is in the right workspace */
-    if (!Util.is_undef(focused_window) && focused_window !== excluded_window && focused_window.maximized_vertically && focused_window.get_monitor() === primary_monitor && focused_window.get_workspace() === workspace && !focused_window.minimized) {
+    if (!Util.is_undef(focused_window) && focused_window !== excluded_window && Util.is_maximized(focused_window)/*.maximized_vertically*/ && focused_window.get_monitor() === primary_monitor && focused_window.get_workspace() === workspace && !focused_window.minimized) {
         add_transparency = false;
     } else {
         for (let i = 0; i < windows.length; ++i) {
             let current_window = windows[i];
-            if (current_window !== excluded_window && current_window.maximized_vertically && current_window.get_monitor() === primary_monitor && !current_window.minimized) {
+            if (current_window !== excluded_window && Util.is_maximized(focused_window)/*current_window.maximized_vertically*/ && current_window.get_monitor() === primary_monitor && !current_window.minimized) {
                 add_transparency = false;
                 break;
             }
