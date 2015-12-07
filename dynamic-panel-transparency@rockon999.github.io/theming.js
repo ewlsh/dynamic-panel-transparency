@@ -16,9 +16,9 @@ const GREEN = 1;
 const BLUE = 2;
 const SCALE_FACTOR = 255.9999999;
 
-function init(){}
+function init() {}
 
-function cleanup(){}
+function cleanup() {}
 
 function set_panel_color(params = null) {
     let panel_color = Settings.get_panel_color();
@@ -56,6 +56,32 @@ function set_corner_color(params = null) {
         '' + '-panel-corner-border-color: transparent;';
     Panel._leftCorner.actor.set_style(coloring);
     Panel._rightCorner.actor.set_style(coloring);
+}
+
+function get_user_background_color() {
+   /* let theme = Panel.actor.get_theme_node();
+    let user_theme = theme.get_parent();
+    if (user_theme === null)
+        user_theme = theme;
+    let background_color = user_theme.get_background_color();
+    if (background_color === null)
+        background_color = user_theme.lookup_color('background-color', true);
+    */
+
+        // Prevent shell crash if the actor is not on the stage.
+        // It happens enabling/disabling repeatedly the extension
+        if(!Main.overview._dash._container.get_stage())
+            return Settings.get_panel_color();
+
+        // Remove custom style
+        //let oldStyle = Main.overview._dash._container.get_style();
+     //  Main.overview._dash._container.set_style(null);
+
+        let themeNode = Main.overview._dash._container.get_theme_node();
+       // Main.overview._dash._container.set_style(oldStyle);
+
+        return  themeNode.get_background_color();
+
 }
 
 function strip_panel_css() {
