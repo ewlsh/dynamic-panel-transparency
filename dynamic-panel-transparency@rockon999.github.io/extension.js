@@ -13,11 +13,6 @@ const Panel = Main.panel;
 const Clutter = imports.gi.Clutter;
 
 
-
-
-
-
-
 /* Color Scaling Factor (Byte to Decimal) */
 const SCALE_FACTOR = 255.9999999;
 
@@ -25,16 +20,12 @@ const SCALE_FACTOR = 255.9999999;
 const MAJOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[0]);
 const MINOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[1]);
 
+let status = null;
+
 /* Initialize */
 function init() {
-
     /* Global Variables */
-    //this.tweener = null;
-    //this.settings = null;
-    //this.settings_manager = null;
-    this.transparent = false;
-    this.blank = false;
-
+    status = new TransparencyStatus();
     /* Signal IDs */
     this._lockScreenSig = null;
     this._lockScreenShownSig = null;
@@ -50,17 +41,21 @@ function init() {
 }
 
 function enable() {
-
-
-    /* Get settings... */
+    /* Setup settings... */
     Settings.init();
+    Settings.add('hide-corners', 'hide_corners', 'b', true);
+    Settings.add('transition-speed', 'transition_speed', 'i', 1000);
+    Settings.add('force-animation', 'force_animation', 'b', false);
+    Settings.add('unmaximized-opacity', 'unmaximized_opacity', 'i', 0, 'get_minimum_opacity');
+    Settings.add('maximized-opacity', 'maximized_opacity', 'i', 255, 'get_maximum_opacity');
+    Settings.add('panel-color', 'panel_color', 'ai', [0, 0, 0]);
+    Settings.add('window-touching', 'window_touching', 'b', false);
+    Settings.add('use-user-theme', 'use_user_theme', 'b', false, 'use_user_theme');
+    Settings.bind();
+
+    /* Initialize */
     Transitions.init();
     Theming.init();
-
-    Settings.bind_settings();
-
-    /* Set the appropriate tweener */
-
 
     /* Add support for older Gnome Shell versions (most likely down to 3.12) */
     if (MAJOR_VERSION == 3 && MINOR_VERSION < 17) {
@@ -85,9 +80,9 @@ function enable() {
         _windowUpdated();
     }));
     this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function() {
-        if (!this.transparent && !this.blank) {
+        if (!status.is_transparent() && !status.is_blank()) {
             Transitions.blank_fade_out();
-        } else if (this.transparent && !this.blank) {
+        } else if (status.is_transparent() && !status.is_blank()) {
             Transitions.blank_fade_out({
                 time: 0
             });
@@ -120,7 +115,7 @@ function enable() {
         opacity: 0.0
     });
     /* Simulate Window Changes */
-    _windowUpdated();
+    _windowUpdated({force: true});
 }
 
 
@@ -152,7 +147,7 @@ function disable() {
     this._workspaceSwitchSig = null;
 
     /* Cleanup Settings */
-    Settings.unbind_settings();
+    Settings.unbind();
     Settings.cleanup();
 
     /* Remove Transparency */
@@ -178,17 +173,10 @@ function disable() {
     Theming.cleanup();
 
     /* Cleanup Global Variables */
-    this.transparent = null;
-    this.blank = null;
+    status = null;
 }
 
-function set_transparent(transparent){
-    this.transparent = transparent;
-}
 
-function set_blank(blank){
-    this.blank = blank;
-}
 
 
 /* Event Handlers */
@@ -215,12 +203,12 @@ function _windowUpdated(params = null) {
 
     /* save processing by checking the current window (most likely to be maximized) */
     /* check that the focused window is in the right workspace */
-    if (!Util.is_undef(focused_window) && focused_window !== excluded_window && Util.is_maximized(focused_window)/*.maximized_vertically*/ && focused_window.get_monitor() === primary_monitor && focused_window.get_workspace() === workspace && !focused_window.minimized) {
+    if (!Util.is_undef(focused_window) && focused_window !== excluded_window && Util.is_maximized(focused_window) && focused_window.get_monitor() === primary_monitor && focused_window.get_workspace() === workspace && !focused_window.minimized) {
         add_transparency = false;
     } else {
         for (let i = 0; i < windows.length; ++i) {
             let current_window = windows[i];
-            if (current_window !== excluded_window && Util.is_maximized(current_window)/*current_window.maximized_vertically*/ && current_window.get_monitor() === primary_monitor && !current_window.minimized) {
+            if (current_window !== excluded_window && Util.is_maximized(current_window) && current_window.get_monitor() === primary_monitor && !current_window.minimized) {
                 add_transparency = false;
                 break;
             }
@@ -230,18 +218,19 @@ function _windowUpdated(params = null) {
         time: params.time
     } : null;
     /* only change if the transparency isn't already correct */
-    if (this.transparent !== add_transparency) {
+    if ((status.is_transparent() !== add_transparency) || (params !== null && !Util.is_undef(params.force) && params.force)) {
         if (add_transparency) {
             if (params !== null && !Util.is_undef(params.blank) && params.blank) {
                 Transitions.blank_fade_out(time);
             } else {
                 Transitions.fade_out(time);
+                log('hi: ' + params.force);
             }
         } else {
             Transitions.fade_in(time);
-
+            log('hu');
         }
-    } else if (this.blank) {
+    } else if (status.is_blank()) {
         Transitions.fade_in_from_blank(time);
     }
 }
@@ -273,5 +262,23 @@ function _screenShieldActivated() {
             time: 0
         });
     }
-
 }
+
+const TransparencyStatus = new Lang.Class({ Name: 'DPTTransparencyStatus',
+    _init: function(){
+      this.transparent = false;
+      this.blank = false;
+    },
+    is_transparent: function() {
+        return this.transparent;
+    },
+    is_blank: function() {
+        return this.blank;
+    },
+    set_transparent: function(transparent) {
+        this.transparent = transparent;
+    },
+    set_blank: function(blank) {
+        this.blank = blank;
+    }
+});

@@ -9,7 +9,10 @@ const Lang = imports.lang;
 const Config = imports.misc.config;
 const Panel = Main.panel;
 
-function init(){
+let status = null;
+
+function init() {
+    status = Extension.status;
     if (Settings.get_force_animation()) {
         this.tweener = imports.tweener.tweener;
     } else {
@@ -18,7 +21,7 @@ function init(){
     this.tweener.registerSpecialProperty('background_alpha', Theming.get_background_alpha, Theming.set_background_alpha);
 }
 
-function cleanup(){
+function cleanup() {
     this.tweener = null;
 }
 
@@ -29,10 +32,10 @@ function fade_in(params = null) {
         params = {
             time: Settings.get_transition_speed()
         };
-    Extension.set_transparent(false);
-    Extension.set_blank(false);
+    status.set_transparent(false);
+    status.set_blank(false);
     let time = params.time / 1000;
-     Theming.set_panel_color();
+    Theming.set_panel_color();
     this.tweener.addTween(Panel.actor, {
         background_alpha: Settings.get_minimum_opacity()
     });
@@ -59,12 +62,12 @@ function fade_in_from_blank(params = null) {
             time: Settings.get_transition_speed()
         };
 
-    Extension.set_transparent(true);
-    Extension.set_blank(false);
+    status.set_transparent(true);
+    status.set_blank(false);
 
     let time = params.time / 1000;
 
-     Theming.set_panel_color();
+    Theming.set_panel_color();
     this.tweener.addTween(Panel.actor, {
         background_alpha: 0
     });
@@ -97,8 +100,8 @@ function fade_out(params = null) {
             time: Settings.get_transition_speed()
         };
 
-    Extension.set_transparent(true);
-    Extension.set_blank(false);
+    status.set_transparent(true);
+    status.set_blank(false);
 
     let time = params.time / 1000;
 
@@ -111,7 +114,7 @@ function fade_out(params = null) {
             opacity: 0
         });
     }
-     Theming.set_panel_color();
+    Theming.set_panel_color();
     if (time <= 0 && !Main.overview._shown) {
         fade_out({
             time: 0
@@ -140,10 +143,10 @@ function blank_fade_out(params = null) {
             time: Settings.get_transition_speed()
         };
 
-    Extension.set_transparent(true);
-    Extension.set_blank(true);
+    status.set_transparent(true);
+    status.set_blank(true);
 
-     let time = params.time / 1000;
+    let time = params.time / 1000;
 
     /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
     /* always hide to update preference changes */
@@ -152,7 +155,7 @@ function blank_fade_out(params = null) {
         opacity: 0
     });
 
-     Theming.set_panel_color();
+    Theming.set_panel_color();
     if (time <= 0) {
         Theming.set_background_alpha(Panel.actor, 0);
     } else {
@@ -174,8 +177,8 @@ function blank_fade_out_from_minimum(params = null) {
             time: Settings.get_transition_speed()
         };
 
-    Extension.set_transparent(true);
-    Extension.set_blank(true);
+    status.set_transparent(true);
+    status.set_blank(true);
 
     let time = params.time / 1000;
 
@@ -207,7 +210,7 @@ function hide_corners(params = null) {
         params = {
             opacity: Settings.get_minimum_opacity()
         };
-     Theming.set_corner_color({
+    Theming.set_corner_color({
         opacity: params.opacity
     });
 }
@@ -217,7 +220,7 @@ function show_corners(params = null) {
         params = {
             opacity: Settings.get_maximum_opacity()
         };
-     Theming.set_corner_color({
+    Theming.set_corner_color({
         opacity: params.opacity
     });
 }
