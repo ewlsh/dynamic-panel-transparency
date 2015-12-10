@@ -39,15 +39,17 @@ function cleanup() {
 
 /* Settings Management */
 
-function add(k, p, t, d, g) {
+function add(params) {
     let key = {
-        key: k,
-        param: p,
-        type: t,
-        getter: g
+        key: params.settings_key,
+        param: params.name,
+        type: params.type,
+        getter: null
     };
+    if (!Util.is_undef(params.getter))
+        key.getter = params.getter;
     this.keys[this.keys.length] = key;
-    this.defaults[p] = d;
+    this.defaults[params.name] = params.default;
 }
 
 function bind() {
