@@ -43,14 +43,57 @@ function init() {
 function enable() {
     /* Setup settings... */
     Settings.init();
-    Settings.add('hide-corners', 'hide_corners', 'b', true);
-    Settings.add('transition-speed', 'transition_speed', 'i', 1000);
-    Settings.add('force-animation', 'force_animation', 'b', false);
-    Settings.add('unmaximized-opacity', 'unmaximized_opacity', 'i', 0, 'get_minimum_opacity');
-    Settings.add('maximized-opacity', 'maximized_opacity', 'i', 255, 'get_maximum_opacity');
-    Settings.add('panel-color', 'panel_color', 'ai', [0, 0, 0]);
-    Settings.add('window-touching', 'window_touching', 'b', false);
-    Settings.add('use-user-theme', 'use_user_theme', 'b', false, 'use_user_theme');
+    Settings.add({
+        settings_key: 'hide-corners',
+        param: 'hide_corners',
+        name: 'b',
+        value: true
+    });
+    Settings.add({
+        settings_key: 'transition-speed',
+        name: 'transition_speed',
+        type: 'i',
+        value: 1000
+    });
+    Settings.add({
+        settings_key: 'force-animation',
+        name: 'force_animation',
+        type: 'b',
+        value: false
+    });
+    Settings.add({
+        settings_key: 'unmaximized-opacity',
+        name: 'unmaximized_opacity',
+        type: 'i',
+        value: 0,
+        getter: 'get_minimum_opacity'
+    });
+    Settings.add({
+        settings_key: 'maximized-opacity',
+        name: 'maximized_opacity',
+        type: 'i',
+        value: 255,
+        getter: 'get_maximum_opacity'
+    });
+    Settings.add({
+        settings_key: 'panel-color',
+        name: 'panel_color',
+        type: 'ai',
+        value: [0, 0, 0]
+    });
+    Settings.add({
+        settings_key: 'window-touching',
+        name: 'window_touching',
+        type: 'b',
+        value: false
+    });
+    Settings.add({
+        settings_key: 'use-user-theme',
+        name: 'use_user_theme',
+        type: 'b',
+        value: false,
+        getter: 'use_user_theme'
+    });
     Settings.bind();
 
     /* Initialize */
@@ -115,7 +158,9 @@ function enable() {
         opacity: 0.0
     });
     /* Simulate Window Changes */
-    _windowUpdated({force: true});
+    _windowUpdated({
+        force: true
+    });
 }
 
 
@@ -132,7 +177,7 @@ function disable() {
     global.window_manager.disconnect(this._windowUnminimizeSig);
     global.window_manager.disconnect(this._maximizeSig);
     global.window_manager.disconnect(this._unmaximizeSig);
-    global.screen.disconnect(this._workspaceSwitchSig);
+    global.window_manager.disconnect(this._workspaceSwitchSig);
     /* Cleanup Signals */
     this._lockScreenSig = null;
     this._lockScreenShownSig = null;
@@ -174,6 +219,8 @@ function disable() {
 
     /* Cleanup Global Variables */
     status = null;
+
+    log('disabledness.');
 }
 
 
@@ -256,18 +303,21 @@ function _screenShieldActivated() {
         Transitions.hide_corners({
             opacity: 0
         });
+        log('Shield Activated');
     } else {
         /* make sure we don't have any odd coloring on the screenShield */
         Transitions.blank_fade_out({
             time: 0
         });
+        log('Shield DeActivated');
     }
 }
 
-const TransparencyStatus = new Lang.Class({ Name: 'DPTTransparencyStatus',
-    _init: function(){
-      this.transparent = false;
-      this.blank = false;
+const TransparencyStatus = new Lang.Class({
+    Name: 'DPTTransparencyStatus',
+    _init: function() {
+        this.transparent = false;
+        this.blank = false;
     },
     is_transparent: function() {
         return this.transparent;
