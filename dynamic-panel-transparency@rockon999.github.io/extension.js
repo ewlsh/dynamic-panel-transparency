@@ -24,8 +24,6 @@ let status = null;
 
 /* Initialize */
 function init() {
-    /* Global Variables */
-    status = new TransparencyStatus();
     /* Signal IDs */
     this._lockScreenSig = null;
     this._lockScreenShownSig = null;
@@ -41,12 +39,15 @@ function init() {
 }
 
 function enable() {
+    /* Create transparency status manager */
+    status = new TransparencyStatus();
+
     /* Setup settings... */
     Settings.init();
     Settings.add({
         settings_key: 'hide-corners',
-        param: 'hide_corners',
-        name: 'b',
+        name: 'hide_corners',
+        type: 'b',
         value: true
     });
     Settings.add({
@@ -168,7 +169,6 @@ function disable() {
     /* Disconnect & Null Signals */
     if (Main.screenShield !== null)
         Main.screenShield.disconnect(this._lockScreenSig);
-
     Main.overview.disconnect(this._overviewShowingSig);
     Main.overview.disconnect(this._overviewHiddenSig);
     global.window_manager.disconnect(this._windowMapSig);
@@ -191,10 +191,6 @@ function disable() {
     this._unmaximizeSig = null;
     this._workspaceSwitchSig = null;
 
-    /* Cleanup Settings */
-    Settings.unbind();
-    Settings.cleanup();
-
     /* Remove Transparency */
     Transitions.blank_fade_out();
     Transitions.cleanup();
@@ -207,20 +203,17 @@ function disable() {
         opacity: 0
     });
     /* Remove Our Corner Coloring */
-    Theming.set_corner_color({
-        red: 0,
-        green: 0,
-        blue: 0,
-        opacity: 255
-    });
+    Theming.clear_corner_color();
     /* Remove Our Styling */
     Theming.reapply_panel_css();
     Theming.cleanup();
 
+    /* Cleanup Settings */
+    Settings.unbind();
+    Settings.cleanup();
+
     /* Cleanup Global Variables */
     status = null;
-
-    log('disabledness.');
 }
 
 
@@ -271,11 +264,9 @@ function _windowUpdated(params = null) {
                 Transitions.blank_fade_out(time);
             } else {
                 Transitions.fade_out(time);
-                log('hi: ' + params.force);
             }
         } else {
             Transitions.fade_in(time);
-            log('hu');
         }
     } else if (status.is_blank()) {
         Transitions.fade_in_from_blank(time);

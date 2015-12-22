@@ -58,6 +58,11 @@ function set_corner_color(params = null) {
     Panel._rightCorner.actor.set_style(coloring);
 }
 
+function clear_corner_color(){
+    Panel._leftCorner.actor.set_style(null);
+    Panel._rightCorner.actor.set_style(null);
+}
+
 function get_user_background_color() {
    /* let theme = Panel.actor.get_theme_node();
     let user_theme = theme.get_parent();
