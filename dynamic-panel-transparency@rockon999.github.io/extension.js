@@ -137,14 +137,15 @@ function enable() {
 
 function disable() {
     /* Disconnect & Null Signals */
-    if (Main.screenShield !== null)
+    if (!Util.is_undef(Main.screenShield))
         Main.screenShield.disconnect(this._lockScreenSig);
+    if (!Util.is_undef(this._windowUnminimizeSig))
+        global.window_manager.disconnect(this._windowUnminimizeSig);
     Main.overview.disconnect(this._overviewShowingSig);
     Main.overview.disconnect(this._overviewHiddenSig);
     global.window_manager.disconnect(this._windowMapSig);
     global.window_manager.disconnect(this._windowDestroySig);
     global.window_manager.disconnect(this._windowMinimizeSig);
-    global.window_manager.disconnect(this._windowUnminimizeSig);
     global.window_manager.disconnect(this._maximizeSig);
     global.window_manager.disconnect(this._unmaximizeSig);
     global.screen.disconnect(this._workspaceSwitchSig);
