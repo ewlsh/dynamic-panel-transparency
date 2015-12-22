@@ -26,7 +26,7 @@ function cleanup() {
     for (let i = 0; i < keys.length; ++i) {
         let setting = keys[i];
         if (Util.is_undef(setting.getter)) {
-            this['get_' + setting.param] = null;
+            this['get_' + setting.name] = null;
         } else {
             this[setting.getter] = null;
         }
@@ -42,7 +42,7 @@ function cleanup() {
 function add(params) {
     let key = {
         key: params.settings_key,
-        param: params.name,
+        name: params.name,
         type: params.type,
         getter: null
     };
@@ -53,9 +53,10 @@ function add(params) {
 }
 
 function bind() {
+
     this.settings_manager = new SettingsManager(this.settings, this.keys);
 
-    for (let i = 0; i < keys.length; ++i) {
+    for (let i = 0; i < this.keys.length; ++i) {
         let setting = keys[i];
 
         /* Watch for changes */
@@ -65,16 +66,16 @@ function bind() {
 
         /* Create getter */
         let getter = function() {
-            if (!Util.is_undef(this.settings_manager) && !Util.is_undef(this.settings_manager[setting.param])) {
-                return this.settings_manager[setting.param];
+            if (!Util.is_undef(this.settings_manager) && !Util.is_undef(this.settings_manager[setting.name])) {
+                return this.settings_manager[setting.name];
             } else {
-                return this.defaults[setting.param];
+                return this.defaults[setting.name];
             }
         }
 
         /* Add function */
         if (Util.is_undef(setting.getter)) {
-            this['get_' + setting.param] = getter;
+            this['get_' + setting.name] = getter;
         } else {
             this[setting.getter] = getter;
         }
@@ -94,15 +95,15 @@ const SettingsManager = new Lang.Class({
         this.values = [];
         this.settings = settings;
         for (let i = 0; i < params.length; ++i) {
-            let setting = keys[i];
+            let setting = params[i];
             this.values.push(setting);
-            if (this.settings.list_keys().indexOf(setting.key) == -1)
+            if (this.settings.list_keys().indexOf(setting.key) == -1 || Util.is_undef(setting))
                 continue;
             let variant = GLib.VariantType.new(setting.type);
             if (variant.is_array()) {
-                this[setting.param] = this.settings.get_value(setting.key).deep_unpack();
+                this[setting.name] = this.settings.get_value(setting.key).deep_unpack();
             } else {
-                this[setting.param] = this.settings.get_value(setting.key).unpack();
+                this[setting.name] = this.settings.get_value(setting.key).unpack();
             }
         }
     },
@@ -111,9 +112,9 @@ const SettingsManager = new Lang.Class({
             return;
         let variant = GLib.VariantType.new(setting.type);
         if (variant.is_array()) {
-            this[setting.param] = this.settings.get_value(setting.key).deep_unpack();
+            this[setting.name] = this.settings.get_value(setting.key).deep_unpack();
         } else {
-            this[setting.param] = this.settings.get_value(setting.key).unpack();
+            this[setting.name] = this.settings.get_value(setting.key).unpack();
         }
     }
 });
