@@ -20,7 +20,7 @@
       <summary>Hide Corners</summary>
       <description>Hides the rounded corners of the panel. (improves fade aesthetic)</description>
     </key>
-     <key name="force-animation" type="b">
+    <key name="force-animation" type="b">
       <default>false</default>
       <summary>Force Animation</summary>
       <description>Overrides 'gtk-enable-animations' on installations where animations are disabled.</description>
@@ -30,6 +30,15 @@
       <summary>Panel Color</summary>
       <description>The color of the panel.</description>
     </key>
-
+    <key name="detect-user-theme" type="b">
+      <default>false</default>
+      <summary>Detect the user 's theme</summary>
+      <description>Uses the panel or dash to get the user 's panel color.</description>
+    </key>
+    <key name="user-theme-source" type="s">
+      <default>Panel</default>
+      <summary>Source for detecting the user 's theme</summary>
+      <description>Object used to get the user 's preferred background color.</description>
+    </key>
   </schema>
 </schemalist>

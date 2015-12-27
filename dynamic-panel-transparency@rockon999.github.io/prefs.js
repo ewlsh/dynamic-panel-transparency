@@ -40,8 +40,8 @@ function buildPrefsWidget() {
 
 /* UI Setup */
 const SettingsUI = new Lang.Class({
-    Name: 'DynamicPanelTransparency.Prefs.SettingsUI',
-    GTypeName: 'SettingsUI',
+    Name: 'DynamicPanelTransparency.SettingsUI',
+    GTypeName: 'DynamicPanelTransparencySettingsUI',
     Extends: Gtk.Grid,
 
     _init: function(params) {
@@ -113,7 +113,9 @@ const SettingsUI = new Lang.Class({
             return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
         }));
 
-        let max_opacity = new Gtk.Box(Gtk.Orientation.HORIZTONAL);
+        let max_opacity = new Gtk.Box({
+            orientation: Gtk.Orientation.HORIZONTAL
+        });
         label.valign = Gtk.Align.END;
         label.margin_bottom = 3;
         max_opacity.pack_start(label, false, false, 0);
@@ -144,24 +146,62 @@ const SettingsUI = new Lang.Class({
             return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
         }));
 
-        let min_opacity = new Gtk.Box(Gtk.Orientation.HORIZTONAL);
+        let min_opacity = new Gtk.Box({
+            orientation: Gtk.Orientation.HORIZONTAL
+        });
         label.valign = Gtk.Align.END;
         min_opacity.margin_bottom = 10;
         label.margin_bottom = 3;
         min_opacity.pack_start(label, false, false, 0);
-        min_opacity.pack_end(slider, true, true, 20);
+        min_opacity.pack_end(slider, false, false, 0);
         this.add(min_opacity);
 
+        let panel_color_grid = new Gtk.Grid();
 
-        presentLabel = '<b>' + _("Panel Color") + '</b>';
-        this.add(new Gtk.Label({
+        let label_box = new Gtk.Box({
+            orientation: Gtk.Orientation.VERTICAL
+        });
+
+        let widget_box = new Gtk.Box({
+            orientation: Gtk.Orientation.VERTICAL
+        });
+        presentLabel = '<b>' + _("Detect User Theme") + '</b>';
+        label = new Gtk.Label({
             label: presentLabel,
             use_markup: true,
             halign: Gtk.Align.START
-        }));
+        });
+        let switcher = new Gtk.Switch();
+        switcher.halign = Gtk.Align.END;
+
+        panel_color_grid.attach(label, 0, 1, 1, 1);
+        panel_color_grid.attach(switcher, 1, 1, 1, 1);
+
+        presentLabel = '' + _("Theme Source") + '';
+        label = new Gtk.Label({
+            label: presentLabel,
+            use_markup: true,
+            halign: Gtk.Align.START
+        });
+        let box = new Gtk.ComboBoxText();
+        box.halign = Gtk.Align.END;
+        box.append_text("Panel");
+        box.append_text("Dash");
+        box.set_active(0);
+        label.margin_left = 20;
+        box.margin_left = 20;
+        panel_color_grid.attach(label, 0, 2, 1, 1);
+        panel_color_grid.attach(box, 1, 2, 1, 1);
+
+        presentLabel = '<b>' + _("Panel Color") + '</b>';
+        label = new Gtk.Label({
+            label: presentLabel,
+            use_markup: true,
+            halign: Gtk.Align.START
+        });
 
         let color_btn = new Gtk.ColorButton();
-        color_btn.halign = Gtk.Align.START;
+        color_btn.halign = Gtk.Align.END;
         color_btn.set_use_alpha(false);
 
         let panel_color = this.settings.get_value('panel-color').deep_unpack();
@@ -197,8 +237,11 @@ const SettingsUI = new Lang.Class({
             this.settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
         }));
 
-        this.add(color_btn);
+        panel_color_grid.attach(label, 0, 3, 1, 1);
+        panel_color_grid.attach(color_btn, 1, 3, 1, 1);
 
+        panel_color_grid.set_row_spacing(10);
+        this.add(panel_color_grid);
         /* control corners */
         let check = new Gtk.CheckButton({
             label: _("Hide Corners"),
@@ -214,7 +257,7 @@ const SettingsUI = new Lang.Class({
         /* force animation */
         check = new Gtk.CheckButton({
             label: _("Force Animation"),
-            tooltip_text:  _("Overrides 'gtk-enable-animations'."),
+            tooltip_text: _("Overrides 'gtk-enable-animations'."),
             margin_top: 6
         });
         check.set_active(this.settings.get_boolean(SETTINGS_FORCE_ANIMATION));

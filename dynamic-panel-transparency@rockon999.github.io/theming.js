@@ -21,7 +21,7 @@ function init() {}
 function cleanup() {}
 
 function set_panel_color(params = null) {
-    let panel_color = Settings.get_panel_color();
+    let panel_color = get_background_color();
     let current_alpha = get_background_alpha(Panel.actor);
     if (params === null)
         params = {
@@ -58,35 +58,59 @@ function set_corner_color(params = null) {
     Panel._rightCorner.actor.set_style(coloring);
 }
 
-function clear_corner_color(){
+function clear_corner_color() {
     Panel._leftCorner.actor.set_style(null);
     Panel._rightCorner.actor.set_style(null);
 }
 
-function get_user_background_color() {
-   /* let theme = Panel.actor.get_theme_node();
+
+function get_user_background_color_from_dash() {
+
+    // Prevent shell crash if the actor is not on the stage.
+    // It happens enabling/disabling repeatedly the extension
+    if (Util.is_undef(Main.overview._dash._container.get_stage()))
+        return Settings.get_panel_color();
+    let theme = Main.overview._dash._container.get_theme_node();
     let user_theme = theme.get_parent();
     if (user_theme === null)
         user_theme = theme;
     let background_color = user_theme.get_background_color();
     if (background_color === null)
         background_color = user_theme.lookup_color('background-color', true);
-    */
+    return {
+        red: background_color.r,
+        green: background_color.g,
+        blue: background_color.b,
+        opacity: background_color.a
+    };
+}
 
-        // Prevent shell crash if the actor is not on the stage.
-        // It happens enabling/disabling repeatedly the extension
-        if(!Main.overview._dash._container.get_stage())
-            return Settings.get_panel_color();
+function get_user_background_color_from_dock() {
+    let theme = Panel.actor.get_theme_node();
+    let user_theme = theme.get_parent();
+    if (user_theme === null)
+        user_theme = theme;
+    let background_color = user_theme.get_background_color();
+    if (background_color === null)
+        background_color = user_theme.lookup_color('background-color', true);
+    return {
+        red: background_color.r,
+        green: background_color.g,
+        blue: background_color.b,
+        opacity: background_color.a
+    };
+}
 
-        // Remove custom style
-        //let oldStyle = Main.overview._dash._container.get_style();
-     //  Main.overview._dash._container.set_style(null);
-
-        let themeNode = Main.overview._dash._container.get_theme_node();
-       // Main.overview._dash._container.set_style(oldStyle);
-
-        return  themeNode.get_background_color();
-
+function get_background_color() {
+    if (Settings.detect_user_theme()) {
+        if (Settings.get_user_theme_source().toLowerCase() == 'dock') {
+            return get_user_background_color_from_dock();
+        } else {
+            return get_user_background_color_from_dash();
+        }
+    } else {
+        return Settings.get_panel_color();
+    }
 }
 
 function strip_panel_css() {
