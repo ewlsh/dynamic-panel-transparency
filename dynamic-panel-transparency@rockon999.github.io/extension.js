@@ -89,11 +89,17 @@ function enable() {
         value: false
     });
     Settings.add({
-        settings_key: 'use-user-theme',
-        name: 'use_user_theme',
+        settings_key: 'detect-user-theme',
+        name: 'detect_user_theme',
         type: 'b',
         value: false,
-        getter: 'use_user_theme'
+        getter: 'detect_user_theme'
+    });
+    Settings.add({
+        settings_key: 'user-theme-source',
+        name: 'user_theme_source',
+        type: 's',
+        value: 'Panel'
     });
     Settings.bind();
 
@@ -305,7 +311,7 @@ function _screenShieldActivated() {
 }
 
 const TransparencyStatus = new Lang.Class({
-    Name: 'DPTTransparencyStatus',
+    Name: 'DynamicPanelTtransparency.TransparencyStatus',
     _init: function() {
         this.transparent = false;
         this.blank = false;

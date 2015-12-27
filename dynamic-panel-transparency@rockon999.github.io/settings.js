@@ -90,7 +90,7 @@ function unbind() {
 
 /* Basic class to hold settings values */
 const SettingsManager = new Lang.Class({
-    Name: 'DPTSettingsManager',
+    Name: 'DynamicPanelTransparency.SettingsManager',
     _init: function(settings, params) {
         this.values = [];
         this.settings = settings;
