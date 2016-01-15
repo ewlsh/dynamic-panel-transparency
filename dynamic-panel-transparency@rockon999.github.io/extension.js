@@ -175,9 +175,9 @@ function enable() {
 
 function disable() {
     /* Disconnect & Null Signals */
-    if (!is_undef(Main.screenShield))
+    if (!Util.is_undef(Main.screenShield))
         Main.screenShield.disconnect(this._lockScreenSig);
-    if (!is_undef(this._windowUnminimizeSig))
+    if (!Util.is_undef(this._windowUnminimizeSig))
         global.window_manager.disconnect(this._windowUnminimizeSig);
     Main.overview.disconnect(this._overviewShowingSig);
     Main.overview.disconnect(this._overviewHiddenSig);
