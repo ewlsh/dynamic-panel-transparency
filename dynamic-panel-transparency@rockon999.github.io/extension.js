@@ -138,12 +138,14 @@ function enable() {
             });
         }
     }));
+    /* No unminimize signal on 3.14 (TBD: If this harms the extension) */
+    if (MAJOR_VERSION == 3 && MINOR_VERSION > 14)
+        this._windowUnminimizeSig = global.window_manager.connect('unminimize', Lang.bind(this, this._windowUpdated));
     /* Check to see if the screenShield exists (doesn't if user can't lock) */
     if (Main.screenShield !== null)
         this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, this._screenShieldActivated));
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdated));
-    this._windowUnminimizeSig = global.window_manager.connect('unminimize', Lang.bind(this, this._windowUpdated));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
     this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, function(wm, window_actor) {
         this._windowUpdated({
@@ -173,14 +175,15 @@ function enable() {
 
 function disable() {
     /* Disconnect & Null Signals */
-    if (Main.screenShield !== null)
+    if (!is_undef(Main.screenShield))
         Main.screenShield.disconnect(this._lockScreenSig);
+    if (!is_undef(this._windowUnminimizeSig))
+        global.window_manager.disconnect(this._windowUnminimizeSig);
     Main.overview.disconnect(this._overviewShowingSig);
     Main.overview.disconnect(this._overviewHiddenSig);
     global.window_manager.disconnect(this._windowMapSig);
     global.window_manager.disconnect(this._windowDestroySig);
     global.window_manager.disconnect(this._windowMinimizeSig);
-    global.window_manager.disconnect(this._windowUnminimizeSig);
     global.window_manager.disconnect(this._maximizeSig);
     global.window_manager.disconnect(this._unmaximizeSig);
     global.window_manager.disconnect(this._workspaceSwitchSig);
