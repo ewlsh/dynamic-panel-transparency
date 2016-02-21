@@ -23,12 +23,6 @@ function cleanup() {}
 function set_panel_color(params = {}) {
     let panel_color = get_background_color();
     let current_alpha = get_background_alpha(Panel.actor);
-    log(params === null);
-
-             log(Util.is_undef(params.blue));
-    log(Util.validate(params.blue, 'hello'));
-    log(Util.validate(params.blue, panel_color[BLUE]));
-log(Util.is_undef(panel_color[BLUE]));
     Panel.actor.set_background_color(new Clutter.Color({
         red: Util.validate(params.red, panel_color[RED]),
         green: Util.validate(params.green, panel_color[GREEN]),
@@ -111,7 +105,6 @@ function get_user_background_color_from_panel() {
 
 function get_background_color() {
     if (Settings.detect_user_theme()) {
-        log('d:'+Settings.get_user_theme_source());
         if (Settings.get_user_theme_source().toLowerCase() == 'panel') {
             return get_user_background_color(Panel.actor);
         } else {
