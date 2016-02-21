@@ -1,18 +1,18 @@
+const Config = imports.misc.config;
+const Lang = imports.lang;
+const Main = imports.ui.main;
+
+const Panel = Main.panel;
+
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Extension = Me.imports.extension;
 const Convenience = Me.imports.convenience;
 const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
-const Extension = Me.imports.extension;
 const Util = Me.imports.util;
-const Main = imports.ui.main;
-const Lang = imports.lang;
-const Config = imports.misc.config;
-const Panel = Main.panel;
-
-let status = null;
 
 function init() {
-    status = Extension.status;
+    this.status = Extension.get_panel_status();
     if (Settings.get_force_animation()) {
         this.tweener = imports.tweener.tweener;
     } else {
@@ -22,6 +22,7 @@ function init() {
 }
 
 function cleanup() {
+    this.status = null;
     this.tweener = null;
 }
 
@@ -32,8 +33,8 @@ function fade_in(params = null) {
         params = {
             time: Settings.get_transition_speed()
         };
-    status.set_transparent(false);
-    status.set_blank(false);
+    this.status.set_transparent(false);
+    this.status.set_blank(false);
     let time = params.time / 1000;
     Theming.set_panel_color();
     this.tweener.addTween(Panel.actor, {
@@ -62,8 +63,8 @@ function fade_in_from_blank(params = null) {
             time: Settings.get_transition_speed()
         };
 
-    status.set_transparent(true);
-    status.set_blank(false);
+    this.status.set_transparent(true);
+    this.status.set_blank(false);
 
     let time = params.time / 1000;
 
@@ -100,8 +101,8 @@ function fade_out(params = null) {
             time: Settings.get_transition_speed()
         };
 
-    status.set_transparent(true);
-    status.set_blank(false);
+    this.status.set_transparent(true);
+    this.status.set_blank(false);
 
     let time = params.time / 1000;
 
@@ -143,8 +144,8 @@ function blank_fade_out(params = null) {
             time: Settings.get_transition_speed()
         };
 
-    status.set_transparent(true);
-    status.set_blank(true);
+    this.status.set_transparent(true);
+    this.status.set_blank(true);
 
     let time = params.time / 1000;
 
@@ -177,8 +178,8 @@ function blank_fade_out_from_minimum(params = null) {
             time: Settings.get_transition_speed()
         };
 
-    status.set_transparent(true);
-    status.set_blank(true);
+    this.status.set_transparent(true);
+    this.status.set_blank(true);
 
     let time = params.time / 1000;
 

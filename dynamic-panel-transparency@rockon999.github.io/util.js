@@ -3,7 +3,7 @@ const MAXIMIZED_WIDTH_BUFFER = 5;
 /* Utilities */
 
 function validate(a, b) {
-    return (!is_undef(a) ? a : b);
+    return (is_undef(a) === false ? a : b);
 }
 
 function is_undef(a) {

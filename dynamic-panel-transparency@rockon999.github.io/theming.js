@@ -20,16 +20,15 @@ function init() {}
 
 function cleanup() {}
 
-function set_panel_color(params = null) {
+function set_panel_color(params = {}) {
     let panel_color = get_background_color();
     let current_alpha = get_background_alpha(Panel.actor);
-    if (params === null)
-        params = {
-            red: panel_color[RED],
-            green: panel_color[GREEN],
-            blue: panel_color[BLUE],
-            opacity: Settings.get_maximum_opacity()
-        };
+    log(params === null);
+
+             log(Util.is_undef(params.blue));
+    log(Util.validate(params.blue, 'hello'));
+    log(Util.validate(params.blue, panel_color[BLUE]));
+log(Util.is_undef(panel_color[BLUE]));
     Panel.actor.set_background_color(new Clutter.Color({
         red: Util.validate(params.red, panel_color[RED]),
         green: Util.validate(params.green, panel_color[GREEN]),
@@ -38,16 +37,10 @@ function set_panel_color(params = null) {
     }));
 }
 
-function set_corner_color(params = null) {
-    let panel_color = Settings.get_panel_color();
+function set_corner_color(params = {}) {
+    let panel_color = get_background_color();
     let current_alpha = get_background_alpha(Panel._leftCorner.actor);
-    if (params === null)
-        params = {
-            red: panel_color[RED],
-            green: panel_color[GREEN],
-            blue: panel_color[BLUE],
-            opacity: Settings.get_maximum_opacity()
-        };
+
     let opacity = Util.is_undef(params.opacity) ? current_alpha : params.opacity;
     let red = Util.validate(params.red, panel_color[RED]);
     let green = Util.validate(params.green, panel_color[GREEN]);
@@ -64,49 +57,65 @@ function clear_corner_color() {
 }
 
 
-function get_user_background_color_from_dash() {
+function get_user_background_color(src){
+    if (Util.is_undef(src))
+        return Settings.get_panel_color();
+    let user_theme = src.get_theme_node();
+
+    let background_color = user_theme.get_background_color();
+    if (background_color === null)
+        background_color = user_theme.lookup_color('background-color', true);
+    if(Util.is_undef(background_color))
+      return Settings.get_panel_color();
+    return [
+        background_color.red,
+        background_color.green,
+        background_color.blue,
+    ];
+}
+
+/*function get_user_background_color_from_dash() {
 
     // Prevent shell crash if the actor is not on the stage.
     // It happens enabling/disabling repeatedly the extension
     if (Util.is_undef(Main.overview._dash._container.get_stage()))
         return Settings.get_panel_color();
-    let theme = Main.overview._dash._container.get_theme_node();
-    let user_theme = theme.get_parent();
-    if (user_theme === null)
-        user_theme = theme;
+    let user_theme = Main.overview._dash._container.get_theme_node();
+
     let background_color = user_theme.get_background_color();
     if (background_color === null)
         background_color = user_theme.lookup_color('background-color', true);
-    return {
-        red: background_color.r,
-        green: background_color.g,
-        blue: background_color.b,
-        opacity: background_color.a
-    };
+    if(Util.is_undef(background_color))
+      return Settings.get_panel_color();
+    return [
+        background_color.red,
+        background_color.green,
+        background_color.blue,
+    ];
 }
 
-function get_user_background_color_from_dock() {
-    let theme = Panel.actor.get_theme_node();
-    let user_theme = theme.get_parent();
-    if (user_theme === null)
-        user_theme = theme;
+function get_user_background_color_from_panel() {
+    let user_theme = Panel.actor.get_theme_node();
+
     let background_color = user_theme.get_background_color();
     if (background_color === null)
         background_color = user_theme.lookup_color('background-color', true);
-    return {
-        red: background_color.r,
-        green: background_color.g,
-        blue: background_color.b,
-        opacity: background_color.a
-    };
-}
+    if(Util.is_undef(background_color))
+      return Settings.get_panel_color();
+    return [
+        background_color.red,
+        background_color.green,
+        background_color.blue,
+    ];
+}*/
 
 function get_background_color() {
     if (Settings.detect_user_theme()) {
-        if (Settings.get_user_theme_source().toLowerCase() == 'dock') {
-            return get_user_background_color_from_dock();
+        log('d:'+Settings.get_user_theme_source());
+        if (Settings.get_user_theme_source().toLowerCase() == 'panel') {
+            return get_user_background_color(Panel.actor);
         } else {
-            return get_user_background_color_from_dash();
+            return get_user_background_color(Main.overview._dash._container);
         }
     } else {
         return Settings.get_panel_color();

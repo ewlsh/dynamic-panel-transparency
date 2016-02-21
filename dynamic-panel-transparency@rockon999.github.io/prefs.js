@@ -1,6 +1,8 @@
+
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
+const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -8,6 +10,22 @@ const Convenience = Me.imports.convenience;
 
 const Gettext = imports.gettext.domain('dynamic-panel-transparency');
 const _ = Gettext.gettext;
+
+const Dictionary = {
+    'Transition Speed': _("Transition Speed"),
+    'Maximum Opacity': _("Maximum Opacity"),
+    'Minimum Opacity': _("Minimum Opacity"),
+    'Panel Color': _("Panel Color"),
+    'Theme Source': _("Theme Source"),
+    'Detect User Theme': _("Detect User Theme"),
+    'Hide Corners': _("Hide Corners"),
+    'Some shell themes already do this.': _("Some shell themes already do this."),
+    'Force Animation': _("Force Animation"),
+    'Overrides \'gtk-enable-animations\'.': _("Overrides 'gtk-enable-animations'."),
+    'Panel': _("Panel"),
+    'Dash': _("Dash"),
+    'default': _("default")
+}
 
 /* Settings Keys */
 const SETTINGS_HIDE_CORNERS = 'hide-corners';
@@ -25,186 +43,128 @@ const BLUE = 2;
 /* Color Scaling Factor (Byte to Decimal) */
 const SCALE_FACTOR = 255.9999999;
 
-
-
 function init() {
     Convenience.initTranslations();
 }
 
 function buildPrefsWidget() {
-    let widget = new SettingsUI();
+    let widget = getPrefsWidget();
     widget.show_all();
-
     return widget;
 }
 
 /* UI Setup */
-const SettingsUI = new Lang.Class({
-    Name: 'DynamicPanelTransparency.SettingsUI',
-    GTypeName: 'DynamicPanelTransparencySettingsUI',
-    Extends: Gtk.Grid,
+function getPrefsWidget() {
 
-    _init: function(params) {
+    /* Get Settings */
+    let settings = Convenience.getSettings();
+    /* Create a UI Builder */
+    let builder = new Gtk.Builder();
+    /* Setup Translation */
+    builder.set_translation_domain(Me.metadata['gettext-domain']);
+    /* Get UI File */
+    builder.add_from_file(Me.path + '/ui/prefs.ui');
+    /* Main Widget (Grid) */
+    let main_widget = builder.get_object('main');
 
-        this.parent(params);
+    /* Util function for easily setting labels */
+    function setLabel(obj, label) {
+        builder.get_object(obj).set_label(label);
+    }
 
-        this.margin = 24;
+    setLabel('speed_label', '<b>' + Dictionary['Transition Speed'] + '</b>');
 
-        this.row_spacing = 6;
+    /* Transition speed control */
+    let speed_scale = builder.get_object('speed_scale');
+    /* Init value. */
+    speed_scale.adjustment.set_value(settings.get_int(SETTINGS_TRANSITION_SPEED));
+    /* Add default marking. */
+    speed_scale.add_mark(1000, Gtk.PositionType.BOTTOM, Dictionary['default']);
+    /* Add formatting */
+    speed_scale.connect('format-value', Lang.bind(this, function (scale, value) {
+        return value + 'ms';
+    }));
 
-        this.orientation = Gtk.Orientation.VERTICAL;
+    setLabel('maximum_label', '<b>' + Dictionary['Maximum Opacity'] + '</b>');
 
-        this.settings = Convenience.getSettings();
+    /* Maximum opacity control */
+    let maximum_scale = builder.get_object('maximum_scale');
+    /* Init value. */
+    maximum_scale.adjustment.set_value(settings.get_int(SETTINGS_MAXIMIZED_OPACITY));
+    /* Add formatting */
+    maximum_scale.connect('format-value', Lang.bind(this, function (scale, value) {
+        return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
+    }));
 
-        let presentLabel = '<b>' + _("Transition Speed") + '</b>';
-        this.add(new Gtk.Label({
-            label: presentLabel,
-            use_markup: true,
-            halign: Gtk.Align.START
-        }));
+    setLabel('minimum_label', '<b>' + Dictionary['Minimum Opacity'] + '</b>');
 
-        /* control transition speed */
-        let slider = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 5000, 100);
-        slider.adjustment.set_value(this.settings.get_int(SETTINGS_TRANSITION_SPEED));
-        /* show the user where they're at */
-        slider.set_draw_value(true);
-        /* lets add some color */
-        slider.set_has_origin(true);
-        /* make it legible */
-        slider.set_size_request(400, 10);
-        /* add a tick at the default */
-        slider.add_mark(1000, Gtk.PositionType.BOTTOM, _("default"));
-        /* right margin */
-        slider.margin_right = 20;
+    /* Minimum opacity control */
+    let minimum_scale = builder.get_object('minimum_scale');
+    /* Init value. */
+    minimum_scale.adjustment.set_value(settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY));
+    /* Add formatting */
+    minimum_scale.connect('format-value', Lang.bind(this, function (scale, value) {
+        return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
+    }));
 
-        slider.connect('format-value', Lang.bind(this, function(scale, value) {
-            return value + 'ms';
-        }));
-        slider.connect('value-changed', Lang.bind(this, function(range) {
-            this.settings.set_int(SETTINGS_TRANSITION_SPEED, range.get_value());
-        }));
+    setLabel('detect_theme_label', '<b>' + Dictionary['Detect User Theme'] + '</b>');
 
-        this.add(slider);
+    let theme_switch = builder.get_object('theme_switch');
+    theme_switch.set_active(settings.get_boolean('detect-user-theme'));
 
+    let theme_overlay = builder.get_object('theme_overlay');
+    theme_overlay.add_overlay(builder.get_object('theme_revealer'));
+    theme_overlay.add_overlay(builder.get_object('theme_revealer_2'));
 
+    let theme_revealer_2 = builder.get_object('theme_revealer_2');
+    let theme_revealer = builder.get_object('theme_revealer');
 
-        presentLabel = '<b>' + _("Maximum Opacity") + '</b>';
-        let label = new Gtk.Label({
-            label: presentLabel,
-            use_markup: true,
-            halign: Gtk.Align.START
-        });
-        label.set_size_request(20, -1);
+    let detect_theme_label = builder.get_object('detect_theme_label');
+    let theme_label = builder.get_object('theme_label');
 
+    if (settings.get_boolean('detect-user-theme')) {
+        theme_revealer_2.set_reveal_child(false);
+        detect_theme_label.set_sensitive(true);
+        theme_revealer.set_reveal_child(true);
+        theme_label.set_label(Dictionary['Theme Source']);
+        theme_overlay.reorder_overlay(theme_revealer, -1);
+    } else {
+        theme_revealer.set_reveal_child(false);
+        detect_theme_label.set_sensitive(false);
+        theme_revealer_2.set_reveal_child(true);
+        theme_label.set_label(Dictionary['Panel Color']);
+        theme_overlay.reorder_overlay(theme_revealer_2, -1);
+    }
 
-        slider = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 255, 1);
-        slider.adjustment.set_value(this.settings.get_int(SETTINGS_MAXIMIZED_OPACITY));
-        /* show the user where they're at */
-        slider.set_draw_value(true);
-        /* lets add some color */
-        slider.set_has_origin(true);
-        /* make it legible */
-        slider.set_size_request(400, 10);
-
-        slider.connect('value-changed', Lang.bind(this, function(range) {
-            this.settings.set_int(SETTINGS_MAXIMIZED_OPACITY, range.get_value());
-        }));
-        slider.connect('format-value', Lang.bind(this, function(scale, value) {
-            return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
-        }));
-
-        let max_opacity = new Gtk.Box({
-            orientation: Gtk.Orientation.HORIZONTAL
-        });
-        label.valign = Gtk.Align.END;
-        label.margin_bottom = 3;
-        max_opacity.pack_start(label, false, false, 0);
-        max_opacity.pack_end(slider, true, true, 20);
-        this.add(max_opacity);
-        presentLabel = '<b>' + _("Minimum Opacity") + '</b>';
-        label = new Gtk.Label({
-            label: presentLabel,
-            use_markup: true,
-            halign: Gtk.Align.START
-        });
-        label.set_size_request(20, -1);
-
-        slider = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 255, 1);
-        slider.adjustment.set_value(this.settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY));
-        /* show the user where they're at */
-        slider.set_draw_value(true);
-        /* lets add some color */
-        slider.set_has_origin(true);
-        /* make it legible */
-        slider.set_size_request(400, 10);
+    builder.get_object('theme_switch').connect('state-set', Lang.bind(this, function (widget, state) {
+        if (state) {
+            theme_revealer_2.set_reveal_child(false);
+            detect_theme_label.set_sensitive(true);
+            theme_revealer.set_reveal_child(true);
+            theme_label.set_label(Dictionary['Theme Source']);
+            theme_overlay.reorder_overlay(theme_revealer, -1);
+        } else {
+            theme_revealer.set_reveal_child(false);
+            detect_theme_label.set_sensitive(false);
+            theme_revealer_2.set_reveal_child(true);
+            theme_label.set_label(Dictionary['Panel Color']);
+            theme_overlay.reorder_overlay(theme_revealer_2, -1);
+        }
+    }));
 
 
-        slider.connect('value-changed', Lang.bind(this, function(range) {
-            this.settings.set_int(SETTINGS_UNMAXIMIZED_OPACITY, range.get_value());
-        }));
-        slider.connect('format-value', Lang.bind(this, function(scale, value) {
-            return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
-        }));
+    let theme_source_box = builder.get_object('theme_source_box');
+    theme_source_box.append_text(Dictionary['Panel']);
+    theme_source_box.append_text(Dictionary['Dash']);
+    theme_source_box.set_active(settings.get_enum('user-theme-source'));
+    theme_source_box.connect('changed', Lang.bind(this, function (widget) {
+        settings.set_enum('user-theme-source', widget.get_active());
+    }));
 
-        let min_opacity = new Gtk.Box({
-            orientation: Gtk.Orientation.HORIZONTAL
-        });
-        label.valign = Gtk.Align.END;
-        min_opacity.margin_bottom = 10;
-        label.margin_bottom = 3;
-        min_opacity.pack_start(label, false, false, 0);
-        min_opacity.pack_end(slider, false, false, 0);
-        this.add(min_opacity);
+    let color_btn = builder.get_object('color_btn');
 
-        let panel_color_grid = new Gtk.Grid();
-
-        let label_box = new Gtk.Box({
-            orientation: Gtk.Orientation.VERTICAL
-        });
-
-        let widget_box = new Gtk.Box({
-            orientation: Gtk.Orientation.VERTICAL
-        });
-        presentLabel = '<b>' + _("Detect User Theme") + '</b>';
-        label = new Gtk.Label({
-            label: presentLabel,
-            use_markup: true,
-            halign: Gtk.Align.START
-        });
-        let switcher = new Gtk.Switch();
-        switcher.halign = Gtk.Align.END;
-
-        panel_color_grid.attach(label, 0, 1, 1, 1);
-        panel_color_grid.attach(switcher, 1, 1, 1, 1);
-
-        presentLabel = '' + _("Theme Source") + '';
-        label = new Gtk.Label({
-            label: presentLabel,
-            use_markup: true,
-            halign: Gtk.Align.START
-        });
-        let box = new Gtk.ComboBoxText();
-        box.halign = Gtk.Align.END;
-        box.append_text("Panel");
-        box.append_text("Dash");
-        box.set_active(0);
-        label.margin_left = 20;
-        box.margin_left = 20;
-        panel_color_grid.attach(label, 0, 2, 1, 1);
-        panel_color_grid.attach(box, 1, 2, 1, 1);
-
-        presentLabel = '<b>' + _("Panel Color") + '</b>';
-        label = new Gtk.Label({
-            label: presentLabel,
-            use_markup: true,
-            halign: Gtk.Align.START
-        });
-
-        let color_btn = new Gtk.ColorButton();
-        color_btn.halign = Gtk.Align.END;
-        color_btn.set_use_alpha(false);
-
-        let panel_color = this.settings.get_value('panel-color').deep_unpack();
+    /* Convert & scale color. */ {
+        let panel_color = settings.get_value('panel-color').deep_unpack();
 
         let scaled_red = panel_color[RED];
         scaled_red = scaled_red / SCALE_FACTOR;
@@ -223,47 +183,39 @@ const SettingsUI = new Lang.Class({
         });
 
         color_btn.set_rgba(scaled_color);
+    }
 
-        color_btn.connect('color-set', Lang.bind(this, function(color) {
-            let rgba = color.rgba.to_string();
-            let parsed_red = parseInt(rgba.split('(')[1].split(')')[0].split(',')[RED], 10);
-            let parsed_green = parseInt(rgba.split('(')[1].split(')')[0].split(',')[GREEN], 10);
-            let parsed_blue = parseInt(rgba.split('(')[1].split(')')[0].split(',')[BLUE], 10);
+    color_btn.connect('color-set', Lang.bind(this, function (color) {
+        let rgba = color.rgba.to_string();
+        let parsed_red = parseInt(rgba.split('(')[1].split(')')[0].split(',')[RED], 10);
+        let parsed_green = parseInt(rgba.split('(')[1].split(')')[0].split(',')[GREEN], 10);
+        let parsed_blue = parseInt(rgba.split('(')[1].split(')')[0].split(',')[BLUE], 10);
 
-            let rgb = [];
-            rgb[RED] = parsed_red;
-            rgb[GREEN] = parsed_green;
-            rgb[BLUE] = parsed_blue;
-            this.settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
-        }));
+        let rgb = [];
+        rgb[RED] = parsed_red;
+        rgb[GREEN] = parsed_green;
+        rgb[BLUE] = parsed_blue;
+        settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
+    }));
 
-        panel_color_grid.attach(label, 0, 3, 1, 1);
-        panel_color_grid.attach(color_btn, 1, 3, 1, 1);
 
-        panel_color_grid.set_row_spacing(10);
-        this.add(panel_color_grid);
-        /* control corners */
-        let check = new Gtk.CheckButton({
-            label: _("Hide Corners"),
-            tooltip_text: _("Some shell themes already do this."),
-            margin_top: 6
-        });
-        check.set_active(this.settings.get_boolean(SETTINGS_HIDE_CORNERS));
-        check.connect('toggled', Lang.bind(this, function(value) {
-            this.settings.set_boolean(SETTINGS_HIDE_CORNERS, value.get_active());
-        }));
-        this.add(check);
+    let hide_corners = builder.get_object('hide_corners_check');
+    hide_corners.set_active(settings.get_boolean(SETTINGS_HIDE_CORNERS));
+    hide_corners.set_label(Dictionary['Hide Corners']);
 
-        /* force animation */
-        check = new Gtk.CheckButton({
-            label: _("Force Animation"),
-            tooltip_text: _("Overrides 'gtk-enable-animations'."),
-            margin_top: 6
-        });
-        check.set_active(this.settings.get_boolean(SETTINGS_FORCE_ANIMATION));
-        check.connect('toggled', Lang.bind(this, function(value) {
-            this.settings.set_boolean(SETTINGS_FORCE_ANIMATION, value.get_active());
-        }));
-        this.add(check);
-    },
-});
+    let force_transition = builder.get_object('force_transition_check');
+    force_transition.set_active(settings.get_boolean(SETTINGS_FORCE_ANIMATION));
+    force_transition.set_label(Dictionary['Force Animation']);
+
+    /* Bind settings. */
+    settings.bind(SETTINGS_TRANSITION_SPEED, speed_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind('detect-user-theme', theme_switch, 'active', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind(SETTINGS_UNMAXIMIZED_OPACITY, minimum_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind(SETTINGS_HIDE_CORNERS, hide_corners, 'active', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind(SETTINGS_FORCE_ANIMATION, force_transition, 'active', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind(SETTINGS_MAXIMIZED_OPACITY, maximum_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
+
+    /* Return main widget. */
+    return main_widget;
+}
+
