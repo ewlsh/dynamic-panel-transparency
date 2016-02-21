@@ -68,41 +68,6 @@ function get_user_background_color(src){
     ];
 }
 
-/*function get_user_background_color_from_dash() {
-
-    // Prevent shell crash if the actor is not on the stage.
-    // It happens enabling/disabling repeatedly the extension
-    if (Util.is_undef(Main.overview._dash._container.get_stage()))
-        return Settings.get_panel_color();
-    let user_theme = Main.overview._dash._container.get_theme_node();
-
-    let background_color = user_theme.get_background_color();
-    if (background_color === null)
-        background_color = user_theme.lookup_color('background-color', true);
-    if(Util.is_undef(background_color))
-      return Settings.get_panel_color();
-    return [
-        background_color.red,
-        background_color.green,
-        background_color.blue,
-    ];
-}
-
-function get_user_background_color_from_panel() {
-    let user_theme = Panel.actor.get_theme_node();
-
-    let background_color = user_theme.get_background_color();
-    if (background_color === null)
-        background_color = user_theme.lookup_color('background-color', true);
-    if(Util.is_undef(background_color))
-      return Settings.get_panel_color();
-    return [
-        background_color.red,
-        background_color.green,
-        background_color.blue,
-    ];
-}*/
-
 function get_background_color() {
     if (Settings.detect_user_theme()) {
         if (Settings.get_user_theme_source().toLowerCase() == 'panel') {
