@@ -3,9 +3,9 @@
     border-image: none;
     border: 0;
     background-image: none;
+    /* New CSS */
+    background-gradient-direction: none;
+	background-gradient-start: transparent;
+	background-gradient-end: transparent;
+	box-shadow: none;
 }
-
-/* .corner-transparency {
-    -panel-corner-background-color: rgba(0,0,0,0);
-    -panel-corner-border-color: transparent;
-} */

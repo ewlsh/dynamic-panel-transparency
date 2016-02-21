@@ -12,7 +12,6 @@ const Panel = Main.panel;
 
 const Clutter = imports.gi.Clutter;
 
-
 /* Color Scaling Factor (Byte to Decimal) */
 const SCALE_FACTOR = 255.9999999;
 
@@ -20,10 +19,10 @@ const SCALE_FACTOR = 255.9999999;
 const MAJOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[0]);
 const MINOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[1]);
 
-let status = null;
-
 /* Initialize */
 function init() {
+    /* Panel Status */
+    this.status = null;
     /* Signal IDs */
     this._lockScreenSig = null;
     this._lockScreenShownSig = null;
@@ -40,7 +39,7 @@ function init() {
 
 function enable() {
     /* Create transparency status manager */
-    status = new TransparencyStatus();
+    this.status = new TransparencyStatus();
 
     /* Setup settings... */
     Settings.init();
@@ -99,7 +98,7 @@ function enable() {
         settings_key: 'user-theme-source',
         name: 'user_theme_source',
         type: 's',
-        value: 'Panel'
+        value: 'Dash'
     });
     Settings.bind();
 
@@ -221,10 +220,14 @@ function disable() {
     Settings.unbind();
     Settings.cleanup();
 
-    /* Cleanup Global Variables */
-    status = null;
+    /* Cleanup Status */
+    this.status = null;
 }
 
+
+function get_panel_status(){
+    return this.status;
+}
 
 
 
@@ -303,18 +306,16 @@ function _screenShieldActivated() {
         Transitions.hide_corners({
             opacity: 0
         });
-        log('Shield Activated');
     } else {
         /* make sure we don't have any odd coloring on the screenShield */
         Transitions.blank_fade_out({
             time: 0
         });
-        log('Shield DeActivated');
     }
 }
 
 const TransparencyStatus = new Lang.Class({
-    Name: 'DynamicPanelTtransparency.TransparencyStatus',
+    Name: 'DynamicPanelTransparency.TransparencyStatus',
     _init: function() {
         this.transparent = false;
         this.blank = false;

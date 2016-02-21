@@ -4,10 +4,9 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
-msgstr "TEST"
-"Project-Id-Version: GNOME Shell Extension Transparence de la Barre supérieure Dynamique\n"
+msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-04 12:19-0600\n"
+"POT-Creation-Date: 2016-01-15 16:31-0600\n"
 "PO-Revision-Date: 2016-01-04 13:59-0200\n"
 "Last-Translator: DAEM Q.\n"
 "Language-Team: \n"
@@ -15,42 +14,61 @@ msgstr "TEST"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"TESTProject-Id-Version: GNOME Shell Extension Transparence de la Barre "
+"supérieure Dynamique\n"
 "X-Generator: Poedit 1.8.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: prefs.js:62
+#: prefs.js:13
 msgid "Transition Speed"
 msgstr "Vitesse de transition"
 
-#: prefs.js:79
-msgid "default"
-msgstr "par défaut"
-
-#: prefs.js:95
+#: prefs.js:14
 msgid "Maximum Opacity"
 msgstr "Opacité Maximum"
 
-#: prefs.js:126
+#: prefs.js:15
 msgid "Minimum Opacity"
 msgstr "Opacité Minimum"
 
-#: prefs.js:160
+#: prefs.js:16
 msgid "Panel Color"
 msgstr "Couleur Barre supérieure"
 
-#: prefs.js:208
+#: prefs.js:17
+msgid "Theme Source"
+msgstr ""
+
+#: prefs.js:18
+msgid "Detect User Theme"
+msgstr ""
+
+#: prefs.js:19
 msgid "Hide Corners"
 msgstr "Cacher les coins arrondis"
 
-#: prefs.js:209
+#: prefs.js:20
 msgid "Some shell themes already do this."
 msgstr "Certains thèmes du shell font déjà ça"
 
-#: prefs.js:220
+#: prefs.js:21
 msgid "Force Animation"
 msgstr "Forcer Animation"
 
-#: prefs.js:221
+#: prefs.js:22
 #, fuzzy
 msgid "Overrides 'gtk-enable-animations'."
 msgstr "Remplacer 'gtk-enable-animations'."
+
+#: prefs.js:23
+#, fuzzy
+msgid "Panel"
+msgstr "Couleur Barre supérieure"
+
+#: prefs.js:24
+msgid "Dash"
+msgstr ""
+
+#: prefs.js:25
+msgid "default"
+msgstr "par défaut"

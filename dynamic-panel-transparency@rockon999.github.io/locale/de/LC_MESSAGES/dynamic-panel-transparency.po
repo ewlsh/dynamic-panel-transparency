@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNOME Shell Extension Dynamic Panel Transparency\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-26 12:19-0600\n"
+"POT-Creation-Date: 2016-01-15 16:31-0600\n"
 "PO-Revision-Date: 2015-11-23 11:59-0200\n"
 "Last-Translator: Jonatan Zeidler <jonatan_zeidler@gmx.de>\n"
 "Language-Team: Jonatan Zeidler <jonatan_zeidler@gmx.de>\n"
@@ -18,39 +18,56 @@ msgstr ""
 "X-Generator: Poedit 1.8.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: prefs.js:62
+#: prefs.js:13
 msgid "Transition Speed"
 msgstr "Übergangszeit"
 
-#: prefs.js:79
-msgid "default"
-msgstr "Vorgabe"
-
-#: prefs.js:95
+#: prefs.js:14
 msgid "Maximum Opacity"
 msgstr "Maximale Deckkraft"
 
-#: prefs.js:126
+#: prefs.js:15
 msgid "Minimum Opacity"
 msgstr "Minimale Deckkraft"
 
-#: prefs.js:160
+#: prefs.js:16
 msgid "Panel Color"
 msgstr "Hintergrundfarbe"
 
-#: prefs.js:208
+#: prefs.js:17
+msgid "Theme Source"
+msgstr ""
+
+#: prefs.js:18
+msgid "Detect User Theme"
+msgstr ""
+
+#: prefs.js:19
 msgid "Hide Corners"
 msgstr "Abgerundete Ecken deaktivieren"
 
-#: prefs.js:209
+#: prefs.js:20
 msgid "Some shell themes already do this."
 msgstr ""
 
-#: prefs.js:220
+#: prefs.js:21
 msgid "Force Animation"
 msgstr "Animation erzwingen"
 
-#: prefs.js:221
+#: prefs.js:22
 #, fuzzy
 msgid "Overrides 'gtk-enable-animations'."
 msgstr "Überschreibt 'gtk-enable-animations'."
+
+#: prefs.js:23
+#, fuzzy
+msgid "Panel"
+msgstr "Hintergrundfarbe"
+
+#: prefs.js:24
+msgid "Dash"
+msgstr ""
+
+#: prefs.js:25
+msgid "default"
+msgstr "Vorgabe"

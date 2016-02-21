@@ -1,4 +1,8 @@
 <schemalist>
+  <enum id='org.gnome.shell.extensions.dynamic-panel-transparency.themeSource'>
+    <value value='0' nick='Panel'/>
+    <value value='1' nick='Dock'/>
+  </enum>
   <schema id="org.gnome.shell.extensions.dynamic-panel-transparency" path="/org/gnome/shell/extensions/dynamic-panel-transparency/">
     <key name="transition-speed" type="i">
       <default>1000</default>
@@ -32,13 +36,13 @@
     </key>
     <key name="detect-user-theme" type="b">
       <default>false</default>
-      <summary>Detect the user 's theme</summary>
-      <description>Uses the panel or dash to get the user 's panel color.</description>
+      <summary>Detect the user's theme</summary>
+      <description>Uses the panel or dash to get the user's panel color.</description>
     </key>
-    <key name="user-theme-source" type="s">
-      <default>Panel</default>
-      <summary>Source for detecting the user 's theme</summary>
-      <description>Object used to get the user 's preferred background color.</description>
+    <key name="user-theme-source" enum="org.gnome.shell.extensions.dynamic-panel-transparency.themeSource">
+      <default>'Dash'</default>
+      <summary>Source for detecting the user's theme</summary>
+      <description>Object used to get the user's preferred background color.</description>
     </key>
   </schema>
 </schemalist>
