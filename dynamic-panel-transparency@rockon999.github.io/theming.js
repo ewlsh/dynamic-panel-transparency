@@ -20,15 +20,31 @@ function init() {}
 
 function cleanup() {}
 
+function add_text_shadow(){
+  Panel.actor.add_style_class_name('panel-text-shadow');
+  Panel.actor.add_style_class_name('panel-icon-shadow');
+}
+
+function has_text_shadow(){
+  return Panel.actor.has_style_class_name('panel-text-shadow') && Panel.actor.has_style_class_name('panel-icon-shadow');
+}
+
+function remove_text_shadow(){
+  Panel.actor.remove_style_class_name('panel-icon-shadow');
+  Panel.actor.remove_style_class_name('panel-text-shadow');
+}
+
+function set_text_color(params = {}){
+  let text_color = get_text_color();
+  Panel._leftBox.set_style("color: rgba(32,45,32,1.0);");
+  Panel._rightBox.set_style("color: rgba(32,45,32,1.0);");
+  Panel._centerBox.set_style("color: rgba(32,45,32,1.0);");
+}
+
+
 function set_panel_color(params = {}) {
     let panel_color = get_background_color();
     let current_alpha = get_background_alpha(Panel.actor);
-    log(params === null);
-
-             log(Util.is_undef(params.blue));
-    log(Util.validate(params.blue, 'hello'));
-    log(Util.validate(params.blue, panel_color[BLUE]));
-log(Util.is_undef(panel_color[BLUE]));
     Panel.actor.set_background_color(new Clutter.Color({
         red: Util.validate(params.red, panel_color[RED]),
         green: Util.validate(params.green, panel_color[GREEN]),
@@ -74,44 +90,8 @@ function get_user_background_color(src){
     ];
 }
 
-/*function get_user_background_color_from_dash() {
-
-    // Prevent shell crash if the actor is not on the stage.
-    // It happens enabling/disabling repeatedly the extension
-    if (Util.is_undef(Main.overview._dash._container.get_stage()))
-        return Settings.get_panel_color();
-    let user_theme = Main.overview._dash._container.get_theme_node();
-
-    let background_color = user_theme.get_background_color();
-    if (background_color === null)
-        background_color = user_theme.lookup_color('background-color', true);
-    if(Util.is_undef(background_color))
-      return Settings.get_panel_color();
-    return [
-        background_color.red,
-        background_color.green,
-        background_color.blue,
-    ];
-}
-
-function get_user_background_color_from_panel() {
-    let user_theme = Panel.actor.get_theme_node();
-
-    let background_color = user_theme.get_background_color();
-    if (background_color === null)
-        background_color = user_theme.lookup_color('background-color', true);
-    if(Util.is_undef(background_color))
-      return Settings.get_panel_color();
-    return [
-        background_color.red,
-        background_color.green,
-        background_color.blue,
-    ];
-}*/
-
 function get_background_color() {
     if (Settings.detect_user_theme()) {
-        log('d:'+Settings.get_user_theme_source());
         if (Settings.get_user_theme_source().toLowerCase() == 'panel') {
             return get_user_background_color(Panel.actor);
         } else {
