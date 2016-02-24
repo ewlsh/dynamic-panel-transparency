@@ -1,7 +1,7 @@
 <schemalist>
   <enum id='org.gnome.shell.extensions.dynamic-panel-transparency.themeSource'>
     <value value='0' nick='Panel'/>
-    <value value='1' nick='Dock'/>
+    <value value='1' nick='Dash'/>
   </enum>
   <schema id="org.gnome.shell.extensions.dynamic-panel-transparency" path="/org/gnome/shell/extensions/dynamic-panel-transparency/">
     <key name="transition-speed" type="i">
@@ -38,6 +38,11 @@
       <default>false</default>
       <summary>Detect the user's theme</summary>
       <description>Uses the panel or dash to get the user's panel color.</description>
+    </key>
+    <key name="text-shadow" type="b">
+      <default>false</default>
+      <summary>Add shadowing to text and icons.</summary>
+      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
     </key>
     <key name="user-theme-source" enum="org.gnome.shell.extensions.dynamic-panel-transparency.themeSource">
       <default>'Dash'</default>

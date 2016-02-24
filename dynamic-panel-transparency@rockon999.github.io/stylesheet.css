@@ -9,3 +9,11 @@
 	background-gradient-end: transparent;
 	box-shadow: none;
 }
+
+.panel-text-shadow .panel-button {
+	text-shadow: rgba(0,0,0,1.0) 0px 3px 5px;
+}
+
+.panel-icon-shadow .system-status-icon, .popup-menu-arrow {
+	icon-shadow: rgba(0,0,0,1.0) 0px 3px 5px;
+}

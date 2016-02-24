@@ -24,7 +24,8 @@ const Dictionary = {
     'Overrides \'gtk-enable-animations\'.': _("Overrides 'gtk-enable-animations'."),
     'Panel': _("Panel"),
     'Dash': _("Dash"),
-    'default': _("default")
+    'default': _("default"),
+    'Add Text Shadow': _("Add Text Shadow")
 }
 
 /* Settings Keys */
@@ -207,12 +208,17 @@ function getPrefsWidget() {
     force_transition.set_active(settings.get_boolean(SETTINGS_FORCE_ANIMATION));
     force_transition.set_label(Dictionary['Force Animation']);
 
+    let text_shadow = builder.get_object('text_shadow_check');
+    text_shadow.set_active(settings.get_boolean('text-shadow'));
+    text_shadow.set_label(Dictionary['Add Text Shadow']);
+
     /* Bind settings. */
     settings.bind(SETTINGS_TRANSITION_SPEED, speed_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
     settings.bind('detect-user-theme', theme_switch, 'active', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_UNMAXIMIZED_OPACITY, minimum_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_HIDE_CORNERS, hide_corners, 'active', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_FORCE_ANIMATION, force_transition, 'active', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind('text-shadow', text_shadow, 'active', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_MAXIMIZED_OPACITY, maximum_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
 
     /* Return main widget. */
