@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-15 16:31-0600\n"
+"POT-Creation-Date: 2016-03-06 22:04-0600\n"
 "PO-Revision-Date: 2016-01-04 13:59-0200\n"
 "Last-Translator: DAEM Q.\n"
 "Language-Team: \n"
@@ -19,56 +19,60 @@ msgstr ""
 "X-Generator: Poedit 1.8.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: prefs.js:13
+#: prefs.js:18
 msgid "Transition Speed"
 msgstr "Vitesse de transition"
 
-#: prefs.js:14
+#: prefs.js:19
 msgid "Maximum Opacity"
 msgstr "Opacité Maximum"
 
-#: prefs.js:15
+#: prefs.js:20
 msgid "Minimum Opacity"
 msgstr "Opacité Minimum"
 
-#: prefs.js:16
+#: prefs.js:21
 msgid "Panel Color"
 msgstr "Couleur Barre supérieure"
 
-#: prefs.js:17
+#: prefs.js:22
 msgid "Theme Source"
 msgstr ""
 
-#: prefs.js:18
+#: prefs.js:23
 msgid "Detect User Theme"
 msgstr ""
 
-#: prefs.js:19
+#: prefs.js:24
 msgid "Hide Corners"
 msgstr "Cacher les coins arrondis"
 
-#: prefs.js:20
+#: prefs.js:25
 msgid "Some shell themes already do this."
 msgstr "Certains thèmes du shell font déjà ça"
 
-#: prefs.js:21
+#: prefs.js:26
 msgid "Force Animation"
 msgstr "Forcer Animation"
 
-#: prefs.js:22
+#: prefs.js:27
 #, fuzzy
 msgid "Overrides 'gtk-enable-animations'."
 msgstr "Remplacer 'gtk-enable-animations'."
 
-#: prefs.js:23
+#: prefs.js:28
 #, fuzzy
 msgid "Panel"
 msgstr "Couleur Barre supérieure"
 
-#: prefs.js:24
+#: prefs.js:29
 msgid "Dash"
 msgstr ""
 
-#: prefs.js:25
+#: prefs.js:30
 msgid "default"
 msgstr "par défaut"
+
+#: prefs.js:31
+msgid "Add Text Shadow"
+msgstr ""
