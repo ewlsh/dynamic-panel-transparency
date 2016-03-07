@@ -2,13 +2,6 @@
 <!-- Generated with glade 3.19.0 -->
 <interface>
   <requires lib="gtk+" version="3.16"/>
-  <object class="GtkColorButton" id="color_btn">
-    <property name="visible">True</property>
-    <property name="can_focus">True</property>
-    <property name="receives_default">True</property>
-    <property name="halign">end</property>
-    <property name="title" translatable="yes">Panel Color</property>
-  </object>
   <object class="GtkAdjustment" id="maximum_opacity_adjustment">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
@@ -175,7 +168,42 @@
           </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkOverlay" id="theme_overlay">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkBox" id="placeholder_box">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkButton" id="placeholder_button">
+                    <property name="label" translatable="yes"> </property>
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can_focus">False</property>
+                    <property name="receives_default">False</property>
+                    <property name="no_show_all">True</property>
+                    <property name="opacity">0</property>
+                    <property name="relief">none</property>
+                    <property name="focus_on_click">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="index">-1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="left_attach">1</property>
+            <property name="top_attach">1</property>
+          </packing>
         </child>
       </object>
       <packing>
@@ -239,8 +267,31 @@
       </packing>
     </child>
   </object>
-  <object class="GtkComboBoxText" id="theme_source_box">
+  <object class="GtkRevealer" id="theme_revealer">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
+    <property name="transition_type">crossfade</property>
+    <property name="reveal_child">True</property>
+    <child>
+      <object class="GtkComboBoxText" id="theme_source_box">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+    </child>
+  </object>
+  <object class="GtkRevealer" id="theme_revealer_2">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="transition_type">none</property>
+    <property name="reveal_child">True</property>
+    <child>
+      <object class="GtkColorButton" id="color_btn">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <property name="halign">end</property>
+        <property name="title" translatable="yes">Panel Color</property>
+      </object>
+    </child>
   </object>
 </interface>
