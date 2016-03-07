@@ -100,6 +100,13 @@ function enable() {
         type: 's',
         value: 'Dash'
     });
+    Settings.add({
+        settings_key: 'text-shadow',
+        name: 'text_shadow',
+        type: 'b',
+        value: false,
+        getter: 'add_text_shadow'
+    });
     Settings.bind();
 
     /* Initialize */
@@ -165,6 +172,12 @@ function enable() {
     Transitions.hide_corners({
         opacity: 0.0
     });
+
+    /* Add Text Shadowing */
+    if(Settings.add_text_shadow()) {
+      Theming.add_text_shadow();
+    }
+
     /* Simulate Window Changes */
     _windowUpdated({
         force: true
@@ -210,6 +223,12 @@ function disable() {
         blue: 0,
         opacity: 0
     });
+
+    /* Remove text shadowing */
+    if(Theming.has_text_shadow()) {
+      Theming.add_text_shadow();
+    }
+
     /* Remove Our Corner Coloring */
     Theming.clear_corner_color();
     /* Remove Our Styling */
@@ -250,6 +269,14 @@ function _windowUpdated(params = null) {
     let primary_monitor = global.screen.get_primary_monitor();
     let focused_window = global.display.focus_window;
     let windows = workspace.list_windows();
+
+    /* Fix text shadowing if need exists */
+    /* TODO: Better place to check this? */
+    if(Settings.add_text_shadow() && !Theming.has_text_shadow()){
+        Theming.add_text_shadow();
+    }else if (!Settings.add_text_shadow() && Theming.has_text_shadow()){
+        Theming.remove_text_shadow();
+    }
 
     let add_transparency = true;
 

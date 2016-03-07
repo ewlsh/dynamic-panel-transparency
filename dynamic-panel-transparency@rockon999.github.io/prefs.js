@@ -1,4 +1,3 @@
-
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
@@ -7,6 +6,10 @@ const Lang = imports.lang;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
+const Config = imports.misc.config;
+
+const MAJOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[0]);
+const MINOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[1]);
 
 const Gettext = imports.gettext.domain('dynamic-panel-transparency');
 const _ = Gettext.gettext;
@@ -24,7 +27,8 @@ const Dictionary = {
     'Overrides \'gtk-enable-animations\'.': _("Overrides 'gtk-enable-animations'."),
     'Panel': _("Panel"),
     'Dash': _("Dash"),
-    'default': _("default")
+    'default': _("default"),
+    'Add Text Shadow': _("Add Text Shadow")
 }
 
 /* Settings Keys */
@@ -63,7 +67,10 @@ function getPrefsWidget() {
     /* Setup Translation */
     builder.set_translation_domain(Me.metadata['gettext-domain']);
     /* Get UI File */
-    builder.add_from_file(Me.path + '/ui/prefs.ui');
+    if (MAJOR_VERSION == 3 && MINOR_VERSION >= 18)
+        builder.add_from_file(Me.path + '/ui/prefs.ui');
+    else
+        builder.add_from_file(Me.path + '/ui/prefs-compatibility.ui');
     /* Main Widget (Grid) */
     let main_widget = builder.get_object('main');
 
@@ -112,32 +119,19 @@ function getPrefsWidget() {
     let theme_switch = builder.get_object('theme_switch');
     theme_switch.set_active(settings.get_boolean('detect-user-theme'));
 
-    let theme_overlay = builder.get_object('theme_overlay');
-    theme_overlay.add_overlay(builder.get_object('theme_revealer'));
-    theme_overlay.add_overlay(builder.get_object('theme_revealer_2'));
-
-    let theme_revealer_2 = builder.get_object('theme_revealer_2');
-    let theme_revealer = builder.get_object('theme_revealer');
-
+    let grid3 = builder.get_object('grid3');
+    let theme_source_box = builder.get_object('theme_source_box');
+    let color_btn = builder.get_object('color_btn');
     let detect_theme_label = builder.get_object('detect_theme_label');
     let theme_label = builder.get_object('theme_label');
+    let theme_revealer_2 = builder.get_object('theme_revealer_2');
+    let theme_revealer = builder.get_object('theme_revealer');
+    let theme_overlay = builder.get_object('theme_overlay');
 
-    if (settings.get_boolean('detect-user-theme')) {
-        theme_revealer_2.set_reveal_child(false);
-        detect_theme_label.set_sensitive(true);
-        theme_revealer.set_reveal_child(true);
-        theme_label.set_label(Dictionary['Theme Source']);
-        theme_overlay.reorder_overlay(theme_revealer, -1);
-    } else {
-        theme_revealer.set_reveal_child(false);
-        detect_theme_label.set_sensitive(false);
-        theme_revealer_2.set_reveal_child(true);
-        theme_label.set_label(Dictionary['Panel Color']);
-        theme_overlay.reorder_overlay(theme_revealer_2, -1);
-    }
-
-    builder.get_object('theme_switch').connect('state-set', Lang.bind(this, function (widget, state) {
-        if (state) {
+    if (MAJOR_VERSION == 3 && MINOR_VERSION >= 18) {
+        theme_overlay.add_overlay(builder.get_object('theme_revealer'));
+        theme_overlay.add_overlay(builder.get_object('theme_revealer_2'));
+        if (settings.get_boolean('detect-user-theme')) {
             theme_revealer_2.set_reveal_child(false);
             detect_theme_label.set_sensitive(true);
             theme_revealer.set_reveal_child(true);
@@ -149,6 +143,45 @@ function getPrefsWidget() {
             theme_revealer_2.set_reveal_child(true);
             theme_label.set_label(Dictionary['Panel Color']);
             theme_overlay.reorder_overlay(theme_revealer_2, -1);
+        }
+    } else {
+        if (settings.get_boolean('detect-user-theme')) {
+            theme_label.set_label(Dictionary['Theme Source']);
+            grid3.attach(theme_source_box, 1, 1, 1, 1);
+        } else {
+            theme_label.set_label(Dictionary['Panel Color']);
+            grid3.attach(color_btn, 1, 1, 1, 1);
+        }
+    }
+
+    builder.get_object('theme_switch').connect('state-set', Lang.bind(this, function (widget, state) {
+        if (MAJOR_VERSION == 3 && MINOR_VERSION >= 18) {
+            theme_overlay.add_overlay(builder.get_object('theme_revealer'));
+            theme_overlay.add_overlay(builder.get_object('theme_revealer_2'));
+
+            if (state) {
+                theme_revealer_2.set_reveal_child(false);
+                detect_theme_label.set_sensitive(true);
+                theme_revealer.set_reveal_child(true);
+                theme_label.set_label(Dictionary['Theme Source']);
+                theme_overlay.reorder_overlay(theme_revealer, -1);
+            } else {
+                theme_revealer.set_reveal_child(false);
+                detect_theme_label.set_sensitive(false);
+                theme_revealer_2.set_reveal_child(true);
+                theme_label.set_label(Dictionary['Panel Color']);
+                theme_overlay.reorder_overlay(theme_revealer_2, -1);
+            }
+        } else {
+            if (settings.get_boolean('detect-user-theme')) {
+                theme_label.set_label(Dictionary['Theme Source']);
+                grid3.remove(color_btn);
+                grid3.attach(theme_source_box, 1, 1, 1, 1);
+            } else {
+                theme_label.set_label(Dictionary['Panel Color']);
+                grid3.remove(theme_source_box);
+                grid3.attach(color_btn, 1, 1, 1, 1);
+            }
         }
     }));
 
@@ -207,15 +240,19 @@ function getPrefsWidget() {
     force_transition.set_active(settings.get_boolean(SETTINGS_FORCE_ANIMATION));
     force_transition.set_label(Dictionary['Force Animation']);
 
+    let text_shadow = builder.get_object('text_shadow_check');
+    text_shadow.set_active(settings.get_boolean('text-shadow'));
+    text_shadow.set_label(Dictionary['Add Text Shadow']);
+
     /* Bind settings. */
     settings.bind(SETTINGS_TRANSITION_SPEED, speed_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
     settings.bind('detect-user-theme', theme_switch, 'active', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_UNMAXIMIZED_OPACITY, minimum_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_HIDE_CORNERS, hide_corners, 'active', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_FORCE_ANIMATION, force_transition, 'active', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind('text-shadow', text_shadow, 'active', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_MAXIMIZED_OPACITY, maximum_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
 
     /* Return main widget. */
     return main_widget;
 }
-
