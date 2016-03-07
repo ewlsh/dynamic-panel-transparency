@@ -69,9 +69,9 @@ function getPrefsWidget() {
     builder.set_translation_domain(Me.metadata['gettext-domain']);
     /* Get UI File */
     if (MAJOR_VERSION == 3 && MINOR_VERSION >= 18)
-      builder.add_from_file(Me.path + '/ui/prefs-318.ui');
+        builder.add_from_file(Me.path + '/ui/prefs.ui');
     else
-      builder.add_from_file(Me.path + '/ui/prefs.ui');
+        builder.add_from_file(Me.path + '/ui/prefs-compatibility.ui');
     /* Main Widget (Grid) */
     let main_widget = builder.get_object('main');
 
@@ -120,18 +120,18 @@ function getPrefsWidget() {
     let theme_switch = builder.get_object('theme_switch');
     theme_switch.set_active(settings.get_boolean('detect-user-theme'));
 
+    let grid3 = builder.get_object('grid3');
+    let theme_source_box = builder.get_object('theme_source_box');
+    let color_btn = builder.get_object('color_btn');
+    let detect_theme_label = builder.get_object('detect_theme_label');
+    let theme_label = builder.get_object('theme_label');
+    let theme_revealer_2 = builder.get_object('theme_revealer_2');
+    let theme_revealer = builder.get_object('theme_revealer');
     let theme_overlay = builder.get_object('theme_overlay');
 
     if (MAJOR_VERSION == 3 && MINOR_VERSION >= 18) {
         theme_overlay.add_overlay(builder.get_object('theme_revealer'));
         theme_overlay.add_overlay(builder.get_object('theme_revealer_2'));
-
-        let theme_revealer_2 = builder.get_object('theme_revealer_2');
-        let theme_revealer = builder.get_object('theme_revealer');
-
-        let detect_theme_label = builder.get_object('detect_theme_label');
-        let theme_label = builder.get_object('theme_label');
-
         if (settings.get_boolean('detect-user-theme')) {
             theme_revealer_2.set_reveal_child(false);
             detect_theme_label.set_sensitive(true);
@@ -146,17 +146,12 @@ function getPrefsWidget() {
             theme_overlay.reorder_overlay(theme_revealer_2, -1);
         }
     } else {
-        let grid4 = builder.get_object('grid4');
-        let theme_source_box = builder.get_object('theme_source_box');
-        let color_btn = builder.get_object('theme_source_box');
-        let detect_theme_label = builder.get_object('detect_theme_label');
-        let theme_label = builder.get_object('theme_label');
         if (settings.get_boolean('detect-user-theme')) {
             theme_label.set_label(Dictionary['Theme Source']);
-            grid4.add(theme_source_box);
+            grid3.attach(theme_source_box, 1, 1, 1, 1);
         } else {
             theme_label.set_label(Dictionary['Panel Color']);
-            grid.add(color_btn);
+            grid3.attach(color_btn, 1, 1, 1, 1);
         }
     }
 
@@ -164,12 +159,6 @@ function getPrefsWidget() {
         if (MAJOR_VERSION == 3 && MINOR_VERSION >= 18) {
             theme_overlay.add_overlay(builder.get_object('theme_revealer'));
             theme_overlay.add_overlay(builder.get_object('theme_revealer_2'));
-
-            let theme_revealer_2 = builder.get_object('theme_revealer_2');
-            let theme_revealer = builder.get_object('theme_revealer');
-
-            let detect_theme_label = builder.get_object('detect_theme_label');
-            let theme_label = builder.get_object('theme_label');
 
             if (state) {
                 theme_revealer_2.set_reveal_child(false);
@@ -185,19 +174,14 @@ function getPrefsWidget() {
                 theme_overlay.reorder_overlay(theme_revealer_2, -1);
             }
         } else {
-            let grid4 = builder.get_object('grid4');
-            let theme_source_box = builder.get_object('theme_source_box');
-            let color_btn = builder.get_object('theme_source_box');
-            let detect_theme_label = builder.get_object('detect_theme_label');
-            let theme_label = builder.get_object('theme_label');
             if (settings.get_boolean('detect-user-theme')) {
                 theme_label.set_label(Dictionary['Theme Source']);
-                grid4.remove(color_btn);
-                grid4.add(theme_source_box);
+                grid3.remove(color_btn);
+                grid3.attach(theme_source_box, 1, 1, 1, 1);
             } else {
                 theme_label.set_label(Dictionary['Panel Color']);
-                grid4.remove(theme_source_box);
-                grid.add(color_btn);
+                grid3.remove(theme_source_box);
+                grid3.attach(color_btn, 1, 1, 1, 1);
             }
         }
     }));
@@ -273,4 +257,3 @@ function getPrefsWidget() {
     /* Return main widget. */
     return main_widget;
 }
-
