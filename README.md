@@ -1,5 +1,5 @@
 # Dynamic Panel Transparency
-[![Demo](https://github.com/rockon999/dynamic-panel-transparency/raw/master/media/demo.gif)](https://www.youtube.com/watch?v=P5Eqf65uVhs)
+[![Demo](https://raw.githubusercontent.com/rockon999/dynamic-panel-transparency/master/dynamic-panel-transparency%40rockon999.github.io/media/demo.gif)](https://www.youtube.com/watch?v=P5Eqf65uVhs)
 
 ## Classy transparency for your panel
 This extension *fades* your top panel to nothingness when there are no maximized windows present. Never again will the panel be abruptly darkened!
@@ -22,5 +22,5 @@ Reload your shell using <code>Alt+F2</code> <code>r</code> <code>Enter</code> an
 Report bugs [here](https://github.com/rockon999/dynamic-panel-transparency/issues).
 
 ## License
-Dynamic Panel Transparency is distributed under the terms of the GNU General Public License v2. 
+Dynamic Panel Transparency is distributed under the terms of the GNU General Public License v2.
 See the COPYING and LICENSE files for details.
