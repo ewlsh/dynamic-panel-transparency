@@ -1,4 +1,8 @@
 <schemalist>
+  <enum id='org.gnome.shell.extensions.dynamic-panel-transparency.themeSource'>
+    <value value='0' nick='Panel'/>
+    <value value='1' nick='Dash'/>
+  </enum>
   <schema id="org.gnome.shell.extensions.dynamic-panel-transparency" path="/org/gnome/shell/extensions/dynamic-panel-transparency/">
     <key name="transition-speed" type="i">
       <default>1000</default>
@@ -20,7 +24,7 @@
       <summary>Hide Corners</summary>
       <description>Hides the rounded corners of the panel. (improves fade aesthetic)</description>
     </key>
-     <key name="force-animation" type="b">
+    <key name="force-animation" type="b">
       <default>false</default>
       <summary>Force Animation</summary>
       <description>Overrides 'gtk-enable-animations' on installations where animations are disabled.</description>
@@ -29,6 +33,21 @@
       <default>[0,0,0]</default>
       <summary>Panel Color</summary>
       <description>The color of the panel.</description>
+    </key>
+    <key name="detect-user-theme" type="b">
+      <default>false</default>
+      <summary>Detect the user's theme</summary>
+      <description>Uses the panel or dash to get the user's panel color.</description>
+    </key>
+    <key name="text-shadow" type="b">
+      <default>false</default>
+      <summary>Add shadowing to text and icons.</summary>
+      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
+    </key>
+    <key name="user-theme-source" enum="org.gnome.shell.extensions.dynamic-panel-transparency.themeSource">
+      <default>'Dash'</default>
+      <summary>Source for detecting the user's theme</summary>
+      <description>Object used to get the user's preferred background color.</description>
     </key>
   </schema>
 </schemalist>

@@ -1,13 +1,35 @@
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
+const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
+const Config = imports.misc.config;
+
+const MAJOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[0]);
+const MINOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[1]);
 
 const Gettext = imports.gettext.domain('dynamic-panel-transparency');
 const _ = Gettext.gettext;
+
+const Dictionary = {
+    'Transition Speed': _("Transition Speed"),
+    'Maximum Opacity': _("Maximum Opacity"),
+    'Minimum Opacity': _("Minimum Opacity"),
+    'Panel Color': _("Panel Color"),
+    'Theme Source': _("Theme Source"),
+    'Detect User Theme': _("Detect User Theme"),
+    'Hide Corners': _("Hide Corners"),
+    'Some shell themes already do this.': _("Some shell themes already do this."),
+    'Force Animation': _("Force Animation"),
+    'Overrides \'gtk-enable-animations\'.': _("Overrides 'gtk-enable-animations'."),
+    'Panel': _("Panel"),
+    'Dash': _("Dash"),
+    'default': _("default"),
+    'Add Text Shadow': _("Add Text Shadow")
+}
 
 /* Settings Keys */
 const SETTINGS_HIDE_CORNERS = 'hide-corners';
@@ -25,146 +47,157 @@ const BLUE = 2;
 /* Color Scaling Factor (Byte to Decimal) */
 const SCALE_FACTOR = 255.9999999;
 
-
-
 function init() {
     Convenience.initTranslations();
 }
 
 function buildPrefsWidget() {
-    let widget = new SettingsUI();
+    let widget = getPrefsWidget();
     widget.show_all();
-
     return widget;
 }
 
 /* UI Setup */
-const SettingsUI = new Lang.Class({
-    Name: 'DynamicPanelTransparency.Prefs.SettingsUI',
-    GTypeName: 'SettingsUI',
-    Extends: Gtk.Grid,
+function getPrefsWidget() {
 
-    _init: function(params) {
+    /* Get Settings */
+    let settings = Convenience.getSettings();
+    /* Create a UI Builder */
+    let builder = new Gtk.Builder();
+    /* Setup Translation */
+    builder.set_translation_domain(Me.metadata['gettext-domain']);
+    /* Get UI File */
+    if (MAJOR_VERSION == 3 && MINOR_VERSION >= 18)
+        builder.add_from_file(Me.path + '/ui/prefs.ui');
+    else
+        builder.add_from_file(Me.path + '/ui/prefs-compatibility.ui');
+    /* Main Widget (Grid) */
+    let main_widget = builder.get_object('main');
 
-        this.parent(params);
+    /* Util function for easily setting labels */
+    function setLabel(obj, label) {
+        builder.get_object(obj).set_label(label);
+    }
 
-        this.margin = 24;
+    setLabel('speed_label', '<b>' + Dictionary['Transition Speed'] + '</b>');
 
-        this.row_spacing = 6;
+    /* Transition speed control */
+    let speed_scale = builder.get_object('speed_scale');
+    /* Init value. */
+    speed_scale.adjustment.set_value(settings.get_int(SETTINGS_TRANSITION_SPEED));
+    /* Add default marking. */
+    speed_scale.add_mark(1000, Gtk.PositionType.BOTTOM, Dictionary['default']);
+    /* Add formatting */
+    speed_scale.connect('format-value', Lang.bind(this, function (scale, value) {
+        return value + 'ms';
+    }));
 
-        this.orientation = Gtk.Orientation.VERTICAL;
+    setLabel('maximum_label', '<b>' + Dictionary['Maximum Opacity'] + '</b>');
 
-        this.settings = Convenience.getSettings();
+    /* Maximum opacity control */
+    let maximum_scale = builder.get_object('maximum_scale');
+    /* Init value. */
+    maximum_scale.adjustment.set_value(settings.get_int(SETTINGS_MAXIMIZED_OPACITY));
+    /* Add formatting */
+    maximum_scale.connect('format-value', Lang.bind(this, function (scale, value) {
+        return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
+    }));
 
-        let presentLabel = '<b>' + _("Transition Speed") + '</b>';
-        this.add(new Gtk.Label({
-            label: presentLabel,
-            use_markup: true,
-            halign: Gtk.Align.START
-        }));
+    setLabel('minimum_label', '<b>' + Dictionary['Minimum Opacity'] + '</b>');
 
-        /* control transition speed */
-        let slider = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 5000, 100);
-        slider.adjustment.set_value(this.settings.get_int(SETTINGS_TRANSITION_SPEED));
-        /* show the user where they're at */
-        slider.set_draw_value(true);
-        /* lets add some color */
-        slider.set_has_origin(true);
-        /* make it legible */
-        slider.set_size_request(400, 10);
-        /* add a tick at the default */
-        slider.add_mark(1000, Gtk.PositionType.BOTTOM, _("default"));
-        /* right margin */
-        slider.margin_right = 20;
+    /* Minimum opacity control */
+    let minimum_scale = builder.get_object('minimum_scale');
+    /* Init value. */
+    minimum_scale.adjustment.set_value(settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY));
+    /* Add formatting */
+    minimum_scale.connect('format-value', Lang.bind(this, function (scale, value) {
+        return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
+    }));
 
-        slider.connect('format-value', Lang.bind(this, function(scale, value) {
-            return value + 'ms';
-        }));
-        slider.connect('value-changed', Lang.bind(this, function(range) {
-            this.settings.set_int(SETTINGS_TRANSITION_SPEED, range.get_value());
-        }));
+    setLabel('detect_theme_label', '<b>' + Dictionary['Detect User Theme'] + '</b>');
 
-        this.add(slider);
+    let theme_switch = builder.get_object('theme_switch');
+    theme_switch.set_active(settings.get_boolean('detect-user-theme'));
 
+    let grid3 = builder.get_object('grid3');
+    let theme_source_box = builder.get_object('theme_source_box');
+    let color_btn = builder.get_object('color_btn');
+    let detect_theme_label = builder.get_object('detect_theme_label');
+    let theme_label = builder.get_object('theme_label');
+    let theme_revealer_2 = builder.get_object('theme_revealer_2');
+    let theme_revealer = builder.get_object('theme_revealer');
+    let theme_overlay = builder.get_object('theme_overlay');
 
+    if (MAJOR_VERSION == 3 && MINOR_VERSION >= 18) {
+        theme_overlay.add_overlay(builder.get_object('theme_revealer'));
+        theme_overlay.add_overlay(builder.get_object('theme_revealer_2'));
+        if (settings.get_boolean('detect-user-theme')) {
+            theme_revealer_2.set_reveal_child(false);
+            detect_theme_label.set_sensitive(true);
+            theme_revealer.set_reveal_child(true);
+            theme_label.set_label(Dictionary['Theme Source']);
+            theme_overlay.reorder_overlay(theme_revealer, -1);
+        } else {
+            theme_revealer.set_reveal_child(false);
+            detect_theme_label.set_sensitive(false);
+            theme_revealer_2.set_reveal_child(true);
+            theme_label.set_label(Dictionary['Panel Color']);
+            theme_overlay.reorder_overlay(theme_revealer_2, -1);
+        }
+    } else {
+        if (settings.get_boolean('detect-user-theme')) {
+            theme_label.set_label(Dictionary['Theme Source']);
+            grid3.attach(theme_source_box, 1, 1, 1, 1);
+        } else {
+            theme_label.set_label(Dictionary['Panel Color']);
+            grid3.attach(color_btn, 1, 1, 1, 1);
+        }
+    }
 
-        presentLabel = '<b>' + _("Maximum Opacity") + '</b>';
-        let label = new Gtk.Label({
-            label: presentLabel,
-            use_markup: true,
-            halign: Gtk.Align.START
-        });
-        label.set_size_request(20, -1);
+    builder.get_object('theme_switch').connect('state-set', Lang.bind(this, function (widget, state) {
+        if (MAJOR_VERSION == 3 && MINOR_VERSION >= 18) {
+            theme_overlay.add_overlay(builder.get_object('theme_revealer'));
+            theme_overlay.add_overlay(builder.get_object('theme_revealer_2'));
 
-
-        slider = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 255, 1);
-        slider.adjustment.set_value(this.settings.get_int(SETTINGS_MAXIMIZED_OPACITY));
-        /* show the user where they're at */
-        slider.set_draw_value(true);
-        /* lets add some color */
-        slider.set_has_origin(true);
-        /* make it legible */
-        slider.set_size_request(400, 10);
-
-        slider.connect('value-changed', Lang.bind(this, function(range) {
-            this.settings.set_int(SETTINGS_MAXIMIZED_OPACITY, range.get_value());
-        }));
-        slider.connect('format-value', Lang.bind(this, function(scale, value) {
-            return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
-        }));
-
-        let max_opacity = new Gtk.Box(Gtk.Orientation.HORIZTONAL);
-        label.valign = Gtk.Align.END;
-        label.margin_bottom = 3;
-        max_opacity.pack_start(label, false, false, 0);
-        max_opacity.pack_end(slider, true, true, 20);
-        this.add(max_opacity);
-        presentLabel = '<b>' + _("Minimum Opacity") + '</b>';
-        label = new Gtk.Label({
-            label: presentLabel,
-            use_markup: true,
-            halign: Gtk.Align.START
-        });
-        label.set_size_request(20, -1);
-
-        slider = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 255, 1);
-        slider.adjustment.set_value(this.settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY));
-        /* show the user where they're at */
-        slider.set_draw_value(true);
-        /* lets add some color */
-        slider.set_has_origin(true);
-        /* make it legible */
-        slider.set_size_request(400, 10);
-
-
-        slider.connect('value-changed', Lang.bind(this, function(range) {
-            this.settings.set_int(SETTINGS_UNMAXIMIZED_OPACITY, range.get_value());
-        }));
-        slider.connect('format-value', Lang.bind(this, function(scale, value) {
-            return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
-        }));
-
-        let min_opacity = new Gtk.Box(Gtk.Orientation.HORIZTONAL);
-        label.valign = Gtk.Align.END;
-        min_opacity.margin_bottom = 10;
-        label.margin_bottom = 3;
-        min_opacity.pack_start(label, false, false, 0);
-        min_opacity.pack_end(slider, true, true, 20);
-        this.add(min_opacity);
+            if (state) {
+                theme_revealer_2.set_reveal_child(false);
+                detect_theme_label.set_sensitive(true);
+                theme_revealer.set_reveal_child(true);
+                theme_label.set_label(Dictionary['Theme Source']);
+                theme_overlay.reorder_overlay(theme_revealer, -1);
+            } else {
+                theme_revealer.set_reveal_child(false);
+                detect_theme_label.set_sensitive(false);
+                theme_revealer_2.set_reveal_child(true);
+                theme_label.set_label(Dictionary['Panel Color']);
+                theme_overlay.reorder_overlay(theme_revealer_2, -1);
+            }
+        } else {
+            if (settings.get_boolean('detect-user-theme')) {
+                theme_label.set_label(Dictionary['Theme Source']);
+                grid3.remove(color_btn);
+                grid3.attach(theme_source_box, 1, 1, 1, 1);
+            } else {
+                theme_label.set_label(Dictionary['Panel Color']);
+                grid3.remove(theme_source_box);
+                grid3.attach(color_btn, 1, 1, 1, 1);
+            }
+        }
+    }));
 
 
-        presentLabel = '<b>' + _("Panel Color") + '</b>';
-        this.add(new Gtk.Label({
-            label: presentLabel,
-            use_markup: true,
-            halign: Gtk.Align.START
-        }));
+    let theme_source_box = builder.get_object('theme_source_box');
+    theme_source_box.append_text(Dictionary['Panel']);
+    theme_source_box.append_text(Dictionary['Dash']);
+    theme_source_box.set_active(settings.get_enum('user-theme-source'));
+    theme_source_box.connect('changed', Lang.bind(this, function (widget) {
+        settings.set_enum('user-theme-source', widget.get_active());
+    }));
 
-        let color_btn = new Gtk.ColorButton();
-        color_btn.halign = Gtk.Align.START;
-        color_btn.set_use_alpha(false);
+    let color_btn = builder.get_object('color_btn');
 
-        let panel_color = this.settings.get_value('panel-color').deep_unpack();
+    /* Convert & scale color. */ {
+        let panel_color = settings.get_value('panel-color').deep_unpack();
 
         let scaled_red = panel_color[RED];
         scaled_red = scaled_red / SCALE_FACTOR;
@@ -183,44 +216,43 @@ const SettingsUI = new Lang.Class({
         });
 
         color_btn.set_rgba(scaled_color);
+    }
 
-        color_btn.connect('color-set', Lang.bind(this, function(color) {
-            let rgba = color.rgba.to_string();
-            let parsed_red = parseInt(rgba.split('(')[1].split(')')[0].split(',')[RED], 10);
-            let parsed_green = parseInt(rgba.split('(')[1].split(')')[0].split(',')[GREEN], 10);
-            let parsed_blue = parseInt(rgba.split('(')[1].split(')')[0].split(',')[BLUE], 10);
+    color_btn.connect('color-set', Lang.bind(this, function (color) {
+        let rgba = color.rgba.to_string();
+        let parsed_red = parseInt(rgba.split('(')[1].split(')')[0].split(',')[RED], 10);
+        let parsed_green = parseInt(rgba.split('(')[1].split(')')[0].split(',')[GREEN], 10);
+        let parsed_blue = parseInt(rgba.split('(')[1].split(')')[0].split(',')[BLUE], 10);
 
-            let rgb = [];
-            rgb[RED] = parsed_red;
-            rgb[GREEN] = parsed_green;
-            rgb[BLUE] = parsed_blue;
-            this.settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
-        }));
+        let rgb = [];
+        rgb[RED] = parsed_red;
+        rgb[GREEN] = parsed_green;
+        rgb[BLUE] = parsed_blue;
+        settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
+    }));
 
-        this.add(color_btn);
 
-        /* control corners */
-        let check = new Gtk.CheckButton({
-            label: _("Hide Corners"),
-            tooltip_text: _("Some shell themes already do this."),
-            margin_top: 6
-        });
-        check.set_active(this.settings.get_boolean(SETTINGS_HIDE_CORNERS));
-        check.connect('toggled', Lang.bind(this, function(value) {
-            this.settings.set_boolean(SETTINGS_HIDE_CORNERS, value.get_active());
-        }));
-        this.add(check);
+    let hide_corners = builder.get_object('hide_corners_check');
+    hide_corners.set_active(settings.get_boolean(SETTINGS_HIDE_CORNERS));
+    hide_corners.set_label(Dictionary['Hide Corners']);
 
-        /* force animation */
-        check = new Gtk.CheckButton({
-            label: _("Force Animation"),
-            tooltip_text:  _("Overrides 'gtk-enable-animations'."),
-            margin_top: 6
-        });
-        check.set_active(this.settings.get_boolean(SETTINGS_FORCE_ANIMATION));
-        check.connect('toggled', Lang.bind(this, function(value) {
-            this.settings.set_boolean(SETTINGS_FORCE_ANIMATION, value.get_active());
-        }));
-        this.add(check);
-    },
-});
+    let force_transition = builder.get_object('force_transition_check');
+    force_transition.set_active(settings.get_boolean(SETTINGS_FORCE_ANIMATION));
+    force_transition.set_label(Dictionary['Force Animation']);
+
+    let text_shadow = builder.get_object('text_shadow_check');
+    text_shadow.set_active(settings.get_boolean('text-shadow'));
+    text_shadow.set_label(Dictionary['Add Text Shadow']);
+
+    /* Bind settings. */
+    settings.bind(SETTINGS_TRANSITION_SPEED, speed_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind('detect-user-theme', theme_switch, 'active', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind(SETTINGS_UNMAXIMIZED_OPACITY, minimum_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind(SETTINGS_HIDE_CORNERS, hide_corners, 'active', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind(SETTINGS_FORCE_ANIMATION, force_transition, 'active', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind('text-shadow', text_shadow, 'active', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind(SETTINGS_MAXIMIZED_OPACITY, maximum_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
+
+    /* Return main widget. */
+    return main_widget;
+}

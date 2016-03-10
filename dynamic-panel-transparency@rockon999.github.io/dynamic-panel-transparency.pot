@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-26 12:19-0600\n"
+"POT-Creation-Date: 2016-03-06 22:04-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,38 +17,58 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: prefs.js:62
+#: prefs.js:18
 msgid "Transition Speed"
 msgstr ""
 
-#: prefs.js:79
-msgid "default"
-msgstr ""
-
-#: prefs.js:95
+#: prefs.js:19
 msgid "Maximum Opacity"
 msgstr ""
 
-#: prefs.js:126
+#: prefs.js:20
 msgid "Minimum Opacity"
 msgstr ""
 
-#: prefs.js:160
+#: prefs.js:21
 msgid "Panel Color"
 msgstr ""
 
-#: prefs.js:208
+#: prefs.js:22
+msgid "Theme Source"
+msgstr ""
+
+#: prefs.js:23
+msgid "Detect User Theme"
+msgstr ""
+
+#: prefs.js:24
 msgid "Hide Corners"
 msgstr ""
 
-#: prefs.js:209
+#: prefs.js:25
 msgid "Some shell themes already do this."
 msgstr ""
 
-#: prefs.js:220
+#: prefs.js:26
 msgid "Force Animation"
 msgstr ""
 
-#: prefs.js:221
+#: prefs.js:27
 msgid "Overrides 'gtk-enable-animations'."
+msgstr ""
+
+#: prefs.js:28
+msgid "Panel"
+msgstr ""
+
+#: prefs.js:29
+msgid "Dash"
+msgstr ""
+
+#: prefs.js:30
+msgid "default"
+msgstr ""
+
+#: prefs.js:31
+msgid "Add Text Shadow"
 msgstr ""
