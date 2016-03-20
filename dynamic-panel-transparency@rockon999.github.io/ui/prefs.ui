@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.19.0 -->
 <interface>
-  <requires lib="gtk+" version="3.18"/>
+  <requires lib="gtk+" version="3.14"/>
   <object class="GtkAdjustment" id="maximum_opacity_adjustment">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
