@@ -1,0 +1,76 @@
+# Dynamic Panel Transparency Translatable Strings.
+# Copyright (C) 2016
+# See the LICENSE file.
+# rockon999, 2016.
+# Fábio Nogueira <fnogueira@gnome.org>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-03-07 11:11-0300\n"
+"PO-Revision-Date: 2016-03-07 11:13-0300\n"
+"Last-Translator: Fábio Nogueira <fnogueira@gnome.org>\n"
+"Language-Team: rockon999 <>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: prefs.js:18
+msgid "Transition Speed"
+msgstr "Velocidade de transição"
+
+#: prefs.js:19
+msgid "Maximum Opacity"
+msgstr "Opacidade máxima"
+
+#: prefs.js:20
+msgid "Minimum Opacity"
+msgstr "Opacidade mínima"
+
+#: prefs.js:21
+msgid "Panel Color"
+msgstr "Esquema de cores"
+
+#: prefs.js:22
+msgid "Theme Source"
+msgstr "Origem do tema"
+
+#: prefs.js:23
+msgid "Detect User Theme"
+msgstr "Tema padrão do usuário"
+
+#: prefs.js:24
+msgid "Hide Corners"
+msgstr "Ocultar os cantos"
+
+#: prefs.js:25
+msgid "Some shell themes already do this."
+msgstr "Alguns temas do shell já fazem isto."
+
+#: prefs.js:26
+msgid "Force Animation"
+msgstr "Forçar animação"
+
+#: prefs.js:27
+msgid "Overrides 'gtk-enable-animations'."
+msgstr "Substitui o 'gtk-enable-animations'."
+
+#: prefs.js:28
+msgid "Panel"
+msgstr "Painel"
+
+#: prefs.js:29
+msgid "Dash"
+msgstr "Dash"
+
+#: prefs.js:30
+msgid "default"
+msgstr "padrão"
+
+#: prefs.js:31
+msgid "Add Text Shadow"
+msgstr "Adicionar sombras ao texto"
