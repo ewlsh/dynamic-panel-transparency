@@ -1,6 +1,21 @@
+/* Global Utility Variables */
 const MAXIMIZED_WIDTH_BUFFER = 5;
 
-/* Utilities */
+/* Gnome Versioning */
+const MAJOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[0]);
+const MINOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[1]);
+
+/* Utility Variable Access */
+
+function get_maximized_width_buffer(){
+    return MAXIMIZED_WIDTH_BUFFER;
+}
+
+function get_shell_version(){
+    return {major: MAJOR_VERSION, minor: MINOR_VERSION};
+}
+
+/* Utility Functions */
 
 function validate(a, b) {
     return (is_undef(a) === false ? a : b);
