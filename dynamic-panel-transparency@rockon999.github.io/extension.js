@@ -15,10 +15,6 @@ const Clutter = imports.gi.Clutter;
 /* Color Scaling Factor (Byte to Decimal) */
 const SCALE_FACTOR = 255.9999999;
 
-/* Gnome Versioning */
-const MAJOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[0]);
-const MINOR_VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[1]);
-
 /* Initialize */
 function init() {
     /* Panel Status */
@@ -113,8 +109,10 @@ function enable() {
     Transitions.init();
     Theming.init();
 
+    let version = Util.get_shell_version();
+
     /* Add support for older Gnome Shell versions (most likely down to 3.12) */
-    if (MAJOR_VERSION == 3 && MINOR_VERSION < 17) {
+    if(version.major == 3 && version.minor < 17) {
         this._maximizeSig = global.window_manager.connect('maximize', Lang.bind(this, this._windowUpdated));
         this._unmaximizeSig = global.window_manager.connect('unmaximize', Lang.bind(this, this._windowUpdated));
     } else {
@@ -145,11 +143,13 @@ function enable() {
         }
     }));
     /* No unminimize signal on 3.14 (TBD: If this harms the extension) */
-    if (MAJOR_VERSION == 3 && MINOR_VERSION > 14)
+    if (version.major == 3 && version.minor > 14) {
         this._windowUnminimizeSig = global.window_manager.connect('unminimize', Lang.bind(this, this._windowUpdated));
+    }
     /* Check to see if the screenShield exists (doesn't if user can't lock) */
-    if (Main.screenShield !== null)
+    if (Main.screenShield !== null) {
         this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, this._screenShieldActivated));
+    }
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdated));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
@@ -159,15 +159,13 @@ function enable() {
         });
     }));
 
-
-    /* Register Proxy Property With Tweener */
-
     /* Get Rid of Panel's CSS Background */
     Theming.strip_panel_css();
     /* Initial Coloring */
     Theming.set_panel_color({
         opacity: 0.0
     });
+
     /* Initial Coloring */
     Transitions.hide_corners({
         opacity: 0.0
@@ -178,19 +176,24 @@ function enable() {
       Theming.add_text_shadow();
     }
 
+    //Theming.set_text_color();
+
     /* Simulate Window Changes */
     _windowUpdated({
         force: true
     });
+
 }
 
 
 function disable() {
     /* Disconnect & Null Signals */
-    if (!is_undef(Main.screenShield))
+    if (!is_undef(Main.screenShield)) {
         Main.screenShield.disconnect(this._lockScreenSig);
-    if (!is_undef(this._windowUnminimizeSig))
+    }
+    if (!is_undef(this._windowUnminimizeSig)) {
         global.window_manager.disconnect(this._windowUnminimizeSig);
+    }
     Main.overview.disconnect(this._overviewShowingSig);
     Main.overview.disconnect(this._overviewHiddenSig);
     global.window_manager.disconnect(this._windowMapSig);
@@ -226,7 +229,7 @@ function disable() {
 
     /* Remove text shadowing */
     if(Theming.has_text_shadow()) {
-      Theming.add_text_shadow();
+      Theming.remove_text_shadow();
     }
 
     /* Remove Our Corner Coloring */
@@ -244,7 +247,7 @@ function disable() {
 }
 
 
-function get_panel_status(){
+function get_panel_status() {
     return this.status;
 }
 
