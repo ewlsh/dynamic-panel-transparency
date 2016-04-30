@@ -49,5 +49,6 @@
       <summary>Source for detecting the user's theme</summary>
       <description>Object used to get the user's preferred background color.</description>
     </key>
+    <key name="app-settings" type="s(iiiiibb)">
   </schema>
 </schemalist>
