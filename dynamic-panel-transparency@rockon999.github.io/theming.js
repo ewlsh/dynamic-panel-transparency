@@ -20,27 +20,21 @@ function init() {}
 
 function cleanup() {}
 
-function add_text_shadow(){
+function add_text_shadow() {
   Panel.actor.add_style_class_name('panel-text-shadow');
   Panel.actor.add_style_class_name('panel-icon-shadow');
+  Panel.actor.add_style_class_name('panel-arrow-shadow');
 }
 
-function has_text_shadow(){
-  return Panel.actor.has_style_class_name('panel-text-shadow') && Panel.actor.has_style_class_name('panel-icon-shadow');
+function has_text_shadow() {
+  return (Panel.actor.has_style_class_name('panel-text-shadow') || Panel.actor.has_style_class_name('panel-icon-shadow') || Panel.actor.has_style_class_name('panel-arrow-shadow'));
 }
 
-function remove_text_shadow(){
+function remove_text_shadow() {
   Panel.actor.remove_style_class_name('panel-icon-shadow');
   Panel.actor.remove_style_class_name('panel-text-shadow');
+  Panel.actor.remove_style_class_name('panel-arrow-shadow');
 }
-
-function set_text_color(params = {}){
-  let text_color = get_text_color();
-  Panel._leftBox.set_style("color: rgba(32,45,32,1.0);");
-  Panel._rightBox.set_style("color: rgba(32,45,32,1.0);");
-  Panel._centerBox.set_style("color: rgba(32,45,32,1.0);");
-}
-
 
 function set_panel_color(params = {}) {
     let panel_color = get_background_color();
