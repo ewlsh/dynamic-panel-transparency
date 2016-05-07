@@ -16,24 +16,72 @@ const GREEN = 1;
 const BLUE = 2;
 const SCALE_FACTOR = 255.9999999;
 
-function init() {}
+function init() { }
 
-function cleanup() {}
+function cleanup() { }
 
 function add_text_shadow() {
-  Panel.actor.add_style_class_name('panel-text-shadow');
-  Panel.actor.add_style_class_name('panel-icon-shadow');
-  Panel.actor.add_style_class_name('panel-arrow-shadow');
+    Panel.actor.add_style_class_name('panel-text-shadow');
+    Panel.actor.add_style_class_name('panel-icon-shadow');
+    Panel.actor.add_style_class_name('panel-arrow-shadow');
 }
 
 function has_text_shadow() {
-  return (Panel.actor.has_style_class_name('panel-text-shadow') || Panel.actor.has_style_class_name('panel-icon-shadow') || Panel.actor.has_style_class_name('panel-arrow-shadow'));
+    return (Panel.actor.has_style_class_name('panel-text-shadow') || Panel.actor.has_style_class_name('panel-icon-shadow') || Panel.actor.has_style_class_name('panel-arrow-shadow'));
 }
 
 function remove_text_shadow() {
-  Panel.actor.remove_style_class_name('panel-icon-shadow');
-  Panel.actor.remove_style_class_name('panel-text-shadow');
-  Panel.actor.remove_style_class_name('panel-arrow-shadow');
+    Panel.actor.remove_style_class_name('panel-icon-shadow');
+    Panel.actor.remove_style_class_name('panel-text-shadow');
+    Panel.actor.remove_style_class_name('panel-arrow-shadow');
+}
+
+function set_text_color(color) {
+    if (color == 'Default'){
+       remove_text_color();
+    }  else if(color == 'Light'){
+       remove_text_color();
+       Panel.actor.add_style_class_name('panel-text-light');
+       Panel.actor.add_style_class_name('panel-icon-light');
+       Panel.actor.add_style_class_name('panel-arrow-light');
+    } else if (color == 'Dark'){
+       remove_text_color();
+       Panel.actor.add_style_class_name('panel-text-dark');
+       Panel.actor.add_style_class_name('panel-icon-dark');
+       Panel.actor.add_style_class_name('panel-arrow-dark');
+    } else if (color == 'Darker'){
+       remove_text_color();
+       Panel.actor.add_style_class_name('panel-text-darker');
+       Panel.actor.add_style_class_name('panel-icon-darker');
+       Panel.actor.add_style_class_name('panel-arrow-darker');
+    }
+}
+
+function get_current_text_color() {
+    if (Panel.actor.has_style_class_name('panel-text-light') || Panel.actor.has_style_class_name('panel-icon-light') || Panel.actor.has_style_class_name('panel-arrow-light')) {
+        return 'Light';
+    } else if (Panel.actor.has_style_class_name('panel-text-dark') || Panel.actor.has_style_class_name('panel-icon-dark') || Panel.actor.has_style_class_name('panel-arrow-dark')) {
+        return 'Dark';
+    } else if (Panel.actor.has_style_class_name('panel-text-darker') || Panel.actor.has_style_class_name('panel-icon-darker') || Panel.actor.has_style_class_name('panel-arrow-darker')) {
+        return 'Darker';
+    } else {
+        return 'Default';
+    }
+}
+
+function remove_text_color() {
+    let styles = ['panel-icon', 'panel-text', 'panel-arrow'];
+    let colors = ['light', 'dark', 'darker'];
+
+    for (style of styles){
+        for (color of colors){
+            Panel.actor.remove_style_class_name(style + '-' + color);
+        }
+    }
+
+    //Panel.actor.remove_style_class_name('panel-icon-shadow');
+    //Panel.actor.remove_style_class_name('panel-text-shadow');
+    //Panel.actor.remove_style_class_name('panel-arrow-shadow');
 }
 
 function set_panel_color(params = {}) {
@@ -67,7 +115,7 @@ function clear_corner_color() {
 }
 
 
-function get_user_background_color(src){
+function get_user_background_color(src) {
     if (Util.is_undef(src))
         return Settings.get_panel_color();
     let user_theme = src.get_theme_node();
@@ -75,8 +123,8 @@ function get_user_background_color(src){
     let background_color = user_theme.get_background_color();
     if (background_color === null)
         background_color = user_theme.lookup_color('background-color', true);
-    if(Util.is_undef(background_color))
-      return Settings.get_panel_color();
+    if (Util.is_undef(background_color))
+        return Settings.get_panel_color();
     return [
         background_color.red,
         background_color.green,

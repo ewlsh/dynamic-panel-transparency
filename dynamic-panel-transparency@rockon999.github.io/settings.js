@@ -17,6 +17,7 @@ const GLib = imports.gi.GLib;
 
 function init() {
     this.settings = Convenience.getSettings();
+    this.load_app_settings();
     this.keys = [];
     this.defaults = {};
     this.settingsBoundIds = [];
@@ -44,12 +45,54 @@ function add(params) {
         key: params.settings_key,
         name: params.name,
         type: params.type,
-        getter: null
+        getter: null,
+        handler: null
     };
     if (!Util.is_undef(params.getter))
         key.getter = params.getter;
+    if (!Util.is_undef(params.handler))
+        key.handler = params.handler;
     this.keys[this.keys.length] = key;
     this.defaults[params.name] = params.default;
+}
+
+function load_app_settings() {
+    this.app_settings = {};
+    let apps = this.settings.get_value('app-overrides').deep_unpack();
+    for (app of apps) {
+
+       this.app_settings[app] = new SettingsManager();
+    }
+
+
+}
+
+function check_app_settings() {
+    return (app_settings.length > 0);
+}
+
+function update_app_settings(update) {
+    let apps = this.settings.get_value('app-settings').deep_unpack();
+    for (app in apps) {
+        if (app[0] == update) {
+            // log(Object.getOwnPropertyNames(app));
+            let app_name = app[0];
+            for (setting of app[1]) {
+                if (Util.is_undef(this.app_settings[app_name]))
+                    this.app_settings[app_name] = {};
+                let setting_name = setting[0];
+                let setting_value = setting[1];
+                let type = setting[2];
+                let variant = GLib.Variant.parse(setting_value);
+                if (variant.get_type().is_array()) {
+                    this.app_settings[app_name][setting_name] = variant.deep_unpack();
+                } else {
+                    this.app_settings[app_name][setting_name] = variant.unpack();
+                }
+
+            }
+        }
+    }
 }
 
 function bind() {
@@ -60,12 +103,24 @@ function bind() {
         let setting = keys[i];
 
         /* Watch for changes */
-        this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, Lang.bind(this, function() {
+        this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, Lang.bind(this, function () {
             this.settings_manager.update(setting);
         })));
 
+        if (!Util.is_undef(setting.handler)) {
+            this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, setting.handler));
+        }
+
         /* Create getter */
-        let getter = function() {
+        let getter = function () {
+            if (this.check_app_settings()) {
+                let setting_value = this.app_settings[app_name][setting.name];
+                if (!Util.is_undef(this.app_settings[app_name]) && !Util.is_undef(setting_value)) {
+                    return setting_value;
+                }
+            }
+
+
             if (!Util.is_undef(this.settings_manager) && !Util.is_undef(this.settings_manager[setting.name])) {
                 return this.settings_manager[setting.name];
             } else {
@@ -91,7 +146,7 @@ function unbind() {
 /* Basic class to hold settings values */
 const SettingsManager = new Lang.Class({
     Name: 'DynamicPanelTransparency.SettingsManager',
-    _init: function(settings, params) {
+    _init: function (settings, params) {
         this.values = [];
         this.settings = settings;
         for (let i = 0; i < params.length; ++i) {
@@ -107,14 +162,22 @@ const SettingsManager = new Lang.Class({
             }
         }
     },
-    update: function(setting) {
+    update: function (setting) {
         if (this.settings.list_keys().indexOf(setting.key) == -1)
             return;
+
         let variant = GLib.VariantType.new(setting.type);
+
         if (variant.is_array()) {
             this[setting.name] = this.settings.get_value(setting.key).deep_unpack();
         } else {
             this[setting.name] = this.settings.get_value(setting.key).unpack();
         }
+
+    },
+    new_subset: function (){
+        // This way any values not defined in the subset mirror the current settings.
+       return Object.create(this);
+
     }
 });

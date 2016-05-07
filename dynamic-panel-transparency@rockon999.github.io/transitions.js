@@ -115,6 +115,7 @@ function fade_out(params = null) {
             opacity: 0
         });
     }
+
     Theming.set_panel_color();
     if (time <= 0 && !Main.overview._shown) {
         fade_out({

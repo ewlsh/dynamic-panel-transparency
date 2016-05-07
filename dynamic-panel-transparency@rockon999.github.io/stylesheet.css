@@ -10,18 +10,27 @@
 	box-shadow: none;
 }
 
+.panel-text-light .panel-button { color: white; }
+.panel-icon-light .system-status-icon { color: white; }
+.panel-darker-light .popup-menu-arrow { color: white; }
+
+.panel-text-dark .panel-button { color: gray; }
+.panel-icon-dark .system-status-icon { color: gray; }
+.panel-arrow-dark .popup-menu-arrow { color: gray; }
+
+.panel-text-darker .panel-button { color: black; }
+.panel-icon-darker .system-status-icon { color: black; }
+.panel-arrow-darker .popup-menu-arrow { color: black; }
+
 .panel-text-shadow .panel-button {
-    color: white;
 	text-shadow: rgba(0,0,0,1.0) 0px 3px 5px;
 }
 
 .panel-icon-shadow .system-status-icon {
-    color: white;
 	icon-shadow: rgba(0,0,0,0.5) 0px 2px 5px;
 }
 
 .panel-arrow-shadow .popup-menu-arrow {
-    color: white;
 	icon-shadow: rgba(0,0,0,0.5) 0px 2px 5px;
 }
 
