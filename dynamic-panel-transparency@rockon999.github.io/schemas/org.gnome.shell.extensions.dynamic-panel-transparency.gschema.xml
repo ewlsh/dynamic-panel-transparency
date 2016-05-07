@@ -3,6 +3,12 @@
     <value value='0' nick='Panel'/>
     <value value='1' nick='Dash'/>
   </enum>
+  <enum id='org.gnome.shell.extensions.dynamic-shell-transparency.textColor'>
+    <value value='0' nick='Default'/>
+    <value value='1' nick='Light'/>
+    <value value='2' nick='Dark'/>
+    <value value='3' nick='Darker'/>
+  </enum>
   <schema id="org.gnome.shell.extensions.dynamic-panel-transparency" path="/org/gnome/shell/extensions/dynamic-panel-transparency/">
     <key name="transition-speed" type="i">
       <default>1000</default>
@@ -44,11 +50,20 @@
       <summary>Add shadowing to text and icons.</summary>
       <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
     </key>
+    <key name="app-settings" type="a(sa(ss))">
+      <default>[('example',[('example-setting', 'blue')])]</default>
+      <summary>Store different settings for each app.</summary>
+      <description>Stores different settings for individual apps..</description>
+    </key>
     <key name="user-theme-source" enum="org.gnome.shell.extensions.dynamic-panel-transparency.themeSource">
       <default>'Dash'</default>
       <summary>Source for detecting the user's theme</summary>
       <description>Object used to get the user's preferred background color.</description>
     </key>
-    <key name="app-settings" type="s(iiiiibb)">
+    <key name="panel-text-color" enum="org.gnome.shell.extensions.dynamic-shell-transparency.textColor">
+      <default>'Default'</default>
+      <summary>What color the panel text should be.</summary>
+      <description>Used to determine what color the panel text should be.</description>
+    </key>
   </schema>
 </schemalist>

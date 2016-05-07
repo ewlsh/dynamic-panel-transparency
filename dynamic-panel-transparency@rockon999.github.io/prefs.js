@@ -25,7 +25,12 @@ const Dictionary = {
     'Panel': _("Panel"),
     'Dash': _("Dash"),
     'default': _("default"),
-    'Add Text Shadow': _("Add Text Shadow")
+    'Add Text Shadow': _("Add Text Shadow"),
+    'Text Color': _("Text Color"),
+    'Default': _("Default"),
+    'Light': _("Light"),
+    'Dark': _("Dark"),
+    'Darker': _("Darker")
 }
 
 /* Settings Keys */
@@ -37,6 +42,8 @@ const SETTINGS_FORCE_ANIMATION = 'force-animation';
 const SETTINGS_UNMAXIMIZED_OPACITY = 'unmaximized-opacity';
 const SETTINGS_MAXIMIZED_OPACITY = 'maximized-opacity';
 const SETTINGS_PANEL_COLOR = 'panel-color';
+const SETTINGS_TEXT_COLOR = 'panel-text-color';
+const SETTINGS_USER_THEME_SOURCE = 'user-theme-source';
 
 /* Color Array Indices */
 const RED = 0;
@@ -115,68 +122,77 @@ function getPrefsWidget() {
     let theme_switch = builder.get_object('theme_switch');
     theme_switch.set_active(settings.get_boolean(SETTINGS_DETECT_THEME));
 
-    let theme_source_box = builder.get_object('theme_source_box');
-    let color_btn = builder.get_object('color_btn');
     let detect_theme_label = builder.get_object('detect_theme_label');
+    let theme_source_box = builder.get_object('theme_source_box');
     let theme_label = builder.get_object('theme_label');
     let theme_stack = builder.get_object('theme_stack');
+    let color_btn = builder.get_object('color_btn');
+
+    if (settings.get_boolean(SETTINGS_DETECT_THEME)) {
+        detect_theme_label.set_sensitive(true);
+        theme_label.set_label(Dictionary['Theme Source']);
+        theme_stack.set_visible_child(theme_source_box);
+    } else {
+        detect_theme_label.set_sensitive(false);
+        theme_label.set_label(Dictionary['Panel Color']);
+        theme_stack.set_visible_child(color_btn);
+    }
 
 
-        if (settings.get_boolean(SETTINGS_DETECT_THEME)) {
+    builder.get_object('theme_switch').connect('state-set', Lang.bind(this, function (widget, state) {
+        if (state) {
             detect_theme_label.set_sensitive(true);
             theme_label.set_label(Dictionary['Theme Source']);
             theme_stack.set_visible_child(theme_source_box);
         } else {
             detect_theme_label.set_sensitive(false);
             theme_label.set_label(Dictionary['Panel Color']);
-           theme_stack.set_visible_child(color_btn);
+            theme_stack.set_visible_child(color_btn);
         }
-
-
-    builder.get_object('theme_switch').connect('state-set', Lang.bind(this, function (widget, state) {
-            if (state){
-                detect_theme_label.set_sensitive(true);
-                theme_label.set_label(Dictionary['Theme Source']);
-                theme_stack.set_visible_child(theme_source_box);
-            } else {
-                detect_theme_label.set_sensitive(false);
-                theme_label.set_label(Dictionary['Panel Color']);
-                theme_stack.set_visible_child(color_btn);
-            }
     }));
 
-
-    let theme_source_box = builder.get_object('theme_source_box');
     theme_source_box.append_text(Dictionary['Panel']);
     theme_source_box.append_text(Dictionary['Dash']);
-    theme_source_box.set_active(settings.get_enum('user-theme-source'));
+    theme_source_box.set_active(settings.get_enum(SETTINGS_USER_THEME_SOURCE));
     theme_source_box.connect('changed', Lang.bind(this, function (widget) {
-        settings.set_enum('user-theme-source', widget.get_active());
+        settings.set_enum(SETTINGS_USER_THEME_SOURCE, widget.get_active());
     }));
 
-    let color_btn = builder.get_object('color_btn');
+    setLabel('text_color_label', Dictionary['Text Color']);
 
-    /* Convert & scale color. */ {
-        let panel_color = settings.get_value('panel-color').deep_unpack();
+    let text_color_box = builder.get_object('text_color_box');
+    text_color_box.append_text(Dictionary['Default']);
+    text_color_box.append_text(Dictionary['Light']);
+    text_color_box.append_text(Dictionary['Dark']);
+    text_color_box.append_text(Dictionary['Darker']);
+    text_color_box.set_active(settings.get_enum(SETTINGS_TEXT_COLOR));
+    text_color_box.connect('changed', Lang.bind(this, function (widget) {
+        settings.set_enum(SETTINGS_TEXT_COLOR, widget.get_active());
+    }));
 
-        let scaled_red = panel_color[RED];
-        scaled_red = scaled_red / SCALE_FACTOR;
+    /* Convert & scale color. */
+    let panel_color = settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack();
 
-        let scaled_blue = panel_color[BLUE];
-        scaled_blue = scaled_blue / SCALE_FACTOR;
+    let scaled_red = panel_color[RED];
+    scaled_red = scaled_red / SCALE_FACTOR;
 
-        let scaled_green = panel_color[GREEN];
-        scaled_green = scaled_green / SCALE_FACTOR;
+    let scaled_blue = panel_color[BLUE];
+    scaled_blue = scaled_blue / SCALE_FACTOR;
 
-        let scaled_color = new Gdk.RGBA({
-            red: scaled_red,
-            green: scaled_green,
-            blue: scaled_blue,
-            alpha: 1.0
-        });
+    let scaled_green = panel_color[GREEN];
+    scaled_green = scaled_green / SCALE_FACTOR;
 
-        color_btn.set_rgba(scaled_color);
-    }
+    let scaled_color = new Gdk.RGBA({
+        red: scaled_red,
+        green: scaled_green,
+        blue: scaled_blue,
+        alpha: 1.0
+    });
+
+    color_btn.set_rgba(scaled_color);
+
+
+
 
     color_btn.connect('color-set', Lang.bind(this, function (color) {
         let rgba = color.rgba.to_string();

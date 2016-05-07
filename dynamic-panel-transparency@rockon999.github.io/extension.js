@@ -19,6 +19,7 @@ const SCALE_FACTOR = 255.9999999;
 function init() {
     /* Panel Status */
     this.status = null;
+    this.maximized_window = null;
     /* Signal IDs */
     this._lockScreenSig = null;
     this._lockScreenShownSig = null;
@@ -43,7 +44,12 @@ function enable() {
         settings_key: 'hide-corners',
         name: 'hide_corners',
         type: 'b',
-        value: true
+        value: true,
+        handler: Lang.bind(this, function () {
+            _windowUpdated({
+                force: true
+            });
+        })
     });
     Settings.add({
         settings_key: 'transition-speed',
@@ -62,20 +68,33 @@ function enable() {
         name: 'unmaximized_opacity',
         type: 'i',
         value: 0,
-        getter: 'get_minimum_opacity'
+        getter: 'get_minimum_opacity',
+        handler: Lang.bind(this, function () {
+            _windowUpdated({
+                force: true
+            });
+        })
     });
     Settings.add({
         settings_key: 'maximized-opacity',
         name: 'maximized_opacity',
         type: 'i',
         value: 255,
-        getter: 'get_maximum_opacity'
+        getter: 'get_maximum_opacity',
+        handler: Lang.bind(this, function () {
+            _windowUpdated({
+                force: true
+            });
+        })
     });
     Settings.add({
         settings_key: 'panel-color',
         name: 'panel_color',
         type: 'ai',
-        value: [0, 0, 0]
+        value: [0, 0, 0],
+        handler: Lang.bind(this, function () {
+            Theming.set_panel_color();
+        })
     });
     Settings.add({
         settings_key: 'window-touching',
@@ -94,14 +113,39 @@ function enable() {
         settings_key: 'user-theme-source',
         name: 'user_theme_source',
         type: 's',
-        value: 'Dash'
+        value: 'Dash',
+        handler: Lang.bind(this, function () {
+            Theming.set_panel_color();
+        })
     });
     Settings.add({
         settings_key: 'text-shadow',
         name: 'text_shadow',
         type: 'b',
         value: false,
-        getter: 'add_text_shadow'
+        getter: 'add_text_shadow',
+        handler: Lang.bind(this, function () {
+            /* Fix text shadowing if need exists */
+            /* TODO: Better place to check this? */
+            if (Settings.add_text_shadow() && !Theming.has_text_shadow()) {
+                Theming.add_text_shadow();
+            } else if (!Settings.add_text_shadow() && Theming.has_text_shadow()) {
+                Theming.remove_text_shadow();
+            }
+        })
+    });
+    Settings.add({
+        settings_key: 'panel-text-color',
+        name: 'text_color',
+        type: 's',
+        value: 'Default',
+        handler: Lang.bind(this, function () {
+            log(Settings.get_text_color());
+            log(Theming.get_current_text_color());
+            if (Settings.get_text_color() != Theming.get_current_text_color()) {
+                Theming.set_text_color(Settings.get_text_color());
+            }
+        })
     });
     Settings.bind();
 
@@ -112,7 +156,7 @@ function enable() {
     let version = Util.get_shell_version();
 
     /* Add support for older Gnome Shell versions (most likely down to 3.12) */
-    if(version.major == 3 && version.minor < 17) {
+    if (version.major == 3 && version.minor < 17) {
         this._maximizeSig = global.window_manager.connect('maximize', Lang.bind(this, this._windowUpdated));
         this._unmaximizeSig = global.window_manager.connect('unmaximize', Lang.bind(this, this._windowUpdated));
     } else {
@@ -130,10 +174,10 @@ function enable() {
      * unminimize: occurs as the window is unminimized
      * destroy: occurs as the window is destroyed
      */
-    this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, function() {
+    this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, function () {
         _windowUpdated();
     }));
-    this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function() {
+    this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function () {
         if (!status.is_transparent() && !status.is_blank()) {
             Transitions.blank_fade_out();
         } else if (status.is_transparent() && !status.is_blank()) {
@@ -153,7 +197,7 @@ function enable() {
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdated));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
-    this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, function(wm, window_actor) {
+    this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, function (wm, window_actor) {
         this._windowUpdated({
             excluded_window: window_actor.get_meta_window()
         });
@@ -172,11 +216,13 @@ function enable() {
     });
 
     /* Add Text Shadowing */
-    if(Settings.add_text_shadow()) {
-      Theming.add_text_shadow();
+    if (Settings.add_text_shadow()) {
+        Theming.add_text_shadow();
     }
 
-    //Theming.set_text_color();
+    Theming.set_text_color();
+
+    Theming.set_text_color(Settings.get_text_color());
 
     /* Simulate Window Changes */
     _windowUpdated({
@@ -228,9 +274,11 @@ function disable() {
     });
 
     /* Remove text shadowing */
-    if(Theming.has_text_shadow()) {
-      Theming.remove_text_shadow();
+    if (Theming.has_text_shadow()) {
+        Theming.remove_text_shadow();
     }
+
+    Theming.remove_text_color();
 
     /* Remove Our Corner Coloring */
     Theming.clear_corner_color();
@@ -269,30 +317,25 @@ function _windowUpdated(params = null) {
         }
     }
 
-    let primary_monitor = global.screen.get_primary_monitor();
+    //let primary_monitor = global.screen.get_primary_monitor();
     let focused_window = global.display.focus_window;
     let windows = workspace.list_windows();
-
-    /* Fix text shadowing if need exists */
-    /* TODO: Better place to check this? */
-    if(Settings.add_text_shadow() && !Theming.has_text_shadow()){
-        Theming.add_text_shadow();
-    }else if (!Settings.add_text_shadow() && Theming.has_text_shadow()){
-        Theming.remove_text_shadow();
-    }
 
     let add_transparency = true;
 
     /* save processing by checking the current window (most likely to be maximized) */
     /* check that the focused window is in the right workspace */
-    if (!Util.is_undef(focused_window) && focused_window !== excluded_window && Util.is_maximized(focused_window) && focused_window.get_monitor() === primary_monitor && focused_window.get_workspace() === workspace && !focused_window.minimized) {
+    if (!Util.is_undef(focused_window) && focused_window !== excluded_window && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && focused_window.get_workspace() === workspace && !focused_window.minimized) {
         add_transparency = false;
+        this.maximized_window = focused_window;
     } else {
         for (let i = 0; i < windows.length; ++i) {
             let current_window = windows[i];
-            if (current_window !== excluded_window && Util.is_maximized(current_window) && current_window.get_monitor() === primary_monitor && !current_window.minimized) {
+            if (current_window !== excluded_window && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
+                this.maximized_window = focused_window;
                 add_transparency = false;
-                break;
+                if(!Settings.check_app_settings())
+                  break;
             }
         }
     }
@@ -346,20 +389,20 @@ function _screenShieldActivated() {
 
 const TransparencyStatus = new Lang.Class({
     Name: 'DynamicPanelTransparency.TransparencyStatus',
-    _init: function() {
+    _init: function () {
         this.transparent = false;
         this.blank = false;
     },
-    is_transparent: function() {
+    is_transparent: function () {
         return this.transparent;
     },
-    is_blank: function() {
+    is_blank: function () {
         return this.blank;
     },
-    set_transparent: function(transparent) {
+    set_transparent: function (transparent) {
         this.transparent = transparent;
     },
-    set_blank: function(blank) {
+    set_blank: function (blank) {
         this.blank = blank;
     }
 });
