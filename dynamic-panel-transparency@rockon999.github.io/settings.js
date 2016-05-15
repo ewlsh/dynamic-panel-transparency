@@ -9,7 +9,7 @@ const Main = imports.ui.main;
 const Lang = imports.lang;
 const Config = imports.misc.config;
 const Panel = Main.panel;
-
+const Shell = imports.gi.Shell;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
@@ -17,48 +17,27 @@ const Gio = imports.gi.Gio;
 /* Dynamic settings takes a key and watches for it to change in Gio.Settings & creates a getter for it */
 
 const APP_SETTINGS_PARAMS = [{
-    settings_key: 'maximized-opacity',
+    key: 'maximized-opacity',
     name: 'maximized_opacity',
-    type: '(si)',
-    value: ['default', 255],
+    type: '(bi)',
 },
     {
-        settings_key: 'panel-color',
+        key: 'panel-color',
         name: 'panel_color',
-        type: '(sai)',
-        value: ['default', [0, 0, 0]],
+        type: '(bai)',
     }, {
-        settings_key: 'text-shadow',
-        name: 'text_shadow',
-        type: '(sb)',
-        value: ['default', false],
-        getter: 'add_text_shadow',
-        handler: Lang.bind(this, function () {
-            /* Fix text shadowing if need exists */
-            /* TODO: Better place to check this? */
-            if (add_text_shadow() && !Theming.has_text_shadow()) {
-                Theming.add_text_shadow();
-            } else if (!add_text_shadow() && Theming.has_text_shadow()) {
-                Theming.remove_text_shadow();
-            }
-        })
+        key: 'always-trigger',
+        name: 'always_trigger',
+        type: '(bb)',
     }, {
-        settings_key: 'panel-text-color',
+        key: 'panel-text-color',
         name: 'text_color',
-        type: 's',
-        value: 'Default',
-        handler: Lang.bind(this, function () {
-            log(get_text_color());
-            log(Theming.get_current_text_color());
-            if (get_text_color() != Theming.get_current_text_color()) {
-                Theming.set_text_color(get_text_color());
-            }
-        })
+        type: '(b(iii))'
     }];
 
 function init() {
     this.settings = Convenience.getSettings();
-
+    this.app_settings_enabled = false;
     this.keys = [];
     this.defaults = {};
     this.settingsBoundIds = [];
@@ -77,6 +56,7 @@ function cleanup() {
     this.defaults = null;
     this.settingsBoundIds = null;
     this.settings = null;
+    this.app_settings_enabled = null;
 }
 
 /* Settings Management */
@@ -102,7 +82,7 @@ function load_app_overrides() {
 }
 
 function check_app_settings() {
-    return (get_app_overrides().length > 0);
+    return this.app_settings_enabled;
 }
 
 function bind_app_overrides() {
@@ -110,18 +90,16 @@ function bind_app_overrides() {
     for (let app_id of app_overrides) {
         for (let i = 0; i < APP_SETTINGS_PARAMS.length; ++i) {
             let setting = APP_SETTINGS_PARAMS[i];
-            if (!Util.is_undef(this.app_settings_manager[setting])) {
+
+            if (!Util.is_undef(this.app_settings_manager[setting]) && !Util.is_undef(setting)) {
                 /* Watch for changes */
                 this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, Lang.bind(this, function () {
                     this.app_settings_manager.update(setting, app_id);
                 })));
-
-                if (!Util.is_undef(setting.handler)) {
-                    this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, setting.handler));
-                }
             }
         }
     }
+      this.app_settings_enabled = (app_overrides.length > 0);
 }
 
 function bind() {
@@ -143,13 +121,25 @@ function bind() {
         /* Create getter */
         let getter = function () {
 
-            /*if (this.check_app_settings()) {
-                let app_id = Extension.get_maximized_window().get_gtk_application_id();
-                let value = this.app_settings_manager[setting.name][app_id];
-                if (!Util.is_undef(value) && !Util.is_undef(value[1]) && value[0]) {
-                    return value[1];
+            if (this.check_app_settings() && !Util.is_undef(this.app_settings_manager[setting.name])) {
+                let window = Extension.get_maximized_window();
+                if (window) {
+                    let shell_app = Shell.WindowTracker.get_default().get_app_from_pid(window.get_pid());
+                    if (!shell_app)
+                        shell_app = Shell.AppSystem.get_default().lookup_startup_wmclass(window.get_wm_class());
+                    if (!shell_app)
+                        shell_app = Shell.AppSystem.get_default().lookup_desktop_wmclass(window.get_wm_class());
+                    let app_id = shell_app.get_id();
+                    if (shell_app && app_id) {
+                        let value = this.app_settings_manager[setting.name][app_id];
+                        if (!Util.is_undef(value) && !Util.is_undef(value[1]) && value[0]) {
+                            return value[1];
+                        }
+                    }
+
                 }
-            }*/
+
+            }
 
             if (!Util.is_undef(this.settings_manager) && !Util.is_undef(this.settings_manager[setting.name])) {
                 return this.settings_manager[setting.name];
@@ -175,7 +165,7 @@ function unbind() {
 
 /* Basic class to hold settings values */
 const SettingsManager = new Lang.Class({
-    Name: 'DynamicPanelTransparency.SettingsManager',
+    Name: 'DynamicPanelTransparency_SettingsManager',
     _init: function (settings, params) {
         this.values = [];
         this.settings = settings;
@@ -208,39 +198,55 @@ const SettingsManager = new Lang.Class({
 });
 
 const AppSettingsManager = new Lang.Class({
-    Name: 'DynamicPanelTransparency.SettingsManager',
+    Name: 'DynamicPanelTransparency_AppSettingsManager',
     _init: function (params, apps) {
         this.values = [];
         this.settings = {};
-        for (let i = 0; i < params.length; ++i) {
-            for (let a = 0; a < apps.length; ++i) {
-                let app = apps[a];
-                let path = '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/' + app + "/";
-                this.settings[app] = Gio.Settings.new_with_path('org.gnome.shell.extensions.dynamic-shell-transparency.appOverrides', path);
 
+
+        for (let a = 0; a < apps.length; ++a) {
+            let app_id = apps[a];
+            let app = apps[a].split(".")[0];
+            let path = '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/' + app + "/";
+            let sett = null;
+
+            let obj = Convenience.getSchemaObj('org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides');
+            sett = new Gio.Settings({ path: path, settings_schema: obj });
+
+            this.settings[app_id] = sett;
+
+            for (let i = 0; i < params.length; ++i) {
                 let setting = params[i];
                 this.values.push(setting);
-                if (this.settings[app].list_keys().indexOf(setting.key) == -1 || Util.is_undef(setting))
+                if (Util.is_undef(setting) || this.settings[app_id].list_keys().indexOf(setting.key) == -1) {
+                    log('continued');
                     continue;
-                let variant = GLib.VariantType.new(setting.type);
-                if (variant.is_array() || variant.is_tuple()) {
-                    this[setting.name][app] = this.settings[app].get_value(setting.key).deep_unpack();
-                } else {
-                    this[setting.name][app] = this.settings[app].get_value(setting.key).unpack();
                 }
+                let variant = GLib.VariantType.new(setting.type);
+                if (Util.is_undef(this[setting.name]))
+                    this[setting.name] = {};
+                if (variant.is_array() || variant.is_tuple()) {
+                    this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).deep_unpack();
+                } else {
+                    this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).unpack();
+                }
+
+
             }
+
         }
     },
     update: function (setting, app_id) {
-        if (this.settings.list_keys().indexOf(setting.key) == -1)
+        let app = app_id;
+        if (Util.is_undef(setting) || this.settings[app].list_keys().indexOf(setting.key) == -1)
             return;
-
         let variant = GLib.VariantType.new(setting.type);
-
+        if (Util.is_undef(this[setting.name]))
+            this[setting.name] = {};
         if (variant.is_array() || variant.is_tuple()) {
-            this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).deep_unpack();
+            this[setting.name][app] = this.settings[app].get_value(setting.key).deep_unpack();
         } else {
-            this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).unpack();
+            this[setting.name][app] = this.settings[app].get_value(setting.key).unpack();
         }
 
     }

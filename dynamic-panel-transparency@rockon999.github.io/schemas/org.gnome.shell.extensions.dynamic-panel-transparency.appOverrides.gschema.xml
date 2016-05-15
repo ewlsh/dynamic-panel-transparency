@@ -1,7 +1,7 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides">
     <key name="maximized-opacity" type="(bi)">
-      <default>(true, 255)</default>
+      <default>(true, 200)</default>
       <summary>Maximized Opacity</summary>
       <description>The opacity of the panel when there are maximized windows.</description>
     </key>
@@ -11,12 +11,12 @@
       <description>Always trigger the panel when window is focused.</description>
     </key>
     <key name="panel-color" type="(bai)">
-      <default>(true, [0,0,0])</default>
+      <default>(true, [56,89,76])</default>
       <summary>Panel Color</summary>
       <description>The color of the panel.</description>
     </key>
-    <key name="panel-text-color" type="(bs)">
-      <default>(true, 'Default')</default>
+    <key name="panel-text-color" type="(b(iii))">
+      <default>(true, (225,45,55))</default>
       <summary>What color the panel text should be.</summary>
       <description>Used to determine what color the panel text should be.</description>
     </key>

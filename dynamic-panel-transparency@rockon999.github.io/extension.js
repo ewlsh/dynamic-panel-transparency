@@ -31,6 +31,7 @@ function init() {
     this._windowMinimizeSig = null;
     this._windowUnminimizeSig = null;
     this._maximizeSig = null;
+    this._windowsRestacked  = null;
     this._unmaximizeSig = null;
     this._workspaceSwitchSig = null;
 }
@@ -204,6 +205,7 @@ log(a++);
     if (Main.screenShield !== null) {
         this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, this._screenShieldActivated));
     }
+    this._windowsRestacked =  global.screen.connect('restacked', Lang.bind(this, this._windowUpdated));
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdated));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
@@ -257,7 +259,9 @@ function disable() {
     global.window_manager.disconnect(this._maximizeSig);
     global.window_manager.disconnect(this._unmaximizeSig);
     global.window_manager.disconnect(this._workspaceSwitchSig);
+    global.screen.disconnect(this._windowsRestacked);
     /* Cleanup Signals */
+    this._windowsRestacked = null;
     this._lockScreenSig = null;
     this._lockScreenShownSig = null;
     this._overviewShowingSig = null;
@@ -344,10 +348,10 @@ function _windowUpdated(params = null) {
         add_transparency = false;
         this.maximized_window = focused_window;
     } else {
-        for (let i = 0; i < windows.length; ++i) {
+        for (let i = windows.length - 1; i >= 0; --i) {
             let current_window = windows[i];
             if (current_window !== excluded_window && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
-                this.maximized_window = focused_window;
+                this.maximized_window = current_window;
                 add_transparency = false;
                 if(!Settings.check_app_settings())
                   break;
@@ -370,6 +374,10 @@ function _windowUpdated(params = null) {
         }
     } else if (status.is_blank()) {
         Transitions.fade_in_from_blank(time);
+    }else if (Settings.check_app_settings() && add_transparency){
+        Transitions.update_transparent();
+    }else if (Settings.check_app_settings() && !add_transparency){
+        Transitions.update_solid();
     }
 }
 
