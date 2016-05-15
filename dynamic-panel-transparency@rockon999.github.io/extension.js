@@ -17,7 +17,6 @@ const SCALE_FACTOR = 255.9999999;
 
 /* Initialize */
 function init() {
-
     /* Panel Status */
     this.status = null;
     this.maximized_window = null;
@@ -38,7 +37,7 @@ function init() {
 
 function enable() {
 let a = 1;
-log(a++);
+
     /* Create transparency status manager */
     this.status = new TransparencyStatus();
 
@@ -153,17 +152,17 @@ log(a++);
            Theming.set_text_color(Settings.get_text_color());
         })
     });
-    log(a++);
+
     Settings.bind();
-    log(a++);
-Settings.load_app_overrides();
-Settings.bind_app_overrides();
+    Settings.load_app_overrides();
+    Settings.bind_app_overrides();
+
     /* Initialize */
-    log(a++);
+
     Transitions.init();
-    log(a++);
+
     Theming.init();
-log(a++);
+
     let version = Util.get_shell_version();
 
     /* Add support for older Gnome Shell versions (most likely down to 3.12) */
@@ -196,7 +195,7 @@ log(a++);
                 time: 0
             });
         }
-    }));log(a++);
+    }));
     /* No unminimize signal on 3.14 (TBD: If this harms the extension) */
     if (version.major == 3 && version.minor > 14) {
         this._windowUnminimizeSig = global.window_manager.connect('unminimize', Lang.bind(this, this._windowUpdated));
@@ -205,7 +204,7 @@ log(a++);
     if (Main.screenShield !== null) {
         this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, this._screenShieldActivated));
     }
-    this._windowsRestacked =  global.screen.connect('restacked', Lang.bind(this, this._windowUpdated));
+    this._windowsRestacked =  global.screen.connect('restacked', Lang.bind(this, this._windowRestacked));
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdated));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
@@ -226,7 +225,7 @@ log(a++);
     Transitions.hide_corners({
         opacity: 0.0
     });
-log(a++);
+
     /* Add Text Shadowing */
     if (Settings.add_text_shadow()) {
         Theming.add_text_shadow();
@@ -239,7 +238,7 @@ log(a++);
     /* Simulate Window Changes */
     _windowUpdated({
         force: true
-    });log(a++);
+    });
 }
 
 
@@ -321,6 +320,12 @@ function get_maximized_window(){
 
 
 /* Event Handlers */
+
+function _windowRestacked(){
+    if(Settings.check_app_settings()){
+        _windowUpdated();
+    }
+}
 
 function _windowUpdated(params = null) {
     if (Main.overview._shown)
