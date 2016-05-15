@@ -211,7 +211,7 @@ const AppSettingsManager = new Lang.Class({
     Name: 'DynamicPanelTransparency.SettingsManager',
     _init: function (params, apps) {
         this.values = [];
-this.settings = {};
+        this.settings = {};
         for (let i = 0; i < params.length; ++i) {
             for (let a = 0; a < apps.length; ++i) {
                 let app = apps[a];
