@@ -50,18 +50,28 @@
       <summary>Add shadowing to text and icons.</summary>
       <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
     </key>
-    <key name="app-settings" type="a(sa(ss))">
-      <default>[('example',[('example-setting', 'blue')])]</default>
-      <summary>Store different settings for each app.</summary>
-      <description>Stores different settings for individual apps..</description>
+    <key name="text-shadow-position" type="(iii)">
+      <default>(0,3,5)</default>
+      <summary>Add shadowing to text and icons.</summary>
+      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
+    </key>
+    <key name="icon-shadow-position" type="(iii)">
+      <default>(0,2,5)</default>
+      <summary>Add shadowing to text and icons.</summary>
+      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
+    </key>
+    <key name="app-overrides" type="as">
+      <default>[]</default>
+      <summary>Overrides settings for each app.</summary>
+      <description>Yeah... different settings for individual apps..</description>
     </key>
     <key name="user-theme-source" enum="org.gnome.shell.extensions.dynamic-panel-transparency.themeSource">
       <default>'Dash'</default>
       <summary>Source for detecting the user's theme</summary>
       <description>Object used to get the user's preferred background color.</description>
     </key>
-    <key name="panel-text-color" enum="org.gnome.shell.extensions.dynamic-shell-transparency.textColor">
-      <default>'Default'</default>
+    <key name="panel-text-color" type="(iii)">
+      <default>(255,255,255)</default>
       <summary>What color the panel text should be.</summary>
       <description>Used to determine what color the panel text should be.</description>
     </key>

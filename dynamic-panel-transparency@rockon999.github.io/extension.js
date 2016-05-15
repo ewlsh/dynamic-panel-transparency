@@ -17,6 +17,7 @@ const SCALE_FACTOR = 255.9999999;
 
 /* Initialize */
 function init() {
+
     /* Panel Status */
     this.status = null;
     this.maximized_window = null;
@@ -35,6 +36,8 @@ function init() {
 }
 
 function enable() {
+let a = 1;
+log(a++);
     /* Create transparency status manager */
     this.status = new TransparencyStatus();
 
@@ -96,6 +99,12 @@ function enable() {
             Theming.set_panel_color();
         })
     });
+     Settings.add({
+        settings_key: 'app-overrides',
+        name: 'app_overrides',
+        type: 'as',
+        value: []
+    });
     Settings.add({
         settings_key: 'window-touching',
         name: 'window_touching',
@@ -137,22 +146,23 @@ function enable() {
     Settings.add({
         settings_key: 'panel-text-color',
         name: 'text_color',
-        type: 's',
+        type: '(iii)',
         value: 'Default',
         handler: Lang.bind(this, function () {
-            log(Settings.get_text_color());
-            log(Theming.get_current_text_color());
-            if (Settings.get_text_color() != Theming.get_current_text_color()) {
-                Theming.set_text_color(Settings.get_text_color());
-            }
+           Theming.set_text_color(Settings.get_text_color());
         })
     });
+    log(a++);
     Settings.bind();
-
+    log(a++);
+Settings.load_app_overrides();
+Settings.bind_app_overrides();
     /* Initialize */
+    log(a++);
     Transitions.init();
+    log(a++);
     Theming.init();
-
+log(a++);
     let version = Util.get_shell_version();
 
     /* Add support for older Gnome Shell versions (most likely down to 3.12) */
@@ -185,7 +195,7 @@ function enable() {
                 time: 0
             });
         }
-    }));
+    }));log(a++);
     /* No unminimize signal on 3.14 (TBD: If this harms the extension) */
     if (version.major == 3 && version.minor > 14) {
         this._windowUnminimizeSig = global.window_manager.connect('unminimize', Lang.bind(this, this._windowUpdated));
@@ -214,21 +224,20 @@ function enable() {
     Transitions.hide_corners({
         opacity: 0.0
     });
-
+log(a++);
     /* Add Text Shadowing */
     if (Settings.add_text_shadow()) {
         Theming.add_text_shadow();
     }
 
-    Theming.set_text_color();
+   // Theming.set_text_color();
 
     Theming.set_text_color(Settings.get_text_color());
 
     /* Simulate Window Changes */
     _windowUpdated({
         force: true
-    });
-
+    });log(a++);
 }
 
 
@@ -292,6 +301,9 @@ function disable() {
 
     /* Cleanup Status */
     this.status = null;
+
+
+
 }
 
 
@@ -299,6 +311,9 @@ function get_panel_status() {
     return this.status;
 }
 
+function get_maximized_window(){
+    return this.maximized_window;
+}
 
 
 /* Event Handlers */
