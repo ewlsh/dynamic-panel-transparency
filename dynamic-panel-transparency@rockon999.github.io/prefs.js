@@ -2,10 +2,12 @@ const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
 const Gio = imports.gi.Gio;
+const GObject = imports.gi.GObject;
 const Lang = imports.lang;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
+//const ApplicationBox = Me.imports.application_box;
 const Config = imports.misc.config;
 
 const Gettext = imports.gettext.domain('dynamic-panel-transparency');
@@ -31,7 +33,7 @@ const Dictionary = {
     'Light': _("Light"),
     'Dark': _("Dark"),
     'Darker': _("Darker")
-}
+};
 
 /* Settings Keys */
 const SETTINGS_HIDE_CORNERS = 'hide-corners';
@@ -65,6 +67,8 @@ function buildPrefsWidget() {
 
 /* UI Setup */
 function getPrefsWidget() {
+
+
     /* Get Settings */
     let settings = Convenience.getSettings();
     /* Create a UI Builder */
@@ -75,14 +79,15 @@ function getPrefsWidget() {
     builder.add_from_file(Me.path + '/ui/prefs.ui');
 
     /* Main Widget (Grid) */
-    let main_widget = builder.get_object('main');
+    let main_widget = builder.get_object('main_box');
+
 
     /* Util function for easily setting labels */
-    function setLabel(obj, label) {
-        builder.get_object(obj).set_label(label);
-    }
+    //function //setLabel(obj, label) {
+    //    builder.get_object(obj).set_label(label);
+    //}
 
-    setLabel('speed_label', '<b>' + Dictionary['Transition Speed'] + '</b>');
+    ////setLabel('speed_label', '<b>' + Dictionary['Transition Speed'] + '</b>');
 
     /* Transition speed control */
     let speed_scale = builder.get_object('speed_scale');
@@ -95,7 +100,7 @@ function getPrefsWidget() {
         return value + 'ms';
     }));
 
-    setLabel('maximum_label', '<b>' + Dictionary['Maximum Opacity'] + '</b>');
+    ////setLabel('maximum_label', '<b>' + Dictionary['Maximum Opacity'] + '</b>');
 
     /* Maximum opacity control */
     let maximum_scale = builder.get_object('maximum_scale');
@@ -103,10 +108,10 @@ function getPrefsWidget() {
     maximum_scale.adjustment.set_value(settings.get_int(SETTINGS_MAXIMIZED_OPACITY));
     /* Add formatting */
     maximum_scale.connect('format-value', Lang.bind(this, function (scale, value) {
-        return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
+        return (((value / SCALE_FACTOR) * 100).toFixed(0) + '%');
     }));
 
-    setLabel('minimum_label', '<b>' + Dictionary['Minimum Opacity'] + '</b>');
+    //setLabel('minimum_label', '<b>' + Dictionary['Minimum Opacity'] + '</b>');
 
     /* Minimum opacity control */
     let minimum_scale = builder.get_object('minimum_scale');
@@ -117,7 +122,7 @@ function getPrefsWidget() {
         return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
     }));
 
-    setLabel('detect_theme_label', '<b>' + Dictionary['Detect User Theme'] + '</b>');
+    //setLabel('detect_theme_label', '<b>' + Dictionary['Detect User Theme'] + '</b>');
 
     let theme_switch = builder.get_object('theme_switch');
     theme_switch.set_active(settings.get_boolean(SETTINGS_DETECT_THEME));
@@ -149,6 +154,7 @@ function getPrefsWidget() {
             theme_label.set_label(Dictionary['Panel Color']);
             theme_stack.set_visible_child(color_btn);
         }
+
     }));
 
     theme_source_box.append_text(Dictionary['Panel']);
@@ -156,19 +162,21 @@ function getPrefsWidget() {
     theme_source_box.set_active(settings.get_enum(SETTINGS_USER_THEME_SOURCE));
     theme_source_box.connect('changed', Lang.bind(this, function (widget) {
         settings.set_enum(SETTINGS_USER_THEME_SOURCE, widget.get_active());
+
+
     }));
 
-    setLabel('text_color_label', Dictionary['Text Color']);
+    //setLabel('text_color_label', Dictionary['Text Color']);
 
-    let text_color_box = builder.get_object('text_color_box');
-    text_color_box.append_text(Dictionary['Default']);
+    let text_color_box = builder.get_object('text_color_btn');
+    /*  text_color_box.append_text(Dictionary['Default']);
     text_color_box.append_text(Dictionary['Light']);
     text_color_box.append_text(Dictionary['Dark']);
     text_color_box.append_text(Dictionary['Darker']);
-    text_color_box.set_active(settings.get_enum(SETTINGS_TEXT_COLOR));
-    text_color_box.connect('changed', Lang.bind(this, function (widget) {
-        settings.set_enum(SETTINGS_TEXT_COLOR, widget.get_active());
-    }));
+    text_color_box.set_active(settings.get_enum(SETTINGS_TEXT_COLOR));*/
+    //text_color_box.connect('changed', Lang.bind(this, function (widget) {
+    // settings.set_value(SETTINGS_TEXT_COLOR, widget.get_active());
+    //}));
 
     /* Convert & scale color. */
     let panel_color = settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack();
@@ -190,9 +198,6 @@ function getPrefsWidget() {
     });
 
     color_btn.set_rgba(scaled_color);
-
-
-
 
     color_btn.connect('color-set', Lang.bind(this, function (color) {
         let rgba = color.rgba.to_string();
@@ -229,6 +234,321 @@ function getPrefsWidget() {
     settings.bind(SETTINGS_TEXT_SHADOW, text_shadow, 'active', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_MAXIMIZED_OPACITY, maximum_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
 
+
+    let app_list = builder.get_object('app_list');
+    app_list.set_sort_func(Lang.bind(this, function (a, b, user_data) {
+        if (a.constructor == AddAppRow) {
+            return 1;
+        } else if (b.constructor == AddAppRow) {
+            return -1;
+        }
+
+        if (a.constructor != AppRow){
+            return 1;
+        } else if (b.constructor != AppRow){
+            return -1;
+        }
+        let aname = a.app_name;
+        let bname = b.app_name;
+        if (aname < bname) {
+            return -1;
+        } else if (aname > bname) {
+            return 1;
+        } else {
+            return 0;
+        }
+
+    }), null);
+     let overrides =  settings.get_strv('app-overrides');
+     for(let override of overrides){
+        let app_info = Gio.DesktopAppInfo.new(override);
+        if(app_info){
+         let row = new AppRow(app_info);
+                row.show_all();
+                app_list.add(row);
+        }
+     }
+
+    let add = new AddAppRow();
+    add.btn.connect('clicked', Lang.bind(this, function () {
+        Gio.Application.get_default().mark_busy();
+        let a2 = new AppChooser(main_widget.get_toplevel());
+        a2.show_all();
+        Gio.Application.get_default().unmark_busy();
+        let response = a2.run();
+        if (response == Gtk.ResponseType.OK) {
+            let selected_app = a2.get_selected_app();
+            if (selected_app) {
+                let row = new AppRow(selected_app);
+                row.show_all();
+                app_list.add(row);
+                let overrides =  settings.get_strv('app-overrides');
+                log(overrides);
+                overrides.push(selected_app.get_id());
+                  log(overrides);
+                settings.set_strv('app-overrides', overrides);
+            }
+        }
+        a2.destroy();
+    }));
+    app_list.add(add);
+
     /* Return main widget. */
     return main_widget;
 }
+
+const AppRow = new Lang.Class({
+    Name: 'DynamicPanelTransparency_AppRow',
+    Extends: Gtk.ListBoxRow,
+    _init: function (df) {
+        this.parent();
+
+        let grid = new Gtk.Grid({ column_spacing: 10 });
+        let icn = df.get_icon();
+        let img = null;
+        if (icn) {
+            let img = image_from_gicon(icn);
+            grid.attach(img, 0, 0, 1, 1);
+        }
+        let lbl = new Gtk.Label({ label: df.get_name(), xalign: 0.0 });
+        grid.attach_next_to(lbl, img, Gtk.PositionType.RIGHT, 1, 1);
+        lbl.hexpand = true;
+        lbl.halign = Gtk.Align.START;
+        let btn = new Gtk.Button({ label: 'Configure' });
+        grid.attach_next_to(btn, lbl, Gtk.PositionType.RIGHT, 1, 1);
+        btn.vexpand = false;
+        btn.valign = Gtk.Align.CENTER;
+        btn = new Gtk.Button({ label: 'Remove' });
+        grid.attach_next_to(btn, lbl, Gtk.PositionType.RIGHT, 1, 1);
+        btn.vexpand = false;
+        btn.valign = Gtk.Align.CENTER;
+        this.add(grid);
+        this.margin_start = 1;
+        this.margin_end = 1;
+
+        this.btn = btn;
+        this.app_name = df.get_name();
+        this.app_id = df.get_id();
+        this.connect('key-press-event', Lang.bind(this, this.on_key_press_event));
+    },
+    on_key_press_event: function (row, event) {
+        if (event.keyval === Gdk.KEY_Delete || event.keyval === Gdk.KEY_KP_Delete || event.keyval === Gdk.KEY_BackSpace) {
+            this.btn.activate();
+            return true;
+        }
+        return false;
+    }
+});
+
+const Clutter = imports.gi.Clutter;
+const St = imports.gi.St;
+
+
+function image_from_gicon(gicon) {
+    let image = Gtk.Image.new_from_gicon(gicon, Gtk.IconSize.DIALOG);
+    let b = 16; let w = 16; let h = 16;
+    let response = Gtk.IconSize.lookup(Gtk.IconSize.DIALOG, b, w, h);
+    image.set_pixel_size(h);
+    return image;
+}
+
+function list_header_func(row, before, user_data) {
+    if (before && !row.get_header()) {
+        row.set_header(new Gtk.Separator({ orientation: Gtk.Orientation.HORIZONTAL }));
+    }
+}
+
+const AddAppRow = new Lang.Class({
+    Name: 'DynamicPanelTransparency_AddAppRow',
+    Extends: Gtk.ListBoxRow,
+    _init: function (options) {
+        this.parent();
+        let img = new Gtk.Image();
+        img.set_from_icon_name("list-add-symbolic", Gtk.IconSize.BUTTON);
+        this.btn = new Gtk.Button({ label: "", image: img, always_show_image: true });
+        this.btn.get_style_context().remove_class("button");
+        this.add(this.btn);
+        this.get_style_context().add_class('tweak-startup');
+
+    }
+});
+
+const AppChooser = new Lang.Class({
+    Name: 'DynamicPanelTransparency_AppChooser',
+    Extends: Gtk.Dialog,
+    _init: function (main_window) {
+        this.parent({ title: "Applications", use_header_bar: true });
+        //this.running = {};
+        this.all = {};
+        this.entry = new Gtk.SearchEntry();
+        this.entry.set_placeholder_text('Search Applications...');
+        this.entry.set_width_chars(30);
+        this.entry.activates_default = true;
+        this.searchbar = new Gtk.SearchBar();
+        this.searchbar.add(this.entry);
+        this.searchbar.hexpand = true;
+        let lb = new Gtk.ListBox();
+        // lb.margin = 5;
+        lb.activate_on_single_click = false;
+        lb.set_sort_func(Lang.bind(this, this.sort_apps), null);
+        lb.set_header_func(Lang.bind(this, list_header_func), null);
+        lb.set_filter_func(Lang.bind(this, this.list_filter_func), null);
+        this.entry.connect('search-changed', Lang.bind(this, this.on_search_entry_changed));
+        lb.connect('row-activated', Lang.bind(this, function (b, r) {
+            return this.response(Gtk.ResponseType.OK) ? r.get_mapped() : null;
+        }));
+        lb.connect('row-selected', Lang.bind(this, this.on_row_selected));
+        let apps = Gio.app_info_get_all();
+
+        for (let x = 0; x < apps.length; x++) {
+            let a = apps[x];
+            if (a.should_show()) {
+                let w = this.build_widget(a);
+                if (w) {
+                    this.all[w] = a;
+
+                    lb.add(w);
+                }
+
+            }
+
+        }
+
+        let sw = new Gtk.ScrolledWindow();
+        sw.hscrollbar_policy = Gtk.PolicyType.NEVER;
+        sw.add(lb);
+        sw.margin = 5;
+
+        this.add_button('_Close', Gtk.ResponseType.CANCEL);
+        this.add_button('_Add', Gtk.ResponseType.OK);
+        this.set_default_response(Gtk.ResponseType.OK);
+        let searchbtn = new Gtk.ToggleButton();
+        searchbtn.valign = Gtk.Align.CENTER;
+        let image = new Gtk.Image({ icon_name: "edit-find-symbolic", icon_size: Gtk.IconSize.MENU })
+        searchbtn.add(image);
+        let context = searchbtn.get_style_context();
+        context.add_class("image-button");
+        context.remove_class("text-button");
+        this.get_header_bar().pack_end(searchbtn);
+        this._binding = searchbtn.bind_property("active", this.searchbar, "search-mode-enabled", GObject.BindingFlags.BIDIRECTIONAL)
+        this.get_content_area().pack_start(this.searchbar, false, false, 0);
+        this.get_content_area().pack_start(sw, true, true, 0);
+        //this.get_content_area().add();
+        this.set_modal(true);
+        this.set_transient_for(main_window);
+        this.set_size_request(400, 300);
+        this.listbox = lb;
+        this.connect('key-press-event', Lang.bind(this, this.on_key_press));
+    },
+
+    sort_apps: function (a, b, user_data) {
+
+        let aname = this.all[a].get_name();
+        let bname = this.all[b].get_name();
+        if (aname < bname) {
+            return -1;
+        } else if (aname > bname) {
+            return 1;
+        } else {
+            return 0;
+        }
+
+    },
+
+    build_widget: function (a) {
+        let row = new Gtk.ListBoxRow();
+        let g = new Gtk.Grid();
+        if (!a.get_name()) {
+            return null;
+        }
+        let icn = a.get_icon();
+        let img;
+        if (icn) {
+            img = image_from_gicon(icn);
+            g.attach(img, 0, 0, 1, 1);
+            img.hexpand = false;
+        } else {
+            img = null; //attach_next_to treats this correctly
+        }
+        let lbl = new Gtk.Label({ label: a.get_name(), xalign: 0 });
+        g.attach_next_to(lbl, img, Gtk.PositionType.RIGHT, 1, 1);
+        lbl.hexpand = true;
+        lbl.halign = Gtk.Align.START;
+        lbl.vexpand = false;
+        lbl.valign = Gtk.Align.CENTER;
+
+        row.add(g);
+        row.show_all();
+        return row;
+    },
+
+    list_filter_func: function (row, unused) {
+        let txt = this.entry.get_text().toLowerCase();
+        let grid = row.get_child();
+        for (let sib of grid.get_children()) {
+            if (sib.constructor == Gtk.Label) {
+                if (sib.get_text().toLowerCase().indexOf(txt) !== -1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    },
+
+    on_search_entry_changed: function (editable) {
+        this.listbox.invalidate_filter();
+        let selected = this.listbox.get_selected_row();
+        if (selected && selected.get_mapped()) {
+            this.set_response_sensitive(Gtk.ResponseType.OK, true);
+        } else {
+            this.set_response_sensitive(Gtk.ResponseType.OK, false);
+        }
+    },
+
+    on_row_selected: function (box, row) {
+        if (row && row.get_mapped()) {
+            this.set_response_sensitive(Gtk.ResponseType.OK, true);
+        } else {
+            this.set_response_sensitive(Gtk.ResponseType.OK, false);
+        }
+    },
+
+    on_key_press: function (widget, event) {
+        let mods = event.state & Gtk.accelerator_get_default_mod_mask();
+        if (event.keyval == this.search_key && mods == this.search_mods) {
+            this.searchbar.set_search_mode(!this.searchbar.get_search_mode());
+            return true;
+        }
+        let keyname = Gdk.keyval_name(event.keyval);
+        if (keyname == 'Escape') {
+            if (this.searchbar.get_search_mode()) {
+                this.searchbar.set_search_mode(false);
+                return true;
+            }
+            //
+        } else if (!(keyname == 'Up' || keyname == 'Down')) {
+            if (!this.entry.has_focus && this.searchbar.get_search_mode()) {
+                if (this.entry.im_context_filter_keypress(event)) {
+                    this.entry.grab_focus();
+                    let l = this.entry.get_text_length();
+                    this.entry.select_region(l, l);
+                    return true;
+                }
+                return this.searchbar.handle_event(event);
+            }
+            return false;
+        }
+        return false;
+    },
+
+    get_selected_app: function () {
+        let row = this.listbox.get_selected_row();
+        if (row) {
+            return this.all[row];
+        }
+        return null;
+    }
+});
+
+
+
