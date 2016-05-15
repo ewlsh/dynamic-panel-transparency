@@ -26,6 +26,28 @@ function cleanup() {
     this.tweener = null;
 }
 
+function update_transparent() {
+    if (Main.overview.visible || Main.overview._shown)
+        return;
+
+    this.status.set_transparent(true);
+    this.status.set_blank(false);
+
+    Theming.set_panel_color();
+
+    Theming.set_background_alpha(Panel.actor,  Settings.get_minimum_opacity());
+}
+
+function update_solid() {
+    if (Main.overview.visible || Main.overview._shown)
+        return;
+    this.status.set_transparent(false);
+    this.status.set_blank(false);
+
+    Theming.set_panel_color();
+    Theming.set_background_alpha(Panel.actor,  Settings.get_maximum_opacity());
+}
+
 function fade_in(params = null) {
     if (Main.overview.visible || Main.overview._shown)
         return;
