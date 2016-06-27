@@ -30,13 +30,13 @@ function init() {
     this._windowMinimizeSig = null;
     this._windowUnminimizeSig = null;
     this._maximizeSig = null;
-    this._windowsRestacked  = null;
+    this._windowsRestacked = null;
     this._unmaximizeSig = null;
     this._workspaceSwitchSig = null;
 }
 
 function enable() {
-let a = 1;
+    let a = 1;
 
     /* Create transparency status manager */
     this.status = new TransparencyStatus();
@@ -99,9 +99,15 @@ let a = 1;
             Theming.set_panel_color();
         })
     });
-     Settings.add({
+    Settings.add({
         settings_key: 'app-overrides',
         name: 'app_overrides',
+        type: 'as',
+        value: []
+    });
+    Settings.add({
+        settings_key: 'trigger-apps',
+        name: 'trigger_apps',
         type: 'as',
         value: []
     });
@@ -117,6 +123,13 @@ let a = 1;
         type: 'b',
         value: false,
         getter: 'detect_user_theme'
+    });
+    Settings.add({
+        settings_key: 'enable-app-overrides',
+        name: 'enable_app_overrides',
+        type: 'b',
+        value: false,
+        getter: 'enable_app_overrides'
     });
     Settings.add({
         settings_key: 'user-theme-source',
@@ -149,7 +162,7 @@ let a = 1;
         type: '(iii)',
         value: 'Default',
         handler: Lang.bind(this, function () {
-           Theming.set_text_color(Settings.get_text_color());
+            Theming.set_text_color(Settings.get_text_color());
         })
     });
 
@@ -204,7 +217,7 @@ let a = 1;
     if (Main.screenShield !== null) {
         this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, this._screenShieldActivated));
     }
-    this._windowsRestacked =  global.screen.connect('restacked', Lang.bind(this, this._windowRestacked));
+    this._windowsRestacked = global.screen.connect('restacked', Lang.bind(this, this._windowRestacked));
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowUpdated));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
@@ -231,7 +244,7 @@ let a = 1;
         Theming.add_text_shadow();
     }
 
-   // Theming.set_text_color();
+    // Theming.set_text_color();
 
     Theming.set_text_color(Settings.get_text_color());
 
@@ -304,9 +317,6 @@ function disable() {
 
     /* Cleanup Status */
     this.status = null;
-
-
-
 }
 
 
@@ -314,15 +324,15 @@ function get_panel_status() {
     return this.status;
 }
 
-function get_maximized_window(){
+function get_maximized_window() {
     return this.maximized_window;
 }
 
 
 /* Event Handlers */
 
-function _windowRestacked(){
-    if(Settings.check_app_settings()){
+function _windowRestacked() {
+    if (Settings.check_app_settings()) {
         _windowUpdated();
     }
 }
@@ -358,11 +368,22 @@ function _windowUpdated(params = null) {
             if (current_window !== excluded_window && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
                 this.maximized_window = current_window;
                 add_transparency = false;
-                if(!Settings.check_app_settings())
-                  break;
+                if (!Settings.check_app_settings())
+                    break;
             }
         }
     }
+
+    if (!Util.is_undef(focused_window) && add_transparency) {
+        for (let app_id of Settings.get_trigger_apps()) {
+            let app = Util.get_app(focused_window);
+            if (!Util.is_undef(app) && app.get_id() == app_id) {
+                add_transparency = false;
+                break;
+            }
+        }
+    }
+
     let time = (params !== null && !Util.is_undef(params.time)) ? {
         time: params.time
     } : null;
@@ -379,9 +400,9 @@ function _windowUpdated(params = null) {
         }
     } else if (status.is_blank()) {
         Transitions.fade_in_from_blank(time);
-    }else if (Settings.check_app_settings() && add_transparency){
+    } else if (Settings.check_app_settings() && add_transparency) {
         Transitions.update_transparent();
-    }else if (Settings.check_app_settings() && !add_transparency){
+    } else if (Settings.check_app_settings() && !add_transparency) {
         Transitions.update_solid();
     }
 }

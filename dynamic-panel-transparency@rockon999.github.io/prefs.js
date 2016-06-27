@@ -7,7 +7,6 @@ const Lang = imports.lang;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
-//const ApplicationBox = Me.imports.application_box;
 const Config = imports.misc.config;
 
 const Gettext = imports.gettext.domain('dynamic-panel-transparency');
@@ -81,6 +80,12 @@ function getPrefsWidget() {
     /* Main Widget (Grid) */
     let main_widget = builder.get_object('main_box');
 
+    let panel_background = builder.get_object('panel_demo_background');
+    let panel_demo = new DemoPanel(panel_background);
+    //panel_background.override_background_color(Gtk.StateType.NORMAL, new Gdk.RGBA({red:0,green:0,blue:0,alpha:1.0}));
+    //panel_background.override_color(Gtk.StateType.NORMAL, new Gdk.RGBA({red:255,green:255,blue:255,alpha:1.0}));
+    panel_demo.set_bg_color(new Gdk.RGBA({ red: 0, green: 0, blue: 0, alpha: 1.0 }));
+    panel_demo.set_text_color(new Gdk.RGBA({ red: 255, green: 255, blue: 255, alpha: 1.0 }));
 
     /* Util function for easily setting labels */
     //function //setLabel(obj, label) {
@@ -110,6 +115,12 @@ function getPrefsWidget() {
     maximum_scale.connect('format-value', Lang.bind(this, function (scale, value) {
         return (((value / SCALE_FACTOR) * 100).toFixed(0) + '%');
     }));
+     maximum_scale.connect('value-changed', Lang.bind(this, function (widget) {
+       log(widget.get_value());
+
+        panel_demo.set_opacity(widget.get_value(), true);
+      //   panel_demo.fade_in();
+    }));
 
     //setLabel('minimum_label', '<b>' + Dictionary['Minimum Opacity'] + '</b>');
 
@@ -120,6 +131,10 @@ function getPrefsWidget() {
     /* Add formatting */
     minimum_scale.connect('format-value', Lang.bind(this, function (scale, value) {
         return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%';
+    }));
+    minimum_scale.connect('value-changed', Lang.bind(this, function (widget) {
+        panel_demo.set_opacity(widget.get_value(), true);
+       // panel_demo.fade_out();
     }));
 
     //setLabel('detect_theme_label', '<b>' + Dictionary['Detect User Theme'] + '</b>');
@@ -210,6 +225,7 @@ function getPrefsWidget() {
         rgb[GREEN] = parsed_green;
         rgb[BLUE] = parsed_blue;
         settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
+        panel_demo.set_bg_color({ red: rgb[0], green: rgb[1], blue: rgb[2] });
     }));
 
 
@@ -243,9 +259,9 @@ function getPrefsWidget() {
             return -1;
         }
 
-        if (a.constructor != AppRow){
+        if (a.constructor != AppRow) {
             return 1;
-        } else if (b.constructor != AppRow){
+        } else if (b.constructor != AppRow) {
             return -1;
         }
         let aname = a.app_name;
@@ -259,15 +275,15 @@ function getPrefsWidget() {
         }
 
     }), null);
-     let overrides =  settings.get_strv('app-overrides');
-     for(let override of overrides){
+    let overrides = settings.get_strv('app-overrides');
+    for (let override of overrides) {
         let app_info = Gio.DesktopAppInfo.new(override);
-        if(app_info){
-         let row = new AppRow(app_info);
-                row.show_all();
-                app_list.add(row);
+        if (app_info) {
+            let row = new AppRow(app_info);
+            row.show_all();
+            app_list.add(row);
         }
-     }
+    }
 
     let add = new AddAppRow();
     add.btn.connect('clicked', Lang.bind(this, function () {
@@ -282,10 +298,10 @@ function getPrefsWidget() {
                 let row = new AppRow(selected_app);
                 row.show_all();
                 app_list.add(row);
-                let overrides =  settings.get_strv('app-overrides');
-                log(overrides);
+                let overrides = settings.get_strv('app-overrides');
+             //   log(overrides);
                 overrides.push(selected_app.get_id());
-                  log(overrides);
+               // log(overrides);
                 settings.set_strv('app-overrides', overrides);
             }
         }
@@ -296,6 +312,58 @@ function getPrefsWidget() {
     /* Return main widget. */
     return main_widget;
 }
+
+const DemoPanel = new Lang.Class({
+    Name: 'DynamicPanelTransparency_DemoPanel',
+    _init: function (eventbox) {
+        this.panel = eventbox;
+        this.text_color_provider = new Gtk.CssProvider();
+        this.bg_color_provider = new Gtk.CssProvider();
+        this.transition_provider = new Gtk.CssProvider();
+        this.bg_color = {red: 0, green: 0, blue: 0};
+        this.color = {red:0, green:0, blue: 0};
+    },
+    set_bg_color: function (color) {
+        this.panel.get_style_context().remove_provider(this.bg_color_provider);
+ //       if(!this.bg_color.alpha)
+ //         this.bg_color.alpha = this.bg_color.alpha;
+        this.bg_color_provider.load_from_data(".demo-panel-color { background: rgba(" + color.red + ", " + color.green + ", " + color.blue + ", " + color.alpha+ "); }");
+        this.panel.get_style_context().add_provider(this.bg_color_provider, 3);
+        this.panel.get_style_context().add_class("demo-panel-color");
+        this.bg_color = color;
+    },
+    set_text_color: function (color) {
+        this.panel.get_style_context().remove_provider(this.text_color_provider);
+        this.text_color_provider.load_from_data(".demo-panel-text-color { color: rgba(" + color.red + ", " + color.green + ", " + color.blue + ", " + color.alpha+ "); }");
+        this.panel.get_style_context().add_provider(this.text_color_provider, 3);
+        this.panel.get_style_context().add_class("demo-panel-text-color");
+        this.color = color;
+    },
+    set_opacity: function (opacity, change = false) {
+        if (!this.bg_color) {
+            this.bg_color = {};
+        }
+        log('2 ' + opacity);
+        this.bg_color.alpha = ((opacity / SCALE_FACTOR).toFixed(2));
+        log('1 ' + this.bg_color.alpha);
+        if(change) {
+          this.set_bg_color(this.bg_color);
+        }
+
+    },
+    set_transition: function (minimum_opacity, time) {
+        this.panel.get_style_context().remove_provider(this.transition_provider);
+        this.transition_provider.load_from_data(".demo-panel-transition { transition: " + time + "ms linear; }");
+        this.panel.get_style_context().add_provider(this.transition_provider);
+        this.panel.get_style_context().add_class("demo-panel-transition");
+    },
+    fade_in: function () {
+this.set_bg_color(this.bg_color);
+    },
+    fade_out: function () {
+this.set_bg_color(this.bg_color);
+    }
+});
 
 const AppRow = new Lang.Class({
     Name: 'DynamicPanelTransparency_AppRow',

@@ -5,11 +5,6 @@
       <summary>Maximized Opacity</summary>
       <description>The opacity of the panel when there are maximized windows.</description>
     </key>
-    <key name="always-trigger" type="(bb)">
-      <default>(true, false)</default>
-      <summary>Always Trigger</summary>
-      <description>Always trigger the panel when window is focused.</description>
-    </key>
     <key name="panel-color" type="(bai)">
       <default>(true, [56,89,76])</default>
       <summary>Panel Color</summary>
