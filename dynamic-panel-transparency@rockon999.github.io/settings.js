@@ -25,11 +25,7 @@ const APP_SETTINGS_PARAMS = [{
         key: 'panel-color',
         name: 'panel_color',
         type: '(bai)',
-    }, {
-        key: 'always-trigger',
-        name: 'always_trigger',
-        type: '(bb)',
-    }, {
+    },{
         key: 'panel-text-color',
         name: 'text_color',
         type: '(b(iii))'
@@ -99,7 +95,11 @@ function bind_app_overrides() {
             }
         }
     }
-      this.app_settings_enabled = (app_overrides.length > 0);
+    update_app_overrides();
+}
+
+function update_app_overrides() {
+    this.app_settings_enabled = ((get_app_overrides().length > 0) && this.enable_app_overrides());
 }
 
 function bind() {
@@ -124,11 +124,7 @@ function bind() {
             if (this.check_app_settings() && !Util.is_undef(this.app_settings_manager[setting.name])) {
                 let window = Extension.get_maximized_window();
                 if (window) {
-                    let shell_app = Shell.WindowTracker.get_default().get_app_from_pid(window.get_pid());
-                    if (!shell_app)
-                        shell_app = Shell.AppSystem.get_default().lookup_startup_wmclass(window.get_wm_class());
-                    if (!shell_app)
-                        shell_app = Shell.AppSystem.get_default().lookup_desktop_wmclass(window.get_wm_class());
+                    let shell_app = Util.get_app(window);
                     let app_id = shell_app.get_id();
                     if (shell_app && app_id) {
                         let value = this.app_settings_manager[setting.name][app_id];

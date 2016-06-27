@@ -10,6 +10,7 @@ const Config = imports.misc.config;
 const Panel = Main.panel;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
+const Gdk = imports.gi.Gdk;
 const St = imports.gi.St;
 const Util = Me.imports.util;
 
@@ -198,6 +199,20 @@ function set_background_alpha(actor, alpha) {
     }));
 }
 
+/*function get_gtk_background_alpha(actor) {
+    return actor.get_style_context().get_background_color().alpha;
+}*/
+
+/*function set_gtk_background_alpha(actor, alpha) {
+    let background_color = actor.get_style_context().get_background_color();
+    actor.override_background_color(Gtk.StateType.NORMAL, new Gdk.RGBA({
+        red: background_color.red,
+        green: background_color.green,
+        blue: background_color.blue,
+        alpha: alpha
+    }));
+}
+*/
 function apply_stylesheet_css(css, name){
   let file_name = Me.dir.get_path() + "/styles/" + name + ".dpt.css";
   /* Write to the file. */

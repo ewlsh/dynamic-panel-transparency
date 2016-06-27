@@ -1,5 +1,7 @@
 const Meta = imports.gi.Meta;
 const Gio = imports.gi.Gio;
+const Shell = imports.gi.Shell;
+const GLib = imports.gi.GLib;
 
 /* Global Utility Variables */
 const MAXIMIZED_WIDTH_BUFFER = 5;
@@ -60,12 +62,12 @@ function get_file(filename) {
 function write_to_file(filename, text) {
     try {
         let file = get_file(filename);
-        let success = file.replace_contents(text,null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null, null);
-       // let data_output = new Gio.DataOutputStream({ base_stream: stream });
-       // if (data_output.put_string(text, null))
-       //     if (data_output.close_finish() && stream.close_finish())
+        let success = file.replace_contents(text, null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null, null);
+        // let data_output = new Gio.DataOutputStream({ base_stream: stream });
+        // if (data_output.put_string(text, null))
+        //     if (data_output.close_finish() && stream.close_finish())
 
-         return success; //      return true;
+        return success; //      return true;
     } catch (error) { }
 
     return false;
@@ -78,4 +80,13 @@ function remove_file(filename) {
     } catch (error) { }
 
     return false;
+}
+
+function get_app(window) {
+    let shell_app = Shell.WindowTracker.get_default().get_app_from_pid(window.get_pid());
+    if (!shell_app)
+        shell_app = Shell.AppSystem.get_default().lookup_startup_wmclass(window.get_wm_class());
+    if (!shell_app)
+        shell_app = Shell.AppSystem.get_default().lookup_desktop_wmclass(window.get_wm_class());
+    return shell_app;
 }

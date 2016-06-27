@@ -23,17 +23,17 @@
     <property name="can_focus">False</property>
     <property name="orientation">vertical</property>
     <child>
-      <object class="GtkEventBox" id="panel_demo_background">
+      <object class="GtkAlignment">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="top_padding">20</property>
+        <property name="bottom_padding">20</property>
+        <property name="left_padding">10</property>
+        <property name="right_padding">10</property>
         <child>
-          <object class="GtkAlignment">
+          <object class="GtkEventBox" id="panel_demo_background">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="top_padding">20</property>
-            <property name="bottom_padding">20</property>
-            <property name="left_padding">10</property>
-            <property name="right_padding">10</property>
             <child>
               <object class="GtkBox" id="panel_demo_box">
                 <property name="visible">True</property>
@@ -135,7 +135,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="pixel_size">16</property>
-                                <property name="icon_name">network-wired-offline-symbolic</property>
+                                <property name="icon_name">battery-full-charged-symbolic</property>
                                 <property name="icon_size">2</property>
                               </object>
                             </child>
@@ -157,11 +157,11 @@
                 </child>
               </object>
             </child>
+            <style>
+              <class name="panel-demo"/>
+            </style>
           </object>
         </child>
-        <style>
-          <class name="panel-demo"/>
-        </style>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -201,6 +201,7 @@
               <object class="GtkLabel" id="minimum_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Minimum Opacity</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -212,6 +213,7 @@
               <object class="GtkLabel" id="maximum_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Maximum Opacity</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -258,6 +260,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
+                <property name="label" translatable="yes">Transition Speed</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>

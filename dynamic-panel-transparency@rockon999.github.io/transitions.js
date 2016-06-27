@@ -19,6 +19,7 @@ function init() {
         this.tweener = imports.ui.tweener;
     }
     this.tweener.registerSpecialProperty('background_alpha', Theming.get_background_alpha, Theming.set_background_alpha);
+   // this.tweener.registerSpecialProperty('gtk_background_alpha', Theming.get_gtk_background_alpha, Theming.set_gtk_background_alpha);
 }
 
 function cleanup() {
