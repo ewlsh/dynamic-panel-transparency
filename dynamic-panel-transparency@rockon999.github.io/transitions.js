@@ -52,23 +52,31 @@ function update_solid() {
 function fade_in(params = null) {
     if (Main.overview.visible || Main.overview._shown)
         return;
+
     if (params === null || Util.is_undef(params.time))
         params = {
             time: Settings.get_transition_speed()
         };
+
     this.status.set_transparent(false);
     this.status.set_blank(false);
     let time = params.time / 1000;
+
     Theming.set_panel_color();
-    this.tweener.addTween(Panel.actor, {
-        background_alpha: Settings.get_minimum_opacity()
-    });
-    this.tweener.addTween(Panel.actor, {
-        time: time,
-        transition: 'linear',
-        background_alpha: Settings.get_maximum_opacity(),
-        onComplete: fade_in_complete
-    });
+
+    if (time <= 0) {
+        Theming.set_background_alpha(Panel.actor, Settings.get_maximum_opacity());
+    } else {
+        this.tweener.addTween(Panel.actor, {
+            background_alpha: Settings.get_minimum_opacity()
+        });
+        this.tweener.addTween(Panel.actor, {
+            time: time,
+            transition: 'linear',
+            background_alpha: Settings.get_maximum_opacity(),
+            onComplete: fade_in_complete
+        });
+    }
 }
 
 function fade_in_complete() {
@@ -81,6 +89,7 @@ function fade_in_complete() {
 function fade_in_from_blank(params = null) {
     if (Main.overview._shown)
         return;
+
     if (params === null || Util.is_undef(params.time))
         params = {
             time: Settings.get_transition_speed()
@@ -140,10 +149,9 @@ function fade_out(params = null) {
     }
 
     Theming.set_panel_color();
+
     if (time <= 0 && !Main.overview._shown) {
-        fade_out({
-            time: 0
-        });
+        Theming.set_background_alpha(Panel.actor, Settings.get_minimum_opacity());
     } else if (Main.overview._shown) {
         blank_fade_out({
             time: 0
