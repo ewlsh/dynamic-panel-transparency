@@ -145,8 +145,6 @@ function getPrefsWidget() {
             }
     }));
 
-
-    let theme_source_box = builder.get_object('theme_source_box');
     theme_source_box.append_text(Dictionary['Panel']);
     theme_source_box.append_text(Dictionary['Dash']);
     theme_source_box.set_active(settings.get_enum('user-theme-source'));
@@ -154,7 +152,7 @@ function getPrefsWidget() {
         settings.set_enum('user-theme-source', widget.get_active());
     }));
 
-    let color_btn = builder.get_object('color_btn');
+
 
     /* Convert & scale color. */ {
         let panel_color = settings.get_value('panel-color').deep_unpack();
