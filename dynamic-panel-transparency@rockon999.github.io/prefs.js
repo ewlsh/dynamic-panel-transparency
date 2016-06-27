@@ -87,6 +87,7 @@ function getPrefsWidget() {
     panel_demo.set_bg_color(new Gdk.RGBA({ red: 0, green: 0, blue: 0, alpha: 1.0 }));
     panel_demo.set_text_color(new Gdk.RGBA({ red: 255, green: 255, blue: 255, alpha: 1.0 }));
 
+
     /* Util function for easily setting labels */
     //function //setLabel(obj, label) {
     //    builder.get_object(obj).set_label(label);
@@ -104,6 +105,13 @@ function getPrefsWidget() {
     speed_scale.connect('format-value', Lang.bind(this, function (scale, value) {
         return value + 'ms';
     }));
+    speed_scale.connect('value-changed', Lang.bind(this, function (widget) {
+
+
+       // panel_demo.set_opacity(widget.get_value(), true);
+         temp_settings.store(SETTINGS_TRANSITION_SPEED, new GLib.Variant('i', widget.adjustment.get_value()));
+      //   panel_demo.fade_in();
+    }));
 
     ////setLabel('maximum_label', '<b>' + Dictionary['Maximum Opacity'] + '</b>');
 
@@ -116,9 +124,10 @@ function getPrefsWidget() {
         return (((value / SCALE_FACTOR) * 100).toFixed(0) + '%');
     }));
      maximum_scale.connect('value-changed', Lang.bind(this, function (widget) {
-       log(widget.get_value());
+
 
         panel_demo.set_opacity(widget.get_value(), true);
+         temp_settings.store(SETTINGS_MAXIMIZED_OPACITY, new GLib.Variant('i', widget.adjustment.get_value()));
       //   panel_demo.fade_in();
     }));
 
@@ -135,12 +144,17 @@ function getPrefsWidget() {
     minimum_scale.connect('value-changed', Lang.bind(this, function (widget) {
         panel_demo.set_opacity(widget.get_value(), true);
        // panel_demo.fade_out();
+        temp_settings.store(SETTINGS_UNMAXIMIZED_OPACITY, new GLib.Variant('i', widget.adjustment.get_value()));
     }));
 
     //setLabel('detect_theme_label', '<b>' + Dictionary['Detect User Theme'] + '</b>');
 
     let theme_switch = builder.get_object('theme_switch');
     theme_switch.set_active(settings.get_boolean(SETTINGS_DETECT_THEME));
+
+    theme_switch.connect('activate', Lang.bind(this, function(){
+         temp_settings.store(SETTINGS_DETECT_THEME, new GLib.Variant('b', widget.get_active()));
+    }));
 
     let detect_theme_label = builder.get_object('detect_theme_label');
     let theme_source_box = builder.get_object('theme_source_box');
@@ -176,22 +190,28 @@ function getPrefsWidget() {
     theme_source_box.append_text(Dictionary['Dash']);
     theme_source_box.set_active(settings.get_enum(SETTINGS_USER_THEME_SOURCE));
     theme_source_box.connect('changed', Lang.bind(this, function (widget) {
-        settings.set_enum(SETTINGS_USER_THEME_SOURCE, widget.get_active());
-
-
+        //settings.set_enum(SETTINGS_USER_THEME_SOURCE, widget.get_active());
+        temp_settings.store(SETTINGS_USER_THEME_SOURCE, widget.get_active());
     }));
 
     //setLabel('text_color_label', Dictionary['Text Color']);
 
     let text_color_box = builder.get_object('text_color_btn');
-    /*  text_color_box.append_text(Dictionary['Default']);
-    text_color_box.append_text(Dictionary['Light']);
-    text_color_box.append_text(Dictionary['Dark']);
-    text_color_box.append_text(Dictionary['Darker']);
-    text_color_box.set_active(settings.get_enum(SETTINGS_TEXT_COLOR));*/
-    //text_color_box.connect('changed', Lang.bind(this, function (widget) {
-    // settings.set_value(SETTINGS_TEXT_COLOR, widget.get_active());
-    //}));
+
+    text_color_box.connect('color-set', Lang.bind(this, function (color) {
+        let rgba = color.rgba.to_string();
+        let parsed_red = parseInt(rgba.split('(')[1].split(')')[0].split(',')[RED], 10);
+        let parsed_green = parseInt(rgba.split('(')[1].split(')')[0].split(',')[GREEN], 10);
+        let parsed_blue = parseInt(rgba.split('(')[1].split(')')[0].split(',')[BLUE], 10);
+
+        let rgb = [];
+        rgb[RED] = parsed_red;
+        rgb[GREEN] = parsed_green;
+        rgb[BLUE] = parsed_blue;
+        //settings.set_value(SETTINGS_TEXT_COLOR, new GLib.Variant(')', rgb));
+        temp_settings.store(SETTINGS_TEXT_COLOR, new GLib.Variant('(iii)', rgb));
+        panel_demo.set_text_color({ red: rgb[RED], green: rgb[GREEN], blue: rgb[BLUE], alpha: 100 });
+    }));
 
     /* Convert & scale color. */
     let panel_color = settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack();
@@ -224,7 +244,8 @@ function getPrefsWidget() {
         rgb[RED] = parsed_red;
         rgb[GREEN] = parsed_green;
         rgb[BLUE] = parsed_blue;
-        settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
+        //settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
+        temp_settings.store(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
         panel_demo.set_bg_color({ red: rgb[0], green: rgb[1], blue: rgb[2] });
     }));
 
@@ -242,13 +263,13 @@ function getPrefsWidget() {
     text_shadow.set_label(Dictionary['Add Text Shadow']);
 
     /* Bind settings. */
-    settings.bind(SETTINGS_TRANSITION_SPEED, speed_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
+    /*settings.bind(SETTINGS_TRANSITION_SPEED, speed_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_DETECT_THEME, theme_switch, 'active', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_UNMAXIMIZED_OPACITY, minimum_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_HIDE_CORNERS, hide_corners, 'active', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_FORCE_ANIMATION, force_transition, 'active', Gio.SettingsBindFlags.DEFAULT);
     settings.bind(SETTINGS_TEXT_SHADOW, text_shadow, 'active', Gio.SettingsBindFlags.DEFAULT);
-    settings.bind(SETTINGS_MAXIMIZED_OPACITY, maximum_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
+    settings.bind(SETTINGS_MAXIMIZED_OPACITY, maximum_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);*/
 
 
     let app_list = builder.get_object('app_list');
@@ -308,6 +329,19 @@ function getPrefsWidget() {
         a2.destroy();
     }));
     app_list.add(add);
+
+    let apply_btn = builder.get_object('apply_btn');
+    let cancel_btn = builder.get_object('cancel_btn');
+
+    apply_btn.connection('clicked', Lang.bind(this, function(){
+        settings.set_value(SETTINGS_TEXT_COLOR, temp_settings.get(SETTINGS_TEXT_COLOR));
+        settings.set_value(SETTINGS_PANEL_COLOR,temp_settings.get(SETTINGS_PANEL_COLOR));
+        settings.set_enum(SETTINGS_USER_THEME_SOURCE, temp_settings.get(SETTINGS_USER_THEME_SOURCE));
+    }));
+
+    cancel_btn.connection('clicked', Lang.bind(this, function(){
+
+    }));
 
     /* Return main widget. */
     return main_widget;
