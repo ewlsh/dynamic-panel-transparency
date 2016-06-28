@@ -68,6 +68,15 @@ function buildPrefsWidget() {
 function getPrefsWidget() {
 
 
+    let temp_settings = {
+    storage: [],
+    store: function(key, value){
+       storage[key] = value;
+    }, get: function(key) {
+        return storage[key];
+    }
+    };
+
     /* Get Settings */
     let settings = Convenience.getSettings();
     /* Create a UI Builder */
@@ -254,13 +263,25 @@ function getPrefsWidget() {
     hide_corners.set_active(settings.get_boolean(SETTINGS_HIDE_CORNERS));
     hide_corners.set_label(Dictionary['Hide Corners']);
 
+    hide_corners.connect('activate', Lang.bind(this, function(){
+         temp_settings.store(SETTINGS_HIDE_CORNERS, new GLib.Variant('b', widget.get_active()));
+    }));
+
     let force_transition = builder.get_object('force_transition_check');
     force_transition.set_active(settings.get_boolean(SETTINGS_FORCE_ANIMATION));
     force_transition.set_label(Dictionary['Force Animation']);
 
+force_transition.connect('activate', Lang.bind(this, function(){
+         temp_settings.store(SETTINGS_FORCE_ANIMATION, new GLib.Variant('b', widget.get_active()));
+    }));
+
     let text_shadow = builder.get_object('text_shadow_check');
     text_shadow.set_active(settings.get_boolean(SETTINGS_TEXT_SHADOW));
     text_shadow.set_label(Dictionary['Add Text Shadow']);
+
+text_shadow.connect('activate', Lang.bind(this, function(){
+         temp_settings.store(SETTINGS_TEXT_SHADOW, new GLib.Variant('b', widget.get_active()));
+    }));
 
     /* Bind settings. */
     /*settings.bind(SETTINGS_TRANSITION_SPEED, speed_scale.adjustment, 'value', Gio.SettingsBindFlags.DEFAULT);
@@ -333,13 +354,20 @@ function getPrefsWidget() {
     let apply_btn = builder.get_object('apply_btn');
     let cancel_btn = builder.get_object('cancel_btn');
 
-    apply_btn.connection('clicked', Lang.bind(this, function(){
+    apply_btn.connect('clicked', Lang.bind(this, function(){
         settings.set_value(SETTINGS_TEXT_COLOR, temp_settings.get(SETTINGS_TEXT_COLOR));
         settings.set_value(SETTINGS_PANEL_COLOR,temp_settings.get(SETTINGS_PANEL_COLOR));
         settings.set_enum(SETTINGS_USER_THEME_SOURCE, temp_settings.get(SETTINGS_USER_THEME_SOURCE));
-    }));
+        settings.set_value(SETTINGS_TRANSITION_SPEED, temp_settings.get(SETTINGS_TRANSITION_SPEED));
+        settings.set_value(SETTINGS_DETECT_THEME, temp_settings.get(SETTINGS_DETECT_THEME));
+        settings.set_value(SETTINGS_UNMAXIMIZED_OPACITY, temp_settings.get(SETTINGS_UNMAXIMIZED_OPACITY));
+        settings.set_value(SETTINGS_MAXIMIZED_OPACITY,  temp_settings.get(SETTINGS_MAXIMIZED_OPACITY));
+        settings.set_value(SETTINGS_HIDE_CORNERS,  temp_settings.get(SETTINGS_HIDE_CORNERS));
+        settings.set_value(SETTINGS_FORCE_ANIMATION,  temp_settings.get(SETTINGS_FORCE_ANIMATION));
+        settings.set_value(SETTINGS_TEXT_SHADOW,  temp_settings.get(SETTINGS_TEXT_SHADOW));
+   }));
 
-    cancel_btn.connection('clicked', Lang.bind(this, function(){
+    cancel_btn.connect('clicked', Lang.bind(this, function(){
 
     }));
 
