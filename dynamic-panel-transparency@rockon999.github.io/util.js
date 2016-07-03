@@ -30,7 +30,7 @@ function is_undef(a) {
 function is_maximized(window) {
     let type = window.get_window_type();
 
-    if(type == Meta.WindowType.DESKTOP || type == Meta.WindowType.DOCK){
+    if(type == Meta.WindowType.DESKTOP){
         return false;
     }
 
