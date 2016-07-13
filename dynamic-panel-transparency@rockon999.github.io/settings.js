@@ -16,20 +16,13 @@ const Gio = imports.gi.Gio;
 /* This might impair visibility of the code, but it makes my life a thousand times simpler */
 /* Dynamic settings takes a key and watches for it to change in Gio.Settings & creates a getter for it */
 
-const APP_SETTINGS_PARAMS = [{
-    key: 'maximized-opacity',
-    name: 'maximized_opacity',
-    type: '(bi)',
-},
-    {
-        key: 'panel-color',
-        name: 'panel_color',
-        type: '(bai)',
-    },{
-        key: 'panel-text-color',
-        name: 'text_color',
-        type: '(b(iii))'
-    }];
+const APP_SETTINGS_PARAMS = [
+    { key: 'maximized-opacity', name: 'maximized_opacity', type: '(bi)' },
+    { key: 'panel-color', name: 'panel_color', type: '(bai)' }];
+
+const APP_SETTINGS_KEYS = ['maximized-opacity', 'panel-color'];
+
+const APP_SETTINGS_OVERRIDES = { 'detect-user-theme': false }
 
 function init() {
     this.settings = Convenience.getSettings();
@@ -40,6 +33,8 @@ function init() {
 }
 
 function cleanup() {
+    this.app_settings_manager.cleanup();
+
     for (let i = 0; i < keys.length; ++i) {
         let setting = keys[i];
         if (Util.is_undef(setting.getter)) {
@@ -78,7 +73,7 @@ function load_app_overrides() {
 }
 
 function check_app_settings() {
-    return this.app_settings_enabled;
+    return (get_app_overrides().length > 0) || (get_trigger_apps().length > 0);
 }
 
 function bind_app_overrides() {
@@ -95,11 +90,6 @@ function bind_app_overrides() {
             }
         }
     }
-    update_app_overrides();
-}
-
-function update_app_overrides() {
-    this.app_settings_enabled = ((get_app_overrides().length > 0) && this.enable_app_overrides());
 }
 
 function bind() {
@@ -118,25 +108,8 @@ function bind() {
             this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, setting.handler));
         }
 
-        /* Create getter */
+
         let getter = function () {
-
-            if (this.check_app_settings() && !Util.is_undef(this.app_settings_manager[setting.name])) {
-                let window = Extension.get_maximized_window();
-                if (window) {
-                    let shell_app = Util.get_app(window);
-                    let app_id = shell_app.get_id();
-                    if (shell_app && app_id) {
-                        let value = this.app_settings_manager[setting.name][app_id];
-                        if (!Util.is_undef(value) && !Util.is_undef(value[1]) && value[0]) {
-                            return value[1];
-                        }
-                    }
-
-                }
-
-            }
-
             if (!Util.is_undef(this.settings_manager) && !Util.is_undef(this.settings_manager[setting.name])) {
                 return this.settings_manager[setting.name];
             } else {
@@ -145,6 +118,44 @@ function bind() {
         }
 
         /* Add function */
+        if (APP_SETTINGS_KEYS.indexOf(setting.key) !== -1) {
+
+            getter = function () {
+                let override = APP_SETTINGS_OVERRIDES[setting.key];
+
+                if (!Util.is_undef(override)) {
+                    return override;
+                }
+
+                let maximized_window = Extension.get_maximized_window();
+
+                if (!Util.is_undef(maximized_window) && this.check_app_settings() && !Util.is_undef(this.app_settings_manager[setting.name])) {
+
+                    let shell_app = Util.get_app(maximized_window);
+
+                    if (!Util.is_undef(shell_app)) {
+                        let app_id = shell_app.get_id();
+                        if (!Util.is_undef(app_id)) {
+
+                            let value = this.app_settings_manager[setting.name][app_id];
+                            if (!Util.is_undef(value) && !Util.is_undef(value[1]) && value[0]) {
+                                log(app_id);
+                                log('setting: ' + setting.name);
+                                log('value:' + value[1]);
+                                return value[1];
+                            }
+                        }
+                    }
+                }
+
+                if (!Util.is_undef(this.settings_manager) && !Util.is_undef(this.settings_manager[setting.name])) {
+                    return this.settings_manager[setting.name];
+                } else {
+                    return this.defaults[setting.name];
+                }
+            }
+        }
+
         if (Util.is_undef(setting.getter)) {
             this['get_' + setting.name] = getter;
         } else {
@@ -163,8 +174,10 @@ function unbind() {
 const SettingsManager = new Lang.Class({
     Name: 'DynamicPanelTransparency_SettingsManager',
     _init: function (settings, params) {
+
         this.values = [];
         this.settings = settings;
+
         for (let i = 0; i < params.length; ++i) {
             let setting = params[i];
             this.values.push(setting);
@@ -196,14 +209,15 @@ const SettingsManager = new Lang.Class({
 const AppSettingsManager = new Lang.Class({
     Name: 'DynamicPanelTransparency_AppSettingsManager',
     _init: function (params, apps) {
+        let b = 1;
         this.values = [];
         this.settings = {};
-
+        this.settingsBoundIds = {};
 
         for (let a = 0; a < apps.length; ++a) {
             let app_id = apps[a];
-            let app = apps[a].split(".")[0];
-            let path = '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/' + app + "/";
+            //let app = apps[a].split(".")[0];
+            let path = '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/' + app_id + "/";
             let sett = null;
 
             let obj = Convenience.getSchemaObj('org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides');
@@ -217,33 +231,44 @@ const AppSettingsManager = new Lang.Class({
                 if (Util.is_undef(setting) || this.settings[app_id].list_keys().indexOf(setting.key) == -1) {
                     log('continued');
                     continue;
+
                 }
+                if (this.settingsBoundIds[app_id] == null)
+                    this.settingsBoundIds[app_id] = [];
+                this.settingsBoundIds[app_id].push(this.settings[app_id].connect('changed::' + setting.key, Lang.bind(this, function () {
+                    this.update(setting, app_id);
+                })));
                 let variant = GLib.VariantType.new(setting.type);
                 if (Util.is_undef(this[setting.name]))
                     this[setting.name] = {};
                 if (variant.is_array() || variant.is_tuple()) {
                     this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).deep_unpack();
-                } else {
+             //log('appie' + this.settings[app_id].get_value(setting.key).deep_unpack());
+            } else {
+               //     log('appie' + this.settings[app_id].get_value(setting.key).unpack());
                     this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).unpack();
                 }
-
-
             }
-
         }
     },
     update: function (setting, app_id) {
-        let app = app_id;
-        if (Util.is_undef(setting) || this.settings[app].list_keys().indexOf(setting.key) == -1)
+
+        if (Util.is_undef(setting) || this.settings[app_id].list_keys().indexOf(setting.key) == -1)
             return;
         let variant = GLib.VariantType.new(setting.type);
         if (Util.is_undef(this[setting.name]))
             this[setting.name] = {};
         if (variant.is_array() || variant.is_tuple()) {
-            this[setting.name][app] = this.settings[app].get_value(setting.key).deep_unpack();
+            this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).deep_unpack();
         } else {
-            this[setting.name][app] = this.settings[app].get_value(setting.key).unpack();
+            this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).unpack();
         }
-
+    },
+    cleanup: function () {
+        for (let app_id in this.settings.list_keys()) {
+            for (let id in this.settingsBoundIds[app_id]) {
+                this.settings[app_id].disconnect(id);
+            }
+        }
     }
 });

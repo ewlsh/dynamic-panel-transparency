@@ -26,12 +26,12 @@ function init() { this.stylesheets = []; this.styles = []; }
 
 function cleanup() {
     for (let sheet of this.stylesheets) {
-       let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
-       theme.unload_stylesheet(Util.get_file(sheet));
-       log(sheet);
-       Util.remove_file(sheet);
+        let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+        theme.unload_stylesheet(Util.get_file(sheet));
+        log(sheet);
+        Util.remove_file(sheet);
     }
-    for(let style of this.styles){
+    for (let style of this.styles) {
         log(style);
         Panel.actor.remove_style_class_name(style);
     }
@@ -39,78 +39,116 @@ function cleanup() {
     this.styles = null;
 }
 
-function add_text_shadow(color = [0,0,0], icon_position = [0,2,5], text_position=[0,3,5], transparency = 0.5) {
-    let red = color[0];
-    let green = color[1];
-    let blue = color[2];
 
-    let color_css = 'rgba(' + red + ', ' + green + ', ' + blue + ', 1.0)'
-    let tposition_css = ''+text_position[0]+'px '+text_position[1]+'px '+text_position[2]+'px';
-    let iposition_css = ''+icon_position[0]+'px '+icon_position[1]+'px '+icon_position[2]+'px';
 
-    apply_stylesheet_css('.dpt-panel-text-shadow .panel-button { text-shadow: ' + color_css + ' ' + tposition_css + ' }', 'panel-text-shadow');
-    apply_stylesheet_css('.dpt-panel-icon-shadow .system-status-icon { icon-shadow: ' + color_css + ' ' + iposition_css + ' }', 'panel-icon-shadow');
-    apply_stylesheet_css('.dpt-panel-arrow-shadow .popup-menu-arrow { icon-shadow: ' + color_css + ' ' + iposition_css + ' }', 'panel-arrow-shadow');
+function add_text_shadow(text_color = [0, 0, 0, 1.0], text_position = [0, 3, 5]) {
+    let tred = text_color[0];
+    let tgreen = text_color[1];
+    let tblue = text_color[2];
+    let ttransparency = text_color[3];
+
+    let tcolor_css = 'rgba(' + tred + ', ' + tgreen + ', ' + tblue + ', ' + ttransparency + ')';
+   // let icolor_css = 'rgba(' + ired + ', ' + igreen + ', ' + iblue + ', ' + itransparency + ')';
+    let tposition_css = '' + text_position[0] + 'px ' + text_position[1] + 'px ' + text_position[2] + 'px';
+   // let iposition_css = '' + icon_position[0] + 'px ' + icon_position[1] + 'px ' + icon_position[2] + 'px';
+
+    apply_stylesheet_css('.dpt-panel-text-shadow .panel-button { text-shadow: ' + tcolor_css + ' ' + tposition_css + ' }', 'panel-text-shadow');
 
     Panel.actor.add_style_class_name('dpt-panel-text-shadow');
+
+    register_style('dpt-panel-text-shadow');
+}
+
+function add_icon_shadow(icon_color = [0, 0, 0, 0.5], icon_position = [0, 2, 5]) {
+
+
+    let ired = icon_color[0];
+    let igreen = icon_color[1];
+    let iblue = icon_color[2];
+    let itransparency = icon_color[3];
+
+
+    let icolor_css = 'rgba(' + ired + ', ' + igreen + ', ' + iblue + ', ' + itransparency + ')';
+
+    let iposition_css = '' + icon_position[0] + 'px ' + icon_position[1] + 'px ' + icon_position[2] + 'px';
+
+
+    apply_stylesheet_css('.dpt-panel-icon-shadow .system-status-icon { icon-shadow: ' + icolor_css + ' ' + iposition_css + ' }', 'panel-icon-shadow');
+    apply_stylesheet_css('.dpt-panel-arrow-shadow .popup-menu-arrow { icon-shadow: ' + icolor_css + ' ' + iposition_css + ' }', 'panel-arrow-shadow');
+
     Panel.actor.add_style_class_name('dpt-panel-icon-shadow');
     Panel.actor.add_style_class_name('dpt-panel-arrow-shadow');
 
-     register_style('dpt-panel-text-shadow');
-     register_style('dpt-panel-icon-shadow');
-     register_style('dpt-panel-arrow-shadow');
+    register_style('dpt-panel-icon-shadow');
+    register_style('dpt-panel-arrow-shadow');
 }
 
 function has_text_shadow() {
-    return (Panel.actor.has_style_class_name('dpt-panel-text-shadow') || Panel.actor.has_style_class_name('dpt-panel-text-shadow') || Panel.actor.has_style_class_name('dpt-panel-text-shadow'));
+    return Panel.actor.has_style_class_name('dpt-panel-text-shadow');
+}
+
+function has_icon_shadow() {
+    return (Panel.actor.has_style_class_name('dpt-panel-icon-shadow') || Panel.actor.has_style_class_name('dpt-panel-arrow-shadow'));
 }
 
 function remove_text_shadow() {
     deregister_style('dpt-panel-text-shadow');
+    Panel.actor.remove_style_class_name('dpt-panel-text-shadow');
+}
+
+function remove_icon_shadow() {
     deregister_style('dpt-panel-icon-shadow');
     deregister_style('dpt-panel-arrow-shadow');
     Panel.actor.remove_style_class_name('dpt-panel-icon-shadow');
-    Panel.actor.remove_style_class_name('dpt-panel-text-shadow');
     Panel.actor.remove_style_class_name('dpt-panel-arrow-shadow');
 }
 
-function set_text_color(color) {
+function register_text_color(color, prefix = '-') {
     let red = color[0];
     let green = color[1];
     let blue = color[2];
 
     let color_css = 'color: rgb(' + red + ', ' + green + ', ' + blue + ');'
 
-    apply_stylesheet_css('.dpt-panel-text-color .panel-button { ' + color_css + ' }', 'panel-text-color');
-    apply_stylesheet_css('.dpt-panel-icon-color .system-status-icon { ' + color_css + ' }', 'panel-icon-color');
-    apply_stylesheet_css('.dpt-panel-arrow-color .popup-menu-arrow { ' + color_css + ' }', 'panel-arrow-color');
+    apply_stylesheet_css('.dpt-panel' + prefix + 'text-color .panel-button { ' + color_css + ' }', 'panel' + prefix + 'text-color');
+    apply_stylesheet_css('.dpt-panel' + prefix + 'icon-color .system-status-icon { ' + color_css + ' }', 'panel' + prefix + 'icon-color');
+    apply_stylesheet_css('.dpt-panel' + prefix + 'arrow-color .popup-menu-arrow { ' + color_css + ' }', 'panel' + prefix + 'arrow-color');
 
-    Panel.actor.add_style_class_name('dpt-panel-text-color');
-    Panel.actor.add_style_class_name('dpt-panel-icon-color');
-    Panel.actor.add_style_class_name('dpt-panel-arrow-color');
-
-     register_style('dpt-panel-text-color');
-     register_style('dpt-panel-icon-color');
-     register_style('dpt-panel-arrow-color');
+    register_style('dpt-panel' + prefix + 'text-color');
+    register_style('dpt-panel' + prefix + 'icon-color');
+    register_style('dpt-panel' + prefix + 'arrow-color');
 
 }
 
-function remove_text_color() {
-    deregister_style('dpt-panel-text-color');
-    deregister_style('dpt-panel-icon-color');
-    deregister_style('dpt-panel-arrow-color');
-
-    Panel.actor.remove_style_class_name('dpt-panel-text-color');
-    Panel.actor.remove_style_class_name('dpt-panel-icon-color');
-    Panel.actor.remove_style_class_name('dpt-panel-arrow-color');
+function set_text_color(prefix = '-') {
+    if (this.current_prefix != null) {
+        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'text-color');
+        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'icon-color');
+        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'arrow-color');
+    }
+    this.current_prefix = prefix;
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'text-color');
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'icon-color');
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'arrow-color');
 }
 
-function register_style(style){
-    if(this.styles.indexOf(style) == -1)
-      this.styles.push(style);
+
+function remove_text_color(prefix = '-') {
+    deregister_style('dpt-panel' + prefix + 'text-color');
+    deregister_style('dpt-panel' + prefix + 'icon-color');
+    deregister_style('dpt-panel' + prefix + 'arrow-color');
+
+    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'text-color');
+    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'icon-color');
+    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'arrow-color');
 }
 
-function deregister_style(style){
+function register_style(style) {
+    if (this.styles.indexOf(style) == -1)
+        this.styles.push(style);
+}
+
+function deregister_style(style) {
     let index = this.styles.indexOf(style);
     this.styles = this.styles.splice(0, index).concat(this.styles.splice(index + 1, this.styles.length));
 }
@@ -144,7 +182,6 @@ function clear_corner_color() {
     Panel._leftCorner.actor.set_style(null);
     Panel._rightCorner.actor.set_style(null);
 }
-
 
 function get_user_background_color(src) {
     if (Util.is_undef(src))
@@ -199,29 +236,16 @@ function set_background_alpha(actor, alpha) {
     }));
 }
 
-/*function get_gtk_background_alpha(actor) {
-    return actor.get_style_context().get_background_color().alpha;
-}*/
 
-/*function set_gtk_background_alpha(actor, alpha) {
-    let background_color = actor.get_style_context().get_background_color();
-    actor.override_background_color(Gtk.StateType.NORMAL, new Gdk.RGBA({
-        red: background_color.red,
-        green: background_color.green,
-        blue: background_color.blue,
-        alpha: alpha
-    }));
-}
-*/
-function apply_stylesheet_css(css, name){
-  let file_name = Me.dir.get_path() + "/styles/" + name + ".dpt.css";
-  /* Write to the file. */
-  Util.write_to_file(file_name, css);
-  let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
-  if(theme.load_stylesheet(Util.get_file(file_name))){
-      this.stylesheets.push(file_name);
-  } else {
-      log('Error Loading Temporary Stylesheet: ' + name);
-  }
-  return file_name;
+function apply_stylesheet_css(css, name) {
+    let file_name = Me.dir.get_path() + "/styles/" + name + ".dpt.css";
+    /* Write to the file. */
+    Util.write_to_file(file_name, css);
+    let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+    if (theme.load_stylesheet(Util.get_file(file_name))) {
+        this.stylesheets.push(file_name);
+    } else {
+        log('Error Loading Temporary Stylesheet: ' + name);
+    }
+    return file_name;
 }
