@@ -2,12 +2,7 @@
   <enum id='org.gnome.shell.extensions.dynamic-panel-transparency.themeSource'>
     <value value='0' nick='Panel'/>
     <value value='1' nick='Dash'/>
-  </enum>
-  <enum id='org.gnome.shell.extensions.dynamic-shell-transparency.textColor'>
-    <value value='0' nick='Default'/>
-    <value value='1' nick='Light'/>
-    <value value='2' nick='Dark'/>
-    <value value='3' nick='Darker'/>
+    <value value='2' nick='Custom'/>
   </enum>
   <schema id="org.gnome.shell.extensions.dynamic-panel-transparency" path="/org/gnome/shell/extensions/dynamic-panel-transparency/">
     <key name="transition-speed" type="i">
@@ -45,14 +40,19 @@
       <summary>Detect the user's theme</summary>
       <description>Uses the panel or dash to get the user's panel color.</description>
     </key>
-    <key name="enable-app-overrides" type="b">
-      <default>false</default>
-      <summary>Allow app specific settings.</summary>
-      <description>Enables each app to have different settings.</description>
+    <key name="user-theme-source" enum="org.gnome.shell.extensions.dynamic-panel-transparency.themeSource">
+      <default>'Dash'</default>
+      <summary>Source for detecting the user's theme</summary>
+      <description>Object used to get the user's preferred background color.</description>
     </key>
     <key name="text-shadow" type="b">
       <default>false</default>
-      <summary>Add shadowing to text and icons.</summary>
+      <summary>Add shadowing to text.</summary>
+      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
+    </key>
+    <key name="icon-shadow" type="b">
+      <default>false</default>
+      <summary>Add shadowing to icons.</summary>
       <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
     </key>
     <key name="text-shadow-position" type="(iii)">
@@ -65,8 +65,33 @@
       <summary>Add shadowing to text and icons.</summary>
       <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
     </key>
-    <key name="panel-text-color" type="(iii)">
+    <key name="icon-shadow-color" type="(iiid)">
+      <default>(0,0,0,0.5)</default>
+      <summary>Color of shadowing for icons.</summary>
+      <description>.</description>
+    </key>
+    <key name="text-shadow-color" type="(iiid)">
+      <default>(0,0,0,1.0)</default>
+      <summary>Color of shadowing for text.</summary>
+      <description>.</description>
+    </key>
+    <key name="text-color" type="(iii)">
       <default>(255,255,255)</default>
+      <summary>What color the panel text should be.</summary>
+      <description>Used to determine what color the panel text should be.</description>
+    </key>
+    <key name="maximized-text-color" type="(iii)">
+      <default>(255,255,255)</default>
+      <summary>What color the panel text should be.</summary>
+      <description>Used to determine what color the panel text should be.</description>
+    </key>
+    <key name="enable-text-color" type="b">
+      <default>false</default>
+      <summary>What color the panel text should be.</summary>
+      <description>Used to determine what color the panel text should be.</description>
+    </key>
+    <key name="enable-maximized-text-color" type="b">
+      <default>false</default>
       <summary>What color the panel text should be.</summary>
       <description>Used to determine what color the panel text should be.</description>
     </key>
@@ -79,11 +104,6 @@
       <default>[]</default>
       <summary>Apps that will always trigger the panel when focused.</summary>
       <description>List of apps that triggers the panel when a window of the app is in focus.</description>
-    </key>
-    <key name="user-theme-source" enum="org.gnome.shell.extensions.dynamic-panel-transparency.themeSource">
-      <default>'Dash'</default>
-      <summary>Source for detecting the user's theme</summary>
-      <description>Object used to get the user's preferred background color.</description>
     </key>
   </schema>
 </schemalist>

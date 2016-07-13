@@ -32,14 +32,19 @@ function is_undef(a) {
 
 function is_maximized(window) {
     let type = window.get_window_type();
+    let id = window.get_gtk_application_id();
 
-    if (type == Meta.WindowType.DESKTOP || type == Meta.WindowType.DOCK) {
+   // if(Settings.get_trigg)
+
+    if (type == Meta.WindowType.DESKTOP) {
         return false;
     }
 
     if (window.maximized_vertically) {
         return true;
     }
+
+    //get_gtk_application_id ()
 
     let frame = window.get_frame_rect();
 
