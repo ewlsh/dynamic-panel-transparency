@@ -74,7 +74,7 @@ function fade_in(params = null) {
 
     if (time <= 0) {
         Theming.set_background_alpha(Panel.actor, Settings.get_maximum_opacity());
-
+        this.animation_status.done();
     } else {
         this.tweener.addTween(Panel.actor, {
             time: time,
@@ -130,11 +130,11 @@ function fade_out(params = null) {
     if (time <= 0 && !Main.overview._shown) {
         Theming.set_background_alpha(Panel.actor, Settings.get_minimum_opacity());
         Theming.set_panel_color();
+        this.animation_status.done();
     } else if (Main.overview._shown) {
         blank_fade_out({
             time: 0
         });
-
     } else {
         this.tweener.addTween(Panel.actor, {
             time: time,
@@ -178,6 +178,7 @@ function blank_fade_out(params = null) {
     if (time <= 0) {
         Theming.set_background_alpha(Panel.actor, 0);
         Theming.set_panel_color();
+        this.animation_status.done();
     } else {
         this.tweener.addTween(Panel.actor, {
             time: time,
