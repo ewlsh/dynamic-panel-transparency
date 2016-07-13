@@ -138,9 +138,7 @@ function enable() {
             /* Fix text shadowing if need exists */
             /* TODO: Better place to check this? */
             if (Settings.add_text_shadow() && !Theming.has_text_shadow()) {
-                Theming.add_text_shadow(Settings.get_text_shadow_color(),
-
-                    Settings.get_text_shadow_position());
+                Theming.add_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
             } else if (!Settings.add_text_shadow() && Theming.has_text_shadow()) {
                 Theming.remove_text_shadow();
             }
@@ -156,10 +154,7 @@ function enable() {
             /* Fix text shadowing if need exists */
             /* TODO: Better place to check this? */
             if (Settings.add_icon_shadow() && !Theming.has_icon_shadow()) {
-                Theming.add_icon_shadow(Settings.get_icon_shadow_color(),
-
-                    Settings.get_icon_shadow_position(),
-                 );
+                Theming.add_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
             } else if (!Settings.add_icon_shadow() && Theming.has_icon_shadow()) {
                 Theming.remove_icon_shadow();
             }
@@ -175,9 +170,7 @@ function enable() {
             /* Fix text shadowing if need exists */
             /* TODO: Better place to check this? */
             if (Settings.add_text_shadow() && !Theming.has_text_shadow()) {
-                Theming.add_text_shadow(Settings.get_text_shadow_color(),
-
-                    Settings.get_text_shadow_position());
+                Theming.add_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
             } else if (!Settings.add_text_shadow() && Theming.has_text_shadow()) {
                 Theming.remove_text_shadow();
             }
@@ -195,7 +188,7 @@ function enable() {
             if (Settings.add_icon_shadow() && !Theming.has_icon_shadow()) {
                 Theming.add_icon_shadow(Settings.get_icon_shadow_color(),
 
-                    Settings.get_icon_shadow_position(),
+                    Settings.get_icon_shadow_position()
                  );
             } else if (!Settings.add_icon_shadow() && Theming.has_icon_shadow()) {
                 Theming.remove_icon_shadow();
@@ -214,7 +207,7 @@ function enable() {
             if (Settings.add_icon_shadow() && !Theming.has_icon_shadow()) {
                 Theming.add_icon_shadow(Settings.get_icon_shadow_color(),
 
-                    Settings.get_icon_shadow_position(),
+                    Settings.get_icon_shadow_position()
                  );
             } else if (!Settings.add_icon_shadow() && Theming.has_icon_shadow()) {
                 Theming.remove_icon_shadow();
