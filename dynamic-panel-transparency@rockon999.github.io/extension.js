@@ -271,7 +271,7 @@ function enable() {
     Theming.init();
 
     let version = Util.get_shell_version();
-
+ Main.screenShield.connect('lock-status-changed', Lang.bind(this, this._lockStatusChanged));
     /* Add support for older Gnome Shell versions (most likely down to 3.12) */
     /*if (version.major == 3 && version.minor < 17) {
         this._maximizeSig = global.window_manager.connect('maximize', Lang.bind(this, this._windowUpdated));
@@ -459,6 +459,16 @@ function get_maximized_window() {
 
 
 /* Event Handlers */
+
+function _lockStatusChanged(shield, locked) {
+    log('herm');
+        if (locked) {
+            log('ie bernie');
+          Theming.set_background_alpha(Panel.actor, 0);
+        }
+
+
+    }
 
 
 function _workspacesChanged() {

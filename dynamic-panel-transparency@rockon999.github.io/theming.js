@@ -188,25 +188,35 @@ function get_user_background_color(src) {
         return Settings.get_panel_color();
     let user_theme = src.get_theme_node();
 
-    let background_color = user_theme.get_background_color();
-    if (background_color === null)
+    let background_color =null;
+    log( background_color.red +' '
+       + background_color.green + ' '
+       + background_color.blue);
+    if (background_color === null){
         background_color = user_theme.lookup_color('background-color', true);
+
+    }
     if (Util.is_undef(background_color))
         return Settings.get_panel_color();
-    return [
-        background_color.red,
-        background_color.green,
-        background_color.blue,
-    ];
+    return {
+        red:background_color.red,
+        green:background_color.green,
+        blue:background_color.blue,
+    };
 }
 
 function get_background_color() {
     if (Settings.detect_user_theme()) {
+        let background_color = null;
         if (Settings.get_user_theme_source().toLowerCase() == 'panel') {
-            return get_user_background_color(Panel.actor);
+          // background_color =  Extension.get_panel_bg();
+
         } else {
-            return get_user_background_color(Main.overview._dash._container);
+           // background_color =  Extension.get_dash_bg();
+
+
         }
+        return background_color;
     } else {
         return Settings.get_panel_color();
     }

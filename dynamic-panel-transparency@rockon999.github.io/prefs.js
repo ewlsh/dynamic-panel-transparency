@@ -40,6 +40,7 @@ const SETTINGS_HIDE_CORNERS = 'hide-corners';
 const SETTINGS_TRANSITION_SPEED = 'transition-speed';
 const SETTINGS_DETECT_THEME = 'detect-user-theme';
 const SETTINGS_TEXT_SHADOW = 'text-shadow';
+const SETTINGS_TEXT_SHADOW_COLOR = 'text-shadow-color';
 const SETTINGS_FORCE_ANIMATION = 'force-animation';
 const SETTINGS_UNMAXIMIZED_OPACITY = 'unmaximized-opacity';
 const SETTINGS_MAXIMIZED_OPACITY = 'maximized-opacity';
@@ -209,7 +210,7 @@ function getPrefsWidget() {
         theme_stack.set_visible_child(color_btn);
     }
 
-    builder.get_object('theme_switch').connect('state-set', Lang.bind(this, function (widget, state) {
+    theme_switch.connect('state-set', Lang.bind(this, function (widget, state) {
         if (state) {
             detect_theme_label.set_sensitive(true);
             theme_label.set_label(Dictionary['Theme Source']);
@@ -219,14 +220,14 @@ function getPrefsWidget() {
             theme_label.set_label(Dictionary['Panel Color']);
             theme_stack.set_visible_child(color_btn);
         }
-        temp_settings.store_enum(SETTINGS_DETECT_THEME, new GLib.Variant('b', state));
+        temp_settings.store(SETTINGS_DETECT_THEME, new GLib.Variant('b', state));
     }));
 
     theme_source_box.append_text(Dictionary['Panel']);
     theme_source_box.append_text(Dictionary['Dash']);
     theme_source_box.set_active(settings.get_enum(SETTINGS_USER_THEME_SOURCE));
     theme_source_box.connect('changed', Lang.bind(this, function (widget) {
-        temp_settings.store(SETTINGS_USER_THEME_SOURCE, widget.get_active());
+        temp_settings.store_enum(SETTINGS_USER_THEME_SOURCE, widget.get_active());
     }));
 
     //setLabel('text_color_label', Dictionary['Text Color']);
@@ -383,6 +384,51 @@ let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
     text_shadow.connect('toggled', Lang.bind(this, function (widget) {
         log('abc');
         temp_settings.store(SETTINGS_TEXT_SHADOW, new GLib.Variant('b', widget.get_active()));
+    }));
+
+    let text_shadow_vertical_offset = builder.get_object('text_shadow_vertical_offset');
+    let text_shadow_horizontal_offset = builder.get_object('text_shadow_horizontal_offset');
+    let text_shadow_radius = builder.get_object('text_shadow_radius');
+    let text_shadow_color_btn =  builder.get_object('text_shadow_color');
+
+     let text_shadow_color = settings.get_value(SETTINGS_TEXT_SHADOW_COLOR).deep_unpack();
+
+    scaled_red = text_shadow_color[RED];
+    scaled_red = scaled_red / SCALE_FACTOR;
+
+    scaled_blue = text_shadow_color[BLUE];
+    scaled_blue = scaled_blue / SCALE_FACTOR;
+
+    scaled_green = text_shadow_color[GREEN];
+    scaled_green = scaled_green / SCALE_FACTOR;
+
+    scaled_alpha = text_shadow_color[4];
+    scaled_alpha = scaled_alpha / SCALE_FACTOR;
+
+    scaled_color = new Gdk.RGBA({
+        red: scaled_red,
+        green: scaled_green,
+        blue: scaled_blue,
+        alpha: scaled_alpha
+    });
+
+    text_shadow_color_btn.set_rgba(scaled_color);
+
+    text_shadow_color_btn.connect('color-set', Lang.bind(this, function (color) {
+        let rgba = color.rgba.to_string();
+        let parsed_red = parseInt(rgba.split('(')[1].split(')')[0].split(',')[RED], 10);
+        let parsed_green = parseInt(rgba.split('(')[1].split(')')[0].split(',')[GREEN], 10);
+        let parsed_blue = parseInt(rgba.split('(')[1].split(')')[0].split(',')[BLUE], 10);
+        let parsed_alpha = parseInt(rgba.split('(')[1].split(')')[0].split(',')[4], 10);
+
+        let rgb = [];
+        rgb[RED] = parsed_red;
+        rgb[GREEN] = parsed_green;
+        rgb[BLUE] = parsed_blue;
+        rgb[4] = parsed_alpha;
+        //settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
+        temp_settings.store(SETTINGS_TEXT_SHADOW_COLOR, new GLib.Variant('(iiii)', rgb));
+        //panel_demo.set_bg_color({ red: rgb[0], green: rgb[1], blue: rgb[2] });
     }));
 
 

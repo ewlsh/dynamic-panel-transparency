@@ -1,5 +1,5 @@
 .panel-transparency {
-    background-color: rgba(0,0,0,0);
+    background-color: rgba(78, 98, 67, 0);
     border-image: none;
     border: 0;
     background-image: none;
@@ -7,7 +7,7 @@
     background-gradient-direction: none;
 	background-gradient-start: transparent;
 	background-gradient-end: transparent;
-	box-shadow: none;
+	/*box-shadow: none; */
 }
 
 
