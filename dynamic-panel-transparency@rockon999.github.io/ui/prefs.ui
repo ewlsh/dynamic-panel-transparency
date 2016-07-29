@@ -15,7 +15,7 @@
 Website
 </property>
     <property name="authors">rockon999</property>
-    <property name="translator_credits" translatable="yes">narzb
+    <property name="translator_credits">narzb
 varlesh
 jonnius
 frnogueira
@@ -86,7 +86,7 @@ frnogueira
     <property name="message_type">question</property>
     <property name="buttons">yes-no</property>
     <property name="text" translatable="yes">Shell Restart Required.</property>
-    <property name="secondary_text" translatable="yes">A shell restart is required to view &lt;i&gt;Foreground&lt;/i&gt; changes. Do you want to restart now?</property>
+    <property name="secondary_text" translatable="yes">A shell restart is required to view some of your changes. Do you want to restart now?</property>
     <property name="secondary_use_markup">True</property>
     <child internal-child="vbox">
       <object class="GtkBox">
@@ -334,6 +334,23 @@ frnogueira
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="force_transition_check">
+                <property name="label" translatable="yes">Force Animation</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_markup" translatable="yes">Overrides 'gtk-enable-animations'.</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+                <property name="width">2</property>
               </packing>
             </child>
           </object>
@@ -988,7 +1005,7 @@ frnogueira
                       </object>
                       <packing>
                         <property name="name">page0</property>
-                        <property name="title" translatable="yes">page0</property>
+                        <property name="title">page0</property>
                       </packing>
                     </child>
                     <child>
@@ -999,7 +1016,7 @@ frnogueira
                       </object>
                       <packing>
                         <property name="name">page1</property>
-                        <property name="title" translatable="yes">page1</property>
+                        <property name="title">page1</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -1119,36 +1136,6 @@ frnogueira
                   <packing>
                     <property name="left_attach">0</property>
                     <property name="top_attach">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="force_transition_check">
-                    <property name="label" translatable="yes"> </property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="halign">start</property>
-                    <property name="xalign">0</property>
-                    <property name="draw_indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="text_shadow_check">
-                    <property name="label" translatable="yes">Add Text Shadow</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="halign">start</property>
-                    <property name="xalign">0</property>
-                    <property name="draw_indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
                   </packing>
                 </child>
               </object>

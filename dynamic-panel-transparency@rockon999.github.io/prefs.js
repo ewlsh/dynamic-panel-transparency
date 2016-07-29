@@ -14,25 +14,12 @@ const Gettext = imports.gettext.domain('dynamic-panel-transparency');
 const _ = Gettext.gettext;
 
 const Dictionary = {
-    'Transition Speed': _("Transition Speed"),
-    'Maximum Opacity': _("Maximum Opacity"),
-    'Minimum Opacity': _("Minimum Opacity"),
     'Panel Color': _("Panel Color"),
     'Theme Source': _("Theme Source"),
-    'Detect User Theme': _("Detect User Theme"),
-    'Hide Corners': _("Hide Corners"),
-    'Some shell themes already do this.': _("Some shell themes already do this."),
-    'Force Animation': _("Force Animation"),
-    'Overrides \'gtk-enable-animations\'.': _("Overrides 'gtk-enable-animations'."),
     'Panel': _("Panel"),
     'Dash': _("Dash"),
     'default': _("default"),
-    'Add Text Shadow': _("Add Text Shadow"),
-    'Text Color': _("Text Color"),
     'Default': _("Default"),
-    'Light': _("Light"),
-    'Dark': _("Dark"),
-    'Darker': _("Darker")
 };
 
 /* Settings Keys */
@@ -162,7 +149,6 @@ function getPrefsWidget() {
         temp_settings.store(SETTINGS_TRANSITION_SPEED, new GLib.Variant('i', widget.adjustment.get_value()));
     }));
 
-    ////setLabel('maximum_label', '<b>' + Dictionary['Maximum Opacity'] + '</b>');
 
     /* Maximum opacity control */
     let maximum_scale = builder.get_object('maximum_scale');
@@ -178,7 +164,7 @@ function getPrefsWidget() {
         panel_demo.fade_in();
     }));
 
-    //setLabel('minimum_label', '<b>' + Dictionary['Minimum Opacity'] + '</b>');
+
 
     /* Minimum opacity control */
     let minimum_scale = builder.get_object('minimum_scale');
@@ -194,7 +180,7 @@ function getPrefsWidget() {
         temp_settings.store(SETTINGS_UNMAXIMIZED_OPACITY, new GLib.Variant('i', widget.adjustment.get_value()));
     }));
 
-    //setLabel('detect_theme_label', '<b>' + Dictionary['Detect User Theme'] + '</b>');
+
 
     let theme_switch = builder.get_object('theme_switch');
     theme_switch.set_active(settings.get_boolean(SETTINGS_DETECT_THEME));
@@ -235,7 +221,6 @@ function getPrefsWidget() {
         temp_settings.store_enum(SETTINGS_USER_THEME_SOURCE, widget.get_active());
     }));
 
-    //setLabel('text_color_label', Dictionary['Text Color']);
     let text_color_switch = builder.get_object('text_color_switch');
     let maximized_text_color_switch = builder.get_object('maximized_text_color_switch');
     let text_color_revealer = builder.get_object('text_color_revealer');
@@ -368,7 +353,6 @@ function getPrefsWidget() {
 
     let hide_corners = builder.get_object('hide_corners_check');
     hide_corners.set_active(settings.get_boolean(SETTINGS_HIDE_CORNERS));
-    hide_corners.set_label(Dictionary['Hide Corners']);
 
     hide_corners.connect('toggled', Lang.bind(this, function (widget) {
         temp_settings.store(SETTINGS_HIDE_CORNERS, new GLib.Variant('b', widget.get_active()));
@@ -376,7 +360,6 @@ function getPrefsWidget() {
 
     let force_transition = builder.get_object('force_transition_check');
     force_transition.set_active(settings.get_boolean(SETTINGS_FORCE_ANIMATION));
-    force_transition.set_label(Dictionary['Force Animation']);
 
     force_transition.connect('toggled', Lang.bind(this, function (widget) {
         temp_settings.store(SETTINGS_FORCE_ANIMATION, new GLib.Variant('b', widget.get_active()));
@@ -384,7 +367,6 @@ function getPrefsWidget() {
 
     let text_shadow = builder.get_object('text_shadow_switch');
     text_shadow.set_active(settings.get_boolean(SETTINGS_TEXT_SHADOW));
-    //text_shadow.set_label(Dictionary['Add Text Shadow']);
 
     text_shadow.connect('state-set', Lang.bind(this, function (widget, state) {
         temp_settings.store(SETTINGS_TEXT_SHADOW, new GLib.Variant('b', state));
@@ -466,7 +448,6 @@ temp_settings.restart_required(true);
 
     let icon_shadow = builder.get_object('icon_shadow_switch');
     icon_shadow.set_active(settings.get_boolean(SETTINGS_ICON_SHADOW));
-   // icon_shadow.set_label(Dictionary['Add Icon Shadow']);
 
     icon_shadow.connect('state-set', Lang.bind(this, function (widget, state) {
         temp_settings.store(SETTINGS_ICON_SHADOW, new GLib.Variant('b', state));
@@ -604,7 +585,7 @@ temp_settings.restart_required(true);
 
         dialog.transient_for = main_widget.get_toplevel();
 
-        let path = '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/' + app_id + "/";
+        let path = '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/' + app_id + '/';
         let obj = Convenience.getSchemaObj('org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides');
         let app_settings = new Gio.Settings({ path: path, settings_schema: obj });
 
@@ -795,7 +776,7 @@ temp_settings.restart_required(true);
         if (response === Gtk.ResponseType.YES) {
             let d = Gio.bus_get_sync(Gio.BusType.SESSION, null);
 
-            GLib.spawn_command_line_async("dbus-send --type=method_call --print-reply --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:'global.reexec_self()'");
+            GLib.spawn_command_line_async('dbus-send --type=method_call --print-reply --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:\'global.reexec_self()\'');
             restart_dialog.close();
         } else if (response === Gtk.ResponseType.NO) {
             restart_dialog.close();
@@ -837,16 +818,16 @@ const DemoPanel = new Lang.Class({
         this.panel.get_style_context().remove_provider(this.bg_color_provider);
         if (typeof (color.alpha) === 'undefined' || color.alpha === null)
             color.alpha = 1.0;
-        this.bg_color_provider.load_from_data(".demo-panel-color { background: rgba(" + color.red + ", " + color.green + ", " + color.blue + ", " + color.alpha + "); }");
+        this.bg_color_provider.load_from_data('.demo-panel-color { background: rgba(' + color.red + ', ' + color.green + ', ' + color.blue + ', ' + color.alpha + '); }');
         this.panel.get_style_context().add_provider(this.bg_color_provider, 3);
-        this.panel.get_style_context().add_class("demo-panel-color");
+        this.panel.get_style_context().add_class('demo-panel-color');
         this.bg_color = color;
     },
     set_text_color: function (color) {
         this.panel.get_style_context().remove_provider(this.text_color_provider);
-        this.text_color_provider.load_from_data(".demo-panel-text-color { color: rgba(" + color.red + ", " + color.green + ", " + color.blue + ", " + color.alpha + "); }");
+        this.text_color_provider.load_from_data('.demo-panel-text-color { color: rgba(' + color.red + ', ' + color.green + ', ' + color.blue + ', ' + color.alpha + '); }');
         this.panel.get_style_context().add_provider(this.text_color_provider, 3);
-        this.panel.get_style_context().add_class("demo-panel-text-color");
+        this.panel.get_style_context().add_class('demo-panel-text-color');
         this.color = color;
     },
     set_opacity: function (opacity, change = false) {
@@ -961,9 +942,9 @@ const AddAppRow = new Lang.Class({
     _init: function (options) {
         this.parent();
         let img = new Gtk.Image();
-        img.set_from_icon_name("list-add-symbolic", Gtk.IconSize.BUTTON);
-        this.btn = new Gtk.Button({ label: "", image: img, always_show_image: true });
-        this.btn.get_style_context().remove_class("button");
+        img.set_from_icon_name('list-add-symbolic', Gtk.IconSize.BUTTON);
+        this.btn = new Gtk.Button({ label: '', image: img, always_show_image: true });
+        this.btn.get_style_context().remove_class('button');
         this.add(this.btn);
         this.get_style_context().add_class('tweak-startup');
 
@@ -974,7 +955,7 @@ const AppChooser = new Lang.Class({
     Name: 'DynamicPanelTransparency_AppChooser',
     Extends: Gtk.Dialog,
     _init: function (main_window, excluded_apps) {
-        this.parent({ title: "Applications", use_header_bar: true });
+        this.parent({ title: 'Applications', use_header_bar: true });
         //this.running = {};
         this.all = {};
         this.entry = new Gtk.SearchEntry();
@@ -1021,13 +1002,13 @@ const AppChooser = new Lang.Class({
         this.set_default_response(Gtk.ResponseType.OK);
         let searchbtn = new Gtk.ToggleButton();
         searchbtn.valign = Gtk.Align.CENTER;
-        let image = new Gtk.Image({ icon_name: "edit-find-symbolic", icon_size: Gtk.IconSize.MENU })
+        let image = new Gtk.Image({ icon_name: 'edit-find-symbolic', icon_size: Gtk.IconSize.MENU })
         searchbtn.add(image);
         let context = searchbtn.get_style_context();
-        context.add_class("image-button");
-        context.remove_class("text-button");
+        context.add_class('image-button');
+        context.remove_class('text-button');
         this.get_header_bar().pack_end(searchbtn);
-        this._binding = searchbtn.bind_property("active", this.searchbar, "search-mode-enabled", GObject.BindingFlags.BIDIRECTIONAL)
+        this._binding = searchbtn.bind_property('active', this.searchbar, 'search-mode-enabled', GObject.BindingFlags.BIDIRECTIONAL)
         this.get_content_area().pack_start(this.searchbar, false, false, 0);
         this.get_content_area().pack_start(sw, true, true, 0);
         //this.get_content_area().add();
