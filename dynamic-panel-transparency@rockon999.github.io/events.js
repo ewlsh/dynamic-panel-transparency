@@ -33,7 +33,7 @@ function init() {
         _windowUpdated();
     }));
     this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function () {
-        if (!status.is_blank()) {
+        if (!Transitions.get_transparency_status().is_blank()) {
             Transitions.blank_fade_out();
         }
     }));
