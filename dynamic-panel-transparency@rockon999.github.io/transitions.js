@@ -10,21 +10,32 @@ const Convenience = Me.imports.convenience;
 const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
 const Util = Me.imports.util;
+const Events = Me.imports.events;
 
 function init() {
-    this.status = Extension.get_panel_status();
+    // Objects to track where the transparency is and where it's going.
+    this.status = new TransparencyStatus();
     this.animation_status = new AnimationStatus();
+
+    // Override the gnome animation preferences if need be.
     if (Settings.get_force_animation()) {
         this.tweener = imports.tweener.tweener;
     } else {
         this.tweener = imports.ui.tweener;
     }
+
+    // Register our property with the tweener of choice.
     this.tweener.registerSpecialProperty('background_alpha', Theming.get_background_alpha, Theming.set_background_alpha);
 }
 
 function cleanup() {
+    this.animation_status = null;
     this.status = null;
     this.tweener = null;
+}
+
+function get_transparency_status() {
+    return this.status;
 }
 
 function get_animation_status() {
@@ -32,26 +43,32 @@ function get_animation_status() {
 }
 
 function update_transparent() {
+
+
     if (Main.overview.visible || Main.overview._shown)
         return;
 
     this.status.set_transparent(true);
     this.status.set_blank(false);
 
-    Theming.set_panel_color({opacity:  Settings.get_minimum_opacity()});
+    Theming.set_panel_color({ opacity: Settings.get_minimum_opacity() });
 
 }
 
 function update_solid() {
+
+
     if (Main.overview.visible || Main.overview._shown)
         return;
     this.status.set_transparent(false);
     this.status.set_blank(false);
 
-    Theming.set_panel_color({opacity: Settings.get_maximum_opacity()});
+    Theming.set_panel_color({ opacity: Settings.get_maximum_opacity() });
 }
 
 function fade_in(params = null) {
+
+
     if (Main.overview.visible || Main.overview._shown)
         return;
 
@@ -86,6 +103,7 @@ function fade_in(params = null) {
 }
 
 function fade_in_complete() {
+
     if (Main.overview._shown && Settings.get_minimum_opacity() > 0) {
         blank_fade_out();
         return;
@@ -99,6 +117,7 @@ function fade_in_complete() {
 }
 
 function fade_out(params = null) {
+
     if (this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM)) {
         this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM);
     } else {
@@ -140,7 +159,7 @@ function fade_out(params = null) {
             time: time,
             transition: 'linear',
             background_alpha: Settings.get_minimum_opacity(),
-            onComplete: Lang.bind(this, function(){
+            onComplete: Lang.bind(this, function () {
                 Theming.set_panel_color();
                 this.animation_status.done();
             })
@@ -151,6 +170,7 @@ function fade_out(params = null) {
 
 /* Doesn't adhere to opacity settings. For overview and screenShield. */
 function blank_fade_out(params = null) {
+
     if (this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.BLANK)) {
         this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.BLANK);
     } else {
@@ -184,7 +204,7 @@ function blank_fade_out(params = null) {
             time: time,
             transition: 'linear',
             background_alpha: 0,
-            onComplete: Lang.bind(this, function(){
+            onComplete: Lang.bind(this, function () {
                 Theming.set_panel_color();
                 this.animation_status.done();
             })
@@ -194,6 +214,7 @@ function blank_fade_out(params = null) {
 
 /* Sadly, the current corner/panel overlap is very awkward */
 function hide_corners(params = null) {
+
     if (params === null || Util.is_undef(params.opacity))
         params = {
             opacity: Settings.get_minimum_opacity()
@@ -204,6 +225,7 @@ function hide_corners(params = null) {
 }
 
 function show_corners(params = null) {
+
     if (params === null || Util.is_undef(params.opacity))
         params = {
             opacity: Settings.get_maximum_opacity()
@@ -212,6 +234,26 @@ function show_corners(params = null) {
         opacity: params.opacity
     });
 }
+
+const TransparencyStatus = new Lang.Class({
+    Name: 'DynamicPanelTransparency_TransparencyStatus',
+    _init: function () {
+        this.transparent = false;
+        this.blank = false;
+    },
+    is_transparent: function () {
+        return this.transparent;
+    },
+    is_blank: function () {
+        return this.blank;
+    },
+    set_transparent: function (transparent) {
+        this.transparent = transparent;
+    },
+    set_blank: function (blank) {
+        this.blank = blank;
+    }
+});
 
 const AnimationStatus = new Lang.Class({
     Name: 'DynamicPanelTransparency_AnimationStatus',

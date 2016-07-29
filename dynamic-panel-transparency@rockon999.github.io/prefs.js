@@ -45,7 +45,12 @@ const SETTINGS_FORCE_ANIMATION = 'force-animation';
 const SETTINGS_UNMAXIMIZED_OPACITY = 'unmaximized-opacity';
 const SETTINGS_MAXIMIZED_OPACITY = 'maximized-opacity';
 const SETTINGS_PANEL_COLOR = 'panel-color';
+const SETTINGS_ICON_SHADOW = 'icon-shadow';
 const SETTINGS_TEXT_COLOR = 'text-color';
+const SETTINGS_ICON_SHADOW_COLOR = 'icon-shadow-color';
+const SETTINGS_ICON_SHADOW_POSITION = 'icon-shadow-position';
+const SETTINGS_TEXT_SHADOW_POSITION = 'text-shadow-position';
+const SETTINGS_ICON_COLOR = 'icon-color';
 const SETTINGS_MAXIMIZED_TEXT_COLOR = 'maximized-text-color';
 const SETTINGS_USER_THEME_SOURCE = 'user-theme-source';
 const SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR = 'enable-maximized-text-color';
@@ -99,7 +104,7 @@ function getPrefsWidget() {
                     settings.set_value(key, this.get(key));
                 }
             }
-        }, foreground: function (b) {
+        }, restart_required: function (b) {
             if (typeof (b) !== 'undefined' && b !== null)
                 this._foreground = b;
             return this._foreground;
@@ -237,31 +242,31 @@ function getPrefsWidget() {
     let maximized_text_color_revealer = builder.get_object('maximized_text_color_revealer');
 
 
-text_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR));
-maximized_text_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR));
+    text_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR));
+    maximized_text_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR));
 
     maximized_text_color_switch.connect('state-set', Lang.bind(this, function (widget, state) {
-       temp_settings.store(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR, new GLib.Variant('b', state));
-       maximized_text_color_revealer.set_reveal_child(state);
+        temp_settings.store(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR, new GLib.Variant('b', state));
+        maximized_text_color_revealer.set_reveal_child(state);
     }));
 
     text_color_switch.connect('state-set', Lang.bind(this, function (widget, state) {
-       temp_settings.store(SETTINGS_ENABLE_TEXT_COLOR, new GLib.Variant('b', state));
-       text_color_revealer.set_reveal_child(state);
+        temp_settings.store(SETTINGS_ENABLE_TEXT_COLOR, new GLib.Variant('b', state));
+        text_color_revealer.set_reveal_child(state);
     }));
 
     //let text_color_btn = builder.get_object('text_color_btn');
     let maximized_text_color_btn = builder.get_object('maximized_text_color_btn');
 
-let maximized_text_color = settings.get_value(SETTINGS_MAXIMIZED_TEXT_COLOR).deep_unpack();
+    let maximized_text_color = settings.get_value(SETTINGS_MAXIMIZED_TEXT_COLOR).deep_unpack();
 
-   let scaled_red =  maximized_text_color[RED];
+    let scaled_red = maximized_text_color[RED];
     scaled_red = scaled_red / SCALE_FACTOR;
 
-    let scaled_blue =  maximized_text_color[BLUE];
+    let scaled_blue = maximized_text_color[BLUE];
     scaled_blue = scaled_blue / SCALE_FACTOR;
 
-  let scaled_green =  maximized_text_color[GREEN];
+    let scaled_green = maximized_text_color[GREEN];
     scaled_green = scaled_green / SCALE_FACTOR;
 
     let scaled_color = new Gdk.RGBA({
@@ -271,7 +276,7 @@ let maximized_text_color = settings.get_value(SETTINGS_MAXIMIZED_TEXT_COLOR).dee
         alpha: 1.0
     });
 
-     maximized_text_color_btn.set_rgba(scaled_color);
+    maximized_text_color_btn.set_rgba(scaled_color);
     maximized_text_color_btn.connect('color-set', Lang.bind(this, function (color) {
         let rgba = color.rgba.to_string();
         let parsed_red = parseInt(rgba.split('(')[1].split(')')[0].split(',')[RED], 10);
@@ -283,13 +288,13 @@ let maximized_text_color = settings.get_value(SETTINGS_MAXIMIZED_TEXT_COLOR).dee
         rgb[GREEN] = parsed_green;
         rgb[BLUE] = parsed_blue;
         temp_settings.store(SETTINGS_MAXIMIZED_TEXT_COLOR, new GLib.Variant('(iii)', rgb));
-        temp_settings.foreground(true);
+        temp_settings.restart_required(true);
         panel_demo.set_text_color(new Gdk.RGBA({ red: rgb[RED], green: rgb[GREEN], blue: rgb[BLUE], alpha: 1.0 }));
     }));
 
 
     let text_color_btn = builder.get_object('text_color_btn');
-let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
+    let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
 
     scaled_red = text_color[RED];
     scaled_red = scaled_red / SCALE_FACTOR;
@@ -297,7 +302,7 @@ let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
     scaled_blue = text_color[BLUE];
     scaled_blue = scaled_blue / SCALE_FACTOR;
 
-  scaled_green = text_color[GREEN];
+    scaled_green = text_color[GREEN];
     scaled_green = scaled_green / SCALE_FACTOR;
 
     scaled_color = new Gdk.RGBA({
@@ -320,7 +325,7 @@ let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
         rgb[GREEN] = parsed_green;
         rgb[BLUE] = parsed_blue;
         temp_settings.store(SETTINGS_TEXT_COLOR, new GLib.Variant('(iii)', rgb));
-        temp_settings.foreground(true);
+        temp_settings.restart_required(true);
         panel_demo.set_text_color(new Gdk.RGBA({ red: rgb[RED], green: rgb[GREEN], blue: rgb[BLUE], alpha: 1.0 }));
     }));
 
@@ -377,21 +382,47 @@ let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
         temp_settings.store(SETTINGS_FORCE_ANIMATION, new GLib.Variant('b', widget.get_active()));
     }));
 
-    let text_shadow = builder.get_object('text_shadow_check');
+    let text_shadow = builder.get_object('text_shadow_switch');
     text_shadow.set_active(settings.get_boolean(SETTINGS_TEXT_SHADOW));
-    text_shadow.set_label(Dictionary['Add Text Shadow']);
+    //text_shadow.set_label(Dictionary['Add Text Shadow']);
 
-    text_shadow.connect('toggled', Lang.bind(this, function (widget) {
-        log('abc');
-        temp_settings.store(SETTINGS_TEXT_SHADOW, new GLib.Variant('b', widget.get_active()));
-    }));
+    text_shadow.connect('state-set', Lang.bind(this, function (widget, state) {
+        temp_settings.store(SETTINGS_TEXT_SHADOW, new GLib.Variant('b', state));
+temp_settings.restart_required(true);
+ }));
 
     let text_shadow_vertical_offset = builder.get_object('text_shadow_vertical_offset');
+  //  let current_value = text_shadow_vertical_offset.get_value_as_int();
+    temp_settings.store(SETTINGS_TEXT_SHADOW_POSITION, settings.get_value(SETTINGS_TEXT_SHADOW_POSITION));
+    text_shadow_vertical_offset.set_value(settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack()[1]);
+    text_shadow_vertical_offset.connect('value-changed', Lang.bind(this, function (widget) {
+        let position = temp_settings.get(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
+        position[1] = widget.get_value_as_int();
+        temp_settings.store(SETTINGS_TEXT_SHADOW_POSITION, new GLib.Variant('(iii)', position));
+temp_settings.restart_required(true);
+}));
     let text_shadow_horizontal_offset = builder.get_object('text_shadow_horizontal_offset');
+  //  current_value = text_shadow_horizontal_offset.get_value_as_int();
+    text_shadow_horizontal_offset.set_value(settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack()[0]);
+    text_shadow_horizontal_offset.connect('value-changed', Lang.bind(this, function (widget) {
+               let position = temp_settings.get(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
+        position[0] = widget.get_value_as_int();
+        temp_settings.store(SETTINGS_TEXT_SHADOW_POSITION, new GLib.Variant('(iii)', position));
+temp_settings.restart_required(true);
+ }));
     let text_shadow_radius = builder.get_object('text_shadow_radius');
-    let text_shadow_color_btn =  builder.get_object('text_shadow_color');
+  //  current_value = text_shadow_horizontal_offset.get_value_as_int();
+    text_shadow_radius.set_value(settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack()[2]);
+    text_shadow_radius.connect('value-changed', Lang.bind(this, function (widget) {
+        let position = temp_settings.get(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
+        position[2] = widget.get_value_as_int();
+        temp_settings.store(SETTINGS_TEXT_SHADOW_POSITION, new GLib.Variant('(iii)', position));
+temp_settings.restart_required(true);
+ }));
+    let text_shadow_color_btn = builder.get_object('text_shadow_color');
 
-     let text_shadow_color = settings.get_value(SETTINGS_TEXT_SHADOW_COLOR).deep_unpack();
+
+    let text_shadow_color = settings.get_value(SETTINGS_TEXT_SHADOW_COLOR).deep_unpack();
 
     scaled_red = text_shadow_color[RED];
     scaled_red = scaled_red / SCALE_FACTOR;
@@ -402,7 +433,7 @@ let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
     scaled_green = text_shadow_color[GREEN];
     scaled_green = scaled_green / SCALE_FACTOR;
 
-    scaled_alpha = text_shadow_color[4];
+  let  scaled_alpha = text_shadow_color[4];
     scaled_alpha = scaled_alpha / SCALE_FACTOR;
 
     scaled_color = new Gdk.RGBA({
@@ -427,11 +458,92 @@ let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
         rgb[BLUE] = parsed_blue;
         rgb[4] = parsed_alpha;
         //settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
-        temp_settings.store(SETTINGS_TEXT_SHADOW_COLOR, new GLib.Variant('(iiii)', rgb));
+        temp_settings.store(SETTINGS_TEXT_SHADOW_COLOR, new GLib.Variant('(iiid)', rgb));
         //panel_demo.set_bg_color({ red: rgb[0], green: rgb[1], blue: rgb[2] });
+temp_settings.restart_required(true);
+  }));
+
+
+    let icon_shadow = builder.get_object('icon_shadow_switch');
+    icon_shadow.set_active(settings.get_boolean(SETTINGS_ICON_SHADOW));
+   // icon_shadow.set_label(Dictionary['Add Icon Shadow']);
+
+    icon_shadow.connect('state-set', Lang.bind(this, function (widget, state) {
+        temp_settings.store(SETTINGS_ICON_SHADOW, new GLib.Variant('b', state));
+        temp_settings.restart_required(true);
     }));
 
+     let icon_shadow_vertical_offset = builder.get_object('icon_shadow_vertical_offset');
 
+    temp_settings.store(SETTINGS_ICON_SHADOW_POSITION, settings.get_value(SETTINGS_ICON_SHADOW_POSITION));
+    icon_shadow_vertical_offset.set_value(settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack()[1]);
+    icon_shadow_vertical_offset.connect('value-changed', Lang.bind(this, function (widget) {
+        let position = temp_settings.get(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
+        position[1] = widget.get_value_as_int();
+        temp_settings.store(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
+        temp_settings.restart_required(true);
+    }));
+    let icon_shadow_horizontal_offset = builder.get_object('icon_shadow_horizontal_offset');
+  //  current_value = icon_shadow_horizontal_offset.get_value_as_int();
+    icon_shadow_horizontal_offset.set_value(settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack()[0]);
+    icon_shadow_horizontal_offset.connect('value-changed', Lang.bind(this, function (widget) {
+        let position = temp_settings.get(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
+        position[0] =widget.get_value_as_int();
+        temp_settings.store(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
+temp_settings.restart_required(true);
+ }));
+    let icon_shadow_radius = builder.get_object('icon_shadow_radius');
+   // current_value = icon_shadow_horizontal_offset.get_value_as_int();
+    icon_shadow_radius.set_value(settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack()[2]);
+    icon_shadow_radius.connect('value-changed', Lang.bind(this, function (widget) {
+        let position = temp_settings.get(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
+        position[2] =widget.get_value_as_int();
+        temp_settings.store(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
+temp_settings.restart_required(true);
+}));
+    let icon_shadow_color_btn = builder.get_object('icon_shadow_color');
+
+
+    let icon_shadow_color = settings.get_value(SETTINGS_ICON_SHADOW_COLOR).deep_unpack();
+
+    scaled_red = icon_shadow_color[RED];
+    scaled_red = scaled_red / SCALE_FACTOR;
+
+    scaled_blue = icon_shadow_color[BLUE];
+    scaled_blue = scaled_blue / SCALE_FACTOR;
+
+    scaled_green = icon_shadow_color[GREEN];
+    scaled_green = scaled_green / SCALE_FACTOR;
+
+    scaled_alpha = icon_shadow_color[4];
+    scaled_alpha = scaled_alpha / SCALE_FACTOR;
+
+    scaled_color = new Gdk.RGBA({
+        red: scaled_red,
+        green: scaled_green,
+        blue: scaled_blue,
+        alpha: scaled_alpha
+    });
+
+    icon_shadow_color_btn.set_rgba(scaled_color);
+
+    icon_shadow_color_btn.connect('color-set', Lang.bind(this, function (color) {
+        let rgba = color.rgba.to_string();
+        let parsed_red = parseInt(rgba.split('(')[1].split(')')[0].split(',')[RED], 10);
+        let parsed_green = parseInt(rgba.split('(')[1].split(')')[0].split(',')[GREEN], 10);
+        let parsed_blue = parseInt(rgba.split('(')[1].split(')')[0].split(',')[BLUE], 10);
+        let parsed_alpha = parseInt(rgba.split('(')[1].split(')')[0].split(',')[4], 10);
+
+        let rgb = [];
+        rgb[RED] = parsed_red;
+        rgb[GREEN] = parsed_green;
+        rgb[BLUE] = parsed_blue;
+        rgb[4] = parsed_alpha;
+        //settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
+        temp_settings.store(SETTINGS_ICON_SHADOW_COLOR, new GLib.Variant('(iiid)', rgb));
+        //panel_demo.set_bg_color({ red: rgb[0], green: rgb[1], blue: rgb[2] });
+temp_settings.restart_required(true);
+ }));
 
     /* Setup App Settings Tab */
     let app_list = builder.get_object('app_list');
@@ -554,7 +666,7 @@ let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
         }));
 
         dialog.connect('response', Lang.bind(this, function (dialog, response) {
-        //    widget;
+            //    widget;
             if (response == Gtk.ResponseType.APPLY) {
                 if (sett.panel_color !== null)
                     app_settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('(bai)', [true, sett.panel_color]));
@@ -693,7 +805,7 @@ let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
     // Setup apply button.
     apply_btn.connect('clicked', Lang.bind(this, function () {
         let widget_parent = main_widget.get_toplevel();
-        if (temp_settings.foreground()) {
+        if (temp_settings.restart_required()) {
             restart_dialog.run();
         }
         temp_settings.apply();

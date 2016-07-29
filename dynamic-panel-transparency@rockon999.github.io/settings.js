@@ -12,7 +12,7 @@ const Panel = Main.panel;
 const Shell = imports.gi.Shell;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
-
+const Events = Me.imports.events;
 /* This might impair visibility of the code, but it makes my life a thousand times simpler */
 /* Dynamic settings takes a key and watches for it to change in Gio.Settings & creates a getter for it */
 
@@ -127,7 +127,7 @@ function bind() {
                     return override;
                 }
 
-                let maximized_window = Extension.get_maximized_window();
+                let maximized_window = Events.get_current_maximized_window();
 
                 if (!Util.is_undef(maximized_window) && this.check_app_settings() && !Util.is_undef(this.app_settings_manager[setting.name])) {
 
@@ -139,9 +139,6 @@ function bind() {
 
                             let value = this.app_settings_manager[setting.name][app_id];
                             if (!Util.is_undef(value) && !Util.is_undef(value[1]) && value[0]) {
-                                log(app_id);
-                                log('setting: ' + setting.name);
-                                log('value:' + value[1]);
                                 return value[1];
                             }
                         }
@@ -243,16 +240,13 @@ const AppSettingsManager = new Lang.Class({
                     this[setting.name] = {};
                 if (variant.is_array() || variant.is_tuple()) {
                     this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).deep_unpack();
-             //log('appie' + this.settings[app_id].get_value(setting.key).deep_unpack());
             } else {
-               //     log('appie' + this.settings[app_id].get_value(setting.key).unpack());
                     this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).unpack();
                 }
             }
         }
     },
     update: function (setting, app_id) {
-
         if (Util.is_undef(setting) || this.settings[app_id].list_keys().indexOf(setting.key) == -1)
             return;
         let variant = GLib.VariantType.new(setting.type);
@@ -265,7 +259,7 @@ const AppSettingsManager = new Lang.Class({
         }
     },
     cleanup: function () {
-        for (let app_id in this.settings.list_keys()) {
+        for (let app_id in Object.keys(this.settings)) {
             for (let id in this.settingsBoundIds[app_id]) {
                 this.settings[app_id].disconnect(id);
             }
