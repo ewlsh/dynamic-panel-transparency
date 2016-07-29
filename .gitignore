@@ -1,8 +1,8 @@
 old_files/
 styles/
-*.dpt.css
 .vscode/
 *.json
 *~
 *.dpt.css
 .goutputstream*
+*#
