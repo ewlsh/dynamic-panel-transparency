@@ -7,69 +7,186 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dynamic Panel Transparany GNOME Shell Extension\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-06 22:04-0600\n"
+"POT-Creation-Date: 2016-07-29 17:51-0500\n"
 "PO-Revision-Date: 2016-03-07 08:15+0100\n"
+"Last-Translator: Jonatan Zeidler <jonatan_zeidler@gmx.de>\n"
+"Language-Team: Jonatan H. Zeidler <jonatan_zeidler@gmx.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Last-Translator: Jonatan Zeidler <jonatan_zeidler@gmx.de>\n"
-"Language-Team: Jonatan H. Zeidler <jonatan_zeidler@gmx.de>\n"
 "X-Generator: Poedit 1.8.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: prefs.js:18
-msgid "Transition Speed"
-msgstr "Übergangszeit"
-
-#: prefs.js:19
-msgid "Maximum Opacity"
-msgstr "Maximale Deckkraft"
-
-#: prefs.js:20
-msgid "Minimum Opacity"
-msgstr "Minimale Deckkraft"
-
-#: prefs.js:21
+#: prefs.js:17 ui/prefs.ui:1004 ui/app-prefs.ui:88
 msgid "Panel Color"
 msgstr "Hintergrundfarbe"
 
-#: prefs.js:22
+#: prefs.js:18 ui/prefs.ui:983 ui/app-prefs.ui:74
 msgid "Theme Source"
 msgstr "Themenquelle"
 
-#: prefs.js:23
-msgid "Detect User Theme"
-msgstr "Benutzerthema erkennen"
-
-#: prefs.js:24
-msgid "Hide Corners"
-msgstr "Abgerundete Ecken deaktivieren"
-
-#: prefs.js:25
-msgid "Some shell themes already do this."
-msgstr "Einige Shell-Themen tun dies bereits."
-
-#: prefs.js:26
-msgid "Force Animation"
-msgstr "Animation erzwingen"
-
-#: prefs.js:27
-msgid "Overrides 'gtk-enable-animations'."
-msgstr "Überschreibt 'gtk-enable-animations'."
-
-#: prefs.js:28
+#: prefs.js:19
 msgid "Panel"
 msgstr "Leiste"
 
-#: prefs.js:29
+#: prefs.js:20
 msgid "Dash"
 msgstr "Dash"
 
-#: prefs.js:30
+#: prefs.js:21
 msgid "default"
 msgstr "Vorgabe"
 
-#: prefs.js:31
-msgid "Add Text Shadow"
+#: prefs.js:22
+#, fuzzy
+msgid "Default"
+msgstr "Vorgabe"
+
+#: ui/prefs.ui:11
+msgid "Classy transparency for your panel."
+msgstr ""
+
+#: ui/prefs.ui:13
+msgid ""
+"\n"
+"\n"
+"Website\n"
+msgstr ""
+
+#: ui/prefs.ui:88
+msgid "Shell Restart Required."
+msgstr ""
+
+#: ui/prefs.ui:89
+msgid ""
+"A shell restart is required to view some of your changes. Do you want to "
+"restart now?"
+msgstr ""
+
+#: ui/prefs.ui:170
+msgid "Activities"
+msgstr ""
+
+#: ui/prefs.ui:184
+msgid "Fri 5:31 PM"
+msgstr ""
+
+#: ui/prefs.ui:314
+msgid "Transition Speed"
+msgstr "Übergangszeit"
+
+#: ui/prefs.ui:341
+msgid "Force Animation"
+msgstr "Animation erzwingen"
+
+#: ui/prefs.ui:345
+msgid "Overrides 'gtk-enable-animations'."
+msgstr "Überschreibt 'gtk-enable-animations'."
+
+#: ui/prefs.ui:363
+#, fuzzy
+msgid "Transitions"
+msgstr "Übergangszeit"
+
+#: ui/prefs.ui:422
+msgid "Custom Text Color"
+msgstr ""
+
+#: ui/prefs.ui:449
+msgid "Alternate Maximized Color"
+msgstr ""
+
+#: ui/prefs.ui:475 ui/prefs.ui:563
+#, fuzzy
+msgid "Text Color"
+msgstr "Hintergrundfarbe"
+
+#: ui/prefs.ui:524
+#, fuzzy
+msgid "Maximized Color"
+msgstr "Hintergrundfarbe"
+
+#: ui/prefs.ui:665 ui/prefs.ui:843
+#, fuzzy
+msgid "Shadow Color"
+msgstr "Hintergrundfarbe"
+
+#: ui/prefs.ui:678 ui/prefs.ui:856
+msgid "Radius"
+msgstr ""
+
+#: ui/prefs.ui:691 ui/prefs.ui:869
+msgid "Horizontal Offset"
+msgstr ""
+
+#: ui/prefs.ui:704 ui/prefs.ui:882
+msgid "Vertical Offset"
+msgstr ""
+
+#: ui/prefs.ui:717
+#, fuzzy
+msgid "Text Shadowing"
 msgstr "Einen Textschatten hinzufügen"
+
+#: ui/prefs.ui:744
+#, fuzzy
+msgid "Text Shadow"
+msgstr "Einen Textschatten hinzufügen"
+
+#: ui/prefs.ui:895
+msgid "Icon Shadowing"
+msgstr ""
+
+#: ui/prefs.ui:922
+msgid "Icon Shadow"
+msgstr ""
+
+#: ui/prefs.ui:951
+msgid "Foreground"
+msgstr ""
+
+#: ui/prefs.ui:1045
+msgid "Detect User Theme"
+msgstr "Benutzerthema erkennen"
+
+#: ui/prefs.ui:1090
+msgid "Minimum Opacity"
+msgstr "Minimale Deckkraft"
+
+#: ui/prefs.ui:1103
+msgid "Maximum Opacity"
+msgstr "Maximale Deckkraft"
+
+#: ui/prefs.ui:1128
+#, fuzzy
+msgid " Hide Corners"
+msgstr "Abgerundete Ecken deaktivieren"
+
+#: ui/prefs.ui:1159 ui/app-prefs.ui:58
+msgid "Background"
+msgstr ""
+
+#: ui/prefs.ui:1221
+msgid "App Settings"
+msgstr ""
+
+#: ui/prefs.ui:1261
+msgid "About"
+msgstr ""
+
+#: ui/app-prefs.ui:32
+#, fuzzy
+msgid "Maximized Opacity"
+msgstr "Maximale Deckkraft"
+
+#: ui/app-prefs.ui:115
+msgid "Always trigger the panel."
+msgstr ""
+
+#: ui/app-prefs.ui:132
+msgid "Other"
+msgstr ""
+
+#~ msgid "Some shell themes already do this."
+#~ msgstr "Einige Shell-Themen tun dies bereits."
