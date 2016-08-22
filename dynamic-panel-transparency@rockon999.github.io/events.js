@@ -1,34 +1,39 @@
+/* exported init, cleanup, _workspacesChanged, _windowRestacked, _screenShieldActivated, _workspaceSwitched, get_current_maximized_window */
+
+const Lang = imports.lang;
+
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
-const Settings = Me.imports.settings;
 const Transitions = Me.imports.transitions;
+const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
 const Util = Me.imports.util;
 
 const Main = imports.ui.main;
-const Lang = imports.lang;
-const Config = imports.misc.config;
-const Panel = Main.panel;
-
-const Clutter = imports.gi.Clutter;
 
 
+// TODO: is this description of signal connections correct?
 
-    /* Signal Connections
-     * hidden: occurs after the overview is hidden
-     * showing: occurs as the overview is opening
-     * active-changed: occurs when the screen shield is toggled.
-     * notify::n-workspaces: occurs when the number of workspaces changes
-     * restacked: occurs when the window Z-ordering changes
-     * workspace-switched: occurs after a workspace is switched
-     * map: monitors both new windows and unminimizing windows
-     * minimize: occurs as the window is minimized
-     * unminimize: occurs as the window is unminimized
-     * destroy: occurs as the window is destroyed
-     */
+/* Signal Connections
+ * hidden: occurs after the overview is hidden
+ * showing: occurs as the overview is opening
+ * active-changed: occurs when the screen shield is toggled.
+ * notify::n-workspaces: occurs when the number of workspaces changes
+ * restacked: occurs when the window Z-ordering changes
+ * workspace-switched: occurs after a workspace is switched
+ * map: monitors both new windows and unminimizing windows
+ * minimize: occurs as the window is minimized
+ * unminimize: occurs as the window is unminimized
+ * destroy: occurs as the window is destroyed
+ */
 
+
+/**
+ * Intialize.
+ *
+ */
 function init() {
     let version = Util.get_shell_version();
+
     this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, function () {
         _windowUpdated();
     }));
@@ -36,12 +41,18 @@ function init() {
         if (!Transitions.get_transparency_status().is_blank()) {
             Transitions.blank_fade_out();
         }
+        if (Settings.get_enable_overview_text_color()) {
+            Theming.set_text_color('-maximized-');
+        } else {
+            Theming.set_text_color();
+        }
     }));
 
     /* No unminimize signal on 3.14 (TBD: If this harms the extension) */
-    if (version.major == 3 && version.minor > 14) {
+    if (version.major === 3 && version.minor > 14) {
         this._windowUnminimizeSig = global.window_manager.connect('unminimize', Lang.bind(this, this._windowUpdated));
     }
+
     /* Check to see if the screenShield exists (doesn't if user can't lock) */
     if (Main.screenShield !== null) {
         this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, this._screenShieldActivated));
@@ -56,20 +67,48 @@ function init() {
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, function () {
         this._windowUpdated();
     }));
+
+    // TODO: seperate function.
     this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, function (wm, window_actor) {
+        if (!Util.is_undef(window_actor.get_meta_window().dpt_tracking)) {
+            delete window_actor.get_meta_window().dpt_tracking;
+        }
+
+        // Find the workspace that this window should be in.
+        let workspace_container = null;
+        for (let container in this.workspaces) {
+            if (window_actor.get_meta_window().get_workspace() === container.workspace) {
+                workspace_container = container;
+                break;
+            }
+        }
+
+        /* If the workspace exists then lets find the window inside and remove it. */
+        if (!Util.is_undef(workspace_container)) {
+            let index = workspace_container.windows.indexOf(window_actor.get_meta_window());
+            if (index > -1) {
+                workspace_container.windows.splice(index, 1);
+            }
+        }
+
         this._windowUpdated({
             excluded_window: window_actor.get_meta_window()
         });
     }));
 }
 
+/**
+ * Don't want to hold onto anything that isn't ours.
+ *
+ */
 function cleanup() {
-     if (!Util.is_undef(this._windowUnminimizeSig)) {
+    /* Disconnect Signals */
+    if (!Util.is_undef(this._windowUnminimizeSig)) {
         global.window_manager.disconnect(this._windowUnminimizeSig);
     }
 
-     if (Main.screenShield !== null) {
-         Main.screenShield.disconnect(this._lockScreenSig);
+    if (Main.screenShield !== null) {
+        Main.screenShield.disconnect(this._lockScreenSig);
     }
 
     Main.overview.disconnect(this._overviewShowingSig);
@@ -81,19 +120,19 @@ function cleanup() {
     global.screen.disconnect(this._windowRestackedSig);
     global.screen.disconnect(this._workspacesChangedSig);
 
+    /* Remove window tracking properties. */
     for (let container in this.workspaces) {
         for (let window_container in container.windows) {
             window_container.window.disconnect(window_container.signalId);
-           delete window_container.window.dpt_tracking;
+            delete window_container.window.dpt_tracking;
         }
-        if (!Util.is_undef(container) && !Util.is_undef(container.workspace))
+        if (!Util.is_undef(container) && !Util.is_undef(container.workspace)) {
             container.workspace.disconnect(container.signalId);
+        }
     }
 
     /* Cleanup Signals */
     this._windowRestackedSig = null;
-    //this._lockScreenSig = null;
-    //this._lockScreenShownSig = null;
     this._overviewShowingSig = null;
     this._overviewHiddenSig = null;
     this._windowMapSig = null;
@@ -108,7 +147,12 @@ function cleanup() {
 
 /* Event Handlers */
 
-// Monitors the maximization of windows. (Because GNOME removed that signal :\)
+
+/**
+ * Called whenever a workspace changes.
+ * Used to monitor when any window maximized, because GNOME removed the maximization signal in 3.14. (Ugh.)
+ *
+ */
 function _workspacesChanged() {
     if (typeof (this.workspaces) === 'undefined' || this.workspaces === null) {
         this.workspaces = [];
@@ -118,8 +162,9 @@ function _workspacesChanged() {
         for (let window_container in container.windows) {
             window_container.window.disconnect(window_container.signalId);
         }
-        if (!Util.is_undef(container) && !Util.is_undef(container.workspace))
+        if (!Util.is_undef(container) && !Util.is_undef(container.workspace)) {
             container.workspace.disconnect(container.signalId);
+        }
     }
 
     for (let i = 0; i < global.screen.get_n_workspaces(); i++) {
@@ -129,15 +174,13 @@ function _workspacesChanged() {
         }
         const id = workspace.connect('window-added', Lang.bind(this, function (workspace, window) {
             if (!Util.is_undef(window)) {
-                log('gogo:+' + window);
-                log('gogo2:+' + workspace);
                 if (Util.is_undef(window.dpt_tracking)) {
                     window.dpt_tracking = true;
 
                     let wId = window.connect('notify::maximized-vertically', Lang.bind(this, function () {
                         this._windowUpdated();
                         for (let workspace_container in this.workspaces) {
-                            if (workspace_container.signalId == id) {
+                            if (workspace_container.signalId === id) {
                                 workspace_container.windows.push({ 'window': window, 'signalId': wId });
                             }
                         }
@@ -146,14 +189,10 @@ function _workspacesChanged() {
             }
         }));
         let windows = [];
-
-        log(Object.getOwnPropertyNames(workspace.list_windows()));
         for (let w = 0; w < workspace.list_windows().length; w++) {
             let window = workspace.list_windows()[w];
             if (!Util.is_undef(window) && Util.is_undef(window.dpt_tracking)) {
                 window.dpt_tracking = true;
-                log('gogo3:+' + window);
-                log('gogo23:+' + workspace);
                 let wId = window.connect('notify::maximized-vertically', Lang.bind(this, function () {
                     this._windowUpdated();
                 }));
@@ -166,7 +205,14 @@ function _workspacesChanged() {
 }
 
 
-// main logic of the extension.
+/**
+ * Handles any window updates. Contains the core logic of this extension.
+ *
+ * @param {Object} params [params=null] - List of parameters for the update.
+ * @param {Object} params.excluded_window - Optional. A Meta.Window that should be ignored when updating. Usually this is force events that don't remove a window before this is called.
+ * @param {Boolean} params.force - Optional. Updates even if the current state is believed to be identical.
+ * @param {Boolean} params.blank - Optional. Whether or not the panel alpha should be set to 0 instead of the unmaximized opacity.
+ */
 function _windowUpdated(params = null) {
     if (Main.overview._shown)
         return;
@@ -182,16 +228,16 @@ function _windowUpdated(params = null) {
         }
     }
 
-    //let primary_monitor = global.screen.get_primary_monitor();
     let focused_window = global.display.focus_window;
     let windows = workspace.list_windows();
 
     let add_transparency = true;
 
-    /* save processing by checking the current window (most likely to be maximized) */
-    /* check that the focused window is in the right workspace */
+    // TODO: Faster way than nulling & updating?
     this.maximized_window = null;
 
+    /* Save processing time by checking the current window (most likely to be maximized) */
+    /* Check that the focused window is in the right workspace. (I really hope it always is...) */
     if (!Util.is_undef(focused_window) && focused_window !== excluded_window && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && focused_window.get_workspace() === workspace && !focused_window.minimized) {
         add_transparency = false;
         this.maximized_window = focused_window;
@@ -209,12 +255,26 @@ function _windowUpdated(params = null) {
     }
 
     if (!Util.is_undef(focused_window)) {
-        for (let app_id of Settings.get_trigger_apps()) {
-            let app = Util.get_app(focused_window);
-            if (!Util.is_undef(app) && app.get_id() == app_id) {
+        let found = false;
+
+        for (let wm_class of Settings.get_trigger_windows()) {
+            // DEBUG: log(focused_window.get_wm_class().toLowerCase() + '===' + wm_class.toLowerCase());
+            if (focused_window.get_wm_class().toLowerCase() === wm_class.toLowerCase()) {
                 add_transparency = false;
+                found = true;
                 this.maximized_window = focused_window;
                 break;
+            }
+        }
+
+        if (!found) {
+            for (let app_id of Settings.get_trigger_apps()) {
+                let app = Util.get_app_for_window(focused_window);
+                if (!Util.is_undef(app) && app.get_id() === app_id) {
+                    add_transparency = false;
+                    this.maximized_window = focused_window;
+                    break;
+                }
             }
         }
     }
@@ -222,7 +282,7 @@ function _windowUpdated(params = null) {
     let time = (params !== null && !Util.is_undef(params.time)) ? {
         time: params.time
     } : null;
-    /* only change if the transparency isn't already correct */
+    /* Only change if the transparency isn't already correct */
     if ((Transitions.get_transparency_status().is_transparent() !== add_transparency) || (params !== null && !Util.is_undef(params.force) && params.force)) {
         if (add_transparency) {
             if (params !== null && !Util.is_undef(params.blank) && params.blank) {
@@ -233,36 +293,40 @@ function _windowUpdated(params = null) {
         } else {
             Transitions.fade_in({ time: time });
         }
-    } else if (Transitions.get_transparency_status().is_blank() && !add_transparency) {
-        Transitions.fade_in({ time: time });//_from_blank(time);
-    } else if (Settings.check_app_settings() && add_transparency) {
-        Transitions.update_transparent();
-    } else if (Settings.check_app_settings() && !add_transparency) {
-        Transitions.update_solid();
+    } else if (Transitions.get_transparency_status().is_blank()) {
+        if (add_transparency) {
+            Transitions.minimum_fade_in({ time: time });
+        } else {
+            Transitions.fade_in({ time: time });
+        }
+    } else if (Settings.check_app_settings()) {
+        // TODO: Double check this removed logic.
+        Theming.set_panel_color();
     }
 
-    if (Settings.get_enable_maximized_text_color()) {
-        if (Settings.get_enable_text_color() && add_transparency) {
+    if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
+        if (add_transparency) {
             Theming.set_text_color();
-        } else if (!add_transparency) {
+        } else {
             Theming.set_text_color('-maximized-');
         }
     }
-
-
 }
 
-// special case: blank the panel if the screenShield is activated.
+/**
+ * SPECIAL CASE: Handle the screenShield when the lock screen isn't active.
+ *
+ */
 function _screenShieldActivated() {
     if (Main.screenShield !== null && !Main.screenShield._isActive) {
         _windowUpdated({
             blank: true,
             time: 0
         });
-        // Why did we do this?
-        /*Transitions.hide_corners({
-            opacity: 0
-        });*/
+
+        // TODO: Figure out why I did this...
+
+        /* Transitions.hide_corners({ opacity: 0 }); */
     } else {
         /* make sure we don't have any odd coloring on the screenShield */
         Transitions.blank_fade_out({
@@ -271,14 +335,21 @@ function _screenShieldActivated() {
     }
 }
 
-// special case: Don't rerun the logic if we aren't using per-app settings.
+
+/**
+ * SPECIAL_CASE: Only update if we're using per-app settings.
+ *
+ */
 function _windowRestacked() {
     if (Settings.check_app_settings()) {
         _windowUpdated();
     }
 }
 
-// special case: Pass the expected workspace to the _windowUpdated logic.
+/**
+ * SPECIAL_CASE: Update logic requires the workspace that we'll be switching to.
+ *
+ */
 function _workspaceSwitched(wm, from, to, direction) {
     let workspace_to = global.screen.get_workspace_by_index(to);
     if (workspace_to !== null) {
@@ -291,9 +362,12 @@ function _workspaceSwitched(wm, from, to, direction) {
     }
 }
 
-
-// Function that returns the current VISIBLE maximized window based on the _windowUpdated function.
-// This does not mean the maximized window is necessarily the highest window in the z-order.
+/**
+ * Returns the current visible maximized window as understood by the events' logic.
+ * The maximized window is not necessarily the highest window in the z-order.
+ *
+ * @returns {Object} The current visible maximized window.
+ */
 function get_current_maximized_window() {
     return this.maximized_window;
 }
