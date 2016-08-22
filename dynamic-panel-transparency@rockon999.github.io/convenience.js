@@ -1,3 +1,5 @@
+/* exported initTranslations, getSettings, getSchemaObj */
+
 /*
   Copyright (c) 2011-2012, Giovanni Campagna <scampa.giovanni@gmail.com>
 
@@ -88,7 +90,7 @@ function getSettings(schema) {
             + extension.metadata.uuid + '. Please check your installation.');
 
 
-        return new Gio.Settings({ settings_schema: schemaObj });
+    return new Gio.Settings({ settings_schema: schemaObj });
 
 
 }
@@ -107,20 +109,17 @@ function getSchemaObj(schema) {
     // in the standard folders)
     let schemaDir = extension.dir.get_child('schemas');
     let schemaSource;
-    if (schemaDir.query_exists(null))
-        schemaSource = GioSSS.new_from_directory(schemaDir.get_path(),
-            GioSSS.get_default(),
-            false);
-    else
+    if (schemaDir.query_exists(null)) {
+        schemaSource = GioSSS.new_from_directory(schemaDir.get_path(), GioSSS.get_default(), false);
+    } else {
         schemaSource = GioSSS.get_default();
-
+    }
     let schemaObj = schemaSource.lookup(schema, true);
     if (!schemaObj)
-        log('Schema ' + schema + ' could not be found for extension '
-            + extension.metadata.uuid + '. Please check your installation.');
+        log('Schema ' + schema + ' could not be found for extension ' + extension.metadata.uuid + '. Please check your installation.');
 
 
-       return schemaObj;
+    return schemaObj;
 
 
 }

@@ -1,25 +1,18 @@
-.panel-transparency {
-    background-color: rgba(78, 98, 67, 0);
-    border-image: none;
-    border: 0;
-    background-image: none;
-    /* New CSS */
-    background-gradient-direction: none;
-	background-gradient-start: transparent;
-	background-gradient-end: transparent;
-	/*box-shadow: none; */
+/* Allows the extension to change the panel's background with transitions. */
+.panel-strip-background {
+    background-color: rgba(0, 0 ,0 , 0);
+
 }
 
-
-.panel-text-shadow .panel-button {
-	text-shadow: rgba(0,0,0,1.0) 0px 3px 5px;
-}
-
-.panel-icon-shadow .system-status-icon {
-	icon-shadow: rgba(0,0,0,0.5) 0px 2px 5px;
-}
-
-.panel-arrow-shadow .popup-menu-arrow {
-	icon-shadow: rgba(0,0,0,0.5) 0px 2px 5px;
+/* Used to remove odd effects when full transparency is needed. */
+.panel-full-transparency {
+  border-image: none;
+  border: 0;
+  background-image: none;
+  box-shadow: none;
+  /* Gnome Shell specific CSS */
+  background-gradient-direction: none;
+  background-gradient-start: transparent;
+  background-gradient-end: transparent;
 }
 

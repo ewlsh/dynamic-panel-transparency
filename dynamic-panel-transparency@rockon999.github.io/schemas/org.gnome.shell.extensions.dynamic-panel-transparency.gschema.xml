@@ -95,15 +95,35 @@
       <summary>What color the panel text should be.</summary>
       <description>Used to determine what color the panel text should be.</description>
     </key>
+    <key name="enable-overview-text-color" type="b">
+      <default>false</default>
+      <summary>What color the panel text should be.</summary>
+      <description>Used to determine what color the panel text should be.</description>
+    </key>
+    <key name="remove-panel-styling" type="b">
+      <default>false</default>
+      <summary>What color the panel text should be.</summary>
+      <description>Used to determine what color the panel text should be.</description>
+    </key>
     <key name="app-overrides" type="as">
       <default>[]</default>
       <summary>Overrides settings for each app.</summary>
+      <description>Yeah... different settings for individual apps..</description>
+    </key>
+    <key name="window-overrides" type="as">
+      <default>[]</default>
+      <summary>Overrides settings for a wmclass.</summary>
       <description>Yeah... different settings for individual apps..</description>
     </key>
     <key name="trigger-apps" type="as">
       <default>[]</default>
       <summary>Apps that will always trigger the panel when focused.</summary>
       <description>List of apps that triggers the panel when a window of the app is in focus.</description>
+    </key>
+    <key name="trigger-windows" type="as">
+      <default>[]</default>
+      <summary>Windows that will always trigger the panel when focused.</summary>
+      <description>List of windows that triggers the panel when a window of the app is in focus.</description>
     </key>
   </schema>
 </schemalist>

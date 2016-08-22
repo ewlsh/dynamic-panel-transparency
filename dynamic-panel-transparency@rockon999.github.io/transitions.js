@@ -1,32 +1,42 @@
-const Config = imports.misc.config;
-const Lang = imports.lang;
-const Main = imports.ui.main;
+/* exported init, cleanup, get_animation_status, get_transparency_status, update_solid, update_transparent, minimum_fade_in */
+/* exported fade_in, fade_out */
 
+const Lang = imports.lang;
+
+const Main = imports.ui.main;
 const Panel = Main.panel;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Extension = Me.imports.extension;
-const Convenience = Me.imports.convenience;
 const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
 const Util = Me.imports.util;
-const Events = Me.imports.events;
 
+const TIME_SCALE_FACTOR = 1000;
+
+/**
+ * Intialize.
+ *
+ */
 function init() {
-    // Objects to track where the transparency is and where it's going.
+    /* Objects to track where the transparency is and where it's going. */
     this.status = new TransparencyStatus();
     this.animation_status = new AnimationStatus();
 
-    // Override the gnome animation preferences if need be.
+    /* Override the gnome animation preferences if need be. The default tweener obeys animation settings, the core one doesn't. */
     if (Settings.get_force_animation()) {
         this.tweener = imports.tweener.tweener;
     } else {
         this.tweener = imports.ui.tweener;
     }
 
-    // Register our property with the tweener of choice.
+    /* Register our property with the tweener of choice. */
     this.tweener.registerSpecialProperty('background_alpha', Theming.get_background_alpha, Theming.set_background_alpha);
 }
+
+/**
+ * Freeup any held assets on disable.
+ *
+ */
 
 function cleanup() {
     this.animation_status = null;
@@ -34,46 +44,80 @@ function cleanup() {
     this.tweener = null;
 }
 
+
+/**
+ * Get the current status of the panel's transparency.
+ *
+ * @returns {Object} Current transparency. @see TransparencyStatus
+ */
 function get_transparency_status() {
     return this.status;
 }
 
+/**
+ * Get any animation that the panel is currently doing.
+ *
+ * @returns {Object} Current animation status. @see AnimationStatus
+ */
 function get_animation_status() {
     return this.animation_status;
 }
 
-function update_transparent() {
-
-
+/**
+ * Fades the panel into the unmaximized (minimum) alpha. Used for closing the overview.
+ *
+ * @param {Object} params [params=null] - Parameters for the transition.
+ * @param {Number} params.time - Transition speed in milliseconds.
+ */
+function minimum_fade_in(params = null) {
     if (Main.overview.visible || Main.overview._shown)
         return;
+
+    if (this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_IN, AnimationDestination.MINIMUM)) {
+        this.animation_status.set(AnimationAction.FADE_IN, AnimationDestination.MINIMUM);
+    } else {
+        return;
+    }
+
+    if (params === null || Util.is_undef(params.time))
+        params = {
+            time: Settings.get_transition_speed()
+        };
 
     this.status.set_transparent(true);
     this.status.set_blank(false);
 
-    Theming.set_panel_color({ opacity: Settings.get_minimum_opacity() });
+    let time = params.time / TIME_SCALE_FACTOR;
 
+    Theming.set_panel_color();
+
+    /* Avoid Tweener if the time or opacity don't require it. */
+    if (time <= 0 || Settings.get_minimum_opacity() <= 0) {
+        Theming.set_background_alpha(Panel.actor, Settings.get_minimum_opacity());
+        this.fade_in_complete();
+        this.animation_status.done();
+    } else {
+        this.tweener.addTween(Panel.actor, {
+            time: time,
+            transition: 'linear',
+            background_alpha: Settings.get_minimum_opacity(),
+            onComplete: Lang.bind(this, fade_in_complete)
+        });
+    }
 }
 
-function update_solid() {
-
-
-    if (Main.overview.visible || Main.overview._shown)
-        return;
-    this.status.set_transparent(false);
-    this.status.set_blank(false);
-
-    Theming.set_panel_color({ opacity: Settings.get_maximum_opacity() });
-}
-
+/**
+ * Fades the panel into the nmaximized (maximum) alpha.
+ *
+ * @param {Object} params [params=null] - Parameters for the transition.
+ * @param {Number} params.time - Transition speed in milliseconds.
+ */
 function fade_in(params = null) {
-
-
     if (Main.overview.visible || Main.overview._shown)
         return;
 
     if (this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM)) {
-        this.animation_status.set(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM)
+        this.animation_status.set(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM);
     } else {
         return;
     }
@@ -85,12 +129,14 @@ function fade_in(params = null) {
 
     this.status.set_transparent(false);
     this.status.set_blank(false);
-    let time = params.time / 1000;
+
+    let time = params.time / TIME_SCALE_FACTOR;
 
     Theming.set_panel_color();
 
     if (time <= 0) {
         Theming.set_background_alpha(Panel.actor, Settings.get_maximum_opacity());
+        this.fade_in_complete();
         this.animation_status.done();
     } else {
         this.tweener.addTween(Panel.actor, {
@@ -102,22 +148,36 @@ function fade_in(params = null) {
     }
 }
 
+/**
+ * Callback for when a fade_in transition is completed.
+ *
+ */
 function fade_in_complete() {
-
-    if (Main.overview._shown && Settings.get_minimum_opacity() > 0) {
+    if (Main.overview._shown) {
         blank_fade_out();
         return;
     }
 
     if (!Settings.get_hide_corners()) {
-        show_corners();
+        update_corner_alpha();
+    }
+
+    if (!Settings.remove_panel_styling()) {
+        Theming.reapply_panel_styling();
     }
 
     this.animation_status.done();
 }
 
-function fade_out(params = null) {
+// TODO: Could this be used for minimum_fade_in?
 
+/**
+ * Fades the panel into the unmaximized (minimum) alpha.
+ *
+ * @param {Object} params [params=null] - Parameters for the transition.
+ * @param {Number} params.time - Transition speed in milliseconds.
+ */
+function fade_out(params = null) {
     if (this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM)) {
         this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM);
     } else {
@@ -132,19 +192,17 @@ function fade_out(params = null) {
     this.status.set_transparent(true);
     this.status.set_blank(false);
 
-    let time = params.time / 1000;
+    let time = params.time / TIME_SCALE_FACTOR;
 
     /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
     /* always hide to update preference changes */
     if (!Settings.get_hide_corners()) {
-        hide_corners();
+        update_corner_alpha();
     } else {
-        hide_corners({
-            opacity: 0
-        });
+        update_corner_alpha(0);
     }
 
-
+    Theming.strip_panel_styling();
 
     if (time <= 0 && !Main.overview._shown) {
         Theming.set_background_alpha(Panel.actor, Settings.get_minimum_opacity());
@@ -168,7 +226,12 @@ function fade_out(params = null) {
 }
 
 
-/* Doesn't adhere to opacity settings. For overview and screenShield. */
+/**
+ * Fades the panel's alpha to 0. Used for opening the overview & displaying the screenShield.
+ *
+ * @param {Object} params [params=null] - Parameters for the transition.
+ * @param {Number} params.time - Transition speed in milliseconds.
+ */
 function blank_fade_out(params = null) {
 
     if (this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.BLANK)) {
@@ -185,15 +248,12 @@ function blank_fade_out(params = null) {
     this.status.set_transparent(true);
     this.status.set_blank(true);
 
-    let time = params.time / 1000;
+    let time = params.time / TIME_SCALE_FACTOR;
 
     /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
     /* always hide to update preference changes */
 
-    hide_corners({
-        opacity: 0
-    });
-
+    update_corner_alpha(0);
 
     if (time <= 0) {
         Theming.set_background_alpha(Panel.actor, 0);
@@ -212,26 +272,19 @@ function blank_fade_out(params = null) {
     }
 }
 
-/* Sadly, the current corner/panel overlap is very awkward */
-function hide_corners(params = null) {
 
-    if (params === null || Util.is_undef(params.opacity))
-        params = {
-            opacity: Settings.get_minimum_opacity()
-        };
+/**
+ * Updates the alpha value of the corners' coloring. Slightly awkward overlap is unavoidable.
+ *
+ * @param {Number} alpha - Alpha value ranging from 0-255.
+ */
+function update_corner_alpha(alpha = null) {
+    if (alpha === null) {
+        alpha = this.status.is_transparent() ? Settings.get_minimum_opacity() : Settings.get_maximum_opacity();
+    }
+
     Theming.set_corner_color({
-        opacity: params.opacity
-    });
-}
-
-function show_corners(params = null) {
-
-    if (params === null || Util.is_undef(params.opacity))
-        params = {
-            opacity: Settings.get_maximum_opacity()
-        };
-    Theming.set_corner_color({
-        opacity: params.opacity
+        alpha: alpha
     });
 }
 
@@ -271,25 +324,27 @@ const AnimationStatus = new Lang.Class({
         this.action = action;
         this.destination = destination;
     },
-    done: function (action, destination) {
+    done: function () {
         this.action = null;
         this.destination = null;
     },
     same: function (action, destination) {
-        return (this.action == action && this.destination == destination);
+        return (this.action === action && this.destination === destination);
     },
-    ready: function (action, destination) {
-        return (this.action == null && this.destination == null);
+    ready: function () {
+        return (this.action === null && this.destination === null);
     }
 });
 
-const AnimationAction = function () {
-    const FADING_OUT = 0;
-    const FADING_IN = 1;
-}
-const AnimationDestination = function () {
-    const BLANK = 0;
-    const MINIMUM = 1;
-    const MAXIMUM = 2;
+const AnimationAction = {
+    FADING_OUT: 0,
+    FADING_IN: 1
+};
+Object.freeze(AnimationAction);
 
-}
+const AnimationDestination = {
+    BLANK: 0,
+    MINIMUM: 1,
+    MAXIMUM: 2
+};
+Object.freeze(AnimationDestination);

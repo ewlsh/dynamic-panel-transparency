@@ -1,7 +1,7 @@
-const Meta = imports.gi.Meta;
+/* exported get_maximized_width_buffer, get_shell_version,validate, is_undef, clamp, is_maximized */
+/* exported remove_file, get_file, write_to_file, get_app_for_window, get_app_for_wmclass, gdk_to_css_color */
+
 const Gio = imports.gi.Gio;
-const Shell = imports.gi.Shell;
-const GLib = imports.gi.GLib;
 
 /* Global Utility Variables */
 const MAXIMIZED_WIDTH_BUFFER = 5;
@@ -30,13 +30,14 @@ function is_undef(a) {
     return (typeof (a) === 'undefined' || a === null);
 }
 
+function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+}
+
 function is_maximized(window) {
     let type = window.get_window_type();
-    let id = window.get_gtk_application_id();
 
-   // if(Settings.get_trigg)
-
-    if (type == Meta.WindowType.DESKTOP) {
+    if (type === imports.gi.Meta.WindowType.DESKTOP) {
         return false;
     }
 
@@ -44,15 +45,17 @@ function is_maximized(window) {
         return true;
     }
 
-    //get_gtk_application_id ()
-
     let frame = window.get_frame_rect();
 
     if (frame.y <= imports.ui.main.panel.actor.get_height()) {
-        return (window.maximized_horizontally || frame.width >= (window.get_screen().get_size()[0] - MAXIMIZED_WIDTH_BUFFER))
+        return (window.maximized_horizontally || frame.width >= (window.get_screen().get_size()[0] - MAXIMIZED_WIDTH_BUFFER));
     }
 
     return false;
+}
+
+function join() {
+
 }
 
 function get_file(filename) {
@@ -68,12 +71,10 @@ function write_to_file(filename, text) {
     try {
         let file = get_file(filename);
         let success = file.replace_contents(text, null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null, null);
-        // let data_output = new Gio.DataOutputStream({ base_stream: stream });
-        // if (data_output.put_string(text, null))
-        //     if (data_output.close_finish() && stream.close_finish())
-
-        return success; //      return true;
-    } catch (error) { }
+        return success;
+    } catch (error) {
+        log(error);
+    }
 
     return false;
 }
@@ -82,16 +83,29 @@ function remove_file(filename) {
     try {
         let file = get_file(filename);
         return file.delete(null);
-    } catch (error) { }
+    } catch (error) {
+        log(error);
+    }
 
     return false;
 }
 
-function get_app(window) {
+function get_app_for_window(window) {
+    const Shell = imports.gi.Shell;
+
     let shell_app = Shell.WindowTracker.get_default().get_app_from_pid(window.get_pid());
-    if (!shell_app)
+    if (is_undef(shell_app))
         shell_app = Shell.AppSystem.get_default().lookup_startup_wmclass(window.get_wm_class());
-    if (!shell_app)
+    if (is_undef(shell_app))
         shell_app = Shell.AppSystem.get_default().lookup_desktop_wmclass(window.get_wm_class());
     return shell_app;
 }
+
+function gdk_to_css_color(color) {
+    let red = Math.round(clamp((color.red * 255), 0, 255));
+    let green = Math.round(clamp((color.green * 255), 0, 255));
+    let blue = Math.round(clamp((color.blue * 255), 0, 255));
+
+    return { 'red': red, 'green': green, 'blue': blue };
+}
+
