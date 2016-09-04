@@ -2,6 +2,8 @@
 
 const Lang = imports.lang;
 
+const Params = imports.misc.params;
+
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Transitions = Me.imports.transitions;
 const Settings = Me.imports.settings;
@@ -42,7 +44,7 @@ function init() {
             Transitions.blank_fade_out();
         }
         if (Settings.get_enable_overview_text_color()) {
-            Theming.set_text_color('-maximized-');
+            Theming.set_text_color('maximized');
         } else {
             Theming.set_text_color();
         }
@@ -68,13 +70,13 @@ function init() {
         this._windowUpdated();
     }));
 
-    // TODO: seperate function.
+    // TODO: Seperate function.
     this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, function (wm, window_actor) {
         if (!Util.is_undef(window_actor.get_meta_window().dpt_tracking)) {
             delete window_actor.get_meta_window().dpt_tracking;
         }
 
-        // Find the workspace that this window should be in.
+        /* Find the workspace that this window should be in. */
         let workspace_container = null;
         for (let container in this.workspaces) {
             if (window_actor.get_meta_window().get_workspace() === container.workspace) {
@@ -208,27 +210,27 @@ function _workspacesChanged() {
 /**
  * Handles any window updates. Contains the core logic of this extension.
  *
- * @param {Object} params [params=null] - List of parameters for the update.
+ * @param {Object} params - List of parameters for the update.
  * @param {Object} params.excluded_window - Optional. A Meta.Window that should be ignored when updating. Usually this is force events that don't remove a window before this is called.
  * @param {Boolean} params.force - Optional. Updates even if the current state is believed to be identical.
  * @param {Boolean} params.blank - Optional. Whether or not the panel alpha should be set to 0 instead of the unmaximized opacity.
+ * @param {Number} params.time - Optional. The amount of time any invoked transition should take.
  */
-function _windowUpdated(params = null) {
+function _windowUpdated(params) {
     if (Main.overview._shown)
         return;
 
-    let workspace = global.screen.get_active_workspace();
-    let excluded_window = null;
-    if (params !== null) {
-        if (!Util.is_undef(params.workspace)) {
-            workspace = params.workspace;
-        }
-        if (!Util.is_undef(params.excluded_window)) {
-            excluded_window = params.excluded_window;
-        }
-    }
+    params = Params.parse(params, {
+        workspace: global.screen.get_active_workspace(),
+        excluded_window: null,
+        blank: false,
+        force: false
+    }, true);
 
-    let focused_window = global.display.focus_window;
+    let excluded_window = params.excluded_window;
+    let workspace = params.workspace;
+
+    let focused_window = global.display.get_focus_window();
     let windows = workspace.list_windows();
 
     let add_transparency = true;
@@ -248,8 +250,9 @@ function _windowUpdated(params = null) {
             if (current_window !== excluded_window && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
                 this.maximized_window = current_window;
                 add_transparency = false;
-                if (!Settings.check_app_settings())
+                if (!Settings.check_app_settings()) {
                     break;
+                }
             }
         }
     }
@@ -279,25 +282,27 @@ function _windowUpdated(params = null) {
         }
     }
 
-    let time = (params !== null && !Util.is_undef(params.time)) ? {
-        time: params.time
-    } : null;
+    let transition_params = {};
+    if ('time' in params) {
+        transition_params.time = params.time;
+    }
+
     /* Only change if the transparency isn't already correct */
-    if ((Transitions.get_transparency_status().is_transparent() !== add_transparency) || (params !== null && !Util.is_undef(params.force) && params.force)) {
+    if ((Transitions.get_transparency_status().is_transparent() !== add_transparency) || params.force) {
         if (add_transparency) {
-            if (params !== null && !Util.is_undef(params.blank) && params.blank) {
-                Transitions.blank_fade_out({ time: time });
+            if (params.blank) {
+                Transitions.blank_fade_out(transition_params);
             } else {
-                Transitions.fade_out({ time: time });
+                Transitions.fade_out(transition_params);
             }
         } else {
-            Transitions.fade_in({ time: time });
+            Transitions.fade_in(transition_params);
         }
     } else if (Transitions.get_transparency_status().is_blank()) {
         if (add_transparency) {
-            Transitions.minimum_fade_in({ time: time });
+            Transitions.minimum_fade_in(transition_params);
         } else {
-            Transitions.fade_in({ time: time });
+            Transitions.fade_in(transition_params);
         }
     } else if (Settings.check_app_settings()) {
         // TODO: Double check this removed logic.
@@ -308,9 +313,10 @@ function _windowUpdated(params = null) {
         if (add_transparency) {
             Theming.set_text_color();
         } else {
-            Theming.set_text_color('-maximized-');
+            Theming.set_text_color('maximized');
         }
     }
+
 }
 
 /**

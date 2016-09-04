@@ -125,5 +125,10 @@
       <summary>Windows that will always trigger the panel when focused.</summary>
       <description>List of windows that triggers the panel when a window of the app is in focus.</description>
     </key>
+    <key name="transition-type" type="i">
+      <default>1</default>
+      <summary>Transition type</summary>
+      <description>The transition used on the panel</description>
+    </key>
   </schema>
 </schemalist>

@@ -20,7 +20,6 @@ const COLOR_PARSER = function (input) {
 function init() { }
 
 function enable() {
-
     /* Setup settings... */
     Settings.init();
     /* Register settings... */
@@ -195,6 +194,15 @@ function enable() {
         type: 'b'
     });
 
+    Settings.add({
+        settings_key: 'transition-type',
+        name: 'transition_type',
+        type: 'i',
+        handler: Lang.bind(this, function () {
+            Transitions.update_transition_type();
+        })
+    });
+
     /* App-Specific Settings */
 
     Settings.add_app_setting({
@@ -226,19 +234,16 @@ function enable() {
         })
     });
 
-
     /* After we've given Settings the necessary information... let's bind these. */
 
     Settings.bind();
     Settings.bind_app_settings();
-
 
     /* Initialize */
 
     Transitions.init();
     Theming.init();
     Events.init();
-
 
     /* Get Rid of the Panel's CSS Background */
     Theming.strip_panel_background();
@@ -248,6 +253,7 @@ function enable() {
         alpha: 0.0
     });
 
+    /* Update the corners. */
     Transitions.update_corner_alpha(0);
 
     /* Add Shadowing */
@@ -261,7 +267,7 @@ function enable() {
 
     /* Register text color styling. */
     Theming.register_text_color(Settings.get_text_color());
-    Theming.register_text_color(Settings.get_maximized_text_color(), '-maximized-');
+    Theming.register_text_color(Settings.get_maximized_text_color(), 'maximized');
 
     if (Settings.get_enable_text_color()) {
         Theming.set_text_color();
