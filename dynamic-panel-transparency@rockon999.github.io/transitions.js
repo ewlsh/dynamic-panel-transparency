@@ -1,4 +1,4 @@
-/* exported init, cleanup, get_animation_status, get_transparency_status, update_solid, update_transparent, minimum_fade_in */
+/* exported init, cleanup, get_animation_status, get_transparency_status, update_solid, update_transparent, minimum_fade_in, update_transition_type */
 /* exported fade_in, fade_out */
 
 const Lang = imports.lang;
@@ -6,10 +6,11 @@ const Lang = imports.lang;
 const Main = imports.ui.main;
 const Panel = Main.panel;
 
+const Params = imports.misc.params;
+
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
-const Util = Me.imports.util;
 
 const TIME_SCALE_FACTOR = 1000;
 
@@ -21,6 +22,7 @@ function init() {
     /* Objects to track where the transparency is and where it's going. */
     this.status = new TransparencyStatus();
     this.animation_status = new AnimationStatus();
+    this.transition_type = TransitionType.from_index(Settings.get_transition_type());
 
     /* Override the gnome animation preferences if need be. The default tweener obeys animation settings, the core one doesn't. */
     if (Settings.get_force_animation()) {
@@ -40,8 +42,17 @@ function init() {
 
 function cleanup() {
     this.animation_status = null;
+    this.transition_type = null;
     this.status = null;
     this.tweener = null;
+}
+
+/**
+ * Updates the default transition type from settings.
+ *
+ */
+function update_transition_type() {
+    this.transition_type = TransitionType.from_index(Settings.get_transition_type());
 }
 
 
@@ -69,7 +80,7 @@ function get_animation_status() {
  * @param {Object} params [params=null] - Parameters for the transition.
  * @param {Number} params.time - Transition speed in milliseconds.
  */
-function minimum_fade_in(params = null) {
+function minimum_fade_in(params) {
     if (Main.overview.visible || Main.overview._shown)
         return;
 
@@ -79,10 +90,10 @@ function minimum_fade_in(params = null) {
         return;
     }
 
-    if (params === null || Util.is_undef(params.time))
-        params = {
-            time: Settings.get_transition_speed()
-        };
+
+    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
+
+    let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
 
     this.status.set_transparent(true);
     this.status.set_blank(false);
@@ -99,7 +110,7 @@ function minimum_fade_in(params = null) {
     } else {
         this.tweener.addTween(Panel.actor, {
             time: time,
-            transition: 'linear',
+            transition: transition,
             background_alpha: Settings.get_minimum_opacity(),
             onComplete: Lang.bind(this, fade_in_complete)
         });
@@ -112,7 +123,7 @@ function minimum_fade_in(params = null) {
  * @param {Object} params [params=null] - Parameters for the transition.
  * @param {Number} params.time - Transition speed in milliseconds.
  */
-function fade_in(params = null) {
+function fade_in(params) {
     if (Main.overview.visible || Main.overview._shown)
         return;
 
@@ -122,10 +133,9 @@ function fade_in(params = null) {
         return;
     }
 
-    if (params === null || Util.is_undef(params.time))
-        params = {
-            time: Settings.get_transition_speed()
-        };
+    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
+
+    let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
 
     this.status.set_transparent(false);
     this.status.set_blank(false);
@@ -134,6 +144,9 @@ function fade_in(params = null) {
 
     Theming.set_panel_color();
 
+log('time: ' + time);
+log(transition);
+
     if (time <= 0) {
         Theming.set_background_alpha(Panel.actor, Settings.get_maximum_opacity());
         this.fade_in_complete();
@@ -141,7 +154,7 @@ function fade_in(params = null) {
     } else {
         this.tweener.addTween(Panel.actor, {
             time: time,
-            transition: 'linear',
+            transition: transition,
             background_alpha: Settings.get_maximum_opacity(),
             onComplete: Lang.bind(this, fade_in_complete)
         });
@@ -177,22 +190,24 @@ function fade_in_complete() {
  * @param {Object} params [params=null] - Parameters for the transition.
  * @param {Number} params.time - Transition speed in milliseconds.
  */
-function fade_out(params = null) {
+function fade_out(params) {
     if (this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM)) {
         this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM);
     } else {
         return;
     }
 
-    if (params === null || Util.is_undef(params.time))
-        params = {
-            time: Settings.get_transition_speed()
-        };
+    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
+
+    let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_OUT);
 
     this.status.set_transparent(true);
     this.status.set_blank(false);
 
     let time = params.time / TIME_SCALE_FACTOR;
+
+    log('time: ' + time);
+    log(transition);
 
     /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
     /* always hide to update preference changes */
@@ -215,7 +230,7 @@ function fade_out(params = null) {
     } else {
         this.tweener.addTween(Panel.actor, {
             time: time,
-            transition: 'linear',
+            transition: transition,
             background_alpha: Settings.get_minimum_opacity(),
             onComplete: Lang.bind(this, function () {
                 Theming.set_panel_color();
@@ -223,6 +238,7 @@ function fade_out(params = null) {
             })
         });
     }
+
 }
 
 
@@ -232,7 +248,7 @@ function fade_out(params = null) {
  * @param {Object} params [params=null] - Parameters for the transition.
  * @param {Number} params.time - Transition speed in milliseconds.
  */
-function blank_fade_out(params = null) {
+function blank_fade_out(params) {
 
     if (this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.BLANK)) {
         this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.BLANK);
@@ -240,10 +256,9 @@ function blank_fade_out(params = null) {
         return;
     }
 
-    if (params === null || Util.is_undef(params.time))
-        params = {
-            time: Settings.get_transition_speed()
-        };
+    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
+
+    let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
 
     this.status.set_transparent(true);
     this.status.set_blank(true);
@@ -262,7 +277,7 @@ function blank_fade_out(params = null) {
     } else {
         this.tweener.addTween(Panel.actor, {
             time: time,
-            transition: 'linear',
+            transition: transition,
             background_alpha: 0,
             onComplete: Lang.bind(this, function () {
                 Theming.set_panel_color();
@@ -335,6 +350,42 @@ const AnimationStatus = new Lang.Class({
         return (this.action === null && this.destination === null);
     }
 });
+
+const TransitionType = {
+    LINEAR: { code: 'linear', name: 'Linear', index: 1 },
+    SINE: { code: 'Sine', name: 'Sine', index: 2 },
+    QUAD: { code: 'Quad', name: 'Quadratic', index: 3 },
+    CUBIC: { code: 'Cubic', name: 'Cubic', index: 4 },
+    QUARTIC: { code: 'Quart', name: 'Quartic', index: 5 },
+    QUINTIC: { code: 'Quint', name: 'Quintic', index: 6 },
+    EXPONENTIAL: { code: 'Expo', name: 'Exponential', index: 7 },
+    CIRCULAR: { code: 'Circ', name: 'Circle', index: 8 },
+    BACK: { code: 'Back', name: 'Back', index: 15 },
+    ELASTIC: { code: 'Elastic', name: 'Elastic', index: 9 },
+    BOUNCE: { code: 'Bounce', name: 'Bounce', index: 10 },
+    from_index: function (search_index) {
+        for (let key in this) {
+            let value = this[key];
+            if (typeof (value) === 'object' && search_index === value.index) {
+                return value;
+            }
+        }
+        return null;
+    },
+    to_code_string: function (type, action) {
+        /* 'linear' is a special case. It doesn't have in/out modes. */
+        if (type.code === this.LINEAR.code) {
+            return this.LINEAR.code;
+        }
+        return (action === AnimationAction.FADING_IN ? 'easeIn' : 'easeOut') + type.code;
+    }
+};
+Object.keys(TransitionType).forEach(function (value, index, arr) {
+    if (typeof (value) === 'object') {
+        Object.freeze(value);
+    }
+});
+Object.freeze(TransitionType);
 
 const AnimationAction = {
     FADING_OUT: 0,

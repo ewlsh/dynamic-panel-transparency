@@ -54,10 +54,6 @@ function is_maximized(window) {
     return false;
 }
 
-function join() {
-
-}
-
 function get_file(filename) {
     try {
         let file = Gio.file_new_for_path(filename);

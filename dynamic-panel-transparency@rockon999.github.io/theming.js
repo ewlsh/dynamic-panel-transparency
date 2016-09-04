@@ -2,14 +2,19 @@
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings;
+const Util = Me.imports.util;
 
 const Clutter = imports.gi.Clutter;
+const St = imports.gi.St;
+
+const Params = imports.misc.params;
+
 const Main = imports.ui.main;
 
 const Panel = Main.panel;
 
-const St = imports.gi.St;
-const Util = Me.imports.util;
+
+
 
 const SCALE_FACTOR = 255;
 
@@ -135,11 +140,17 @@ function remove_icon_shadow() {
  * @param {Number} color.red - Red value ranging from 0-255.
  * @param {Number} color.green - Green value ranging from 0-255.
  * @param {Number} color.blue - Blue value ranging from 0-255.
- * @param {string} prefix [prefix='-'] - What prefix to apply to the stylesheet. '-' is the default.
+ * @param {string} prefix - What prefix to apply to the stylesheet. '-' is the default.
  */
 
-function register_text_color(color, prefix = '-') {
+function register_text_color(color, prefix) {
     let color_css = 'color: rgb(' + color.red + ', ' + color.green + ', ' + color.blue + ');';
+
+    if (!Util.is_undef(prefix)) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
 
     apply_stylesheet_css('.dpt-panel' + prefix + 'text-color .panel-button { ' + color_css + ' }', 'panel' + prefix + 'text-color');
     apply_stylesheet_css('.dpt-panel' + prefix + 'icon-color .system-status-icon { ' + color_css + ' }', 'panel' + prefix + 'icon-color');
@@ -154,14 +165,20 @@ function register_text_color(color, prefix = '-') {
 /**
  * Sets which registered text color stylesheet to use for the text coloring. @see register_text_color
  *
- * @param {string} prefix [prefix='-'] - What stylesheet prefix to retrieve. '-' is the default.
+ * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
  */
 
-function set_text_color(prefix = '-') {
+function set_text_color(prefix) {
     if (this.current_prefix !== null) {
         Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'text-color');
         Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'icon-color');
         Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'arrow-color');
+    }
+
+    if (!Util.is_undef(prefix)) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
     }
 
     this.current_prefix = prefix;
@@ -175,9 +192,15 @@ function set_text_color(prefix = '-') {
 /**
  * Remove a registered text color stylesheet from the text coloring. @see register_text_color
  *
- * @param {string} prefix [prefix='-'] - What stylesheet prefix to retrieve. '-' is the default.
+ * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
  */
-function remove_text_color(prefix = '-') {
+function remove_text_color(prefix) {
+    if (!Util.is_undef(prefix)) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
     deregister_style('dpt-panel' + prefix + 'text-color');
     deregister_style('dpt-panel' + prefix + 'icon-color');
     deregister_style('dpt-panel' + prefix + 'arrow-color');
@@ -217,14 +240,22 @@ function deregister_style(style) {
  * @param {Number} color.alpha - Alpha value ranging from 0-255.
  */
 
-function set_panel_color(color = {}) {
+function set_panel_color(color) {
     let panel_color = get_background_color();
     let current_alpha = get_background_alpha(Panel.actor);
+
+    color = Params.parse(color, {
+        red: panel_color.red,
+        green: panel_color.green,
+        blue: panel_color.blue,
+        alpha: current_alpha
+    });
+
     Panel.actor.set_background_color(new Clutter.Color({
-        red: Util.validate(color.red, panel_color.red),
-        green: Util.validate(color.green, panel_color.green),
-        blue: Util.validate(color.blue, panel_color.blue),
-        alpha: (Util.is_undef(color.alpha) ? current_alpha : color.alpha)
+        red: color.red,
+        green: color.green,
+        blue: color.blue,
+        alpha: color.alpha
     }));
 }
 
@@ -237,24 +268,27 @@ function set_panel_color(color = {}) {
  * @param {Number} color.blue - Blue value ranging from 0-255.
  * @param {Number} color.alpha - Alpha value ranging from 0-255.
  */
-function set_corner_color(color = {}) {
+function set_corner_color(color) {
     let panel_color = get_background_color();
     let current_alpha = get_background_alpha(Panel._leftCorner.actor);
 
-    let opacity = Util.is_undef(color.alpha) ? current_alpha : color.alpha;
-    opacity = Util.clamp(opacity / SCALE_FACTOR, 0, 1);
+    color = Params.parse(color, {
+        red: panel_color.red,
+        green: panel_color.green,
+        blue: panel_color.blue,
+        alpha: current_alpha
+    });
 
-    let red = Util.validate(color.red, panel_color.red);
-    let green = Util.validate(color.green, panel_color.green);
-    let blue = Util.validate(color.blue, panel_color.blue);
+    let opacity = Util.clamp(color.alpha / SCALE_FACTOR, 0, 1);
+
 
     /* I strongly dislike using a deprecated method (set_style)
      * but this is a hold over from the older extension code and
-     * the only way user-friendly way. */
-    let coloring = '-panel-corner-background-color: rgba(' + red + ', ' + green + ', ' + blue + ', ' + opacity + ');' +
+     * the only way to keep per-app coloring working with corners. */
+    let coloring = '-panel-corner-background-color: rgba(' + color.red + ', ' + color.green + ', ' + color.blue + ', ' + opacity + ');' +
         '' + '-panel-corner-border-color: transparent;';
 
-    // TODO: Update this code.
+    // TODO: Update this code. We're using @deprecated code.
     Panel._leftCorner.actor.set_style(coloring);
     Panel._rightCorner.actor.set_style(coloring);
 }
@@ -288,7 +322,7 @@ function get_background_color() {
  *
  */
 
-function strip_panel_styling(){
+function strip_panel_styling() {
     Panel.actor.add_style_class_name('panel-full-transparency');
 }
 
@@ -297,7 +331,7 @@ function strip_panel_styling(){
  *
  */
 
-function reapply_panel_styling(){
+function reapply_panel_styling() {
     Panel.actor.remove_style_class_name('panel-full-transparency');
 }
 
@@ -329,9 +363,11 @@ function reapply_panel_background() {
  */
 
 function apply_stylesheet_css(css, name) {
-    let file_name = Me.dir.get_path() + "/styles/" + name + ".dpt.css";
+    let file_name = Me.dir.get_path() + '/styles/' + name + '.dpt.css';
     /* Write to the file. */
-    Util.write_to_file(file_name, css);
+    if (!Util.write_to_file(file_name, css)) {
+        log('Dynamic Panel Transparency cannot be installed as a system extension.');
+    }
     let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
     if (theme.load_stylesheet(Util.get_file(file_name))) {
         this.stylesheets.push(file_name);
@@ -351,6 +387,10 @@ function get_background_alpha(actor) {
 
 function set_background_alpha(actor, alpha) {
     let background_color = actor.get_background_color();
+
+    /* Some transition algorithms go overboard. */
+    alpha = Util.clamp(alpha, 0, 255);
+
     actor.set_background_color(new Clutter.Color({
         red: background_color.red,
         green: background_color.green,

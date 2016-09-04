@@ -3,6 +3,11 @@
 <interface>
   <requires lib="gtk+" version="3.14"/>
   <!-- interface-css-provider-path custom.css -->
+  <object class="GtkComboBox">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="valign">start</property>
+  </object>
   <object class="GtkAboutDialog" id="about_dialog">
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
@@ -69,51 +74,6 @@ frnogueira
     <property name="upper">10</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
-  </object>
-  <object class="GtkMessageDialog" id="custom_entry">
-    <property name="can_focus">False</property>
-    <property name="type_hint">dialog</property>
-    <property name="buttons">ok-cancel</property>
-    <property name="text" translatable="yes">Custom</property>
-    <property name="secondary_text" translatable="yes">Please enter a custom WM_CLASS.</property>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="hexpand">True</property>
-            <property name="homogeneous">True</property>
-            <property name="layout_style">expand</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="custom_text_entry">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="valign">start</property>
-            <property name="margin_left">5</property>
-            <property name="margin_right">5</property>
-            <property name="vexpand">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <child>
-      <placeholder/>
-    </child>
   </object>
   <object class="GtkEntryBuffer" id="entrybuffer1"/>
   <object class="GtkAdjustment" id="maximum_opacity_adjustment">
@@ -346,6 +306,7 @@ frnogueira
           <object class="GtkGrid" id="transitions_grid">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="valign">start</property>
             <property name="margin_left">5</property>
             <property name="margin_right">5</property>
             <property name="margin_top">5</property>
@@ -392,6 +353,11 @@ frnogueira
                 <property name="receives_default">False</property>
                 <property name="tooltip_markup" translatable="yes">Overrides 'gtk-enable-animations'.</property>
                 <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
                 <property name="xalign">0</property>
                 <property name="draw_indicator">True</property>
                 <child>
@@ -405,9 +371,56 @@ frnogueira
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">1</property>
-                <property name="width">2</property>
+                <property name="top_attach">2</property>
               </packing>
+            </child>
+            <child>
+              <object class="GtkComboBoxText" id="transition_type_box">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
+                <property name="active_id">1</property>
+                <items>
+                  <item id="1" translatable="yes">Linear (default)</item>
+                  <item id="2" translatable="yes">Sine</item>
+                  <item id="3" translatable="yes">Quadratic</item>
+                  <item id="4" translatable="yes">Cubic</item>
+                  <item id="5" translatable="yes">Quartic</item>
+                  <item id="6" translatable="yes">Quintic</item>
+                  <item id="7" translatable="yes">Exponential</item>
+                  <item id="8" translatable="yes">Circle</item>
+                  <item id="15" translatable="yes">Back</item>
+                  <item id="9" translatable="yes">Elastic</item>
+                  <item id="10" translatable="yes">Bounce</item>
+                </items>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
+                <property name="label" translatable="yes">Transition Style</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
             </child>
           </object>
         </child>

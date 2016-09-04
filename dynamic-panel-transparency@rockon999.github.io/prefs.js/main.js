@@ -28,6 +28,7 @@ const Dictionary = {
 /* Settings Keys */
 const SETTINGS_HIDE_CORNERS = 'hide-corners';
 const SETTINGS_TRANSITION_SPEED = 'transition-speed';
+const SETTINGS_TRANSITION_TYPE = 'transition-type';
 const SETTINGS_TEXT_SHADOW = 'text-shadow';
 const SETTINGS_TEXT_SHADOW_COLOR = 'text-shadow-color';
 const SETTINGS_FORCE_ANIMATION = 'force-animation';
@@ -73,23 +74,22 @@ function buildPrefsWidget() {
         }, get: function (key) {
             let a = this.enum_storage[key];
             if (!Util.is_undef(a))
-                // if (typeof (a) !== 'undefined' && a !== null)
                 return this.enum_storage[key];
             return this.storage[key];
         }, has: function (key) {
             let a = this.get(key);
             return (typeof (a) !== 'undefined' && a !== null);
         }, apply: function () {
-            for (let key in this.enum_storage) {
+            Object.keys(this.enum_storage).forEach(function(key){
                 if (this.has(key)) {
                     settings.set_enum(key, this.get(key));
                 }
-            }
-            for (let key in this.storage) {
+            }, this);
+            Object.keys(this.storage).forEach(function(key){
                 if (this.has(key)) {
                     settings.set_value(key, this.get(key));
                 }
-            }
+            }, this);
         }, restart_required: function (b) {
             if (typeof (b) !== 'undefined' && b !== null)
                 this._foreground = b;
@@ -155,6 +155,12 @@ function buildPrefsWidget() {
         speed_scale.connect('value-changed', Lang.bind(this, function (widget) {
             temp_settings.store(SETTINGS_TRANSITION_SPEED, new GLib.Variant('i', widget.adjustment.get_value()));
         }));
+
+        let transition_type_box = builder.get_object('transition_type_box');
+        transition_type_box.connect('changed', Lang.bind(this, function (box) {
+            temp_settings.store('transition-type', new GLib.Variant('i', box.get_active()));
+        }));
+        transition_type_box.set_active(settings.get_int(SETTINGS_TRANSITION_TYPE));
 
 
         let force_transition = builder.get_object('force_transition_check');
