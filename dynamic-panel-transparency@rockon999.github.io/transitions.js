@@ -1,4 +1,4 @@
-/* exported init, cleanup, get_animation_status, get_transparency_status, update_solid, update_transparent, minimum_fade_in, update_transition_type */
+/* exported init, cleanup, get_animation_status, get_transparency_status, minimum_fade_in, update_transition_type */
 /* exported fade_in, fade_out */
 
 const Lang = imports.lang;
