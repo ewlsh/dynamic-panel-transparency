@@ -80,12 +80,12 @@ function buildPrefsWidget() {
             let a = this.get(key);
             return (typeof (a) !== 'undefined' && a !== null);
         }, apply: function () {
-            Object.keys(this.enum_storage).forEach(function(key){
+            Object.keys(this.enum_storage).forEach(function (key) {
                 if (this.has(key)) {
                     settings.set_enum(key, this.get(key));
                 }
             }, this);
-            Object.keys(this.storage).forEach(function(key){
+            Object.keys(this.storage).forEach(function (key) {
                 if (this.has(key)) {
                     settings.set_value(key, this.get(key));
                 }
@@ -158,9 +158,9 @@ function buildPrefsWidget() {
 
         let transition_type_box = builder.get_object('transition_type_box');
         transition_type_box.connect('changed', Lang.bind(this, function (box) {
-            temp_settings.store('transition-type', new GLib.Variant('i', box.get_active()));
+            temp_settings.store('transition-type', new GLib.Variant('i', +(box.get_active_id())));
         }));
-        transition_type_box.set_active(settings.get_int(SETTINGS_TRANSITION_TYPE));
+        transition_type_box.set_active_id('' + settings.get_int(SETTINGS_TRANSITION_TYPE) + '');
 
 
         let force_transition = builder.get_object('force_transition_check');
@@ -174,6 +174,10 @@ function buildPrefsWidget() {
 
     /* Setup foreground tab */
     {
+        /* Used for version-specific properties */
+        let shell_version = Util.get_shell_version();
+
+
         let text_color_switch = builder.get_object('text_color_switch');
         let text_color_revealer = builder.get_object('text_color_revealer');
 
@@ -279,6 +283,11 @@ function buildPrefsWidget() {
         }));
 
         let text_shadow_color_btn = builder.get_object('text_shadow_color');
+
+        if (shell_version.major === 3 && shell_version.minor > 18) {
+            text_shadow_color_btn.show_editor = true;
+        }
+
         let text_shadow_color = settings.get_value(SETTINGS_TEXT_SHADOW_COLOR).deep_unpack();
 
         css_color = 'rgba(' + text_shadow_color[RED] + ',' + text_shadow_color[GREEN] + ',' + text_shadow_color[BLUE] + ',' + text_shadow_color[ALPHA].toFixed(2) + ')';
@@ -330,8 +339,12 @@ function buildPrefsWidget() {
             temp_settings.store(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
             temp_settings.restart_required(true);
         }));
+
         let icon_shadow_color_btn = builder.get_object('icon_shadow_color');
 
+        if (shell_version.major === 3 && shell_version.minor > 18) {
+            icon_shadow_color_btn.show_editor = true;
+        }
 
         let icon_shadow_color = settings.get_value(SETTINGS_ICON_SHADOW_COLOR).deep_unpack();
 

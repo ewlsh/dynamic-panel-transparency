@@ -67,7 +67,7 @@ function write_to_file(filename, text) {
     try {
         let file = get_file(filename);
         let success = file.replace_contents(text, null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null, null);
-        return success;
+        return success[0];
     } catch (error) {
         log(error);
     }
