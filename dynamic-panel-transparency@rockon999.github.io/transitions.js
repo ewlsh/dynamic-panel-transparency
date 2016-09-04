@@ -92,7 +92,6 @@ function minimum_fade_in(params) {
 
 
     params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
-
     let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
 
     this.status.set_transparent(true);
@@ -134,7 +133,6 @@ function fade_in(params) {
     }
 
     params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
-
     let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
 
     this.status.set_transparent(false);
@@ -143,9 +141,6 @@ function fade_in(params) {
     let time = params.time / TIME_SCALE_FACTOR;
 
     Theming.set_panel_color();
-
-log('time: ' + time);
-log(transition);
 
     if (time <= 0) {
         Theming.set_background_alpha(Panel.actor, Settings.get_maximum_opacity());
@@ -198,16 +193,12 @@ function fade_out(params) {
     }
 
     params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
-
     let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_OUT);
 
     this.status.set_transparent(true);
     this.status.set_blank(false);
 
     let time = params.time / TIME_SCALE_FACTOR;
-
-    log('time: ' + time);
-    log(transition);
 
     /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
     /* always hide to update preference changes */
@@ -257,7 +248,6 @@ function blank_fade_out(params) {
     }
 
     params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
-
     let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
 
     this.status.set_transparent(true);
