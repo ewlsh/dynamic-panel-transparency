@@ -4,3 +4,4 @@ styles/
 .vscode/
 *.json
 *~
+.buildconfig
