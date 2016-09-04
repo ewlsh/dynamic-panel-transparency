@@ -247,7 +247,6 @@ function _windowUpdated(params) {
     } else {
         for (let i = windows.length - 1; i >= 0; --i) {
             let current_window = windows[i];
-
             if (current_window !== excluded_window && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
                 this.maximized_window = current_window;
                 add_transparency = false;
@@ -307,7 +306,9 @@ function _windowUpdated(params) {
         }
     } else if (Settings.check_app_settings()) {
         // TODO: Double check this removed logic.
-        Theming.set_panel_color();
+        // Oh no... this is messed up.
+        //Theming.set_panel_color();
+        Transitions.fade_in(transition_params);
     }
 
     if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {

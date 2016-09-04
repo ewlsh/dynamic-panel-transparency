@@ -215,9 +215,16 @@ function enable() {
         settings_key: 'maximized-opacity',
         name: 'maximized_opacity',
         type: 'i',
-        parser: Lang.bind(this, function (input, def, uuid) {
-            if (Settings.app_settings_manager['enable_background_tweaks'][uuid]) {
-                return input;
+        parser: Lang.bind(this, function (input, def, uuid, window = false) {
+            if (window) {
+                if (Settings.window_settings_manager['enable_background_tweaks'][uuid]) {
+                    return input;
+                }
+            } else {
+                if (Settings.app_settings_manager['enable_background_tweaks'][uuid]) {
+                    return input;
+
+                }
             }
             return def;
         })
@@ -226,9 +233,16 @@ function enable() {
         settings_key: 'panel-color',
         name: 'panel_color',
         type: '(iii)',
-        parser: Lang.bind(this, function (input, def, uuid) {
-            if (Settings.app_settings_manager['enable_background_tweaks'][uuid]) {
-                return input;
+        parser: Lang.bind(this, function (input, def, uuid, window = false) {
+            if (window) {
+                if (Settings.window_settings_manager['enable_background_tweaks'][uuid]) {
+                    return COLOR_PARSER(input);
+                }
+            } else {
+                if (Settings.app_settings_manager['enable_background_tweaks'][uuid]) {
+                    return COLOR_PARSER(input);
+
+                }
             }
             return def;
         })
