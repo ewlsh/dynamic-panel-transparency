@@ -50,7 +50,8 @@ function init() {
         }
     }));
 
-    /* No unminimize signal on 3.14 (TBD: If this harms the extension) */
+    // COMPATIBILITY: No unminimize signal on 3.14
+    // TODO: Figure out if this harms the extension behaviour
     if (version.major === 3 && version.minor > 14) {
         this._windowUnminimizeSig = global.window_manager.connect('unminimize', Lang.bind(this, this._windowUpdated));
     }

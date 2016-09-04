@@ -284,6 +284,7 @@ function buildPrefsWidget() {
 
         let text_shadow_color_btn = builder.get_object('text_shadow_color');
 
+        // COMPATIBILITY: In 3.18 and lower there is no 'show-editor' property.
         if (shell_version.major === 3 && shell_version.minor > 18) {
             text_shadow_color_btn.show_editor = true;
         }
@@ -342,6 +343,7 @@ function buildPrefsWidget() {
 
         let icon_shadow_color_btn = builder.get_object('icon_shadow_color');
 
+        // COMPATIBILITY: In 3.18 and lower there is no 'show-editor' property.
         if (shell_version.major === 3 && shell_version.minor > 18) {
             icon_shadow_color_btn.show_editor = true;
         }
@@ -568,10 +570,11 @@ function buildPrefsWidget() {
                         app_settings.set_value(SETTINGS_MAXIMIZED_OPACITY, new GLib.Variant('i', temp_app_settings.maximum_opacity));
                     if (temp_app_settings.always_trigger !== null) {
                         let trigger_key = null;
+
                         if (path.indexOf('window') !== -1) {
                             trigger_key = 'trigger-windows';
                         } else {
-                            trigger_key = settings.get_strv('trigger-apps');
+                            trigger_key = 'trigger-apps';
                         }
 
                         let triggers = settings.get_strv(trigger_key);
@@ -587,7 +590,6 @@ function buildPrefsWidget() {
                             }
                         }
                     }
-
                     //dialog.close();
                 } else if (response === Gtk.ResponseType.CANCEL) {
                     //dialog.close();

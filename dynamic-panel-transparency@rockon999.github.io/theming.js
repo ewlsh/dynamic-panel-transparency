@@ -33,7 +33,13 @@ function init() { this.stylesheets = []; this.styles = []; }
 function cleanup() {
     for (let sheet of this.stylesheets) {
         let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
-        theme.unload_stylesheet(Util.get_file(sheet));
+        let shell_version = Util.get_shell_version();
+        let file_obj = sheet;
+        /* st-theme in 3.14 uses strings, not Gio.File */
+        if (shell_version.major === 3 && shell_version.minor > 14) {
+            file_obj = Util.get_file(sheet);
+        }
+        theme.unload_stylesheet(file_obj);
         Util.remove_file(sheet);
     }
     for (let style of this.styles) {
@@ -369,7 +375,13 @@ function apply_stylesheet_css(css, name) {
         log('Dynamic Panel Transparency cannot be installed as a system extension.');
     }
     let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
-    if (theme.load_stylesheet(Util.get_file(file_name))) {
+    let shell_version = Util.get_shell_version();
+    let file_obj = file_name;
+    // COMPATIBILITY: st-theme in 3.14 uses strings, not Gio.File
+    if (shell_version.major === 3 && shell_version.minor > 14) {
+        file_obj = Util.get_file(file_name);
+    }
+    if (theme.load_stylesheet(file_obj)) {
         this.stylesheets.push(file_name);
     } else {
         log('Error Loading Temporary Stylesheet: ' + name);
