@@ -319,7 +319,7 @@ function _windowUpdated(params) {
     if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
         if (add_transparency) {
             Theming.set_text_color();
-        } else {
+        } else if (Settings.get_enable_maximized_text_color()) {
             Theming.set_text_color('maximized');
         }
     }

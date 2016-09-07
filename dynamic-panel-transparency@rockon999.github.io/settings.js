@@ -108,7 +108,7 @@ function add_app_override(params) {
 }
 
 function check_app_settings() {
-    return (this.get_app_overrides().length > 0) || (this.get_window_overrides().length > 0) || (this.get_trigger_apps().length > 0);
+    return (this.get_app_overrides().length > 0) || (this.get_window_overrides().length > 0) || (this.get_trigger_apps().length > 0) || (this.get_trigger_windows().length > 0);
 }
 
 function bind_app_settings() {
