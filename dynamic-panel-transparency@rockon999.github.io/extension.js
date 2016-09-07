@@ -7,6 +7,7 @@ const Transitions = Me.imports.transitions;
 const Theming = Me.imports.theming;
 const Settings = Me.imports.settings;
 const Events = Me.imports.events;
+const Util = Me.imports.util;
 
 const COLOR_PARSER = function (input) {
     let color = { red: input[0], green: input[1], blue: input[2] };
@@ -16,10 +17,38 @@ const COLOR_PARSER = function (input) {
     return color;
 };
 
+
+const Main = imports.ui.main;
+const Panel = Main.panel;
+
 /* Initialize */
 function init() { }
 
+const Mainloop = imports.mainloop;
+
 function enable() {
+    initialize_settings();
+
+    /* Initialize Utilities */
+    Transitions.init();
+    Theming.init();
+
+    /* Delay the extension so we can retreive the background color */
+    Mainloop.idle_add(Lang.bind(this, function () {
+        let bg = Panel.actor.get_theme_node().get_background_color();
+        // Freeze the object.
+        Theming.set_theme_background_color(Util.clutter_to_native_color(bg));
+        Theming.set_theme_opacity(bg.alpha);
+        // Debug?
+        log('Detected user theme style: rgba(' + bg.red + ', ' + bg.green + ', ' + bg.blue + ', ' + bg.alpha + ')');
+        // Start the event loop.
+        Events.init();
+        // Modify the panel.
+        modify_panel();
+    }));
+}
+
+function initialize_settings() {
     /* Setup settings... */
     Settings.init();
     /* Register settings... */
@@ -47,7 +76,7 @@ function enable() {
         settings_key: 'unmaximized-opacity',
         name: 'unmaximized_opacity',
         type: 'i',
-        getter: 'get_minimum_opacity',
+        getter: 'get_unmaximized_opacity',
         handler: Lang.bind(this, function () {
             Events._windowUpdated({
                 force: true
@@ -58,7 +87,7 @@ function enable() {
         settings_key: 'maximized-opacity',
         name: 'maximized_opacity',
         type: 'i',
-        getter: 'get_maximum_opacity',
+        getter: 'get_maximized_opacity',
         handler: Lang.bind(this, function () {
             Events._windowUpdated({
                 force: true
@@ -202,6 +231,18 @@ function enable() {
             Transitions.update_transition_type();
         })
     });
+    Settings.add({
+        settings_key: 'enable-opacity',
+        name: 'enable_custom_opacity',
+        getter: 'enable_custom_opacity',
+        type: 'b'
+    });
+    Settings.add({
+        settings_key: 'enable-background-color',
+        name: 'enable_custom_background_color',
+        getter: 'enable_custom_background_color',
+        type: 'b'
+    });
 
     /* App-Specific Settings */
 
@@ -252,12 +293,10 @@ function enable() {
 
     Settings.bind();
     Settings.bind_app_settings();
+}
 
-    /* Initialize */
 
-    Transitions.init();
-    Theming.init();
-    Events.init();
+function modify_panel() {
 
     /* Get Rid of the Panel's CSS Background */
     Theming.strip_panel_background();

@@ -35,7 +35,12 @@
       <summary>Panel Color</summary>
       <description>The color of the panel.</description>
     </key>
-    <key name="detect-user-theme" type="b">
+    <key name="enable-opacity" type="b">
+      <default>false</default>
+      <summary>Detect the user's theme</summary>
+      <description>Uses the panel or dash to get the user's panel color.</description>
+    </key>
+    <key name="enable-background-color" type="b">
       <default>false</default>
       <summary>Detect the user's theme</summary>
       <description>Uses the panel or dash to get the user's panel color.</description>
