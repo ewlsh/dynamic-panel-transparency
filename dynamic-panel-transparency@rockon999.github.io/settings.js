@@ -6,6 +6,8 @@ const Convenience = Me.imports.convenience;
 const Util = Me.imports.util;
 const Lang = imports.lang;
 
+const Params = imports.misc.params;
+
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Events = Me.imports.events;
@@ -162,10 +164,12 @@ function bind() {
         /* Add function */
 
         if (this.overriden_keys.indexOf(setting.key) !== -1) {
-            getter = function () {
+            getter = function (params) {
+                params = Params.parse(params, { app_settings: true });
+
                 let maximized_window = Events.get_current_maximized_window();
 
-                if (!Util.is_undef(maximized_window) && this.check_app_settings()) {
+                if (!Util.is_undef(maximized_window) && this.check_app_settings() && params.app_settings) {
                     if (!Util.is_undef(this.window_settings_manager[setting.name])) {
                         let value = this.window_settings_manager[setting.name][maximized_window.get_wm_class().toLowerCase()];
                         if (!Util.is_undef(value)) {

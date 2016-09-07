@@ -84,14 +84,16 @@ function minimum_fade_in(params) {
     if (Main.overview.visible || Main.overview._shown)
         return;
 
-    if (this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_IN, AnimationDestination.MINIMUM)) {
+    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interruptible: false });
+
+    if (params.interruptible || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_IN, AnimationDestination.MINIMUM)) {
         this.animation_status.set(AnimationAction.FADE_IN, AnimationDestination.MINIMUM);
     } else {
         return;
     }
 
 
-    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
+
     let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
 
     this.status.set_transparent(true);
@@ -102,15 +104,15 @@ function minimum_fade_in(params) {
     Theming.set_panel_color();
 
     /* Avoid Tweener if the time or opacity don't require it. */
-    if (time <= 0 || Settings.get_minimum_opacity() <= 0) {
-        Theming.set_background_alpha(Panel.actor, Settings.get_minimum_opacity());
+    if (time <= 0 || Theming.get_unmaximized_opacity() <= 0) {
+        Theming.set_background_alpha(Panel.actor, Theming.get_unmaximized_opacity());
         this.fade_in_complete();
         this.animation_status.done();
     } else {
         this.tweener.addTween(Panel.actor, {
             time: time,
             transition: transition,
-            background_alpha: Settings.get_minimum_opacity(),
+            background_alpha: Theming.get_unmaximized_opacity(),
             onComplete: Lang.bind(this, fade_in_complete)
         });
     }
@@ -126,13 +128,14 @@ function fade_in(params) {
     if (Main.overview.visible || Main.overview._shown)
         return;
 
-    if (this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM)) {
+    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interruptible: false });
+
+    if (params.interruptible || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM)) {
         this.animation_status.set(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM);
     } else {
         return;
     }
 
-    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
     let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
 
     this.status.set_transparent(false);
@@ -143,14 +146,14 @@ function fade_in(params) {
     Theming.set_panel_color();
 
     if (time <= 0) {
-        Theming.set_background_alpha(Panel.actor, Settings.get_maximum_opacity());
+        Theming.set_background_alpha(Panel.actor, Theming.get_maximized_opacity());
         this.fade_in_complete();
         this.animation_status.done();
     } else {
         this.tweener.addTween(Panel.actor, {
             time: time,
             transition: transition,
-            background_alpha: Settings.get_maximum_opacity(),
+            background_alpha: Theming.get_maximized_opacity(),
             onComplete: Lang.bind(this, fade_in_complete)
         });
     }
@@ -186,13 +189,14 @@ function fade_in_complete() {
  * @param {Number} params.time - Transition speed in milliseconds.
  */
 function fade_out(params) {
-    if (this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM)) {
+    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interruptible: false });
+
+    if (params.interruptible || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM)) {
         this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM);
     } else {
         return;
     }
 
-    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
     let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_OUT);
 
     this.status.set_transparent(true);
@@ -211,7 +215,7 @@ function fade_out(params) {
     Theming.strip_panel_styling();
 
     if (time <= 0 && !Main.overview._shown) {
-        Theming.set_background_alpha(Panel.actor, Settings.get_minimum_opacity());
+        Theming.set_background_alpha(Panel.actor, Theming.get_unmaximized_opacity());
         Theming.set_panel_color();
         this.animation_status.done();
     } else if (Main.overview._shown) {
@@ -222,7 +226,7 @@ function fade_out(params) {
         this.tweener.addTween(Panel.actor, {
             time: time,
             transition: transition,
-            background_alpha: Settings.get_minimum_opacity(),
+            background_alpha: Theming.get_unmaximized_opacity(),
             onComplete: Lang.bind(this, function () {
                 Theming.set_panel_color();
                 this.animation_status.done();
@@ -240,14 +244,14 @@ function fade_out(params) {
  * @param {Number} params.time - Transition speed in milliseconds.
  */
 function blank_fade_out(params) {
+    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interruptible: false });
 
-    if (this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.BLANK)) {
+    if (params.interruptible || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.BLANK)) {
         this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.BLANK);
     } else {
         return;
     }
 
-    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
     let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
 
     this.status.set_transparent(true);
@@ -285,7 +289,7 @@ function blank_fade_out(params) {
  */
 function update_corner_alpha(alpha = null) {
     if (alpha === null) {
-        alpha = this.status.is_transparent() ? Settings.get_minimum_opacity() : Settings.get_maximum_opacity();
+        alpha = this.status.is_transparent() ? Theming.get_unmaximized_opacity() : Theming.get_maximized_opacity();
     }
 
     Theming.set_corner_color({

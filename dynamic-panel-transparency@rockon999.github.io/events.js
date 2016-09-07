@@ -283,6 +283,7 @@ function _windowUpdated(params) {
     }
 
     let transition_params = {};
+
     if ('time' in params) {
         transition_params.time = params.time;
     }
@@ -307,8 +308,12 @@ function _windowUpdated(params) {
     } else if (Settings.check_app_settings()) {
         // TODO: Double check this removed logic.
         // Oh no... this is messed up.
-        //Theming.set_panel_color();
-        Transitions.fade_in(transition_params);
+        // Theming.set_panel_color();
+        /* Mark as interruptible in case any other more important transition is needed. */
+        transition_params.interruptible = true;
+        if (!add_transparency) {
+            Transitions.fade_in(transition_params);
+        }
     }
 
     if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {

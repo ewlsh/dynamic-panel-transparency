@@ -50,6 +50,31 @@ function cleanup() {
 }
 
 /**
+ * Sets the theme background color.
+ *
+ * @param {Object} color - Object representing an RGBA color.
+ * @param {Number} color.red - Red value ranging from 0-255.
+ * @param {Number} color.green - Green value ranging from 0-255.
+ * @param {Number} color.blue - Blue value ranging from 0-255.
+ */
+function set_theme_background_color(color) {
+    this.theme_background_color = color;
+    log(color);
+    log(this.theme_background_color);
+    Object.freeze(this.theme_background_color);
+}
+
+/**
+ * Sets the theme opacity.
+ *
+ * @param {Number} alpha - Alpha value ranging from 0-255.
+ */
+function set_theme_opacity(alpha) {
+    this.theme_opacity = alpha;
+    log(this.theme_opacity);
+}
+
+/**
  * Adds a shadow stylesheet to text in the panel.
  *
  * @param {Object} text_color - Object representing an RGBA color.
@@ -165,7 +190,6 @@ function register_text_color(color, prefix) {
     register_style('dpt-panel' + prefix + 'text-color');
     register_style('dpt-panel' + prefix + 'icon-color');
     register_style('dpt-panel' + prefix + 'arrow-color');
-
 }
 
 /**
@@ -310,7 +334,7 @@ function clear_corner_color() {
 }
 
 /**
- * Returns the user's desired panel color from Settings. Formerly handled theme detection.
+ * Returns the user's desired panel color from Settings. Handles theme detection again.
  *
  * @returns {Object} color - Object containing an RGBA color value.
  * @returns {Number} color.red - Red value ranging from 0-255.
@@ -320,7 +344,46 @@ function clear_corner_color() {
  */
 
 function get_background_color() {
-    return Settings.get_panel_color();
+    let result = Settings.get_panel_color();
+    let orig = Settings.get_panel_color({ app_settings: false });
+
+    if (Settings.enable_custom_background_color() || !Util.match_colors(result, orig)) {
+        return result;
+    } else {
+        return this.theme_background_color;
+    }
+}
+
+/**
+ * Returns the user's desired maximized panel opacity from Settings or their theme.
+ *
+ * @returns {Number} opacity - Alpha value from 0-255
+ */
+
+//TODO: 150? No magic numbers, please. Needs better system to determine when default theme opacitys are too low.
+function get_maximized_opacity() {
+    let result = Settings.get_maximized_opacity();
+    let orig = Settings.get_maximized_opacity({ app_settings: false });
+
+    if (!Settings.enable_custom_opacity() && this.theme_opacity >= 150 && result === orig) {
+        return this.theme_opacity;
+    } else {
+        return result;
+    }
+}
+
+/**
+ * Returns the user's desired unmaximized panel opacity from Settings or their theme.
+ *
+ * @returns {Number} opacity - Alpha value from 0-255
+ */
+function get_unmaximized_opacity() {
+    if (Settings.enable_custom_opacity()) {
+        return Settings.get_unmaximized_opacity();
+    } else {
+        // TODO: Better default?
+        return 0;
+    }
 }
 
 /**

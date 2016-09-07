@@ -3,6 +3,7 @@
 const Lang = imports.lang;
 
 const GObject = imports.gi.GObject;
+const GdkPixbuf = imports.gi.GdkPixbuf;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
@@ -22,8 +23,11 @@ const gtk30_ = imports.gettext.domain('gtk30').gettext;
 
 const Dictionary = {
     'default': _("default"),
-    'App Tweaks': _("App Tweaks")
+    'App Tweaks': _("App Tweaks"),
+    'Custom WM Class': _("Custom WM_CLASS")
 };
+
+const GNOME_BACKGROUND_SCHEMA = 'org.gnome.desktop.background';
 
 /* Settings Keys */
 const SETTINGS_HIDE_CORNERS = 'hide-corners';
@@ -46,6 +50,11 @@ const SETTINGS_ENABLE_TEXT_COLOR = 'enable-text-color';
 const SETTINGS_REMOVE_PANEL_STYLING = 'remove-panel-styling';
 const SETTINGS_ENABLE_OVERVIEW_TEXT_COLOR = 'enable-overview-text-color';
 const SETTINGS_ENABLE_BACKGROUND_TWEAKS = 'enable-background-tweaks';
+const SETTINGS_ENABLE_BACKGROUND_COLOR = 'enable-background-color';
+const SETTINGS_ENABLE_OPACITY = 'enable-opacity';
+
+const Page = { TRANSITIONS: 0, FOREGROUND: 1, BACKGROUND: 2, APP_TWEAKS: 3, ABOUT: 4 };
+Object.freeze(Page);
 
 /* Color Array Indices */
 const RED = 0;
@@ -121,13 +130,13 @@ function buildPrefsWidget() {
 
     /* Only show the panel & extra button on relevant pages. */
     main_notebook.connect('switch-page', Lang.bind(this, function (notebook, page, index) {
-        if (index === 1 || index === 2) {
+        if (index === Page.FOREGROUND || index === Page.BACKGROUND) {
             panel_revealer.set_reveal_child(true);
         } else {
             panel_revealer.set_reveal_child(false);
         }
 
-        if (index === 3) {
+        if (index === Page.APP_TWEAKS) {
             extra_btn.show();
         } else {
             extra_btn.hide();
@@ -135,12 +144,58 @@ function buildPrefsWidget() {
     }));
 
     /* Panel used to demonstrate the user's settings. */
-    // TODO: actually take from settings
+    // TODO: Actually take from settings
+    // TODO: Look into the above more. Temp fix present.
     let panel_background = builder.get_object('panel_demo_background');
+    let panel_overlay = builder.get_object('panel_overlay');
+    panel_overlay.add_overlay(panel_background);
+
+    let panel_wallpaper = builder.get_object('panel_wallpaper');
+
+    let bg_settings = new Gio.Settings({
+        schema_id: GNOME_BACKGROUND_SCHEMA
+    });
+
+    let wallpaper_path = bg_settings.get_string('picture-uri').replace('file://', '');
+
+    let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper_path, 700, -1, true);
+    panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, 700, 30);
+
+    panel_background.connect('size-allocate', Lang.bind(this, function (widget, rect) {
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper_path, rect.width, -1, true);
+        panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, rect.width, 30);
+    }));
+
     let panel_demo = new DemoPanel.DemoPanel(panel_background);
-    panel_demo.set_background_color({ red: 0, green: 0, blue: 0, alpha: 1.0 });
-    panel_demo.set_text_color({ red: 255, green: 255, blue: 255, alpha: 1.0 });
-    panel_demo.set_opacity(255);
+
+    let enable_bg_color = settings.get_boolean(SETTINGS_ENABLE_BACKGROUND_COLOR);
+    let bg_color = settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack();
+    if (enable_bg_color) {
+        panel_demo.set_background_color({ red: bg_color[0], green: bg_color[1], blue: bg_color[2] });
+    } else {
+        panel_demo.set_background_color({ red: 0, green: 0, blue: 0 });
+    }
+
+
+    let enable_text_color = settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR);
+    let enable_maximized_text_color = settings.get_boolean(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR);
+    if (enable_maximized_text_color && enable_text_color) {
+        let maximized_text_color = settings.get_value(SETTINGS_MAXIMIZED_TEXT_COLOR).deep_unpack();
+        panel_demo.set_text_color({ red: maximized_text_color[0], green: maximized_text_color[1], blue: maximized_text_color[2], alpha: 1.0 });
+    } else if (enable_text_color) {
+        let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
+        panel_demo.set_text_color({ red: text_color[0], green: text_color[1], blue: text_color[2], alpha: 1.0 });
+    } else {
+        panel_demo.set_text_color({ red: 255, green: 255, blue: 255, alpha: 1.0 });
+    }
+    let opacity = settings.get_int(SETTINGS_MAXIMIZED_OPACITY);
+    let enable_opacity = settings.get_boolean(SETTINGS_ENABLE_OPACITY);
+    if (enable_opacity) {
+        panel_demo.set_opacity(opacity);
+    } else {
+        panel_demo.set_opacity(255);
+    }
+
     {
         /* Transition speed control */
         let speed_scale = builder.get_object('speed_scale');
@@ -192,6 +247,24 @@ function buildPrefsWidget() {
 
         maximized_text_color_switch.connect('toggled', Lang.bind(this, function (widget) {
             temp_settings.store(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR, new GLib.Variant('b', widget.get_active()));
+
+            let enable_text_color = settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR);
+            let enable_maximized_text_color = settings.get_boolean(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR);
+            if (temp_settings.has(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR)) {
+                enable_maximized_text_color = temp_settings.get(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR).unpack();
+            }
+            if (temp_settings.has(SETTINGS_ENABLE_TEXT_COLOR)) {
+                enable_text_color = temp_settings.get(SETTINGS_ENABLE_TEXT_COLOR).unpack();
+            }
+            if (enable_maximized_text_color && enable_text_color) {
+                let maximized_text_color = settings.get_value(SETTINGS_MAXIMIZED_TEXT_COLOR).deep_unpack();
+                panel_demo.set_text_color({ red: maximized_text_color[0], green: maximized_text_color[1], blue: maximized_text_color[2], alpha: 1.0 });
+            } else if (enable_text_color) {
+                let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
+                panel_demo.set_text_color({ red: text_color[0], green: text_color[1], blue: text_color[2], alpha: 1.0 });
+            } else {
+                panel_demo.set_text_color({ red: 255, green: 255, blue: 255, alpha: 1.0 });
+            }
         }));
 
         let overview_text_color_switch = builder.get_object('overview_text_color_check');
@@ -206,7 +279,6 @@ function buildPrefsWidget() {
 
         remove_panel_styling_check.connect('toggled', Lang.bind(this, function (widget) {
             temp_settings.store(SETTINGS_REMOVE_PANEL_STYLING, new GLib.Variant('b', widget.get_active()));
-            temp_settings.restart_required(true);
         }));
 
 
@@ -216,8 +288,10 @@ function buildPrefsWidget() {
         let css_color = 'rgba(' + maximized_text_color[RED] + ',' + maximized_text_color[GREEN] + ',' + maximized_text_color[BLUE] + ', 1.0)';
         let scaled_color = new Gdk.RGBA();
 
-        if (scaled_color.parse(css_color))
+        if (scaled_color.parse(css_color)) {
             maximized_text_color_btn.set_rgba(scaled_color);
+        }
+
         maximized_text_color_btn.connect('color-set', Lang.bind(this, function (color_btn) {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
             let rgb = [color.red, color.green, color.blue];
@@ -233,8 +307,10 @@ function buildPrefsWidget() {
 
         css_color = 'rgba(' + text_color[RED] + ',' + text_color[GREEN] + ',' + text_color[BLUE] + ', 1.0)';
         scaled_color = new Gdk.RGBA();
-        if (scaled_color.parse(css_color))
+
+        if (scaled_color.parse(css_color)) {
             text_color_btn.set_rgba(scaled_color);
+        }
 
         text_color_btn.connect('color-set', Lang.bind(this, function (color_btn) {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
@@ -363,9 +439,7 @@ function buildPrefsWidget() {
 
             let rgba = [color.red, color.green, color.blue, alpha];
 
-            //settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
             temp_settings.store(SETTINGS_ICON_SHADOW_COLOR, new GLib.Variant('(iiid)', rgba));
-            //panel_demo.set_background_color({ red: rgb[0], green: rgb[1], blue: rgb[2] });
             temp_settings.restart_required(true);
         }));
     }
@@ -374,6 +448,23 @@ function buildPrefsWidget() {
 
     /* Setup Background Tab */
     {
+        let background_color_switch = builder.get_object('background_color_switch');
+        let opacity_switch = builder.get_object('opacity_switch');
+        let background_color_revealer = builder.get_object('background_color_revealer');
+        let opacity_revealer = builder.get_object('opacity_revealer');
+
+        background_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_BACKGROUND_COLOR));
+        background_color_switch.connect('state-set', Lang.bind(this, function (widget, state) {
+            temp_settings.store(SETTINGS_ENABLE_BACKGROUND_COLOR, new GLib.Variant('b', state));
+            background_color_revealer.set_reveal_child(state);
+        }));
+
+        opacity_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_OPACITY));
+        opacity_switch.connect('state-set', Lang.bind(this, function (widget, state) {
+            temp_settings.store(SETTINGS_ENABLE_OPACITY, new GLib.Variant('b', state));
+            opacity_revealer.set_reveal_child(state);
+        }));
+
         /* Maximum opacity control */
         let maximum_scale = builder.get_object('maximum_scale');
         /* Init value. */
@@ -384,8 +475,26 @@ function buildPrefsWidget() {
         }));
         maximum_scale.connect('value-changed', Lang.bind(this, function (widget) {
             panel_demo.set_opacity(widget.get_value(), true);
+
+            let enable_text_color = settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR);
+            let enable_maximized_text_color = settings.get_boolean(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR);
+            if (temp_settings.has(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR)) {
+                enable_maximized_text_color = temp_settings.get(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR).unpack();
+            }
+            if (temp_settings.has(SETTINGS_ENABLE_TEXT_COLOR)) {
+                enable_text_color = temp_settings.get(SETTINGS_ENABLE_TEXT_COLOR).unpack();
+            }
+            if (enable_maximized_text_color && enable_text_color) {
+                let maximized_text_color = settings.get_value(SETTINGS_MAXIMIZED_TEXT_COLOR).deep_unpack();
+                panel_demo.set_text_color({ red: maximized_text_color[0], green: maximized_text_color[1], blue: maximized_text_color[2], alpha: 1.0 });
+            } else if (enable_text_color) {
+                let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
+                panel_demo.set_text_color({ red: text_color[0], green: text_color[1], blue: text_color[2], alpha: 1.0 });
+            } else {
+                panel_demo.set_text_color({ red: 255, green: 255, blue: 255, alpha: 1.0 });
+            }
+
             temp_settings.store(SETTINGS_MAXIMIZED_OPACITY, new GLib.Variant('i', widget.adjustment.get_value()));
-            //panel_demo.fade_in();
         }));
 
 
@@ -400,6 +509,15 @@ function buildPrefsWidget() {
         }));
         minimum_scale.connect('value-changed', Lang.bind(this, function (widget) {
             panel_demo.set_opacity(widget.get_value(), true);
+
+            let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
+            let enable_text_color = settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR);
+            if (temp_settings.has(SETTINGS_ENABLE_TEXT_COLOR)) {
+                enable_text_color = temp_settings.get(SETTINGS_ENABLE_TEXT_COLOR).unpack();
+            }
+            if (enable_text_color) {
+                panel_demo.set_text_color({ red: text_color[0], green: text_color[1], blue: text_color[2], alpha: 1.0 });
+            }
             temp_settings.store(SETTINGS_UNMAXIMIZED_OPACITY, new GLib.Variant('i', widget.adjustment.get_value()));
         }));
 
@@ -415,11 +533,9 @@ function buildPrefsWidget() {
             color_btn.set_rgba(scaled_color);
         }
         color_btn.connect('color-set', Lang.bind(this, function (color_btn) {
-            //let alpha = +(color_btn.get_rgba().alpha.toFixed(2));
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
-
-
             let rgb = [color.red, color.green, color.blue];
+
             temp_settings.store(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
             panel_demo.set_background_color({ red: rgb[0], green: rgb[1], blue: rgb[2] });
         }));
@@ -507,12 +623,8 @@ function buildPrefsWidget() {
             dialog.add_button(gtk30_('_Apply'), Gtk.ResponseType.APPLY);
 
             dialog.transient_for = main_widget.get_toplevel();
-            log(path);
-            log(app_id);
-            log(app_name);
             let custom_path = path + '' + app_id + '/';
             let obj = Convenience.getSchemaObj('org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides');
-            log('path gen: ' + custom_path);
             let app_settings = new Gio.Settings({ path: custom_path, settings_schema: obj });
 
 
@@ -538,10 +650,22 @@ function buildPrefsWidget() {
             _maximum_scale.connect('value-changed', Lang.bind(this, function (widget) {
                 temp_app_settings.maximum_opacity = widget.adjustment.get_value();
             }));
+
             let _always_trigger = app_prefs_builder.get_object('always_trigger');
             _always_trigger.connect('toggled', Lang.bind(this, function (widget) {
                 temp_app_settings.always_trigger = widget.get_active();
             }));
+
+            {
+                let trigger_key = null;
+                if (path.indexOf('windowOverrides') !== -1) {
+                    trigger_key = 'trigger-windows';
+                } else {
+                    trigger_key = 'trigger-apps';
+                }
+                let triggers = settings.get_strv(trigger_key);
+                _always_trigger.set_active(triggers.indexOf(app_id) !== -1);
+            }
 
             let _color_btn = app_prefs_builder.get_object('color_btn');
 
@@ -571,7 +695,7 @@ function buildPrefsWidget() {
                     if (temp_app_settings.always_trigger !== null) {
                         let trigger_key = null;
 
-                        if (path.indexOf('window') !== -1) {
+                        if (path.indexOf('windowOverrides') !== -1) {
                             trigger_key = 'trigger-windows';
                         } else {
                             trigger_key = 'trigger-apps';
@@ -590,14 +714,10 @@ function buildPrefsWidget() {
                             }
                         }
                     }
-                    //dialog.close();
-                } else if (response === Gtk.ResponseType.CANCEL) {
-                    //dialog.close();
                 }
             }));
             dialog.show_all();
             dialog.run();
-            // HM?
             dialog.hide();
         });
 
@@ -615,7 +735,6 @@ function buildPrefsWidget() {
 
         for (let override of window_overrides) {
             let row = new AppRow.CustomRow(override, window_cfg, window_rmv);
-            //log('adding override: ' + override);
             row.show_all();
             app_list.add(row);
         }
@@ -643,39 +762,12 @@ function buildPrefsWidget() {
         }));
 
         extra_btn.connect('clicked', Lang.bind(this, function () {
-            log('as');
             if (main_notebook.get_current_page() === 3) {
-                /* let custom_entry = builder.get_object('custom_entry');
-                 let custom_text_entry = builder.get_object('custom_text_entry');
 
-                 custom_entry.transient_for = main_widget.get_toplevel();
-
-
-                 let response = custom_entry.run();
-                 let text = custom_text_entry.get_text();
-
-                 // Prevent empty content.
-                 while (response === Gtk.ResponseType.OK && (Util.is_undef(text) || text === null || text === '')) {
-                     response = custom_entry.run();
-                 }
-
-                 if (response === Gtk.ResponseType.OK) {
-                     let row = new AppRow.CustomRow(text, window_cfg, window_rmv);
-                     row.show_all();
-                     app_list.add(row);
-                     let overrides = settings.get_strv('window-overrides');
-                     overrides.push(text);
-                     settings.set_strv('window-overrides', overrides);
-                 }
-
-                 custom_entry.hide();*/
                 let dialog = new Gtk.Dialog({
-                    //use_header_bar: true,
                     modal: true,
-                    title: "Custom WM_CLASS"
+                    title: Dictionary['Custom WM_CLASS']
                 });
-
-                //dialog.get_header_bar().set_subtitle();
 
                 dialog.add_button(gtk30_('_Cancel'), Gtk.ResponseType.CANCEL);
                 dialog.add_button(gtk30_('_OK'), Gtk.ResponseType.OK);
@@ -780,9 +872,13 @@ function buildPrefsWidget() {
     widget_parent.connect('realize', Lang.bind(this, function () {
         panel_revealer.set_reveal_child(false);
         extra_btn.hide();
-        // We have to regrab this object as it isn't in this scope.
+        /* We have to regrab this object as it isn't in this scope. */
         let text_color_revealer = builder.get_object('text_color_revealer');
         text_color_revealer.set_reveal_child(settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR));
+        let background_color_revealer = builder.get_object('background_color_revealer');
+        background_color_revealer.set_reveal_child(settings.get_boolean(SETTINGS_ENABLE_BACKGROUND_COLOR));
+        let opacity_revealer = builder.get_object('opacity_revealer');
+        opacity_revealer.set_reveal_child(settings.get_boolean(SETTINGS_ENABLE_OPACITY));
     }));
 
 

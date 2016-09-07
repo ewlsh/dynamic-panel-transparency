@@ -97,6 +97,7 @@ function get_app_for_window(window) {
     return shell_app;
 }
 
+// TODO: alpha?
 function gdk_to_css_color(color) {
     let red = Math.round(clamp((color.red * 255), 0, 255));
     let green = Math.round(clamp((color.green * 255), 0, 255));
@@ -105,3 +106,23 @@ function gdk_to_css_color(color) {
     return { 'red': red, 'green': green, 'blue': blue };
 }
 
+function clutter_to_native_color(color, alpha = false) {
+    let output = {};
+    output.red = color.red;
+    output.green = color.green;
+    output.blue = color.blue;
+    if (alpha) {
+        output.alpha = color.alpha;
+    }
+    return output;
+}
+
+function match_colors(a, b, alpha = false) {
+    let result = (a.red === b.red);
+    result = result && (a.green === b.green);
+    result = result && (a.blue === b.blue);
+    if (alpha) {
+        result = result && (a.alpha === b.alpha);
+    }
+    return result;
+}
