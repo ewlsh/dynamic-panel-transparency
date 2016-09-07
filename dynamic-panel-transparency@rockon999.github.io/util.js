@@ -1,7 +1,6 @@
 /* exported get_maximized_width_buffer, get_shell_version,validate, is_undef, clamp, is_maximized */
 /* exported remove_file, get_file, write_to_file, get_app_for_window, get_app_for_wmclass, gdk_to_css_color */
 
-const Meta = imports.gi.Meta;
 const Gio = imports.gi.Gio;
 
 
@@ -39,7 +38,7 @@ function clamp(value, min, max) {
 function is_maximized(window) {
     let type = window.get_window_type();
 
-    if(type === Meta.WindowType.DESKTOP){
+    if(type === imports.gi.Meta.WindowType.DESKTOP){
         return false;
     }
 
