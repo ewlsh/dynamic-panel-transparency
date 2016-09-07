@@ -583,17 +583,32 @@ function buildPrefsWidget() {
         let window_rmv = Lang.bind(this, function (wm_class, row) {
             let overrides = settings.get_strv('window-overrides');
             let index = overrides.indexOf(wm_class);
+            overrides.splice(index, 1);
 
-            overrides = overrides.splice(0, index).concat(overrides.splice(index + 1, overrides.length));
             settings.set_strv('window-overrides', overrides);
+
+            let triggers = settings.get_strv('trigger-windows');
+            index = triggers.indexOf(wm_class);
+            triggers.splice(index, 1);
+
+            settings.set_strv('trigger-windows', triggers);
+
             app_list.remove(row);
+
         });
         let rmv = Lang.bind(this, function (app_id, row) {
             let overrides = settings.get_strv('app-overrides');
             let index = overrides.indexOf(app_id);
+            overrides.splice(index, 1);
 
-            overrides = overrides.splice(0, index).concat(overrides.splice(index + 1, overrides.length));
             settings.set_strv('app-overrides', overrides);
+
+            let triggers = settings.get_strv('trigger-apps');
+            index = triggers.indexOf(app_id);
+            triggers.splice(index, 1);
+
+            settings.set_strv('trigger-apps', triggers);
+
             app_list.remove(row);
         });
 
@@ -636,7 +651,7 @@ function buildPrefsWidget() {
             background_tweaks_switch.set_active(app_settings.get_boolean(SETTINGS_ENABLE_BACKGROUND_TWEAKS));
             background_tweaks_revealer.set_reveal_child(background_tweaks_switch.get_active());
             background_tweaks_switch.connect('state-set', Lang.bind(this, function (widget, state) {
-                temp_app_settings.background_tweaks = true;
+                temp_app_settings.background_tweaks = state;
                 background_tweaks_revealer.set_reveal_child(state);
             }));
 
@@ -709,7 +724,7 @@ function buildPrefsWidget() {
                         } else {
                             let index = triggers.indexOf(app_id);
                             if (index !== -1) {
-                                triggers = triggers.splice(0, index).concat(triggers.splice(index + 1, triggers.length));
+                                triggers.splice(index, 1);
                                 settings.set_strv(trigger_key, triggers);
                             }
                         }
