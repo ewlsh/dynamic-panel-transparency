@@ -7,3 +7,4 @@ styles/
 *.dpt.css
 .goutputstream*
 *#
+.buildconfig
