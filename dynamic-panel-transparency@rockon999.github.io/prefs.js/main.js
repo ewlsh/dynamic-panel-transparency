@@ -10,6 +10,7 @@ const Gdk = imports.gi.Gdk;
 const Gio = imports.gi.Gio;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Compatibility = Me.imports.compatibility;
 const Convenience = Me.imports.convenience;
 const Util = Me.imports.util;
 const AppChooser = imports.app_chooser;
@@ -229,10 +230,6 @@ function buildPrefsWidget() {
 
     /* Setup foreground tab */
     {
-        /* Used for version-specific properties */
-        let shell_version = Util.get_shell_version();
-
-
         let text_color_switch = builder.get_object('text_color_switch');
         let text_color_revealer = builder.get_object('text_color_revealer');
 
@@ -361,9 +358,7 @@ function buildPrefsWidget() {
         let text_shadow_color_btn = builder.get_object('text_shadow_color');
 
         // COMPATIBILITY: In 3.18 and lower there is no 'show-editor' property.
-        if (shell_version.major === 3 && shell_version.minor > 18) {
-            text_shadow_color_btn.show_editor = true;
-        }
+        Compatibility.gtk_color_button_set_show_editor(text_shadow_color_btn, true);
 
         let text_shadow_color = settings.get_value(SETTINGS_TEXT_SHADOW_COLOR).deep_unpack();
 
@@ -420,9 +415,7 @@ function buildPrefsWidget() {
         let icon_shadow_color_btn = builder.get_object('icon_shadow_color');
 
         // COMPATIBILITY: In 3.18 and lower there is no 'show-editor' property.
-        if (shell_version.major === 3 && shell_version.minor > 18) {
-            icon_shadow_color_btn.show_editor = true;
-        }
+        Compatibility.gtk_color_button_set_show_editor(icon_shadow_color_btn, true);
 
         let icon_shadow_color = settings.get_value(SETTINGS_ICON_SHADOW_COLOR).deep_unpack();
 
