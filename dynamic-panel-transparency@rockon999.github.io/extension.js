@@ -297,7 +297,6 @@ function initialize_settings() {
 
 
 function modify_panel() {
-
     /* Get Rid of the Panel's CSS Background */
     Theming.strip_panel_background();
 

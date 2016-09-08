@@ -1,6 +1,7 @@
-/* exported init, cleanup, add_text_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, exported remove_text_shadow, remove_icon_shadow, register_text_color, register_style, exported get_background_alpha, set_background_alpha, set_text_color, set_corner_color, set_panel_color, remove_text_color, strip_panel_background, strip_panel_styling, reapply_panel_background, reapply_panel_styling, clear_corner_color */
+/* exported init, cleanup, add_text_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, exported remove_text_shadow, remove_icon_shadow, register_text_color, register_style, exported get_background_alpha, set_background_alpha, set_text_color, set_corner_color, set_panel_color, remove_text_color, strip_panel_background, strip_panel_styling, reapply_panel_background, reapply_panel_styling, clear_corner_color, set_theme_background_color, set_theme_opacity, get_maximized_opacity, get_unmaximized_opacity */
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Compatibility = Me.imports.compatibility;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 
@@ -14,8 +15,6 @@ const Main = imports.ui.main;
 const Panel = Main.panel;
 
 
-
-
 const SCALE_FACTOR = 255;
 
 /**
@@ -23,7 +22,10 @@ const SCALE_FACTOR = 255;
  *
  */
 
-function init() { this.stylesheets = []; this.styles = []; }
+function init() {
+    this.stylesheets = [];
+    this.styles = [];
+}
 
 /**
  * Used to release any held assets of this file.
@@ -33,13 +35,7 @@ function init() { this.stylesheets = []; this.styles = []; }
 function cleanup() {
     for (let sheet of this.stylesheets) {
         let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
-        let shell_version = Util.get_shell_version();
-        let file_obj = sheet;
-        /* st-theme in 3.14 uses strings, not Gio.File */
-        if (shell_version.major === 3 && shell_version.minor > 14) {
-            file_obj = Util.get_file(sheet);
-        }
-        theme.unload_stylesheet(file_obj);
+        Compatibility.st_theme_unload_stylesheet(theme, sheet);
         Util.remove_file(sheet);
     }
     for (let style of this.styles) {
@@ -59,8 +55,6 @@ function cleanup() {
  */
 function set_theme_background_color(color) {
     this.theme_background_color = color;
-    log(color);
-    log(this.theme_background_color);
     Object.freeze(this.theme_background_color);
 }
 
@@ -71,7 +65,6 @@ function set_theme_background_color(color) {
  */
 function set_theme_opacity(alpha) {
     this.theme_opacity = alpha;
-    log(this.theme_opacity);
 }
 
 /**
@@ -438,13 +431,7 @@ function apply_stylesheet_css(css, name) {
         log('Dynamic Panel Transparency cannot be installed as a system extension.');
     }
     let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
-    let shell_version = Util.get_shell_version();
-    let file_obj = file_name;
-    // COMPATIBILITY: st-theme in 3.14 uses strings, not Gio.File
-    if (shell_version.major === 3 && shell_version.minor > 14) {
-        file_obj = Util.get_file(file_name);
-    }
-    if (theme.load_stylesheet(file_obj)) {
+    if (Compatibility.st_theme_load_stylesheet(theme, file_name)) {
         this.stylesheets.push(file_name);
     } else {
         log('Error Loading Temporary Stylesheet: ' + name);

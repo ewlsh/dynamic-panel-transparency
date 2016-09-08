@@ -5,6 +5,7 @@ const Lang = imports.lang;
 const Params = imports.misc.params;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Compatibility = Me.imports.compatibility;
 const Transitions = Me.imports.transitions;
 const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
@@ -34,8 +35,6 @@ const Main = imports.ui.main;
  *
  */
 function init() {
-    let version = Util.get_shell_version();
-
     this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, function () {
         _windowUpdated();
     }));
@@ -52,9 +51,8 @@ function init() {
 
     // COMPATIBILITY: No unminimize signal on 3.14
     // TODO: Figure out if this harms the extension behaviour
-    if (version.major === 3 && version.minor > 14) {
-        this._windowUnminimizeSig = global.window_manager.connect('unminimize', Lang.bind(this, this._windowUpdated));
-    }
+    this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, this._windowUpdated));
+
 
     /* Check to see if the screenShield exists (doesn't if user can't lock) */
     if (Main.screenShield !== null) {

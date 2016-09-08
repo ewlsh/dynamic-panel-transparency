@@ -1,5 +1,4 @@
-/* exported get_maximized_width_buffer, get_shell_version,validate, is_undef, clamp, is_maximized */
-/* exported remove_file, get_file, write_to_file, get_app_for_window, get_app_for_wmclass, gdk_to_css_color */
+/* exported get_maximized_width_buffer, get_shell_version,validate, is_undef, clamp, is_maximized, match_colors, remove_file, get_file, write_to_file, get_app_for_window, get_app_for_wmclass, gdk_to_css_color, clutter_to_native_color, create_enum */
 
 const Gio = imports.gi.Gio;
 
@@ -38,7 +37,7 @@ function clamp(value, min, max) {
 function is_maximized(window) {
     let type = window.get_window_type();
 
-    if(type === imports.gi.Meta.WindowType.DESKTOP){
+    if (type === imports.gi.Meta.WindowType.DESKTOP) {
         return false;
     }
 
@@ -126,4 +125,19 @@ function match_colors(a, b, alpha = false) {
         result = result && (a.alpha === b.alpha);
     }
     return result;
+}
+
+function create_enum(type, recursive = false) {
+    const freeze_children = function (obj) {
+        Object.keys(obj).forEach(function (value, index, arr) {
+            if (typeof (value) === 'object') {
+                Object.freeze(value);
+                if (recursive) {
+                    freeze_children(value);
+                }
+            }
+        });
+    };
+    Object.freeze(type);
+    freeze_children(type);
 }
