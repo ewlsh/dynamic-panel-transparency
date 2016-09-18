@@ -1078,7 +1078,6 @@ function buildPrefsWidget() {
                 let rgb = [color.red, color.green, color.blue];
 
                 temp_app_settings.panel_color = rgb;
-                panel_demo.set_background_color({ red: rgb[RED], green: rgb[GREEN], blue: rgb[BLUE] });
             }));
 
             dialog.show_all();
