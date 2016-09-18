@@ -242,7 +242,7 @@ function buildPrefsWidget() {
         /* Init value. */
         speed_scale.adjustment.set_value(settings.get_int(SETTINGS_TRANSITION_SPEED));
         /* Add default marking. */
-        speed_scale.add_mark(settings.get_default_value(SETTINGS_TRANSITION_SPEED), Gtk.PositionType.BOTTOM, Dictionary['default']);
+        speed_scale.add_mark(settings.get_default_value(SETTINGS_TRANSITION_SPEED).unpack(), Gtk.PositionType.BOTTOM, Dictionary['default']);
         /* Add formatting */
         speed_scale.connect('format-value', Lang.bind(this, function (scale, value) {
             return value + 'ms';
