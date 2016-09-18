@@ -75,21 +75,9 @@ function init() {
             delete window_actor.get_meta_window().dpt_tracking;
         }
 
-        /* Find the workspace that this window should be in. */
-        let workspace_container = null;
-        for (let container in this.workspaces) {
-            if (window_actor.get_meta_window().get_workspace() === container.workspace) {
-                workspace_container = container;
-                break;
-            }
-        }
-
-        /* If the workspace exists then lets find the window inside and remove it. */
-        if (!Util.is_undef(workspace_container)) {
-            let index = workspace_container.windows.indexOf(window_actor.get_meta_window());
-            if (index > -1) {
-                workspace_container.windows.splice(index, 1);
-            }
+        let index = this.windows.indexOf(window_actor.get_meta_window());
+        if (index !== -1) {
+            this.windows.splice(index, 1);
         }
 
         this._windowUpdated({
@@ -122,14 +110,17 @@ function cleanup() {
     global.screen.disconnect(this._workspacesChangedSig);
 
     /* Remove window tracking properties. */
-    for (let container in this.workspaces) {
-        for (let window_container in container.windows) {
-            window_container.window.disconnect(window_container.signalId);
-            delete window_container.window.dpt_tracking;
-        }
+    for (let container of this.workspaces) {
         if (!Util.is_undef(container) && !Util.is_undef(container.workspace)) {
-            container.workspace.disconnect(container.signalId);
+            for (let signalId of container.signalIds) {
+                container.workspace.disconnect(signalId);
+            }
         }
+    }
+
+    for (let window_container of this.windows) {
+        window_container.window.disconnect(window_container.signalId);
+        delete window_container.window.dpt_tracking;
     }
 
     /* Cleanup Signals */
@@ -143,6 +134,7 @@ function cleanup() {
     this._workspaceSwitchSig = null;
     this._workspacesChangedSig = null;
     this.workspaces = null;
+    this.windows = null;
 
 }
 
@@ -155,53 +147,53 @@ function cleanup() {
  *
  */
 function _workspacesChanged() {
-    if (typeof (this.workspaces) === 'undefined' || this.workspaces === null) {
-        this.workspaces = [];
-    }
+    this.workspaces = [];
+    this.windows = [];
 
-    for (let container in this.workspaces) {
-        for (let window_container in container.windows) {
-            window_container.window.disconnect(window_container.signalId);
-        }
+    for (let container of this.workspaces) {
         if (!Util.is_undef(container) && !Util.is_undef(container.workspace)) {
-            container.workspace.disconnect(container.signalId);
+            for (let signalId of container.signalIds) {
+                container.workspace.disconnect(signalId);
+            }
         }
+    }
+    for (let window_container of this.windows) {
+        window_container.window.disconnect(window_container.signalId);
     }
 
     for (let i = 0; i < global.screen.get_n_workspaces(); i++) {
         let workspace = global.screen.get_workspace_by_index(i);
+
         if (typeof (workspace) === 'undefined' || workspace === null) {
             continue;
         }
+
+        const nId = workspace.connect('notify::workspace-index', Lang.bind(this, this._workspacesChanged));
+
         const id = workspace.connect('window-added', Lang.bind(this, function (workspace, window) {
             if (!Util.is_undef(window)) {
                 if (Util.is_undef(window.dpt_tracking)) {
                     window.dpt_tracking = true;
-
-                    let wId = window.connect('notify::maximized-vertically', Lang.bind(this, function () {
+                    const wId = window.connect('notify::maximized-vertically', Lang.bind(this, function () {
                         this._windowUpdated();
-                        for (let workspace_container in this.workspaces) {
-                            if (workspace_container.signalId === id) {
-                                workspace_container.windows.push({ 'window': window, 'signalId': wId });
-                            }
-                        }
                     }));
+                    this.windows.push({ 'window': window, 'signalId': wId });
                 }
             }
         }));
-        let windows = [];
+
+
         for (let w = 0; w < workspace.list_windows().length; w++) {
             let window = workspace.list_windows()[w];
             if (!Util.is_undef(window) && Util.is_undef(window.dpt_tracking)) {
                 window.dpt_tracking = true;
-                let wId = window.connect('notify::maximized-vertically', Lang.bind(this, function () {
+                const wId = window.connect('notify::maximized-vertically', Lang.bind(this, function () {
                     this._windowUpdated();
                 }));
-                windows.push({ 'window': window, 'signalId': wId });
+                this.windows.push({ 'window': window, 'signalId': wId });
             }
         }
-
-        this.workspaces.push({ 'workspace': workspace, 'signalId': id, 'windows': windows });
+        this.workspaces.push({ 'workspace': workspace, 'signalIds': [nId, id], index: i });
     }
 }
 
