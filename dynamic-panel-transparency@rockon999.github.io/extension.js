@@ -256,6 +256,7 @@ function initialize_settings() {
         settings_key: 'maximized-opacity',
         name: 'maximized_opacity',
         type: 'i',
+        // TODO: This is a hack of the parsing system.
         parser: Lang.bind(this, function (input, def, uuid, window = false) {
             if (window) {
                 if (Settings.window_settings_manager['enable_background_tweaks'][uuid]) {
@@ -278,6 +279,7 @@ function initialize_settings() {
         settings_key: 'panel-color',
         name: 'panel_color',
         type: '(iii)',
+        // TODO: This is a hack of the parsing system.
         parser: Lang.bind(this, function (input, def, uuid, window = false) {
             if (window) {
                 if (Settings.window_settings_manager['enable_background_tweaks'][uuid]) {
