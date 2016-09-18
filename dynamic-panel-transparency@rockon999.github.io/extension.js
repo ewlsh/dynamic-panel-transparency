@@ -267,6 +267,10 @@ function initialize_settings() {
 
                 }
             }
+            // TODO: I dislike this placement.
+            if (!Settings.enable_custom_opacity() && Theming.theme_opacity >= Theming.THEME_DETECTION_MINIMUM_OPACITY) {
+                return Theming.theme_opacity;
+            }
             return def;
         })
     });
@@ -282,8 +286,11 @@ function initialize_settings() {
             } else {
                 if (Settings.app_settings_manager['enable_background_tweaks'][uuid]) {
                     return COLOR_PARSER(input);
-
                 }
+            }
+            // TODO: I dislike this placement.
+            if (!Settings.enable_custom_background_color()) {
+                return Theming.theme_background_color;
             }
             return def;
         })

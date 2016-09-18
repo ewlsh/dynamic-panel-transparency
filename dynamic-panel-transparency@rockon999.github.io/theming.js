@@ -356,7 +356,6 @@ function get_background_color() {
 //TODO: Needs better system to determine when default theme opacities are too low.
 function get_maximized_opacity() {
     let custom = Settings.get_maximized_opacity({ app_info: true });
-    //let original = Settings.get_maximized_opacity({ app_settings: false });
 
     /* 1) Make sure we want a custom opacity. 2) If custom.app_info !== null that means the setting is overriden. */
     if (!Settings.enable_custom_opacity() && custom.app_info === null) {

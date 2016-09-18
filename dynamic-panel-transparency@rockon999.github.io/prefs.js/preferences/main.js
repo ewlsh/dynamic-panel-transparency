@@ -31,7 +31,7 @@ const gs_ = imports.gettext.domain('gnome-shell').gettext;
 const Dictionary = {
     'default': _("default"),
     'App Tweaks': _("App Tweaks"),
-    'Custom WM_CLASS': _("Custom WM_CLASS")
+    'Add a Custom WM_CLASS': _("Add a Custom WM_CLASS")
 };
 
 /* eslint-enable */
@@ -1162,7 +1162,7 @@ function buildPrefsWidget() {
 
                 let dialog = new Gtk.Dialog({
                     modal: true,
-                    title: Dictionary['Custom WM_CLASS']
+                    title: Dictionary['Add a Custom WM_CLASS']
                 });
 
                 dialog.add_button(gtk30_('_Cancel'), Gtk.ResponseType.CANCEL);
@@ -1185,7 +1185,7 @@ function buildPrefsWidget() {
                     }
                 }));
 
-
+                dialog.set_size_request(400, 100); // eslint-disable-line
                 dialog.show_all();
 
                 let response = dialog.run();

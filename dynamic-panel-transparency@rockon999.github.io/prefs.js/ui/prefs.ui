@@ -1525,7 +1525,7 @@ frnogueira
         </child>
         <child>
           <object class="GtkButton" id="extra_btn">
-            <property name="label" translatable="yes" comments="Adds a 'custom' app tweak. Only visible on the App Tweaks page.">Custom...</property>
+            <property name="label" translatable="yes" comments="Adds a 'custom' app tweak. Only visible on the App Tweaks page.">Advanced...</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
           </object>
@@ -1548,6 +1548,7 @@ frnogueira
   <object class="GtkBox" id="wm_class_contents">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
+    <property name="valign">start</property>
     <property name="margin_left">10</property>
     <property name="margin_right">10</property>
     <property name="margin_top">10</property>
@@ -1555,11 +1556,14 @@ frnogueira
     <property name="orientation">vertical</property>
     <property name="spacing">5</property>
     <child>
-      <object class="GtkLabel">
+      <object class="GtkLabel" id="50">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="halign">start</property>
-        <property name="label" translatable="yes">Please enter a custom WM_CLASS.</property>
+        <property name="valign">start</property>
+        <property name="margin_bottom">5</property>
+        <property name="label" translatable="yes">A WM_CLASS is a code that identifies a window. Use this setting if the window you want custom settings for is not part of an application. You can find a window's WM_CLASS with the command 'xprop WM_CLASS'. Enter the first result from 'xprop WM_CLASS' below without quotation marks.</property>
+        <property name="wrap">True</property>
+        <property name="max_width_chars">50</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -1571,6 +1575,7 @@ frnogueira
       <object class="GtkEntry" id="wm_class_entry">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
+        <property name="valign">start</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -1606,6 +1611,7 @@ frnogueira
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes">WM_CLASS cannot be blank.</property>
+                <property name="single_line_mode">True</property>
                 <attributes>
                   <attribute name="weight" value="semibold"/>
                 </attributes>
