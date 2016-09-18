@@ -292,7 +292,6 @@ function initialize_settings() {
     /* After we've given Settings the necessary information... let's bind these. */
 
     Settings.bind();
-    Settings.bind_app_settings();
 }
 
 

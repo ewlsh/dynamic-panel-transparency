@@ -18,7 +18,6 @@ const Events = Me.imports.events;
 
 function init() {
     this.settings = Convenience.getSettings();
-    this.app_settings_enabled = false;
     this.keys = [];
     this.app_keys = {};
     this.overriden_keys = [];
@@ -28,10 +27,14 @@ function init() {
 
     this.settingsBoundIds.push(this.settings.connect('changed::app-overrides', Lang.bind(this, function () {
         this._app_overrides = this.settings.get_strv('app-overrides');
+        this.app_settings_manager.unbind();
+        this.app_settings_manager = new AppSettingsManager(this.app_keys, this.get_app_overrides(), '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/');
     })));
 
     this.settingsBoundIds.push(this.settings.connect('changed::window-overrides', Lang.bind(this, function () {
         this._window_overrides = this.settings.get_strv('window-overrides');
+        this.window_settings_manager.unbind();
+        this.window_settings_manager = new AppSettingsManager(this.app_keys, this.get_window_overrides(), '/org/gnome/shell/extensions/dynamic-shell-transparency/windowOverrides/');
     })));
 
     this.get_app_overrides = function () {
@@ -44,8 +47,6 @@ function init() {
 }
 
 function cleanup() {
-    this.app_settings_manager.cleanup();
-
     for (let i = 0; i < this.keys.length; ++i) {
         let setting = this.keys[i];
         if (Util.is_undef(setting.getter)) {
@@ -61,7 +62,6 @@ function cleanup() {
     this._app_overrides = null;
     this.settingsBoundIds = null;
     this.settings = null;
-    this.app_settings_enabled = null;
 }
 
 /* Settings Management */
@@ -111,30 +111,8 @@ function check_app_settings() {
     return (this.get_app_overrides().length > 0) || (this.get_window_overrides().length > 0) || (this.get_trigger_apps().length > 0) || (this.get_trigger_windows().length > 0);
 }
 
-function bind_app_settings() {
-    for (let app_id of this.get_app_overrides()) {
-        for (let setting_key of Object.keys(this.app_keys)) {
-            let setting = this.app_keys[setting_key];
-            if (!Util.is_undef(this.app_settings_manager[setting]) && !Util.is_undef(setting)) {
-                /* Watch for changes */
-                this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, Lang.bind(this, function () {
-                    this.app_settings_manager.update(setting, app_id);
-                })));
-            }
-        }
-    }
-    for (let wmclass of this.get_window_overrides()) {
-        for (let setting_key of Object.keys(this.app_keys)) {
-            let setting = this.app_keys[setting_key];
-            if (!Util.is_undef(this.window_settings_manager[setting]) && !Util.is_undef(setting)) {
-                /* Watch for changes. */
-                this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, Lang.bind(this, function () {
-                    this.window_settings_manager.update(setting, wmclass);
-                })));
-            }
-        }
-    }
-}
+// TODO: Determine if this code is completely useless.
+// function bind_app_settings(){for(let a of this.get_app_overrides())for(let b of Object.keys(this.app_keys)){let c=this.app_keys[b];Util.is_undef(this.app_settings_manager[c])||Util.is_undef(c)||this.settingsBoundIds.push(this.settings.connect("changed::"+c.key,Lang.bind(this,function(){this.app_settings_manager.update(c,a)})))}for(let b of this.get_window_overrides())for(let a of Object.keys(this.app_keys)){let c=this.app_keys[a];Util.is_undef(this.window_settings_manager[c])||Util.is_undef(c)||this.settingsBoundIds.push(this.settings.connect("changed::"+c.key,Lang.bind(this,function(){this.window_settings_manager.update(c,b)})))}}
 
 function bind() {
     this.settings_manager = new SettingsManager(this.settings, this.keys);
@@ -243,6 +221,8 @@ function bind() {
 }
 
 function unbind() {
+    this.app_settings_manager.unbind();
+
     for (let i = 0; i < this.settingsBoundIds.length; ++i) {
         this.settings.disconnect(this.settingsBoundIds[i]);
     }
@@ -337,7 +317,7 @@ const AppSettingsManager = new Lang.Class({
             this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).unpack();
         }
     },
-    cleanup: function () {
+    unbind: function () {
         for (let app_id in Object.keys(this.settings)) {
             for (let id in this.settingsBoundIds[app_id]) {
                 this.settings[app_id].disconnect(id);
