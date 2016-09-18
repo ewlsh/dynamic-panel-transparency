@@ -1308,6 +1308,7 @@ frnogueira
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Fixes theme incompatibilities.</property>
                     <property name="draw_indicator">True</property>
                     <child>
                       <object class="GtkLabel">

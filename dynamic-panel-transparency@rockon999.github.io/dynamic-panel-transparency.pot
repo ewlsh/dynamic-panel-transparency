@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-18 16:48-0500\n"
+"POT-Creation-Date: 2016-09-18 16:52-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "default"
 msgstr ""
 
-#: prefs.js/preferences/main.js:33 prefs.js/ui/prefs.ui:1429
+#: prefs.js/preferences/main.js:33 prefs.js/ui/prefs.ui:1430
 msgid "App Tweaks"
 msgstr ""
 
@@ -189,30 +189,34 @@ msgstr ""
 msgid "Enable custom panel color"
 msgstr ""
 
+#: prefs.js/ui/prefs.ui:1311
+msgid "Fixes theme incompatibilities."
+msgstr ""
+
 #. Removes any extra styling certain themes may have. Fixes theme issues.
-#: prefs.js/ui/prefs.ui:1317
+#: prefs.js/ui/prefs.ui:1318
 msgid "Remove excess panel styling"
 msgstr ""
 
 #. Hides the panel corners.
-#: prefs.js/ui/prefs.ui:1339
+#: prefs.js/ui/prefs.ui:1340
 msgid "Hide corners"
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:1367
+#: prefs.js/ui/prefs.ui:1368
 msgid "Background"
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:1469
+#: prefs.js/ui/prefs.ui:1470
 msgid "About"
 msgstr ""
 
 #. Adds a 'custom' app tweak. Only visible on the App Tweaks page.
-#: prefs.js/ui/prefs.ui:1527
+#: prefs.js/ui/prefs.ui:1528
 msgid "Advanced..."
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:1563
+#: prefs.js/ui/prefs.ui:1564
 msgid ""
 "A WM_CLASS is a code that identifies a window. Use this setting if the "
 "window you want custom settings for is not part of an application. You can "
@@ -220,7 +224,7 @@ msgid ""
 "result from 'xprop WM_CLASS' below without quotation marks."
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:1612
+#: prefs.js/ui/prefs.ui:1613
 msgid "WM_CLASS cannot be blank."
 msgstr ""
 
