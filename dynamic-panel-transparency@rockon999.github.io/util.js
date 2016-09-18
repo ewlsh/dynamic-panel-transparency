@@ -1,5 +1,6 @@
 /* exported get_maximized_width_buffer, get_shell_version,validate, is_undef, clamp, is_maximized, match_colors, remove_file, get_file, write_to_file, get_app_for_window, get_app_for_wmclass, gdk_to_css_color, clutter_to_native_color, deep_freeze */
 
+const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
 /* Global Utility Variables */
@@ -8,6 +9,9 @@ const MAXIMIZED_WIDTH_BUFFER = 5;
 /* Gnome Versioning */
 const MAJOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[0]);
 const MINOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[1]);
+
+/* Permissions for created files. */
+const PERMISSIONS_MODE = 744;
 
 /* Utility Variable Access */
 
@@ -65,8 +69,12 @@ function get_file(filename) {
 function write_to_file(filename, text) {
     try {
         let file = get_file(filename);
-        let success = file.replace_contents(text, null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null, null);
-        return success[0];
+        let parent = file.get_parent();
+
+        if (GLib.mkdir_with_parents(parent.get_path(), PERMISSIONS_MODE) === 0) {
+            let success = file.replace_contents(text, null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null, null);
+            return success[0];
+        }
     } catch (error) {
         log(error);
     }
