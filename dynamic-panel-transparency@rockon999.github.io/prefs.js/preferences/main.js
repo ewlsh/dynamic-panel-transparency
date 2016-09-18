@@ -974,7 +974,6 @@ function buildPrefsWidget() {
             settings.set_strv('trigger-windows', triggers);
 
             app_list.remove(row);
-
         });
         let rmv = Lang.bind(this, function (app_id, row) {
             let overrides = settings.get_strv('app-overrides');
