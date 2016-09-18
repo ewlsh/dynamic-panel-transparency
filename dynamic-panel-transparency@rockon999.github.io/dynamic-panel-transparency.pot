@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-06 22:04-0600\n"
+"POT-Creation-Date: 2016-07-29 17:51-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,58 +17,163 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: prefs.js:18
-msgid "Transition Speed"
-msgstr ""
-
-#: prefs.js:19
-msgid "Maximum Opacity"
-msgstr ""
-
-#: prefs.js:20
-msgid "Minimum Opacity"
-msgstr ""
-
-#: prefs.js:21
+#: prefs.js:17 ui/prefs.ui:1004 ui/app-prefs.ui:88
 msgid "Panel Color"
 msgstr ""
 
-#: prefs.js:22
+#: prefs.js:18 ui/prefs.ui:983 ui/app-prefs.ui:74
 msgid "Theme Source"
 msgstr ""
 
-#: prefs.js:23
-msgid "Detect User Theme"
-msgstr ""
-
-#: prefs.js:24
-msgid "Hide Corners"
-msgstr ""
-
-#: prefs.js:25
-msgid "Some shell themes already do this."
-msgstr ""
-
-#: prefs.js:26
-msgid "Force Animation"
-msgstr ""
-
-#: prefs.js:27
-msgid "Overrides 'gtk-enable-animations'."
-msgstr ""
-
-#: prefs.js:28
+#: prefs.js:19
 msgid "Panel"
 msgstr ""
 
-#: prefs.js:29
+#: prefs.js:20
 msgid "Dash"
 msgstr ""
 
-#: prefs.js:30
+#: prefs.js:21
 msgid "default"
 msgstr ""
 
-#: prefs.js:31
-msgid "Add Text Shadow"
+#: prefs.js:22
+msgid "Default"
+msgstr ""
+
+#: ui/prefs.ui:11
+msgid "Classy transparency for your panel."
+msgstr ""
+
+#: ui/prefs.ui:13
+msgid ""
+"\n"
+"\n"
+"Website\n"
+msgstr ""
+
+#: ui/prefs.ui:88
+msgid "Shell Restart Required."
+msgstr ""
+
+#: ui/prefs.ui:89
+msgid ""
+"A shell restart is required to view some of your changes. Do you want to "
+"restart now?"
+msgstr ""
+
+#: ui/prefs.ui:170
+msgid "Activities"
+msgstr ""
+
+#: ui/prefs.ui:184
+msgid "Fri 5:31 PM"
+msgstr ""
+
+#: ui/prefs.ui:314
+msgid "Transition Speed"
+msgstr ""
+
+#: ui/prefs.ui:341
+msgid "Force Animation"
+msgstr ""
+
+#: ui/prefs.ui:345
+msgid "Overrides 'gtk-enable-animations'."
+msgstr ""
+
+#: ui/prefs.ui:363
+msgid "Transitions"
+msgstr ""
+
+#: ui/prefs.ui:422
+msgid "Custom Text Color"
+msgstr ""
+
+#: ui/prefs.ui:449
+msgid "Alternate Maximized Color"
+msgstr ""
+
+#: ui/prefs.ui:475 ui/prefs.ui:563
+msgid "Text Color"
+msgstr ""
+
+#: ui/prefs.ui:524
+msgid "Maximized Color"
+msgstr ""
+
+#: ui/prefs.ui:665 ui/prefs.ui:843
+msgid "Shadow Color"
+msgstr ""
+
+#: ui/prefs.ui:678 ui/prefs.ui:856
+msgid "Radius"
+msgstr ""
+
+#: ui/prefs.ui:691 ui/prefs.ui:869
+msgid "Horizontal Offset"
+msgstr ""
+
+#: ui/prefs.ui:704 ui/prefs.ui:882
+msgid "Vertical Offset"
+msgstr ""
+
+#: ui/prefs.ui:717
+msgid "Text Shadowing"
+msgstr ""
+
+#: ui/prefs.ui:744
+msgid "Text Shadow"
+msgstr ""
+
+#: ui/prefs.ui:895
+msgid "Icon Shadowing"
+msgstr ""
+
+#: ui/prefs.ui:922
+msgid "Icon Shadow"
+msgstr ""
+
+#: ui/prefs.ui:951
+msgid "Foreground"
+msgstr ""
+
+#: ui/prefs.ui:1045
+msgid "Detect User Theme"
+msgstr ""
+
+#: ui/prefs.ui:1090
+msgid "Minimum Opacity"
+msgstr ""
+
+#: ui/prefs.ui:1103
+msgid "Maximum Opacity"
+msgstr ""
+
+#: ui/prefs.ui:1128
+msgid " Hide Corners"
+msgstr ""
+
+#: ui/prefs.ui:1159 ui/app-prefs.ui:58
+msgid "Background"
+msgstr ""
+
+#: ui/prefs.ui:1221
+msgid "App Settings"
+msgstr ""
+
+#: ui/prefs.ui:1261
+msgid "About"
+msgstr ""
+
+#: ui/app-prefs.ui:32
+msgid "Maximized Opacity"
+msgstr ""
+
+#: ui/app-prefs.ui:115
+msgid "Always trigger the panel."
+msgstr ""
+
+#: ui/app-prefs.ui:132
+msgid "Other"
 msgstr ""
