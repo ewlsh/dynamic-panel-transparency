@@ -1081,38 +1081,40 @@ function buildPrefsWidget() {
                 panel_demo.set_background_color({ red: rgb[RED], green: rgb[GREEN], blue: rgb[BLUE] });
             }));
 
-            dialog.connect('response', Lang.bind(this, function (dialog, response) {
-                if (response === Gtk.ResponseType.APPLY) {
-                    if (temp_app_settings.background_tweaks !== null)
-                        app_settings.set_value(SETTINGS_ENABLE_BACKGROUND_TWEAKS, new GLib.Variant('b', temp_app_settings.background_tweaks));
-                    if (temp_app_settings.panel_color !== null)
-                        app_settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('(iii)', temp_app_settings.panel_color));
-                    if (temp_app_settings.maximum_opacity !== null)
-                        app_settings.set_value(SETTINGS_MAXIMIZED_OPACITY, new GLib.Variant('i', temp_app_settings.maximum_opacity));
-                    if (temp_app_settings.always_trigger !== null) {
-                        let trigger_key = null;
-
-                        if (path.indexOf('windowOverrides') !== -1) {
-                            trigger_key = 'trigger-windows';
-                        } else {
-                            trigger_key = 'trigger-apps';
-                        }
-
-                        let triggers = settings.get_strv(trigger_key);
-                        let index = triggers.indexOf(app_id);
-
-                        if (temp_app_settings.always_trigger && index === -1) {
-                            triggers.push(app_id);
-                        } else if (!temp_app_settings.always_trigger && index !== -1) {
-                            triggers.splice(index, 1);
-                        }
-                        settings.set_strv(trigger_key, triggers);
-                    }
-                }
-            }));
             dialog.show_all();
-            dialog.run();
-            dialog.hide();
+
+            let response = dialog.run();
+
+            if (response === Gtk.ResponseType.APPLY) {
+                if (temp_app_settings.background_tweaks !== null)
+                    app_settings.set_value(SETTINGS_ENABLE_BACKGROUND_TWEAKS, new GLib.Variant('b', temp_app_settings.background_tweaks));
+                if (temp_app_settings.panel_color !== null)
+                    app_settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('(iii)', temp_app_settings.panel_color));
+                if (temp_app_settings.maximum_opacity !== null)
+                    app_settings.set_value(SETTINGS_MAXIMIZED_OPACITY, new GLib.Variant('i', temp_app_settings.maximum_opacity));
+                if (temp_app_settings.always_trigger !== null) {
+                    let trigger_key = null;
+
+                    if (path.indexOf('windowOverrides') !== -1) {
+                        trigger_key = 'trigger-windows';
+                    } else {
+                        trigger_key = 'trigger-apps';
+                    }
+
+                    let triggers = settings.get_strv(trigger_key);
+                    let index = triggers.indexOf(app_id);
+
+                    if (temp_app_settings.always_trigger && index === -1) {
+                        triggers.push(app_id);
+                    } else if (!temp_app_settings.always_trigger && index !== -1) {
+                        triggers.splice(index, 1);
+                    }
+                    settings.set_strv(trigger_key, triggers);
+                }
+            }
+
+            content_area.remove(app_prefs_builder.get_object('main_box'));
+            dialog.destroy();
         });
 
         let app_cfg = function (a, b) { cfg.call(this, a, b, '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/'); };
@@ -1282,15 +1284,6 @@ function buildPrefsWidget() {
 
     let restart_dialog = builder.get_object('restart_dialog');
 
-    restart_dialog.connect('response', Lang.bind(this, function (dialog, response) {
-        if (response === Gtk.ResponseType.YES) {
-            GLib.spawn_command_line_async('dbus-send --type=method_call --print-reply --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:\'global.reexec_self()\'');
-            restart_dialog.close();
-        } else if (response === Gtk.ResponseType.NO) {
-            restart_dialog.close();
-        }
-    }));
-
     /* Setup buttons. */
     let apply_btn = builder.get_object('apply_btn');
     let cancel_btn = builder.get_object('cancel_btn');
@@ -1298,7 +1291,11 @@ function buildPrefsWidget() {
     apply_btn.connect('clicked', Lang.bind(this, function () {
         let widget_parent = main_widget.get_toplevel();
         if (temp_settings.restart_required()) {
-            restart_dialog.run();
+            let response = restart_dialog.run();
+            restart_dialog.hide();
+            if (response === Gtk.ResponseType.YES) {
+                GLib.spawn_command_line_async('dbus-send --type=method_call --print-reply --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:\'global.reexec_self()\'');
+            }
         }
         temp_settings.apply();
         widget_parent.close();
