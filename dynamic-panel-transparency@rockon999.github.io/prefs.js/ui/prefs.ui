@@ -101,7 +101,7 @@ frnogueira
               <object class="GtkLabel" id="panel_demo_activities_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Activities</property>
+                <property name="label">Activities</property>
               </object>
             </child>
           </object>
@@ -115,7 +115,7 @@ frnogueira
           <object class="GtkLabel" id="panel_demo_clock_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Fri 5:31 PM</property>
+            <property name="label">Fri 5:31 PM</property>
           </object>
           <packing>
             <property name="expand">True</property>
@@ -407,7 +407,7 @@ frnogueira
                 <property name="margin_right">5</property>
                 <property name="margin_top">5</property>
                 <property name="margin_bottom">5</property>
-                <property name="label" translatable="yes" comments="The function used to animate the panel traansition. See http://hosted.zeh.com.br/tweener/docs/en-us/misc/transitions.html.">Transition Style</property>
+                <property name="label" translatable="yes" comments="The function used to animate the panel traansition. See http://hosted.zeh.com.br/tweener/docs/en-us/misc/transitions.html">Transition Style</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -432,7 +432,6 @@ frnogueira
                   <item id="6" translatable="yes">Quintic</item>
                   <item id="7" translatable="yes">Exponential</item>
                   <item id="8" translatable="yes">Circle</item>
-                  <item id="15" translatable="yes">Back</item>
                   <item id="9" translatable="yes">Elastic</item>
                   <item id="10" translatable="yes">Bounce</item>
                 </items>
