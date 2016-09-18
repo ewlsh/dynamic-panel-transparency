@@ -1292,7 +1292,8 @@ function buildPrefsWidget() {
         let widget_parent = main_widget.get_toplevel();
         if (temp_settings.restart_required()) {
             let response = restart_dialog.run();
-            restart_dialog.hide();
+            restart_dialog.destroy();
+
             if (response === Gtk.ResponseType.YES) {
                 GLib.spawn_command_line_async('dbus-send --type=method_call --print-reply --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:\'global.reexec_self()\'');
             }
