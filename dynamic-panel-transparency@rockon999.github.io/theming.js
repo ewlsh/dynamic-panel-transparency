@@ -14,6 +14,7 @@ const Main = imports.ui.main;
 
 const Panel = Main.panel;
 
+const THEME_DETECTION_MINIMUM_OPACITY = 150;
 
 const SCALE_FACTOR = 255;
 
@@ -337,13 +338,12 @@ function clear_corner_color() {
  */
 
 function get_background_color() {
-    let result = Settings.get_panel_color();
-    let orig = Settings.get_panel_color({ app_settings: false });
+    let custom = Settings.get_panel_color({ app_info: true });
 
-    if (Settings.enable_custom_background_color() || !Util.match_colors(result, orig)) {
-        return result;
-    } else {
+    if (!Settings.enable_custom_background_color() && custom.app_info === null) {
         return this.theme_background_color;
+    } else {
+        return custom.value;
     }
 }
 
@@ -353,15 +353,20 @@ function get_background_color() {
  * @returns {Number} opacity - Alpha value from 0-255
  */
 
-//TODO: 150? No magic numbers, please. Needs better system to determine when default theme opacitys are too low.
+//TODO: Needs better system to determine when default theme opacities are too low.
 function get_maximized_opacity() {
-    let result = Settings.get_maximized_opacity();
-    let orig = Settings.get_maximized_opacity({ app_settings: false });
+    let custom = Settings.get_maximized_opacity({ app_info: true });
+    //let original = Settings.get_maximized_opacity({ app_settings: false });
 
-    if (!Settings.enable_custom_opacity() && this.theme_opacity >= 150 && result === orig) {
-        return this.theme_opacity;
+    /* 1) Make sure we want a custom opacity. 2) If custom.app_info !== null that means the setting is overriden. */
+    if (!Settings.enable_custom_opacity() && custom.app_info === null) {
+        if (this.theme_opacity >= THEME_DETECTION_MINIMUM_OPACITY) {
+            return this.theme_opacity;
+        } else {
+            return Settings.get_maximized_opacity({ default: true });
+        }
     } else {
-        return result;
+        return custom.value;
     }
 }
 
@@ -374,8 +379,7 @@ function get_unmaximized_opacity() {
     if (Settings.enable_custom_opacity()) {
         return Settings.get_unmaximized_opacity();
     } else {
-        // TODO: Better default?
-        return 0;
+        return Settings.get_unmaximized_opacity({ default: true });
     }
 }
 

@@ -13,4 +13,4 @@ if (imports.searchPath.indexOf(PATH) === -1) {
 }
 
 /* Define prefs, so that imports can find it. */
-const prefs = imports.main;
+const prefs = imports.preferences.main;

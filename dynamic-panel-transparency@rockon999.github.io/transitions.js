@@ -11,6 +11,7 @@ const Params = imports.misc.params;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
+const Util = Me.imports.util;
 
 const TIME_SCALE_FACTOR = 1000;
 
@@ -374,12 +375,7 @@ const TransitionType = {
         return (action === AnimationAction.FADING_IN ? 'easeIn' : 'easeOut') + type.code;
     }
 };
-Object.keys(TransitionType).forEach(function (value, index, arr) {
-    if (typeof (value) === 'object') {
-        Object.freeze(value);
-    }
-});
-Object.freeze(TransitionType);
+Util.deep_freeze(TransitionType);
 
 const AnimationAction = {
     FADING_OUT: 0,
@@ -392,4 +388,4 @@ const AnimationDestination = {
     MINIMUM: 1,
     MAXIMUM: 2
 };
-Object.freeze(AnimationDestination);
+Util.deep_freeze(AnimationDestination);
