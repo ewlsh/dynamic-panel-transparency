@@ -178,13 +178,22 @@ function buildPrefsWidget() {
 
     let wallpaper_path = bg_settings.get_string('picture-uri').replace('file://', '');
 
-    let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper_path, PANEL_WIDTH, -1, true);
-    panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+    if (wallpaper_path.endsWith('.xml')) {
+        log('[Dynamic Panel Transparency] Demo panel is not compatible with timed wallpapers.');
+    } else {
+        try {
+            let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper_path, PANEL_WIDTH, -1, true);
+            panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
 
-    panel_background.connect('size-allocate', Lang.bind(this, function (widget, rect) {
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper_path, rect.width, -1, true);
-        panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, rect.width, PANEL_HEIGHT);
-    }));
+            panel_background.connect('size-allocate', Lang.bind(this, function (widget, rect) {
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper_path, rect.width, -1, true);
+                panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, rect.width, PANEL_HEIGHT);
+            }));
+        } catch (error) {
+            log('[Dynamic Panel Transparency] Could not load user\'s wallpaper settings for demo panel.');
+            log(error);
+        }
+    }
 
     let demo_panel_activities_label = builder.get_object('panel_demo_activities_label');
     let demo_panel_clock_label = builder.get_object('panel_demo_clock_label');
