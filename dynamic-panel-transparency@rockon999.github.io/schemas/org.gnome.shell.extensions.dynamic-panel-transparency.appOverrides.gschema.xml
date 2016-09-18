@@ -1,7 +1,7 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides">
     <key name="enable-background-tweaks" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Enable Background Tweaks</summary>
       <description>Enables the opacity and color tweaks.</description>
     </key>

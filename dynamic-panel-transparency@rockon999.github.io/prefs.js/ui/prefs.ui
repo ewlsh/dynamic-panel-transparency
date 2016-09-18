@@ -70,7 +70,7 @@ frnogueira
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkEntryBuffer" id="entrybuffer1"/>
+  <object class="GtkEntryBuffer" id="entry_buffer"/>
   <object class="GtkAdjustment" id="maximum_opacity_adjustment">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
@@ -98,7 +98,7 @@ frnogueira
             <property name="can_focus">False</property>
             <property name="left_padding">5</property>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="panel_demo_activities_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Activities</property>
@@ -217,7 +217,7 @@ frnogueira
     <property name="message_type">question</property>
     <property name="buttons">yes-no</property>
     <property name="text" translatable="yes">Shell Restart Required.</property>
-    <property name="secondary_text" translatable="yes">A shell restart is required to view some of your changes. Do you want to restart now?</property>
+    <property name="secondary_text" translatable="yes" comments="Meant to ask the user if they would like to restart right now or later in a yes/no format.">A shell restart is required to view some of your changes. Do you want to restart now?</property>
     <property name="secondary_use_markup">True</property>
     <child internal-child="vbox">
       <object class="GtkBox">
@@ -345,7 +345,7 @@ frnogueira
                 <property name="margin_right">5</property>
                 <property name="margin_top">5</property>
                 <property name="margin_bottom">5</property>
-                <property name="label" translatable="yes">Transition Speed</property>
+                <property name="label" translatable="yes" comments="How long the transition will take.">Transition Speed</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -388,13 +388,14 @@ frnogueira
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">3</property>
-                    <property name="label" translatable="yes">Force animation</property>
+                    <property name="label" translatable="yes" comments="Overrides Gnome animation settings and &quot;forces&quot; the animation.">Force animation</property>
                   </object>
                 </child>
               </object>
               <packing>
                 <property name="left_attach">0</property>
                 <property name="top_attach">2</property>
+                <property name="width">2</property>
               </packing>
             </child>
             <child>
@@ -406,7 +407,7 @@ frnogueira
                 <property name="margin_right">5</property>
                 <property name="margin_top">5</property>
                 <property name="margin_bottom">5</property>
-                <property name="label" translatable="yes">Transition Style</property>
+                <property name="label" translatable="yes" comments="The function used to animate the panel traansition. See http://hosted.zeh.com.br/tweener/docs/en-us/misc/transitions.html.">Transition Style</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -440,9 +441,6 @@ frnogueira
                 <property name="left_attach">1</property>
                 <property name="top_attach">1</property>
               </packing>
-            </child>
-            <child>
-              <placeholder/>
             </child>
           </object>
         </child>
@@ -508,7 +506,7 @@ frnogueira
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="label" translatable="yes">Enable custom text coloring</property>
+                            <property name="label" translatable="yes" comments="Allows the user to set their own text color.">Enable custom text coloring</property>
                             <property name="use_markup">True</property>
                           </object>
                           <packing>
@@ -535,7 +533,7 @@ frnogueira
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="hexpand">True</property>
-                                    <property name="label" translatable="yes">Primary Color</property>
+                                    <property name="label" translatable="yes" comments="The main color to be used.">Primary Color</property>
                                     <property name="use_markup">True</property>
                                   </object>
                                   <packing>
@@ -564,7 +562,7 @@ frnogueira
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="hexpand">True</property>
-                                    <property name="label" translatable="yes">Secondary Color</property>
+                                    <property name="label" translatable="yes" comments="Another color for special functions.">Secondary Color</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -1085,7 +1083,7 @@ frnogueira
                                         <property name="halign">start</property>
                                         <property name="margin_top">5</property>
                                         <property name="margin_bottom">5</property>
-                                        <property name="label" translatable="yes">Unmaximized Opacity</property>
+                                        <property name="label" translatable="yes" comments="Opacity of the panel when no window is maximized.">Unmaximized Opacity</property>
                                         <property name="use_markup">True</property>
                                       </object>
                                       <packing>
@@ -1132,7 +1130,7 @@ frnogueira
                                         <property name="halign">start</property>
                                         <property name="margin_top">5</property>
                                         <property name="margin_bottom">5</property>
-                                        <property name="label" translatable="yes">Maximized Opacity</property>
+                                        <property name="label" translatable="yes" comments="Opacity of the panel when a window is maximized.">Maximized Opacity</property>
                                         <property name="use_markup">True</property>
                                       </object>
                                       <packing>
@@ -1154,7 +1152,7 @@ frnogueira
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
-                                <property name="label" translatable="yes">Enable custom opacity</property>
+                                <property name="label" translatable="yes" comments="Allows the user to set their own opacity.">Enable custom opacity</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1216,12 +1214,12 @@ frnogueira
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <child>
-                                      <object class="GtkLabel" id="theme_label">
+                                      <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
                                         <property name="hexpand">True</property>
-                                        <property name="label" translatable="yes">Panel Color</property>
+                                        <property name="label" translatable="yes" comments="The panel's background color.">Panel Color</property>
                                         <property name="use_markup">True</property>
                                       </object>
                                       <packing>
@@ -1257,7 +1255,7 @@ frnogueira
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
-                                <property name="label" translatable="yes">Enable custom panel color</property>
+                                <property name="label" translatable="yes" comments="Allows the user to set their own background color for the panel.">Enable custom panel color</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1317,7 +1315,7 @@ frnogueira
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">3</property>
-                        <property name="label" translatable="yes">Remove excess panel styling</property>
+                        <property name="label" translatable="yes" comments="Removes any extra styling certain themes may have. Fixes theme issues.">Remove excess panel styling</property>
                         <property name="single_line_mode">True</property>
                       </object>
                     </child>
@@ -1339,7 +1337,7 @@ frnogueira
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">3</property>
-                        <property name="label" translatable="yes">Hide corners</property>
+                        <property name="label" translatable="yes" comments="Hides the panel corners.">Hide corners</property>
                         <property name="single_line_mode">True</property>
                       </object>
                     </child>
@@ -1527,7 +1525,7 @@ frnogueira
         </child>
         <child>
           <object class="GtkButton" id="extra_btn">
-            <property name="label" translatable="yes">Custom...</property>
+            <property name="label" translatable="yes" comments="Adds a 'custom' app tweak. Only visible on the App Tweaks page.">Custom...</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
           </object>

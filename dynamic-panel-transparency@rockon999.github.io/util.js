@@ -1,7 +1,6 @@
-/* exported get_maximized_width_buffer, get_shell_version,validate, is_undef, clamp, is_maximized, match_colors, remove_file, get_file, write_to_file, get_app_for_window, get_app_for_wmclass, gdk_to_css_color, clutter_to_native_color, create_enum */
+/* exported get_maximized_width_buffer, get_shell_version,validate, is_undef, clamp, is_maximized, match_colors, remove_file, get_file, write_to_file, get_app_for_window, get_app_for_wmclass, gdk_to_css_color, clutter_to_native_color, deep_freeze */
 
 const Gio = imports.gi.Gio;
-
 
 /* Global Utility Variables */
 const MAXIMIZED_WIDTH_BUFFER = 5;
@@ -127,10 +126,10 @@ function match_colors(a, b, alpha = false) {
     return result;
 }
 
-function create_enum(type, recursive = false) {
+function deep_freeze(type, recursive = false) {
     const freeze_children = function (obj) {
         Object.keys(obj).forEach(function (value, index, arr) {
-            if (typeof (value) === 'object') {
+            if (typeof (value) === 'object' && !Object.isFrozen(value)) {
                 Object.freeze(value);
                 if (recursive) {
                     freeze_children(value);

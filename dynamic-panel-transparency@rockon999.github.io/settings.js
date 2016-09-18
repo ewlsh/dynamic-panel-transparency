@@ -157,7 +157,20 @@ function bind() {
             return input;
         });
 
-        let getter = function () {
+        let getter = function (params) {
+            params = Params.parse(params, { app_settings: true, app_info: false, default: false });
+
+            if (params.app_info) {
+                if (params.default) {
+                    return { value: parser(this.settings.get_default_value(setting.key).unpack()), app_info: null };
+                }
+                return { value: parser(this.settings_manager[setting.name]), app_info: null };
+            }
+
+            if (params.default) {
+                return parser(this.settings.get_default_value(setting.key).unpack());
+            }
+
             return parser(this.settings_manager[setting.name]);
         };
 
@@ -165,7 +178,15 @@ function bind() {
 
         if (this.overriden_keys.indexOf(setting.key) !== -1) {
             getter = function (params) {
-                params = Params.parse(params, { app_settings: true });
+                params = Params.parse(params, { app_settings: true, app_info: false, default: false });
+
+                if (params.app_info && params.default) {
+                    return { value: parser(this.settings.get_default_value(setting.key).unpack()), app_info: null };
+                }
+
+                if (params.default) {
+                    return this.settings.get_default_value(setting.key).unpack();
+                }
 
                 let maximized_window = Events.get_current_maximized_window();
 
@@ -178,7 +199,11 @@ function bind() {
                                 return input;
                             });
                             if (!Util.is_undef(value)) {
-                                return window_parser(value, parser(this.settings_manager[setting.name]), maximized_window.get_wm_class().toLowerCase(), true);
+                                let result = window_parser(value, parser(this.settings_manager[setting.name]), maximized_window.get_wm_class().toLowerCase(), true);
+                                if (params.app_info) {
+                                    return { value: result, app_info: maximized_window.get_wm_class().toLowerCase() };
+                                }
+                                return result;
                             }
                         }
                     }
@@ -193,12 +218,18 @@ function bind() {
                             let value = this.app_settings_manager[setting.name][app_id];
 
                             if (!Util.is_undef(value)) {
-                                return app_parser(value, parser(this.settings_manager[setting.name]), app_id);
+                                let result = app_parser(value, parser(this.settings_manager[setting.name]), app_id);
+                                if (params.app_info) {
+                                    return { value: result, app_info: app_id };
+                                }
+                                return result;
                             }
                         }
                     }
                 }
-
+                if (params.app_info) {
+                    return { value: parser(this.settings_manager[setting.name]), app_info: null };
+                }
                 return parser(this.settings_manager[setting.name]);
             };
         }
