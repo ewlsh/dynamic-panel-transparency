@@ -1,110 +1,451 @@
+/* exported init, cleanup, add_text_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, exported remove_text_shadow, remove_icon_shadow, register_text_color, register_style, exported get_background_alpha, set_background_alpha, set_text_color, set_corner_color, set_panel_color, remove_text_color, strip_panel_background, strip_panel_styling, reapply_panel_background, reapply_panel_styling, clear_corner_color, set_theme_background_color, set_theme_opacity, get_maximized_opacity, get_unmaximized_opacity */
+
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+const Compatibility = Me.imports.compatibility;
 const Settings = Me.imports.settings;
-const Transitions = Me.imports.transitions;
-const Extension = Me.imports.extension;
-const Clutter = imports.gi.Clutter;
-const Main = imports.ui.main;
-const Lang = imports.lang;
-const Config = imports.misc.config;
-const Panel = Main.panel;
 const Util = Me.imports.util;
 
-/* Color Array Indices */
-const RED = 0;
-const GREEN = 1;
-const BLUE = 2;
-const SCALE_FACTOR = 255.9999999;
+const Clutter = imports.gi.Clutter;
+const St = imports.gi.St;
 
-function init() {}
+const Params = imports.misc.params;
 
-function cleanup() {}
+const Main = imports.ui.main;
 
-function add_text_shadow() {
-  Panel.actor.add_style_class_name('panel-text-shadow');
-  Panel.actor.add_style_class_name('panel-icon-shadow');
-  Panel.actor.add_style_class_name('panel-arrow-shadow');
+const Panel = Main.panel;
+
+const THEME_DETECTION_MINIMUM_OPACITY = 150;
+
+const SCALE_FACTOR = 255;
+
+/**
+ * Intialize.
+ *
+ */
+
+function init() {
+    this.stylesheets = [];
+    this.styles = [];
 }
+
+/**
+ * Used to release any held assets of this file.
+ *
+ */
+
+function cleanup() {
+    for (let sheet of this.stylesheets) {
+        let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+        Compatibility.st_theme_unload_stylesheet(theme, sheet);
+        Util.remove_file(sheet);
+    }
+    for (let style of this.styles) {
+        Panel.actor.remove_style_class_name(style);
+    }
+    this.stylesheets = null;
+    this.styles = null;
+}
+
+/**
+ * Sets the theme background color.
+ *
+ * @param {Object} color - Object representing an RGBA color.
+ * @param {Number} color.red - Red value ranging from 0-255.
+ * @param {Number} color.green - Green value ranging from 0-255.
+ * @param {Number} color.blue - Blue value ranging from 0-255.
+ */
+function set_theme_background_color(color) {
+    this.theme_background_color = color;
+    Object.freeze(this.theme_background_color);
+}
+
+/**
+ * Sets the theme opacity.
+ *
+ * @param {Number} alpha - Alpha value ranging from 0-255.
+ */
+function set_theme_opacity(alpha) {
+    this.theme_opacity = alpha;
+}
+
+/**
+ * Adds a shadow stylesheet to text in the panel.
+ *
+ * @param {Object} text_color - Object representing an RGBA color.
+ * @param {Number} text_color.red - Red value ranging from 0-255.
+ * @param {Number} text_color.green - Green value ranging from 0-255.
+ * @param {Number} text_color.blue - Blue value ranging from 0-255.
+ * @param {Number} text_color.alpha - Alpha value ranging from 0-1.0 with support for two decimal places.
+ * @param {Number[]} text_position - Integer array containing horizontal offset, vertical offset, radius. (in that order)
+ */
+
+function add_text_shadow(text_color, text_position) {
+    let text_color_css = 'rgba(' + text_color.red + ', ' + text_color.green + ', ' + text_color.blue + ', ' + text_color.alpha.toFixed(2) + ')';
+    let text_position_css = '' + text_position[0] + 'px ' + text_position[1] + 'px ' + text_position[2] + 'px';
+
+    apply_stylesheet_css('.dpt-panel-text-shadow .panel-button { text-shadow: ' + text_position_css + ' ' + text_color_css + '; }', 'panel-text-shadow');
+
+    Panel.actor.add_style_class_name('dpt-panel-text-shadow');
+
+    register_style('dpt-panel-text-shadow');
+}
+
+/**
+ * Adds a shadow stylesheet to icons in the panel.
+ *
+ * @param {Object} icon_color - Object representing an RGBA color.
+ * @param {Number} icon_color.red - Red value ranging from 0-255.
+ * @param {Number} icon_color.green - Green value ranging from 0-255.
+ * @param {Number} icon_color.blue - Blue value ranging from 0-255.
+ * @param {Number} icon_color.alpha - Alpha value ranging from 0-1.0 with support for two decimal places.
+ * @param {Number[]} icon_position - Integer array containing horizontal offset, vertical offset, radius. (in that order)
+ */
+
+function add_icon_shadow(icon_color, icon_position) {
+    let icon_color_css = 'rgba(' + icon_color.red + ', ' + icon_color.green + ', ' + icon_color.blue + ', ' + icon_color.alpha.toFixed(2) + ')';
+    let icon_position_css = '' + icon_position[0] + 'px ' + icon_position[1] + 'px ' + icon_position[2] + 'px';
+
+
+    apply_stylesheet_css('.dpt-panel-icon-shadow .system-status-icon { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'panel-icon-shadow');
+    apply_stylesheet_css('.dpt-panel-arrow-shadow .popup-menu-arrow { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'panel-arrow-shadow');
+
+    Panel.actor.add_style_class_name('dpt-panel-icon-shadow');
+    Panel.actor.add_style_class_name('dpt-panel-arrow-shadow');
+
+    register_style('dpt-panel-icon-shadow');
+    register_style('dpt-panel-arrow-shadow');
+}
+
+/**
+ * Determines if the panel currently has text shadowing applied.
+ *
+ * @returns {Boolean} If the panel has text shadowing.
+ */
 
 function has_text_shadow() {
-  return (Panel.actor.has_style_class_name('panel-text-shadow') || Panel.actor.has_style_class_name('panel-icon-shadow') || Panel.actor.has_style_class_name('panel-arrow-shadow'));
+    return Panel.actor.has_style_class_name('dpt-panel-text-shadow');
 }
+
+/**
+ * Determines if the panel currently has icon shadowing applied.
+ *
+ * @returns {Boolean} If the panel has icon shadowing.
+ */
+
+function has_icon_shadow() {
+    return (Panel.actor.has_style_class_name('dpt-panel-icon-shadow') || Panel.actor.has_style_class_name('dpt-panel-arrow-shadow'));
+}
+
+/**
+ * Removes any text shadowing; deregistering the stylesheet and removing the css.
+ *
+ */
 
 function remove_text_shadow() {
-  Panel.actor.remove_style_class_name('panel-icon-shadow');
-  Panel.actor.remove_style_class_name('panel-text-shadow');
-  Panel.actor.remove_style_class_name('panel-arrow-shadow');
+    deregister_style('dpt-panel-text-shadow');
+    Panel.actor.remove_style_class_name('dpt-panel-text-shadow');
 }
 
-function set_panel_color(params = {}) {
+/**
+ * Removes any icon shadowing; deregistering the stylesheet and removing the css.
+ *
+ */
+
+function remove_icon_shadow() {
+    deregister_style('dpt-panel-icon-shadow');
+    deregister_style('dpt-panel-arrow-shadow');
+    Panel.actor.remove_style_class_name('dpt-panel-icon-shadow');
+    Panel.actor.remove_style_class_name('dpt-panel-arrow-shadow');
+}
+
+/**
+ * Registers text & icon coloring.
+ *
+ * @param {Object} color - Object containing an RGB color value.
+ * @param {Number} color.red - Red value ranging from 0-255.
+ * @param {Number} color.green - Green value ranging from 0-255.
+ * @param {Number} color.blue - Blue value ranging from 0-255.
+ * @param {string} prefix - What prefix to apply to the stylesheet. '-' is the default.
+ */
+
+function register_text_color(color, prefix) {
+    let color_css = 'color: rgb(' + color.red + ', ' + color.green + ', ' + color.blue + ');';
+
+    if (!Util.is_undef(prefix)) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    apply_stylesheet_css('.dpt-panel' + prefix + 'text-color .panel-button { ' + color_css + ' }', 'panel' + prefix + 'text-color');
+    apply_stylesheet_css('.dpt-panel' + prefix + 'icon-color .system-status-icon { ' + color_css + ' }', 'panel' + prefix + 'icon-color');
+    apply_stylesheet_css('.dpt-panel' + prefix + 'arrow-color .popup-menu-arrow { ' + color_css + ' }', 'panel' + prefix + 'arrow-color');
+
+    register_style('dpt-panel' + prefix + 'text-color');
+    register_style('dpt-panel' + prefix + 'icon-color');
+    register_style('dpt-panel' + prefix + 'arrow-color');
+}
+
+/**
+ * Sets which registered text color stylesheet to use for the text coloring. @see register_text_color
+ *
+ * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
+ */
+
+function set_text_color(prefix) {
+    if (this.current_prefix !== null) {
+        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'text-color');
+        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'icon-color');
+        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'arrow-color');
+    }
+
+    if (!Util.is_undef(prefix)) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    this.current_prefix = prefix;
+
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'text-color');
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'icon-color');
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'arrow-color');
+}
+
+
+/**
+ * Remove a registered text color stylesheet from the text coloring. @see register_text_color
+ *
+ * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
+ */
+function remove_text_color(prefix) {
+    if (!Util.is_undef(prefix)) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    deregister_style('dpt-panel' + prefix + 'text-color');
+    deregister_style('dpt-panel' + prefix + 'icon-color');
+    deregister_style('dpt-panel' + prefix + 'arrow-color');
+
+    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'text-color');
+    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'icon-color');
+    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'arrow-color');
+}
+
+/**
+ * Registers any custom style so that it can be removed when the extension is disabled.
+ *
+ * @param {string} style - The name of a CSS styling.
+ */
+function register_style(style) {
+    if (this.styles.indexOf(style) === -1)
+        this.styles.push(style);
+}
+
+/**
+ * Deregisters any custom style. Only use this if the style is definately not in the extension's scope anymore.
+ *
+ * @param {string} style - The name of a CSS styling.
+ */
+function deregister_style(style) {
+    let index = this.styles.indexOf(style);
+    this.styles.splice(index, 1);//.concat(this.styles.splice(index + 1, this.styles.length));
+}
+
+/**
+ * Set's the panel's actor to a specific background color.
+ *
+ * @param {Object} color [color={}] - Object containing an RGBA color value.
+ * @param {Number} color.red - Red value ranging from 0-255.
+ * @param {Number} color.green - Green value ranging from 0-255.
+ * @param {Number} color.blue - Blue value ranging from 0-255.
+ * @param {Number} color.alpha - Alpha value ranging from 0-255.
+ */
+
+function set_panel_color(color) {
     let panel_color = get_background_color();
     let current_alpha = get_background_alpha(Panel.actor);
+
+    color = Params.parse(color, {
+        red: panel_color.red,
+        green: panel_color.green,
+        blue: panel_color.blue,
+        alpha: current_alpha
+    });
+
     Panel.actor.set_background_color(new Clutter.Color({
-        red: Util.validate(params.red, panel_color[RED]),
-        green: Util.validate(params.green, panel_color[GREEN]),
-        blue: Util.validate(params.blue, panel_color[BLUE]),
-        alpha: (Util.is_undef(params.opacity) ? current_alpha : params.opacity)
+        red: color.red,
+        green: color.green,
+        blue: color.blue,
+        alpha: color.alpha
     }));
 }
 
-function set_corner_color(params = {}) {
+/**
+ * Set's the panel corners' actors to a specific background color.
+ *
+ * @param {Object} color [color={}] - Object containing an RGBA color value.
+ * @param {Number} color.red - Red value ranging from 0-255.
+ * @param {Number} color.green - Green value ranging from 0-255.
+ * @param {Number} color.blue - Blue value ranging from 0-255.
+ * @param {Number} color.alpha - Alpha value ranging from 0-255.
+ */
+function set_corner_color(color) {
     let panel_color = get_background_color();
     let current_alpha = get_background_alpha(Panel._leftCorner.actor);
 
-    let opacity = Util.is_undef(params.opacity) ? current_alpha : params.opacity;
-    let red = Util.validate(params.red, panel_color[RED]);
-    let green = Util.validate(params.green, panel_color[GREEN]);
-    let blue = Util.validate(params.blue, panel_color[BLUE]);
-    let coloring = '-panel-corner-background-color: rgba(' + red + ', ' + green + ', ' + blue + ', ' + (opacity / SCALE_FACTOR) + ');' +
+    color = Params.parse(color, {
+        red: panel_color.red,
+        green: panel_color.green,
+        blue: panel_color.blue,
+        alpha: current_alpha
+    });
+
+    let opacity = Util.clamp(color.alpha / SCALE_FACTOR, 0, 1);
+
+
+    /* I strongly dislike using a deprecated method (set_style)
+     * but this is a hold over from the older extension code and
+     * the only way to keep per-app coloring working with corners. */
+    let coloring = '-panel-corner-background-color: rgba(' + color.red + ', ' + color.green + ', ' + color.blue + ', ' + opacity + ');' +
         '' + '-panel-corner-border-color: transparent;';
+
+    // TODO: Update this code. We're using @deprecated code.
     Panel._leftCorner.actor.set_style(coloring);
     Panel._rightCorner.actor.set_style(coloring);
 }
+
+/**
+ * Removes any corner styling this extension has applied.
+ *
+ */
 
 function clear_corner_color() {
     Panel._leftCorner.actor.set_style(null);
     Panel._rightCorner.actor.set_style(null);
 }
 
-
-function get_user_background_color(src){
-    if (Util.is_undef(src))
-        return Settings.get_panel_color();
-    let user_theme = src.get_theme_node();
-
-    let background_color = user_theme.get_background_color();
-    if (background_color === null)
-        background_color = user_theme.lookup_color('background-color', true);
-    if(Util.is_undef(background_color))
-      return Settings.get_panel_color();
-    return [
-        background_color.red,
-        background_color.green,
-        background_color.blue,
-    ];
-}
+/**
+ * Returns the user's desired panel color from Settings. Handles theme detection again.
+ *
+ * @returns {Object} color - Object containing an RGBA color value.
+ * @returns {Number} color.red - Red value ranging from 0-255.
+ * @returns {Number} color.green - Green value ranging from 0-255.
+ * @returns {Number} color.blue - Blue value ranging from 0-255.
+ * @returns {Number} color.alpha - Alpha value ranging from 0-255.
+ */
 
 function get_background_color() {
-    if (Settings.detect_user_theme()) {
-        if (Settings.get_user_theme_source().toLowerCase() == 'panel') {
-            return get_user_background_color(Panel.actor);
-        } else {
-            return get_user_background_color(Main.overview._dash._container);
-        }
+    let custom = Settings.get_panel_color({ app_info: true });
+
+    if (!Settings.enable_custom_background_color() && custom.app_info === null) {
+        return this.theme_background_color;
     } else {
-        return Settings.get_panel_color();
+        return custom.value;
     }
 }
 
-function strip_panel_css() {
-    Panel.actor.add_style_class_name('panel-transparency');
+/**
+ * Returns the user's desired maximized panel opacity from Settings or their theme.
+ *
+ * @returns {Number} opacity - Alpha value from 0-255
+ */
+
+//TODO: Needs better system to determine when default theme opacities are too low.
+function get_maximized_opacity() {
+    let custom = Settings.get_maximized_opacity({ app_info: true });
+    //let original = Settings.get_maximized_opacity({ app_settings: false });
+
+    /* 1) Make sure we want a custom opacity. 2) If custom.app_info !== null that means the setting is overriden. */
+    if (!Settings.enable_custom_opacity() && custom.app_info === null) {
+        if (this.theme_opacity >= THEME_DETECTION_MINIMUM_OPACITY) {
+            return this.theme_opacity;
+        } else {
+            return Settings.get_maximized_opacity({ default: true });
+        }
+    } else {
+        return custom.value;
+    }
 }
 
-function reapply_panel_css() {
-    Panel.actor.remove_style_class_name('panel-transparency');
+/**
+ * Returns the user's desired unmaximized panel opacity from Settings or their theme.
+ *
+ * @returns {Number} opacity - Alpha value from 0-255
+ */
+function get_unmaximized_opacity() {
+    if (Settings.enable_custom_opacity()) {
+        return Settings.get_unmaximized_opacity();
+    } else {
+        return Settings.get_unmaximized_opacity({ default: true });
+    }
 }
 
-/* Special Property Methods */
+/**
+ * Applies the style class 'panel-full-transparency' and removes the basic CSS preventing this extension's transitions.
+ *
+ */
+
+function strip_panel_styling() {
+    Panel.actor.add_style_class_name('panel-full-transparency');
+}
+
+/**
+ * Removes the style class 'panel-full-transparency' and enables the stock CSS preventing this extension's transitions.
+ *
+ */
+
+function reapply_panel_styling() {
+    Panel.actor.remove_style_class_name('panel-full-transparency');
+}
+
+/**
+ * Applies the style class 'panel-strip-background' and removes any CSS embellishments.
+ *
+ */
+
+function strip_panel_background() {
+    Panel.actor.add_style_class_name('panel-strip-background');
+}
+
+/**
+ * Reapplies the style class 'panel-strip-background' and enables any CSS embellishments.
+ *
+ */
+
+function reapply_panel_background() {
+    Panel.actor.remove_style_class_name('panel-strip-background');
+}
+
+/**
+ * Writes CSS data to a file and loads the stylesheet into the Shell.
+ *
+ * @param {string} css - CSS data.
+ * @param {string} name - Name of the intended CSS stylesheet.
+ *
+ * @returns {string} Filename of the stylesheet.
+ */
+
+function apply_stylesheet_css(css, name) {
+    let file_name = Me.dir.get_path() + '/styles/' + name + '.dpt.css';
+    /* Write to the file. */
+    if (!Util.write_to_file(file_name, css)) {
+        log('Dynamic Panel Transparency cannot be installed as a system extension.');
+    }
+    let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+    if (Compatibility.st_theme_load_stylesheet(theme, file_name)) {
+        this.stylesheets.push(file_name);
+    } else {
+        log('Error Loading Temporary Stylesheet: ' + name);
+    }
+    return file_name;
+}
+
+// TODO: Document?
+
+/* Methods to extend Tweener's properties. */
 
 function get_background_alpha(actor) {
     return actor.get_background_color().alpha;
@@ -112,6 +453,10 @@ function get_background_alpha(actor) {
 
 function set_background_alpha(actor, alpha) {
     let background_color = actor.get_background_color();
+
+    /* Some transition algorithms go overboard. */
+    alpha = Util.clamp(alpha, 0, 255);
+
     actor.set_background_color(new Clutter.Color({
         red: background_color.red,
         green: background_color.green,
@@ -119,3 +464,6 @@ function set_background_alpha(actor, alpha) {
         alpha: alpha
     }));
 }
+
+
+

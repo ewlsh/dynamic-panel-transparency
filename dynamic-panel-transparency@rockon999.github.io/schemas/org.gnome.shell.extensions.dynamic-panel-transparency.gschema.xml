@@ -2,6 +2,7 @@
   <enum id='org.gnome.shell.extensions.dynamic-panel-transparency.themeSource'>
     <value value='0' nick='Panel'/>
     <value value='1' nick='Dash'/>
+    <value value='2' nick='Custom'/>
   </enum>
   <schema id="org.gnome.shell.extensions.dynamic-panel-transparency" path="/org/gnome/shell/extensions/dynamic-panel-transparency/">
     <key name="transition-speed" type="i">
@@ -34,20 +35,105 @@
       <summary>Panel Color</summary>
       <description>The color of the panel.</description>
     </key>
-    <key name="detect-user-theme" type="b">
+    <key name="enable-opacity" type="b">
       <default>false</default>
       <summary>Detect the user's theme</summary>
       <description>Uses the panel or dash to get the user's panel color.</description>
     </key>
-    <key name="text-shadow" type="b">
+    <key name="enable-background-color" type="b">
       <default>false</default>
-      <summary>Add shadowing to text and icons.</summary>
-      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
+      <summary>Detect the user's theme</summary>
+      <description>Uses the panel or dash to get the user's panel color.</description>
     </key>
     <key name="user-theme-source" enum="org.gnome.shell.extensions.dynamic-panel-transparency.themeSource">
       <default>'Dash'</default>
       <summary>Source for detecting the user's theme</summary>
       <description>Object used to get the user's preferred background color.</description>
+    </key>
+    <key name="text-shadow" type="b">
+      <default>false</default>
+      <summary>Add shadowing to text.</summary>
+      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
+    </key>
+    <key name="icon-shadow" type="b">
+      <default>false</default>
+      <summary>Add shadowing to icons.</summary>
+      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
+    </key>
+    <key name="text-shadow-position" type="(iii)">
+      <default>(0,3,5)</default>
+      <summary>Add shadowing to text and icons.</summary>
+      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
+    </key>
+    <key name="icon-shadow-position" type="(iii)">
+      <default>(0,2,5)</default>
+      <summary>Add shadowing to text and icons.</summary>
+      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
+    </key>
+    <key name="icon-shadow-color" type="(iiid)">
+      <default>(0,0,0,0.5)</default>
+      <summary>Color of shadowing for icons.</summary>
+      <description>.</description>
+    </key>
+    <key name="text-shadow-color" type="(iiid)">
+      <default>(0,0,0,1.0)</default>
+      <summary>Color of shadowing for text.</summary>
+      <description>.</description>
+    </key>
+    <key name="text-color" type="(iii)">
+      <default>(255,255,255)</default>
+      <summary>What color the panel text should be.</summary>
+      <description>Used to determine what color the panel text should be.</description>
+    </key>
+    <key name="maximized-text-color" type="(iii)">
+      <default>(255,255,255)</default>
+      <summary>What color the panel text should be.</summary>
+      <description>Used to determine what color the panel text should be.</description>
+    </key>
+    <key name="enable-text-color" type="b">
+      <default>false</default>
+      <summary>What color the panel text should be.</summary>
+      <description>Used to determine what color the panel text should be.</description>
+    </key>
+    <key name="enable-maximized-text-color" type="b">
+      <default>false</default>
+      <summary>What color the panel text should be.</summary>
+      <description>Used to determine what color the panel text should be.</description>
+    </key>
+    <key name="enable-overview-text-color" type="b">
+      <default>false</default>
+      <summary>What color the panel text should be.</summary>
+      <description>Used to determine what color the panel text should be.</description>
+    </key>
+    <key name="remove-panel-styling" type="b">
+      <default>false</default>
+      <summary>What color the panel text should be.</summary>
+      <description>Used to determine what color the panel text should be.</description>
+    </key>
+    <key name="app-overrides" type="as">
+      <default>[]</default>
+      <summary>Overrides settings for each app.</summary>
+      <description>Yeah... different settings for individual apps..</description>
+    </key>
+    <key name="window-overrides" type="as">
+      <default>[]</default>
+      <summary>Overrides settings for a wmclass.</summary>
+      <description>Yeah... different settings for individual apps..</description>
+    </key>
+    <key name="trigger-apps" type="as">
+      <default>[]</default>
+      <summary>Apps that will always trigger the panel when focused.</summary>
+      <description>List of apps that triggers the panel when a window of the app is in focus.</description>
+    </key>
+    <key name="trigger-windows" type="as">
+      <default>[]</default>
+      <summary>Windows that will always trigger the panel when focused.</summary>
+      <description>List of windows that triggers the panel when a window of the app is in focus.</description>
+    </key>
+    <key name="transition-type" type="i">
+      <default>1</default>
+      <summary>Transition type</summary>
+      <description>The transition used on the panel</description>
     </key>
   </schema>
 </schemalist>
