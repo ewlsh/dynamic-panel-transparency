@@ -7,11 +7,11 @@ const Gio = imports.gi.Gio;
 const MAXIMIZED_WIDTH_BUFFER = 5;
 
 /* Gnome Versioning */
-const MAJOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[0]);
-const MINOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[1]);
+const MAJOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[0], 10);
+const MINOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[1], 10);
 
 /* Permissions for created files. */
-const PERMISSIONS_MODE = 744;
+const PERMISSIONS_MODE = parseInt('0744', 8);
 
 /* Utility Variable Access */
 
