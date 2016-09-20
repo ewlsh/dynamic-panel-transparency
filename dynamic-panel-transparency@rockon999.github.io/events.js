@@ -237,40 +237,39 @@ function _windowUpdated(params) {
     } else {
         for (let i = windows.length - 1; i >= 0; --i) {
             let current_window = windows[i];
+
+            if (Settings.check_app_settings()) {
+                for (let wm_class of Settings.get_trigger_windows()) {
+                    if (current_window.get_wm_class().toLowerCase() === wm_class.toLowerCase()) {
+                        add_transparency = false;
+                        this.maximized_window = current_window;
+                        break;
+                    }
+                }
+
+                let app = Util.get_app_for_window(current_window);
+                for (let app_id of Settings.get_trigger_apps()) {
+                    if (!Util.is_undef(app) && app.get_id() === app_id) {
+                        add_transparency = false;
+                        this.maximized_window = current_window;
+                        break;
+                    }
+                }
+            }
+
             if (current_window !== excluded_window && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
                 this.maximized_window = current_window;
                 add_transparency = false;
                 if (!Settings.check_app_settings()) {
                     break;
                 }
+
             }
         }
     }
 
-    if (!Util.is_undef(focused_window)) {
-        let found = false;
-
-        for (let wm_class of Settings.get_trigger_windows()) {
-            // DEBUG: log(focused_window.get_wm_class().toLowerCase() + '===' + wm_class.toLowerCase());
-            if (focused_window.get_wm_class().toLowerCase() === wm_class.toLowerCase()) {
-                add_transparency = false;
-                found = true;
-                this.maximized_window = focused_window;
-                break;
-            }
-        }
-
-        if (!found) {
-            for (let app_id of Settings.get_trigger_apps()) {
-                let app = Util.get_app_for_window(focused_window);
-                if (!Util.is_undef(app) && app.get_id() === app_id) {
-                    add_transparency = false;
-                    this.maximized_window = focused_window;
-                    break;
-                }
-            }
-        }
-    }
+    /* Change the way 'always trigger' is handled. */
+    // if(!Util.is_undef(focused_window)){let a=!1;for(let b of Settings.get_trigger_windows())if(focused_window.get_wm_class().toLowerCase()===b.toLowerCase()){add_transparency=!1,a=!0,this.maximized_window=focused_window;break}if(!a)for(let a of Settings.get_trigger_apps()){let b=Util.get_app_for_window(focused_window);if(!Util.is_undef(b)&&b.get_id()===a){add_transparency=!1,this.maximized_window=focused_window;break}}}
 
     let transition_params = {};
 
@@ -296,11 +295,10 @@ function _windowUpdated(params) {
             Transitions.fade_in(transition_params);
         }
     } else if (Settings.check_app_settings()) {
-        // TODO: Double check this removed logic.
-        // Oh no... this is messed up.
-        // Theming.set_panel_color();
-        /* Mark as interruptible in case any other more important transition is needed. */
+        // TODO: Debug this more.
+        /* Mark as interruptible in case another more important transition is needed. */
         transition_params.interruptible = true;
+
         if (!add_transparency) {
             Transitions.fade_in(transition_params);
         }
