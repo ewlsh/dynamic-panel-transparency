@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-18 16:52-0500\n"
+"POT-Creation-Date: 2016-09-19 20:57-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: prefs.js/preferences/main.js:32
+#: prefs.js/preferences/main.js:233
 msgid "default"
 msgstr ""
 
-#: prefs.js/preferences/main.js:33 prefs.js/ui/prefs.ui:1430
+#: prefs.js/preferences/main.js:1004 prefs.js/ui/prefs.ui:1430
 msgid "App Tweaks"
 msgstr ""
 
-#: prefs.js/preferences/main.js:34
+#: prefs.js/preferences/main.js:1153
 msgid "Add a Custom WM_CLASS"
 msgstr ""
 

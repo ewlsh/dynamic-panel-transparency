@@ -24,18 +24,6 @@ const gtk30_ = imports.gettext.domain('gtk30').gettext;
 
 const gs_ = imports.gettext.domain('gnome-shell').gettext;
 
-/* Usage of double quotes is allowed for translations. */
-
-/* eslint-disable */
-
-const Dictionary = {
-    'default': _("default"),
-    'App Tweaks': _("App Tweaks"),
-    'Add a Custom WM_CLASS': _("Add a Custom WM_CLASS")
-};
-
-/* eslint-enable */
-
 const GNOME_BACKGROUND_SCHEMA = 'org.gnome.desktop.background';
 
 /* Settings Keys */
@@ -242,7 +230,7 @@ function buildPrefsWidget() {
         /* Init value. */
         speed_scale.adjustment.set_value(settings.get_int(SETTINGS_TRANSITION_SPEED));
         /* Add default marking. */
-        speed_scale.add_mark(settings.get_default_value(SETTINGS_TRANSITION_SPEED).unpack(), Gtk.PositionType.BOTTOM, Dictionary['default']);
+        speed_scale.add_mark(settings.get_default_value(SETTINGS_TRANSITION_SPEED).unpack(), Gtk.PositionType.BOTTOM, _("default"));
         /* Add formatting */
         speed_scale.connect('format-value', Lang.bind(this, function (scale, value) {
             return value + 'ms';
@@ -1013,7 +1001,7 @@ function buildPrefsWidget() {
                 title: app_name
             });
 
-            dialog.get_header_bar().set_subtitle(Dictionary['App Tweaks']);
+            dialog.get_header_bar().set_subtitle( _("App Tweaks"));
 
             dialog.add_button(gtk30_('_Cancel'), Gtk.ResponseType.CANCEL);
             dialog.add_button(gtk30_('_Apply'), Gtk.ResponseType.APPLY);
@@ -1162,7 +1150,7 @@ function buildPrefsWidget() {
 
                 let dialog = new Gtk.Dialog({
                     modal: true,
-                    title: Dictionary['Add a Custom WM_CLASS']
+                    title: _("Add a Custom WM_CLASS")
                 });
 
                 dialog.add_button(gtk30_('_Cancel'), Gtk.ResponseType.CANCEL);

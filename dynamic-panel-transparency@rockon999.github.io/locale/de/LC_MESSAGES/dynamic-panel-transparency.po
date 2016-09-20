@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dynamic Panel Transparany GNOME Shell Extension\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-18 16:52-0500\n"
+"POT-Creation-Date: 2016-09-19 20:57-0500\n"
 "PO-Revision-Date: 2016-09-19 20:09+0200\n"
 "Last-Translator: Jonatan Hatakeyama Zeidler <jonatan_zeidler@gmx.de>\n"
 "Language-Team: Jonatan H. Zeidler <jonatan_zeidler@gmx.de>\n"
@@ -18,15 +18,15 @@ msgstr ""
 "X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: prefs.js/preferences/main.js:32
+#: prefs.js/preferences/main.js:233
 msgid "default"
 msgstr "Vorgabe"
 
-#: prefs.js/preferences/main.js:33 prefs.js/ui/prefs.ui:1430
+#: prefs.js/preferences/main.js:1004 prefs.js/ui/prefs.ui:1430
 msgid "App Tweaks"
 msgstr "Anwendungsoptimierung"
 
-#: prefs.js/preferences/main.js:34
+#: prefs.js/preferences/main.js:1153
 msgid "Add a Custom WM_CLASS"
 msgstr "Angepasste WM_CLASS hinzufügen\t"
 
