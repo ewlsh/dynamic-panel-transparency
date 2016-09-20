@@ -220,7 +220,7 @@ msgstr ""
 msgid ""
 "A WM_CLASS is a code that identifies a window. Use this setting if the "
 "window you want custom settings for is not part of an application. You can "
-"find a window's WM_CLASS with the command 'xprop WM_CLASS'. Enter the first "
+"find a window's WM_CLASS with the command 'xprop WM_CLASS'. Enter the second "
 "result from 'xprop WM_CLASS' below without quotation marks."
 msgstr ""
 

@@ -240,6 +240,7 @@ function _windowUpdated(params) {
 
             if (Settings.check_app_settings()) {
                 for (let wm_class of Settings.get_trigger_windows()) {
+                    // DEBUG: log(current_window.get_wm_class().toLowerCase() + ' === ' +  wm_class.toLowerCase());
                     if (current_window.get_wm_class().toLowerCase() === wm_class.toLowerCase()) {
                         add_transparency = false;
                         this.maximized_window = current_window;

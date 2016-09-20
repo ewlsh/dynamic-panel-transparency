@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-18 16:52-0500\n"
+"POT-Creation-Date: 2016-09-19 20:57-0500\n"
 "PO-Revision-Date: 2016-03-07 11:13-0300\n"
 "Last-Translator: Fábio Nogueira <fnogueira@gnome.org>\n"
 "Language-Team: rockon999 <>\n"
@@ -19,15 +19,15 @@ msgstr ""
 "X-Generator: Poedit 1.8.7\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: prefs.js/preferences/main.js:32
+#: prefs.js/preferences/main.js:233
 msgid "default"
 msgstr "padrão"
 
-#: prefs.js/preferences/main.js:33 prefs.js/ui/prefs.ui:1430
+#: prefs.js/preferences/main.js:1004 prefs.js/ui/prefs.ui:1430
 msgid "App Tweaks"
 msgstr ""
 
-#: prefs.js/preferences/main.js:34
+#: prefs.js/preferences/main.js:1153
 msgid "Add a Custom WM_CLASS"
 msgstr ""
 
@@ -232,7 +232,7 @@ msgstr ""
 msgid ""
 "A WM_CLASS is a code that identifies a window. Use this setting if the "
 "window you want custom settings for is not part of an application. You can "
-"find a window's WM_CLASS with the command 'xprop WM_CLASS'. Enter the first "
+"find a window's WM_CLASS with the command 'xprop WM_CLASS'. Enter the second "
 "result from 'xprop WM_CLASS' below without quotation marks."
 msgstr ""
 
