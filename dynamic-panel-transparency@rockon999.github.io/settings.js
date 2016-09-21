@@ -170,16 +170,16 @@ function bind() {
 
                 if (!Util.is_undef(maximized_window) && this.check_app_settings() && params.app_settings) {
                     if (!Util.is_undef(this.window_settings_manager[setting.name])) {
-                        let value = this.window_settings_manager[setting.name][maximized_window.get_wm_class().toLowerCase()];
+                        let value = this.window_settings_manager[setting.name][maximized_window.get_wm_class()];
                         if (!Util.is_undef(value)) {
                             let window_setting = this.app_keys[setting.key];
                             let window_parser = ((!Util.is_undef(window_setting) && window_setting.parser !== null) ? window_setting.parser : function (input) {
                                 return input;
                             });
                             if (!Util.is_undef(value)) {
-                                let result = window_parser(value, parser(this.settings_manager[setting.name]), maximized_window.get_wm_class().toLowerCase(), true);
+                                let result = window_parser(value, parser(this.settings_manager[setting.name]), maximized_window.get_wm_class(), true);
                                 if (params.app_info) {
-                                    return { value: result, app_info: maximized_window.get_wm_class().toLowerCase() };
+                                    return { value: result, app_info: maximized_window.get_wm_class() };
                                 }
                                 return result;
                             }

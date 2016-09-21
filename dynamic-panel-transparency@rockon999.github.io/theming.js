@@ -340,7 +340,20 @@ function clear_corner_color() {
 function get_background_color() {
     let custom = Settings.get_panel_color({ app_info: true });
 
-    if (!Settings.enable_custom_background_color() && custom.app_info === null) {
+    if (custom.app_info !== null && Settings.check_app_settings()) {
+        if (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info]) {
+            return custom.value;
+        } else {
+            if (!Settings.enable_custom_background_color()) {
+                return this.theme_background_color;
+            }
+
+            let original = Settings.get_panel_color({ app_settings: false });
+            return original;
+        }
+    }
+
+    if (!Settings.enable_custom_background_color()) {
         return this.theme_background_color;
     } else {
         return custom.value;
@@ -353,12 +366,30 @@ function get_background_color() {
  * @returns {Number} opacity - Alpha value from 0-255
  */
 
-//TODO: Needs better system to determine when default theme opacities are too low.
+// TODO: Needs better system to determine when default theme opacities are too low.
 function get_maximized_opacity() {
     let custom = Settings.get_maximized_opacity({ app_info: true });
 
+    if (custom.app_info !== null && Settings.check_app_settings()) {
+        if (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info]) {
+            return custom.value;
+        }
+
+        if (!Settings.enable_custom_opacity()) {
+            if (this.theme_opacity >= THEME_DETECTION_MINIMUM_OPACITY) {
+                return this.theme_opacity;
+            } else {
+                /* Get the default value */
+                return Settings.get_maximized_opacity({ default: true });
+            }
+        }
+
+        let original = Settings.get_maximized_opacity({ app_settings: false });
+        return original;
+    }
+
     /* 1) Make sure we want a custom opacity. 2) If custom.app_info !== null that means the setting is overriden. */
-    if (!Settings.enable_custom_opacity() && custom.app_info === null) {
+    if (!Settings.enable_custom_opacity()) {
         if (this.theme_opacity >= THEME_DETECTION_MINIMUM_OPACITY) {
             return this.theme_opacity;
         } else {
