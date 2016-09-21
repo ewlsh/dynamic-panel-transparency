@@ -257,7 +257,7 @@ function initialize_settings() {
         name: 'maximized_opacity',
         type: 'i'
         // TODO: This is a hack of the parsing system.
-       /* parser: Lang.bind(this,function(a,b,c,d=false){if(d){if(Settings.window_settings_manager.enable_background_tweaks[c])return a}else if(Settings.app_settings_manager.enable_background_tweaks[c])return a;return!Settings.enable_custom_opacity()&&Theming.theme_opacity>=Theming.THEME_DETECTION_MINIMUM_OPACITY?Theming.theme_opacity:b}); */
+        /* parser: Lang.bind(this,function(a,b,c,d=false){if(d){if(Settings.window_settings_manager.enable_background_tweaks[c])return a}else if(Settings.app_settings_manager.enable_background_tweaks[c])return a;return!Settings.enable_custom_opacity()&&Theming.theme_opacity>=Theming.THEME_DETECTION_MINIMUM_OPACITY?Theming.theme_opacity:b}); */
     });
     Settings.add_app_override({
         settings_key: 'panel-color',
@@ -265,7 +265,7 @@ function initialize_settings() {
         type: '(iii)',
         parser: COLOR_PARSER
         // TODO: This is a hack of the parsing system.
-       /* parser: Lang.bind(this,function(a,b,c,d=false){if(d){if(Settings.window_settings_manager.enable_background_tweaks[c])return COLOR_PARSER(a)}else if(Settings.app_settings_manager.enable_background_tweaks[c])return COLOR_PARSER(a);return Settings.enable_custom_background_color()?b:Theming.theme_background_color}); */
+        /* parser: Lang.bind(this,function(a,b,c,d=false){if(d){if(Settings.window_settings_manager.enable_background_tweaks[c])return COLOR_PARSER(a)}else if(Settings.app_settings_manager.enable_background_tweaks[c])return COLOR_PARSER(a);return Settings.enable_custom_background_color()?b:Theming.theme_background_color}); */
     });
 
     /* After we've given Settings the necessary information... let's bind these. */
@@ -314,10 +314,13 @@ function modify_panel() {
 
 
 function disable() {
+    /* Do this first in case any of the upcoming methods fail. */
+    Theming.set_panel_color({ red: 0, green: 0, blue: 0, alpha: 0 });
+
     /* Disconnect & Null Signals */
     Events.cleanup();
 
-    /* Remove Our Panel Coloring */
+    /* Remove our custom coloring *again* just to be sure no events recolored it while we were cleaning up. */
     Theming.set_panel_color({
         red: 0,
         green: 0,
