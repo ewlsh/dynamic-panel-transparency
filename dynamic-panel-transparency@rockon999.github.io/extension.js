@@ -33,7 +33,7 @@ function enable() {
     Transitions.init();
     Theming.init();
 
-    /* Delay the extension so we can retreive the background color */
+    /* Delay the extension so we can retreive the theme background color. */
     Mainloop.idle_add(Lang.bind(this, function () {
         let bg = Panel.actor.get_theme_node().get_background_color();
         // Freeze the object.
