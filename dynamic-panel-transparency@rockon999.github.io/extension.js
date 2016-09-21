@@ -255,47 +255,17 @@ function initialize_settings() {
     Settings.add_app_override({
         settings_key: 'maximized-opacity',
         name: 'maximized_opacity',
-        type: 'i',
+        type: 'i'
         // TODO: This is a hack of the parsing system.
-        parser: Lang.bind(this, function (input, def, uuid, window = false) {
-            if (window) {
-                if (Settings.window_settings_manager['enable_background_tweaks'][uuid]) {
-                    return input;
-                }
-            } else {
-                if (Settings.app_settings_manager['enable_background_tweaks'][uuid]) {
-                    return input;
-
-                }
-            }
-            // TODO: I dislike this placement.
-            if (!Settings.enable_custom_opacity() && Theming.theme_opacity >= Theming.THEME_DETECTION_MINIMUM_OPACITY) {
-                return Theming.theme_opacity;
-            }
-            return def;
-        })
+       /* parser: Lang.bind(this,function(a,b,c,d=false){if(d){if(Settings.window_settings_manager.enable_background_tweaks[c])return a}else if(Settings.app_settings_manager.enable_background_tweaks[c])return a;return!Settings.enable_custom_opacity()&&Theming.theme_opacity>=Theming.THEME_DETECTION_MINIMUM_OPACITY?Theming.theme_opacity:b}); */
     });
     Settings.add_app_override({
         settings_key: 'panel-color',
         name: 'panel_color',
         type: '(iii)',
+        parser: COLOR_PARSER
         // TODO: This is a hack of the parsing system.
-        parser: Lang.bind(this, function (input, def, uuid, window = false) {
-            if (window) {
-                if (Settings.window_settings_manager['enable_background_tweaks'][uuid]) {
-                    return COLOR_PARSER(input);
-                }
-            } else {
-                if (Settings.app_settings_manager['enable_background_tweaks'][uuid]) {
-                    return COLOR_PARSER(input);
-                }
-            }
-            // TODO: I dislike this placement.
-            if (!Settings.enable_custom_background_color()) {
-                return Theming.theme_background_color;
-            }
-            return def;
-        })
+       /* parser: Lang.bind(this,function(a,b,c,d=false){if(d){if(Settings.window_settings_manager.enable_background_tweaks[c])return COLOR_PARSER(a)}else if(Settings.app_settings_manager.enable_background_tweaks[c])return COLOR_PARSER(a);return Settings.enable_custom_background_color()?b:Theming.theme_background_color}); */
     });
 
     /* After we've given Settings the necessary information... let's bind these. */
