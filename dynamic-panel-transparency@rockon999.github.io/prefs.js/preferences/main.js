@@ -205,6 +205,7 @@ function buildPrefsWidget() {
 
     let enable_text_color = settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR);
     let enable_maximized_text_color = settings.get_boolean(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR);
+
     if (enable_maximized_text_color && enable_text_color) {
         let maximized_text_color = settings.get_value(SETTINGS_MAXIMIZED_TEXT_COLOR).deep_unpack();
         panel_demo.set_text_color({ red: maximized_text_color[RED], green: maximized_text_color[GREEN], blue: maximized_text_color[BLUE], alpha: 1.0 });
@@ -266,6 +267,10 @@ function buildPrefsWidget() {
             text_color_revealer.set_reveal_child(state);
 
             let enable_maximized_text_color = settings.get_boolean(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR);
+            if (temp_settings.has(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR)) {
+                enable_maximized_text_color = temp_settings.get(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR).unpack();
+            }
+
             if (enable_maximized_text_color && state) {
                 let maximized_text_color = settings.get_value(SETTINGS_MAXIMIZED_TEXT_COLOR).deep_unpack();
                 if (temp_settings.has(SETTINGS_MAXIMIZED_TEXT_COLOR)) {
