@@ -9,6 +9,9 @@ const Settings = Me.imports.settings;
 const Events = Me.imports.events;
 const Util = Me.imports.util;
 
+/* eslint-disable */
+
+/* Simple function that converts stored color tuples and/or arrays into js objects. */
 const COLOR_PARSER = function (input) {
     let color = { red: input[0], green: input[1], blue: input[2] };
     if (input.length === 4) {
@@ -16,6 +19,8 @@ const COLOR_PARSER = function (input) {
     }
     return color;
 };
+
+/* eslint-enable */
 
 
 const Main = imports.ui.main;
@@ -27,24 +32,35 @@ function init() { }
 const Mainloop = imports.mainloop;
 
 function enable() {
+    /* Initialize Settings */
     initialize_settings();
 
     /* Initialize Utilities */
     Transitions.init();
     Theming.init();
 
-    /* Delay the extension so we can retreive the theme background color. */
+    /* Delay the extension so we can retreive the theme background color (why are user themes an extensions?). */
     Mainloop.idle_add(Lang.bind(this, function () {
         let bg = Panel.actor.get_theme_node().get_background_color();
-        // Freeze the object.
+
+        /* Store user theme values. */
         Theming.set_theme_background_color(Util.clutter_to_native_color(bg));
         Theming.set_theme_opacity(bg.alpha);
-        // Debug?
-        log('Detected user theme style: rgba(' + bg.red + ', ' + bg.green + ', ' + bg.blue + ', ' + bg.alpha + ')');
-        // Start the event loop.
+
+        // DEBUG: log('Detected user theme style: rgba(' + bg.red + ', ' + bg.green + ', ' + bg.blue + ', ' + bg.alpha + ')');
+        /* Start the event loop. */
         Events.init();
-        // Modify the panel.
+
+        /* Modify the panel. */
         modify_panel();
+
+        /* Setup maximization listeners. */
+        Events._workspacesChanged();
+
+        /* Simulate window changes. */
+        Events._windowUpdated({
+            force: true
+        });
     }));
 }
 
@@ -302,14 +318,6 @@ function modify_panel() {
     if (Settings.get_enable_text_color()) {
         Theming.set_text_color();
     }
-
-    /* Setup maximization listeners. */
-    Events._workspacesChanged();
-
-    /* Simulate window changes. */
-    Events._windowUpdated({
-        force: true
-    });
 }
 
 
