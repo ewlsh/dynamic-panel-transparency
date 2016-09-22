@@ -35,6 +35,9 @@ const Main = imports.ui.main;
  *
  */
 function init() {
+    this.workspaces = [];
+    this.windows = [];
+
     this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, function () {
         _windowUpdated();
     }));
@@ -147,6 +150,7 @@ function cleanup() {
  *
  */
 function _workspacesChanged() {
+    /* Reset tracking arrays everytime a workspace is added. */
     this.workspaces = [];
     this.windows = [];
 

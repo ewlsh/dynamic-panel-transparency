@@ -15,24 +15,21 @@ const Main = imports.ui.main;
 const Panel = Main.panel;
 
 const THEME_DETECTION_MINIMUM_OPACITY = 150;
-
 const SCALE_FACTOR = 255;
 
 /**
  * Intialize.
  *
  */
-
 function init() {
     this.stylesheets = [];
     this.styles = [];
 }
 
 /**
- * Used to release any held assets of this file.
+ * Used to release any held assets of theming.
  *
  */
-
 function cleanup() {
     for (let sheet of this.stylesheets) {
         let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
@@ -193,7 +190,7 @@ function register_text_color(color, prefix) {
  */
 
 function set_text_color(prefix) {
-    if (this.current_prefix !== null) {
+    if (!Util.is_undef(this.current_prefix)) {
         Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'text-color');
         Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'icon-color');
         Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'arrow-color');

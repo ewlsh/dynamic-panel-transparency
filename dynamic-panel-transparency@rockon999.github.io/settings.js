@@ -128,7 +128,14 @@ function bind() {
         })));
 
         if (!Util.is_undef(setting.handler)) {
-            this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, setting.handler));
+            this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, function () {
+                // TODO: Find a better way to handle settings being changed right as the extension starts up.
+                try {
+                    setting.handler.call(this);
+                } catch (e) {
+                    log(e);
+                }
+            }));
         }
 
         let parser = (setting.parser !== null ? setting.parser : function (input) {
