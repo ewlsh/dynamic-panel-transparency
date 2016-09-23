@@ -325,8 +325,8 @@ const AppSettingsManager = new Lang.Class({
         }
     },
     unbind: function () {
-        for (let app_id in Object.keys(this.settings)) {
-            for (let id in this.settingsBoundIds[app_id]) {
+        for (let app_id of Object.keys(this.settings)) {
+            for (let id of this.settingsBoundIds[app_id]) {
                 this.settings[app_id].disconnect(id);
             }
         }

@@ -273,9 +273,6 @@ function _windowUpdated(params) {
         }
     }
 
-    /* Change the way 'always trigger' is handled. */
-    // if(!Util.is_undef(focused_window)){let a=!1;for(let b of Settings.get_trigger_windows())if(focused_window.get_wm_class().toLowerCase()===b.toLowerCase()){add_transparency=!1,a=!0,this.maximized_window=focused_window;break}if(!a)for(let a of Settings.get_trigger_apps()){let b=Util.get_app_for_window(focused_window);if(!Util.is_undef(b)&&b.get_id()===a){add_transparency=!1,this.maximized_window=focused_window;break}}}
-
     let transition_params = {};
 
     if ('time' in params) {
