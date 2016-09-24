@@ -46,7 +46,7 @@ function enable() {
         Theming.set_theme_background_color(Util.clutter_to_native_color(theme_background));
         Theming.set_theme_opacity(theme_background.alpha);
 
-        // DEBUG: log('Detected user theme style: rgba(' + bg.red + ', ' + bg.green + ', ' + bg.blue + ', ' + bg.alpha + ')');
+        log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + theme_background.red + ', ' + theme_background.green + ', ' + theme_background.blue + ', ' + theme_background.alpha + ')');
 
         /* Start the event loop. */
         Events.init();
@@ -313,7 +313,7 @@ function initialize_settings() {
         parser: COLOR_PARSER
     });
 
-    /* After we've given Settings the necessary information... let's bind these. */
+    /* After we've given Settings the necessary information... let's bind it. */
     Settings.bind();
 }
 

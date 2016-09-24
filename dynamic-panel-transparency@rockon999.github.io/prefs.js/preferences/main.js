@@ -152,8 +152,7 @@ function buildPrefsWidget() {
     }));
 
     /* Panel used to demonstrate the user's settings. */
-    // TODO: Actually take from settings.
-    // DONE: Most visual aspects are now taken from settings. No theme detection in preview though.
+    // TODO: Theme detection in the preview.
     let panel_background = builder.get_object('panel_demo_background');
     let panel_overlay = builder.get_object('panel_overlay');
     panel_overlay.add_overlay(panel_background);

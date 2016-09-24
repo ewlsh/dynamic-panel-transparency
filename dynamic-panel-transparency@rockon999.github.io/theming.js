@@ -75,7 +75,6 @@ function set_theme_opacity(alpha) {
  * @param {Number} text_color.alpha - Alpha value ranging from 0-1.0 with support for two decimal places.
  * @param {Number[]} text_position - Integer array containing horizontal offset, vertical offset, radius. (in that order)
  */
-
 function add_text_shadow(text_color, text_position) {
     let text_color_css = 'rgba(' + text_color.red + ', ' + text_color.green + ', ' + text_color.blue + ', ' + text_color.alpha.toFixed(2) + ')';
     let text_position_css = '' + text_position[0] + 'px ' + text_position[1] + 'px ' + text_position[2] + 'px';
@@ -97,7 +96,6 @@ function add_text_shadow(text_color, text_position) {
  * @param {Number} icon_color.alpha - Alpha value ranging from 0-1.0 with support for two decimal places.
  * @param {Number[]} icon_position - Integer array containing horizontal offset, vertical offset, radius. (in that order)
  */
-
 function add_icon_shadow(icon_color, icon_position) {
     let icon_color_css = 'rgba(' + icon_color.red + ', ' + icon_color.green + ', ' + icon_color.blue + ', ' + icon_color.alpha.toFixed(2) + ')';
     let icon_position_css = '' + icon_position[0] + 'px ' + icon_position[1] + 'px ' + icon_position[2] + 'px';
@@ -118,7 +116,6 @@ function add_icon_shadow(icon_color, icon_position) {
  *
  * @returns {Boolean} If the panel has text shadowing.
  */
-
 function has_text_shadow() {
     return Panel.actor.has_style_class_name('dpt-panel-text-shadow');
 }
@@ -128,7 +125,6 @@ function has_text_shadow() {
  *
  * @returns {Boolean} If the panel has icon shadowing.
  */
-
 function has_icon_shadow() {
     return (Panel.actor.has_style_class_name('dpt-panel-icon-shadow') || Panel.actor.has_style_class_name('dpt-panel-arrow-shadow'));
 }
@@ -137,7 +133,6 @@ function has_icon_shadow() {
  * Removes any text shadowing; deregistering the stylesheet and removing the css.
  *
  */
-
 function remove_text_shadow() {
     deregister_style('dpt-panel-text-shadow');
     Panel.actor.remove_style_class_name('dpt-panel-text-shadow');
@@ -147,7 +142,6 @@ function remove_text_shadow() {
  * Removes any icon shadowing; deregistering the stylesheet and removing the css.
  *
  */
-
 function remove_icon_shadow() {
     deregister_style('dpt-panel-icon-shadow');
     deregister_style('dpt-panel-arrow-shadow');
@@ -164,7 +158,6 @@ function remove_icon_shadow() {
  * @param {Number} color.blue - Blue value ranging from 0-255.
  * @param {string} prefix - What prefix to apply to the stylesheet. '-' is the default.
  */
-
 function register_text_color(color, prefix) {
     let color_css = 'color: rgb(' + color.red + ', ' + color.green + ', ' + color.blue + ');';
 
@@ -188,7 +181,6 @@ function register_text_color(color, prefix) {
  *
  * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
  */
-
 function set_text_color(prefix) {
     if (!Util.is_undef(this.current_prefix)) {
         Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'text-color');
@@ -260,7 +252,6 @@ function deregister_style(style) {
  * @param {Number} color.blue - Blue value ranging from 0-255.
  * @param {Number} color.alpha - Alpha value ranging from 0-255.
  */
-
 function set_panel_color(color) {
     let panel_color = get_background_color();
     let current_alpha = get_background_alpha(Panel.actor);
@@ -318,7 +309,6 @@ function set_corner_color(color) {
  * Removes any corner styling this extension has applied.
  *
  */
-
 function clear_corner_color() {
     Panel._leftCorner.actor.set_style(null);
     Panel._rightCorner.actor.set_style(null);
@@ -327,17 +317,12 @@ function clear_corner_color() {
 /**
  * Returns the user's desired panel color from Settings. Handles theme detection again.
  *
- * @returns {Object} color - Object containing an RGBA color value.
- * @returns {Number} color.red - Red value ranging from 0-255.
- * @returns {Number} color.green - Green value ranging from 0-255.
- * @returns {Number} color.blue - Blue value ranging from 0-255.
- * @returns {Number} color.alpha - Alpha value ranging from 0-255.
+ * @returns {Object} Object containing an RGBA color value.
  */
-
 function get_background_color() {
     let custom = Settings.get_panel_color({ app_info: true });
 
-    if (custom.app_info !== null && Settings.check_app_settings()) {
+    if (custom.app_info !== null && Settings.check_overrides()) {
         if (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info]) {
             return custom.value;
         } else {
@@ -360,14 +345,14 @@ function get_background_color() {
 /**
  * Returns the user's desired maximized panel opacity from Settings or their theme.
  *
- * @returns {Number} opacity - Alpha value from 0-255
+ * @returns {Number} Alpha value from 0-255.
  */
 
 // TODO: Needs better system to determine when default theme opacities are too low.
 function get_maximized_opacity() {
     let custom = Settings.get_maximized_opacity({ app_info: true });
 
-    if (custom.app_info !== null && Settings.check_app_settings()) {
+    if (custom.app_info !== null && Settings.check_overrides()) {
         if (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info]) {
             return custom.value;
         }
@@ -400,7 +385,7 @@ function get_maximized_opacity() {
 /**
  * Returns the user's desired unmaximized panel opacity from Settings or their theme.
  *
- * @returns {Number} opacity - Alpha value from 0-255
+ * @returns {Number} Alpha value from 0-255.
  */
 function get_unmaximized_opacity() {
     if (Settings.enable_custom_opacity()) {
@@ -414,7 +399,6 @@ function get_unmaximized_opacity() {
  * Applies the style class 'panel-full-transparency' and removes the basic CSS preventing this extension's transitions.
  *
  */
-
 function strip_panel_styling() {
     Panel.actor.add_style_class_name('panel-full-transparency');
 }
@@ -423,7 +407,6 @@ function strip_panel_styling() {
  * Removes the style class 'panel-full-transparency' and enables the stock CSS preventing this extension's transitions.
  *
  */
-
 function reapply_panel_styling() {
     Panel.actor.remove_style_class_name('panel-full-transparency');
 }
@@ -432,7 +415,6 @@ function reapply_panel_styling() {
  * Applies the style class 'panel-strip-background' and removes any CSS embellishments.
  *
  */
-
 function strip_panel_background() {
     Panel.actor.add_style_class_name('panel-strip-background');
 }
@@ -441,7 +423,6 @@ function strip_panel_background() {
  * Reapplies the style class 'panel-strip-background' and enables any CSS embellishments.
  *
  */
-
 function reapply_panel_background() {
     Panel.actor.remove_style_class_name('panel-strip-background');
 }
@@ -454,7 +435,6 @@ function reapply_panel_background() {
  *
  * @returns {string} Filename of the stylesheet.
  */
-
 function apply_stylesheet_css(css, name) {
     let file_name = Me.dir.get_path() + '/styles/' + name + '.dpt.css';
     /* Write to the file. */
@@ -465,7 +445,7 @@ function apply_stylesheet_css(css, name) {
     if (Compatibility.st_theme_load_stylesheet(theme, file_name)) {
         this.stylesheets.push(file_name);
     } else {
-        log('Error Loading Temporary Stylesheet: ' + name);
+        log('[Dynamic Panel Transparency] Error Loading Temporary Stylesheet: ' + name);
     }
     return file_name;
 }

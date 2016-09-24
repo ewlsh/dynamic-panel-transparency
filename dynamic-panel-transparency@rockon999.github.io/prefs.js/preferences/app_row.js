@@ -26,8 +26,9 @@ const AppRow = new Lang.Class({
 
         let icn = app_info.get_icon();
         let img = null;
+
         if (typeof (icn) !== 'undefined' && icn !== null) {
-            img = image_from_gicon(icn);
+            img = Gtk.Image.new_from_gicon(icn, Gtk.IconSize.MENU);
             grid.attach(img, 0, 0, 1, 1);
         }
 
@@ -83,13 +84,6 @@ const CustomRow = new Lang.Class({
 
         let grid = new Gtk.Grid({ column_spacing: 10 });
 
-        /*let icn = app_info.get_icon();
-        let img = null;
-        if (typeof (icn) !== 'undefined' && icn !== null) {
-            img = image_from_gicon(icn);
-            grid.attach(img, 0, 0, 1, 1);
-        }*/
-
         let lbl = new Gtk.Label({ label: this.wm_class, xalign: 0.0 });
         grid.attach(lbl, 0, 0, 1, 1);
         lbl.hexpand = true;
@@ -141,18 +135,3 @@ const AddAppRow = new Lang.Class({
         this.add(this.btn);
     }
 });
-
-function image_from_gicon(gicon) {
-    let image = Gtk.Image.new_from_gicon(gicon, Gtk.IconSize.DIALOG);
-    let valid, width, height;
-    Gtk.IconSize.lookup(Gtk.IconSize.DIALOG, valid, width, height);
-    if (!valid) {
-        log('No valid height or icon width found.');
-        height = 16;
-    }
-    image.set_pixel_size(height);
-    return image;
-}
-
-
-

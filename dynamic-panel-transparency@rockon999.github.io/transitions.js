@@ -40,7 +40,6 @@ function init() {
  * Freeup any held assets on disable.
  *
  */
-
 function cleanup() {
     this.animation_status = null;
     this.transition_type = null;
@@ -381,7 +380,7 @@ const AnimationAction = {
     FADING_OUT: 0,
     FADING_IN: 1
 };
-Object.freeze(AnimationAction);
+Util.deep_freeze(AnimationAction);
 
 const AnimationDestination = {
     BLANK: 0,

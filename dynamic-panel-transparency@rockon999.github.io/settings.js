@@ -1,4 +1,4 @@
-/* exported init, cleanup, add, add_app_override, check_app_settings, bind, unbind, bind_app_settings */
+/* exported init, cleanup, add, add_app_override, check_overrides, check_triggers, bind, unbind, bind_app_settings */
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
@@ -107,12 +107,13 @@ function add_app_override(params) {
 
 }
 
-function check_app_settings() {
-    return (this.get_app_overrides().length > 0) || (this.get_window_overrides().length > 0) || (this.get_trigger_apps().length > 0) || (this.get_trigger_windows().length > 0);
+function check_overrides() {
+    return (this.get_app_overrides().length > 0) || (this.get_window_overrides().length > 0);
 }
 
-// TODO: Determine if this code is completely useless.
-// function bind_app_settings(){for(let a of this.get_app_overrides())for(let b of Object.keys(this.app_keys)){let c=this.app_keys[b];Util.is_undef(this.app_settings_manager[c])||Util.is_undef(c)||this.settingsBoundIds.push(this.settings.connect("changed::"+c.key,Lang.bind(this,function(){this.app_settings_manager.update(c,a)})))}for(let b of this.get_window_overrides())for(let a of Object.keys(this.app_keys)){let c=this.app_keys[a];Util.is_undef(this.window_settings_manager[c])||Util.is_undef(c)||this.settingsBoundIds.push(this.settings.connect("changed::"+c.key,Lang.bind(this,function(){this.window_settings_manager.update(c,b)})))}}
+function check_triggers() {
+    return (this.get_trigger_apps().length > 0) || (this.get_trigger_windows().length > 0);
+}
 
 function bind() {
     this.settings_manager = new SettingsManager(this.settings, this.keys);
@@ -133,6 +134,7 @@ function bind() {
                 try {
                     setting.handler.call(this);
                 } catch (e) {
+                    log('[Dynamic Panel Transparency] Error handling setting (' + setting.key + ') change.');
                     log(e);
                 }
             }));
@@ -175,7 +177,7 @@ function bind() {
 
                 let maximized_window = Events.get_current_maximized_window();
 
-                if (!Util.is_undef(maximized_window) && this.check_app_settings() && params.app_settings) {
+                if (!Util.is_undef(maximized_window) && this.check_overrides() && params.app_settings) {
                     if (!Util.is_undef(this.window_settings_manager[setting.name])) {
                         let value = this.window_settings_manager[setting.name][maximized_window.get_wm_class()];
                         if (!Util.is_undef(value)) {

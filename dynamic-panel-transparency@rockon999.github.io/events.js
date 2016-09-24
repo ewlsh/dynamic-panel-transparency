@@ -242,9 +242,8 @@ function _windowUpdated(params) {
         for (let i = windows.length - 1; i >= 0; --i) {
             let current_window = windows[i];
 
-            if (Settings.check_app_settings()) {
+            if (Settings.check_triggers()) {
                 for (let wm_class of Settings.get_trigger_windows()) {
-                    // DEBUG: log(current_window.get_wm_class().toLowerCase() + ' === ' +  wm_class.toLowerCase());
                     if (current_window.get_wm_class() === wm_class) {
                         add_transparency = false;
                         this.maximized_window = current_window;
@@ -265,7 +264,7 @@ function _windowUpdated(params) {
             if (current_window !== excluded_window && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
                 this.maximized_window = current_window;
                 add_transparency = false;
-                if (!Settings.check_app_settings()) {
+                if (!Settings.check_overrides() && !Settings.check_triggers()) {
                     break;
                 }
 
@@ -296,7 +295,7 @@ function _windowUpdated(params) {
         } else {
             Transitions.fade_in(transition_params);
         }
-    } else if (Settings.check_app_settings()) {
+    } else if (Settings.check_overrides() || Settings.check_triggers()) {
         // TODO: Debug this more.
         /* Mark as interruptible in case another more important transition is needed. */
         transition_params.interruptible = true;
@@ -326,10 +325,6 @@ function _screenShieldActivated() {
             blank: true,
             time: 0
         });
-
-        // TODO: Figure out why I did this...
-
-        /* Transitions.hide_corners({ opacity: 0 }); */
     } else {
         /* make sure we don't have any odd coloring on the screenShield */
         Transitions.blank_fade_out({
@@ -344,7 +339,7 @@ function _screenShieldActivated() {
  *
  */
 function _windowRestacked() {
-    if (Settings.check_app_settings()) {
+    if (Settings.check_overrides() || Settings.check_triggers()) {
         _windowUpdated();
     }
 }
