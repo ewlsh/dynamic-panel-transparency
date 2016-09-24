@@ -13,12 +13,12 @@
     <key name="maximized-opacity" type="i">
       <default>255</default>
       <summary>Maximized Opacity</summary>
-      <description>The opacity of the panel when there are maximized windows.</description>
+      <description>The opacity of the panel when there are maximized windows [0-255].</description>
     </key>
     <key name="unmaximized-opacity" type="i">
       <default>0</default>
       <summary>Unmaximized Opacity</summary>
-      <description>The opacity of the panel when there are no maximized windows.</description>
+      <description>The opacity of the panel when there are no maximized windows [0-255].</description>
     </key>
     <key name="hide-corners" type="b">
       <default>true</default>
@@ -33,77 +33,77 @@
     <key name="panel-color" type="ai">
       <default>[0,0,0]</default>
       <summary>Panel Color</summary>
-      <description>The color of the panel.</description>
+      <description>The background color of the panel.</description>
     </key>
     <key name="enable-opacity" type="b">
       <default>false</default>
-      <summary>Detect the user's theme</summary>
-      <description>Uses the panel or dash to get the user's panel color.</description>
+      <summary>Enable custom opacities</summary>
+      <description>Whether to enable custom opacities or use the theme values.</description>
     </key>
     <key name="enable-background-color" type="b">
       <default>false</default>
-      <summary>Detect the user's theme</summary>
-      <description>Uses the panel or dash to get the user's panel color.</description>
+      <summary>Enable custom background color</summary>
+      <description>Whether to enable custom coloring or use the theme value.</description>
     </key>
     <key name="user-theme-source" enum="org.gnome.shell.extensions.dynamic-panel-transparency.themeSource">
       <default>'Dash'</default>
-      <summary>Source for detecting the user's theme</summary>
-      <description>Object used to get the user's preferred background color.</description>
+      <summary>[DEPRECATED] Source for detecting the user's theme</summary>
+      <description>[DEPRECATED] No longer used.</description>
     </key>
     <key name="text-shadow" type="b">
       <default>false</default>
-      <summary>Add shadowing to text.</summary>
+      <summary>Add shadowing to text</summary>
       <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
     </key>
     <key name="icon-shadow" type="b">
       <default>false</default>
-      <summary>Add shadowing to icons.</summary>
-      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
+      <summary>Add shadowing to icons</summary>
+      <description>Adds a shadowing effect to make the panel's icons visible on light backgrounds.</description>
     </key>
     <key name="text-shadow-position" type="(iii)">
       <default>(0,3,5)</default>
-      <summary>Add shadowing to text and icons.</summary>
-      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
+      <summary>Text shadow position</summary>
+      <description>The position of the text shadow. (h-offset, v-offset, radius)</description>
     </key>
     <key name="icon-shadow-position" type="(iii)">
       <default>(0,2,5)</default>
-      <summary>Add shadowing to text and icons.</summary>
-      <description>Adds a shadowing effect to make the panel's text readable on light backgrounds.</description>
+      <summary>Icon shadow position</summary>
+      <description>The position of the icon shadow. (h-offset, v-offset, radius)</description>
     </key>
     <key name="icon-shadow-color" type="(iiid)">
       <default>(0,0,0,0.5)</default>
       <summary>Color of shadowing for icons.</summary>
-      <description>.</description>
+      <description>The color of the icon shadow. (red, green, blue, alpha)</description>
     </key>
     <key name="text-shadow-color" type="(iiid)">
       <default>(0,0,0,1.0)</default>
       <summary>Color of shadowing for text.</summary>
-      <description>.</description>
+      <description>The color of the text shadow. (red, green, blue, alpha)</description>
     </key>
     <key name="text-color" type="(iii)">
       <default>(255,255,255)</default>
       <summary>What color the panel text should be.</summary>
-      <description>Used to determine what color the panel text should be.</description>
+      <description>What color the panel text should be.</description>
     </key>
     <key name="maximized-text-color" type="(iii)">
       <default>(255,255,255)</default>
-      <summary>What color the panel text should be.</summary>
-      <description>Used to determine what color the panel text should be.</description>
+      <summary>What color the maximized panel text should be.</summary>
+      <description>What color the panel text should be when windows are maximized</description>
     </key>
     <key name="enable-text-color" type="b">
       <default>false</default>
-      <summary>What color the panel text should be.</summary>
-      <description>Used to determine what color the panel text should be.</description>
+      <summary>Enable custom text color</summary>
+      <description>Whether to enable custom primary text coloring or use the user's theme values.</description>
     </key>
     <key name="enable-maximized-text-color" type="b">
       <default>false</default>
-      <summary>What color the panel text should be.</summary>
-      <description>Used to determine what color the panel text should be.</description>
+       <summary>Enable custom maximized text color</summary>
+      <description>Whether to enable custom secondary text coloring when a window is maximized or not.</description>
     </key>
     <key name="enable-overview-text-color" type="b">
       <default>false</default>
-      <summary>What color the panel text should be.</summary>
-      <description>Used to determine what color the panel text should be.</description>
+      <summary>Enable custom overview text color</summary>
+      <description>Whether to enable secondary custom text coloring when the overview is visible.</description>
     </key>
     <key name="remove-panel-styling" type="b">
       <default>false</default>
@@ -113,27 +113,27 @@
     <key name="app-overrides" type="as">
       <default>[]</default>
       <summary>Overrides settings for each app.</summary>
-      <description>Yeah... different settings for individual apps..</description>
+      <description>Contains a list of the ids for all apps with custom settings.</description>
     </key>
     <key name="window-overrides" type="as">
       <default>[]</default>
-      <summary>Overrides settings for a wmclass.</summary>
-      <description>Yeah... different settings for individual apps..</description>
+      <summary>Overrides settings for a WM_CLASS.</summary>
+      <description>Contains a list of the WM_CLASS for all apps with custom settings.</description>
     </key>
     <key name="trigger-apps" type="as">
       <default>[]</default>
       <summary>Apps that will always trigger the panel when focused.</summary>
-      <description>List of apps that triggers the panel when a window of the app is in focus.</description>
+      <description>List of app ids that trigger the panel when a window of the app is in focus.</description>
     </key>
     <key name="trigger-windows" type="as">
       <default>[]</default>
       <summary>Windows that will always trigger the panel when focused.</summary>
-      <description>List of windows that triggers the panel when a window of the app is in focus.</description>
+      <description>List of windows that triggers the panel when a window of the app is open.</description>
     </key>
     <key name="transition-type" type="i">
       <default>1</default>
       <summary>Transition type</summary>
-      <description>The transition used on the panel</description>
+      <description>The transition function used on the panel</description>
     </key>
   </schema>
 </schemalist>

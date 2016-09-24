@@ -10,33 +10,82 @@ const MAXIMIZED_WIDTH_BUFFER = 5;
 const MAJOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[0], 10);
 const MINOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[1], 10);
 
-/* Permissions for created files. */
+/* Permission setting for created files. */
 const PERMISSIONS_MODE = parseInt('0744', 8);
+
 
 /* Utility Variable Access */
 
+/**
+ * Returns the width buffer for horiztonally maximized windows.
+ *
+ * @returns {Number} The width buffer.
+ *
+ */
 function get_maximized_width_buffer() {
     return MAXIMIZED_WIDTH_BUFFER;
 }
 
+/**
+ * Returns the current shell version.
+ *
+ * @returns {Object} The current shell version.
+ *
+ */
 function get_shell_version() {
     return { major: MAJOR_VERSION, minor: MINOR_VERSION };
 }
 
+
 /* Utility Functions */
 
+/**
+ * Evaluates parameter 'a' and returns 'b' if 'a' is undefined or null.
+ *
+ * @param {Object} a - Test value.
+ * @param {Object} b - Default return value.
+ *
+ * @returns {Object} 'b' when 'a' is null or undefined, 'a' otherwise.
+ *
+ */
 function validate(a, b) {
     return (is_undef(a) === false ? a : b);
 }
 
+/**
+ * Evaluates parameter 'a' and returns true if 'a' is undefined or null or false when not.
+ *
+ * @param {Object} a - Test value.
+ *
+ * @returns {Boolean} Whether 'a' is undefined or null.
+ *
+ */
 function is_undef(a) {
     return (typeof (a) === 'undefined' || a === null);
 }
 
+/**
+ * Evaluates parameter 'value' and returns either 'value' or 'min'/'max' if 'value' is outside of the range.
+ *
+ * @param {Number} value - Test value.
+ * @param {Number} min - Minimum value.
+ * @param {Number} max - Maximum value.
+ *
+ * @returns {Number} 'value' or the minimum or maximum.
+ *
+ */
 function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
 }
 
+/**
+ * Determines if 'window' is maximized.
+ *
+ * @param {Object} window - Window to check.
+ *
+ * @returns {Boolean} Whether 'window' is maximized.
+ *
+ */
 function is_maximized(window) {
     let type = window.get_window_type();
 
@@ -57,18 +106,35 @@ function is_maximized(window) {
     return false;
 }
 
-function get_file(filename) {
+/**
+ * Retrieves the GFile for a file path.
+ *
+ * @param {string} file_path - Path for a file.
+ *
+ * @returns {Object} GFile for the path or null if the path is not valid.
+ *
+ */
+function get_file(file_path) {
     try {
-        let file = Gio.file_new_for_path(filename);
+        let file = Gio.file_new_for_path(file_path);
         return file;
     } catch (error) {
         return null;
     }
 }
 
-function write_to_file(filename, text) {
+/**
+ * Write the given string to a file path; creating the necessary files and directories.
+ *
+ * @param {string} file_path - Path for a file.
+ * @param {string} text - Text to write to the file.
+ *
+ * @returns {Boolean} Whether the file write was a success.
+ *
+ */
+function write_to_file(file_path, text) {
     try {
-        let file = get_file(filename);
+        let file = get_file(file_path);
         let parent = file.get_parent();
 
         if (GLib.mkdir_with_parents(parent.get_path(), PERMISSIONS_MODE) === 0) {
@@ -76,23 +142,41 @@ function write_to_file(filename, text) {
             return success[0];
         }
     } catch (error) {
+        log('[Dynamic Panel Transparency] Error writing to file: ' + file_path);
         log(error);
     }
 
     return false;
 }
 
-function remove_file(filename) {
+/**
+ * Deletes the given file_path.
+ *
+ * @param {string} file_path - Path for a file.
+ *
+ * @returns {Boolean} Whether the file deletion was a success.
+ *
+ */
+function remove_file(file_path) {
     try {
-        let file = get_file(filename);
+        let file = get_file(file_path);
         return file.delete(null);
     } catch (error) {
+        log('[Dynamic Panel Transparency] Error removing file: ' + file_path);
         log(error);
     }
 
     return false;
 }
 
+/**
+ * Retrieve GAppInfo for a given MetaWindow.
+ *
+ * @param {Object} window - MetaWindow object.
+ *
+ * @returns {Object} GAppInfo describing the given MetaWindow.
+ *
+ */
 function get_app_for_window(window) {
     const Shell = imports.gi.Shell;
 
@@ -104,7 +188,14 @@ function get_app_for_window(window) {
     return shell_app;
 }
 
-// TODO: alpha?
+/**
+ * Converts a GdkColor into a JS/CSS color object.
+ *
+ * @param {Object} color - GdkColor to convert.
+ *
+ * @returns {Object} Converted RGB color.
+ *
+ */
 function gdk_to_css_color(color) {
     let red = Math.round(clamp((color.red * 255), 0, 255));
     let green = Math.round(clamp((color.green * 255), 0, 255));
@@ -113,17 +204,33 @@ function gdk_to_css_color(color) {
     return { 'red': red, 'green': green, 'blue': blue };
 }
 
+/**
+ * Converts a ClutterColor into a JS/CSS color object.
+ *
+ * @param {Object} color - ClutterColor to convert.
+ * @param {Boolean} [alpha = false] - Whether to transfer the alpha value.
+ *
+ * @returns {Object} Converted RGB(A) color.
+ *
+ */
 function clutter_to_native_color(color, alpha = false) {
-    let output = {};
-    output.red = color.red;
-    output.green = color.green;
-    output.blue = color.blue;
+    let output = { red: color.red, green: color.green, blue: color.blue };
     if (alpha) {
         output.alpha = color.alpha;
     }
     return output;
 }
 
+/**
+ * Compares two colors for equivalency.
+ *
+ * @param {Object} a - First color.
+ * @param {Object} a - Second color.
+ * @param {Boolean} [alpha = false] - Whether to check the alpha value.
+ *
+ * @returns {Boolean} Whether the two colors are equal.
+ *
+ */
 function match_colors(a, b, alpha = false) {
     let result = (a.red === b.red);
     result = result && (a.green === b.green);
@@ -134,6 +241,13 @@ function match_colors(a, b, alpha = false) {
     return result;
 }
 
+/**
+ * Freezes an Object's and its children.
+ *
+ * @param {Object} type - Object to freeze.
+ * @param {Boolean} [recursive = false] - Whether to recursively traverse the object's children.
+ *
+ */
 function deep_freeze(type, recursive = false) {
     const freeze_children = function (obj) {
         Object.keys(obj).forEach(function (value, index, arr) {

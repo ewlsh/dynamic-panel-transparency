@@ -1,6 +1,6 @@
 /* Allows the extension to change the panel's background with transitions. */
 .panel-strip-background {
-    background-color: rgba(0, 0 ,0 , 0);
+    background-color: rgba(0, 0, 0, 0);
 }
 
 /* Used to remove odd effects when full transparency is needed. */

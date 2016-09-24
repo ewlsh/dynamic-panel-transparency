@@ -44,7 +44,6 @@ const DemoPanel = new Lang.Class({
         this.icon_shadow_provider.load_from_data(Compatibility.parse_css('.demo-panel-shadow { -gtk-icon-shadow: ' + shadow.h_offset + 'px ' + shadow.y_offset + 'px ' + shadow.blur + 'px rgba(' + shadow.color.red + ', ' + shadow.color.green + ', ' + shadow.color.blue + ', ' + shadow.color.alpha + '); }'));
 
         for (let lbl of this.icon_labels) {
-            log(lbl);
             lbl.get_style_context().add_provider(this.icon_shadow_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
             lbl.get_style_context().add_class('demo-panel-shadow');
         }
@@ -53,11 +52,10 @@ const DemoPanel = new Lang.Class({
     set_text_shadow: function (shadow) {
         for (let lbl of this.text_labels) {
             lbl.get_style_context().remove_provider(this.text_shadow_provider);
-            //lbl.get_style_context.add_class('demo-panel-shadow');
         }
-        if (shadow === null)
+        if (shadow === null) {
             return;
-        log('.demo-panel-shadow { text-shadow: ' + shadow.h_offset + 'px ' + shadow.y_offset + 'px ' + shadow.blur + 'px rgba(' + shadow.color.red + ', ' + shadow.color.green + ', ' + shadow.color.blue + ', ' + shadow.color.alpha + '); }');
+        }
         this.text_shadow_provider.load_from_data('.demo-panel-shadow { text-shadow: ' + shadow.h_offset + 'px ' + shadow.y_offset + 'px ' + shadow.blur + 'px rgba(' + shadow.color.red + ', ' + shadow.color.green + ', ' + shadow.color.blue + ', ' + shadow.color.alpha + '); }');
         for (let lbl of this.text_labels) {
             lbl.get_style_context().add_provider(this.text_shadow_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
