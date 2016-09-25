@@ -14,22 +14,6 @@ const Util = Me.imports.util;
 const Main = imports.ui.main;
 
 
-// TODO: is this description of signal connections correct?
-
-/* Signal Connections
- * hidden: occurs after the overview is hidden
- * showing: occurs as the overview is opening
- * active-changed: occurs when the screen shield is toggled.
- * notify::n-workspaces: occurs when the number of workspaces changes
- * restacked: occurs when the window Z-ordering changes
- * workspace-switched: occurs after a workspace is switched
- * map: monitors both new windows and unminimizing windows
- * minimize: occurs as the window is minimized
- * unminimize: occurs as the window is unminimized
- * destroy: occurs as the window is destroyed
- */
-
-
 /**
  * Intialize.
  *
@@ -53,7 +37,6 @@ function init() {
     }));
 
     // COMPATIBILITY: No unminimize signal on 3.14
-    // TODO: Figure out if this harms the extension behaviour
     this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, this._windowUpdated));
 
 
@@ -141,7 +124,22 @@ function cleanup() {
 
 }
 
+
 /* Event Handlers */
+
+/**
+ * Signal Connections
+ * hidden: occurs after the overview is hidden
+ * showing: occurs as the overview is opening
+ * unminimize: occurs as the window is unminimized
+ * active-changed: occurs when the screen shield is toggled.
+ * notify::n-workspaces: occurs when the number of workspaces changes
+ * restacked: occurs when the window Z-ordering changes
+ * switch-workspace: occurs after a workspace is switched
+ * minimize: occurs as the window is minimized
+ * map: monitors both new windows and unminimizing windows
+ * destroy: occurs as the window is destroyed
+ */
 
 
 /**
@@ -233,7 +231,7 @@ function _windowUpdated(params) {
     // TODO: Faster way than nulling & updating?
     this.maximized_window = null;
 
-    /* Save processing time by checking the current window (most likely to be maximized) */
+    /* Save processing time by checking the current focused window (most likely to be maximized) */
     /* Check that the focused window is in the right workspace. (I really hope it always is...) */
     if (!Util.is_undef(focused_window) && focused_window !== excluded_window && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && focused_window.get_workspace() === workspace && !focused_window.minimized) {
         add_transparency = false;
@@ -297,6 +295,7 @@ function _windowUpdated(params) {
         }
     } else if (Settings.check_overrides() || Settings.check_triggers()) {
         // TODO: Debug this more.
+
         /* Mark as interruptible in case another more important transition is needed. */
         transition_params.interruptible = true;
 
@@ -326,7 +325,7 @@ function _screenShieldActivated() {
             time: 0
         });
     } else {
-        /* make sure we don't have any odd coloring on the screenShield */
+        /* Make sure we don't have any odd coloring on the screenShield */
         Transitions.blank_fade_out({
             time: 0
         });

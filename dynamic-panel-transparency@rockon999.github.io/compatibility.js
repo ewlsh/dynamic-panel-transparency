@@ -59,7 +59,6 @@ const Compatibility = {
     st_theme_load_stylesheet: { major: 3, minor: 14 },
     st_theme_unload_stylesheet: { major: 3, minor: 14 },
     gtk_color_button_set_show_editor: { major: 3, minor: 18 },
-    /* No unminimize signal on 3.14. */
     g_signal_connect: { 'unminimize': { major: 3, minor: 14 } },
     css: { '-gtk-icon-shadow': { major: 3, minor: 18, fallback: 'icon-shadow' } }
 };

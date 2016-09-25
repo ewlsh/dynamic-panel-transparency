@@ -439,7 +439,7 @@ function apply_stylesheet_css(css, name) {
     let file_name = Me.dir.get_path() + '/styles/' + name + '.dpt.css';
     /* Write to the file. */
     if (!Util.write_to_file(file_name, css)) {
-        log('Dynamic Panel Transparency cannot be installed as a system extension.');
+        log('Dynamic Panel Transparency does not have write access to its own directory. Dynamic Panel Transparency cannot be installed as a system extension.');
     }
     let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
     if (Compatibility.st_theme_load_stylesheet(theme, file_name)) {
