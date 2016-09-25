@@ -10,7 +10,6 @@
       <summary>Maximized Opacity</summary>
       <description>The opacity of the panel when there are maximized windows.</description>
     </key>
-
     <key name="panel-color" type="(iii)">
       <default>(0, 0, 0)</default>
       <summary>Panel Color</summary>

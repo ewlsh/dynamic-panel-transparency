@@ -13,8 +13,15 @@ const Gio = imports.gi.Gio;
 const Events = Me.imports.events;
 
 /* This might impair visibility of the code, but it makes my life a thousand times simpler */
-/* Dynamic settings takes a key and watches for it to change in Gio.Settings & creates a getter for it. */
+/* settings.js takes a key and watches for it to change in Gio.Settings & creates a getter for it. */
 /* Also can parse, handle, etc. a setting. */
+
+const WINDOW_OVERRIDES_SCHEMA_PATH = '/org/gnome/shell/extensions/dynamic-shell-transparency/windowOverrides/';
+const APP_OVERRIDES_SCHEMA_PATH = '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/';
+const OVERRIDES_SCHEMA_ID = 'org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides';
+
+const SETTINGS_WINDOW_OVERRIDES = 'window-overrides';
+const SETTINGS_APP_OVERRIDES = 'app-overrides';
 
 function init() {
     this.settings = Convenience.getSettings();
@@ -22,19 +29,20 @@ function init() {
     this.app_keys = {};
     this.overriden_keys = [];
     this.settingsBoundIds = [];
-    this._app_overrides = this.settings.get_strv('app-overrides');
-    this._window_overrides = this.settings.get_strv('window-overrides');
 
-    this.settingsBoundIds.push(this.settings.connect('changed::app-overrides', Lang.bind(this, function () {
-        this._app_overrides = this.settings.get_strv('app-overrides');
+    this._app_overrides = this.settings.get_strv(SETTINGS_APP_OVERRIDES);
+    this._window_overrides = this.settings.get_strv(SETTINGS_WINDOW_OVERRIDES);
+
+    this.settingsBoundIds.push(this.settings.connect('changed::' + SETTINGS_APP_OVERRIDES, Lang.bind(this, function () {
+        this._app_overrides = this.settings.get_strv(SETTINGS_APP_OVERRIDES);
         this.app_settings_manager.unbind();
-        this.app_settings_manager = new AppSettingsManager(this.app_keys, this.get_app_overrides(), '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/');
+        this.app_settings_manager = new AppSettingsManager(this.app_keys, this.get_app_overrides(), APP_OVERRIDES_SCHEMA_PATH);
     })));
 
-    this.settingsBoundIds.push(this.settings.connect('changed::window-overrides', Lang.bind(this, function () {
-        this._window_overrides = this.settings.get_strv('window-overrides');
+    this.settingsBoundIds.push(this.settings.connect('changed::' + SETTINGS_WINDOW_OVERRIDES, Lang.bind(this, function () {
+        this._window_overrides = this.settings.get_strv(SETTINGS_WINDOW_OVERRIDES);
         this.window_settings_manager.unbind();
-        this.window_settings_manager = new AppSettingsManager(this.app_keys, this.get_window_overrides(), '/org/gnome/shell/extensions/dynamic-shell-transparency/windowOverrides/');
+        this.window_settings_manager = new AppSettingsManager(this.app_keys, this.get_window_overrides(), WINDOW_OVERRIDES_SCHEMA_PATH);
     })));
 
     this.get_app_overrides = function () {
@@ -104,7 +112,6 @@ function add_app_setting(params) {
 function add_app_override(params) {
     add_app_setting(params);
     this.overriden_keys.push(params.settings_key);
-
 }
 
 function check_overrides() {
@@ -117,8 +124,8 @@ function check_triggers() {
 
 function bind() {
     this.settings_manager = new SettingsManager(this.settings, this.keys);
-    this.app_settings_manager = new AppSettingsManager(this.app_keys, this.get_app_overrides(), '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/');
-    this.window_settings_manager = new AppSettingsManager(this.app_keys, this.get_window_overrides(), '/org/gnome/shell/extensions/dynamic-shell-transparency/windowOverrides/');
+    this.app_settings_manager = new AppSettingsManager(this.app_keys, this.get_app_overrides(), APP_OVERRIDES_SCHEMA_PATH);
+    this.window_settings_manager = new AppSettingsManager(this.app_keys, this.get_window_overrides(), WINDOW_OVERRIDES_SCHEMA_PATH);
 
     for (let i = 0; i < this.keys.length; ++i) {
         let setting = this.keys[i];
@@ -284,7 +291,7 @@ const AppSettingsManager = new Lang.Class({
             let app_path = path + app_id + '/';
             let sett = null;
 
-            let obj = Convenience.getSchemaObj('org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides');
+            let obj = Convenience.getSchemaObj(OVERRIDES_SCHEMA_ID);
             sett = new Gio.Settings({ path: app_path, settings_schema: obj });
 
             this.settings[app_id] = sett;

@@ -1,9 +1,4 @@
 <schemalist>
-  <enum id='org.gnome.shell.extensions.dynamic-panel-transparency.themeSource'>
-    <value value='0' nick='Panel'/>
-    <value value='1' nick='Dash'/>
-    <value value='2' nick='Custom'/>
-  </enum>
   <schema id="org.gnome.shell.extensions.dynamic-panel-transparency" path="/org/gnome/shell/extensions/dynamic-panel-transparency/">
     <key name="transition-speed" type="i">
       <default>1000</default>
@@ -44,11 +39,6 @@
       <default>false</default>
       <summary>Enable custom background color</summary>
       <description>Whether to enable custom coloring or use the theme value.</description>
-    </key>
-    <key name="user-theme-source" enum="org.gnome.shell.extensions.dynamic-panel-transparency.themeSource">
-      <default>'Dash'</default>
-      <summary>[DEPRECATED] Source for detecting the user's theme</summary>
-      <description>[DEPRECATED] No longer used.</description>
     </key>
     <key name="text-shadow" type="b">
       <default>false</default>
