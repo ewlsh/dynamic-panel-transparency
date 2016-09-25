@@ -224,48 +224,60 @@ function _windowUpdated(params) {
     let workspace = params.workspace;
 
     let focused_window = global.display.get_focus_window();
-    let windows = workspace.list_windows();
 
-    let add_transparency = true;
+    let windows = workspace.list_windows();
+    windows = global.display.sort_windows_by_stacking(windows);
 
     // TODO: Faster way than nulling & updating?
     this.maximized_window = null;
 
+    let add_transparency = true;
+
     /* Save processing time by checking the current focused window (most likely to be maximized) */
     /* Check that the focused window is in the right workspace. (I really hope it always is...) */
-    if (!Util.is_undef(focused_window) && focused_window !== excluded_window && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && focused_window.get_workspace() === workspace && !focused_window.minimized) {
+    /* Don't do the 'quick check' if we have trigger apps/windows as they might not be focused. */
+    if (!Util.is_undef(focused_window) && focused_window !== excluded_window && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && focused_window.get_workspace().index() === workspace.index() && !focused_window.minimized && !Settings.check_triggers()) {
         add_transparency = false;
         this.maximized_window = focused_window;
     } else {
-        for (let i = windows.length - 1; i >= 0; --i) {
+        for (let i = windows.length - 1; i >= 0; i--) {
             let current_window = windows[i];
+            let is_trigger = false;
 
             if (Settings.check_triggers()) {
-                for (let wm_class of Settings.get_trigger_windows()) {
-                    if (current_window.get_wm_class() === wm_class) {
+                /* Check if the current WM_CLASS is a trigger. */
+                if (Settings.get_trigger_windows().indexOf(current_window.get_wm_class()) !== -1) {
+                    /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
+                    if (current_window !== excluded_window && current_window.is_on_primary_monitor() && !current_window.minimized) {
                         add_transparency = false;
+                        is_trigger = true;
                         this.maximized_window = current_window;
                         break;
                     }
                 }
 
                 let app = Util.get_app_for_window(current_window);
-                for (let app_id of Settings.get_trigger_apps()) {
-                    if (!Util.is_undef(app) && app.get_id() === app_id) {
+                /* Check if the found app exists and if it is a trigger app. */
+                if (!Util.is_undef(app) && Settings.get_trigger_apps().indexOf(app.get_id()) !== -1) {
+                    /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
+                    if (current_window !== excluded_window && current_window.is_on_primary_monitor() && !current_window.minimized) {
                         add_transparency = false;
+                        is_trigger = true;
                         this.maximized_window = current_window;
                         break;
                     }
                 }
             }
 
+            /* Make sure the window is on the correct monitor, isn't minimized, isn't supposed to be excluded, and is actually maximized. */
             if (current_window !== excluded_window && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
-                this.maximized_window = current_window;
-                add_transparency = false;
-                if (!Settings.check_overrides() && !Settings.check_triggers()) {
-                    break;
+                if (Util.is_undef(this.maximized_window) && !is_trigger) {
+                    this.maximized_window = current_window;
+                    add_transparency = false;
+                    if (!Settings.check_triggers()) {
+                        break;
+                    }
                 }
-
             }
         }
     }
