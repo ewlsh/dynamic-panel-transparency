@@ -458,6 +458,9 @@ function buildPrefsWidget() {
             temp_settings.restart_required(true);
 
             let enable_text_shadow = settings.get_boolean(SETTINGS_TEXT_SHADOW);
+            if (temp_settings.has(SETTINGS_TEXT_SHADOW)) {
+                enable_text_shadow = temp_settings.get(SETTINGS_TEXT_SHADOW).deep_unpack();
+            }
 
             if (enable_text_shadow) {
                 let text_shadow = settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
@@ -490,6 +493,9 @@ function buildPrefsWidget() {
             temp_settings.restart_required(true);
 
             let enable_text_shadow = settings.get_boolean(SETTINGS_TEXT_SHADOW);
+            if (temp_settings.has(SETTINGS_TEXT_SHADOW)) {
+                enable_text_shadow = temp_settings.get(SETTINGS_TEXT_SHADOW).deep_unpack();
+            }
 
             if (enable_text_shadow) {
                 let text_shadow = settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
@@ -522,6 +528,9 @@ function buildPrefsWidget() {
             temp_settings.restart_required(true);
 
             let enable_text_shadow = settings.get_boolean(SETTINGS_TEXT_SHADOW);
+            if (temp_settings.has(SETTINGS_TEXT_SHADOW)) {
+                enable_text_shadow = temp_settings.get(SETTINGS_TEXT_SHADOW).deep_unpack();
+            }
 
             if (enable_text_shadow) {
                 let text_shadow = settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
@@ -566,6 +575,9 @@ function buildPrefsWidget() {
             temp_settings.restart_required(true);
 
             let enable_text_shadow = settings.get_boolean(SETTINGS_TEXT_SHADOW);
+            if (temp_settings.has(SETTINGS_TEXT_SHADOW)) {
+                enable_text_shadow = temp_settings.get(SETTINGS_TEXT_SHADOW).deep_unpack();
+            }
 
             if (enable_text_shadow) {
                 let text_shadow = settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
@@ -653,6 +665,9 @@ function buildPrefsWidget() {
             temp_settings.restart_required(true);
 
             let enable_icon_shadow = settings.get_boolean(SETTINGS_ICON_SHADOW);
+            if (temp_settings.has(SETTINGS_ICON_SHADOW)) {
+                enable_icon_shadow = temp_settings.get(SETTINGS_ICON_SHADOW).deep_unpack();
+            }
 
             if (enable_icon_shadow) {
                 let icon_shadow = settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
@@ -684,6 +699,9 @@ function buildPrefsWidget() {
             temp_settings.restart_required(true);
 
             let enable_icon_shadow = settings.get_boolean(SETTINGS_ICON_SHADOW);
+            if (temp_settings.has(SETTINGS_ICON_SHADOW)) {
+                enable_icon_shadow = temp_settings.get(SETTINGS_ICON_SHADOW).deep_unpack();
+            }
 
             if (enable_icon_shadow) {
                 let icon_shadow = settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
@@ -715,6 +733,9 @@ function buildPrefsWidget() {
             temp_settings.restart_required(true);
 
             let enable_icon_shadow = settings.get_boolean(SETTINGS_ICON_SHADOW);
+            if (temp_settings.has(SETTINGS_ICON_SHADOW)) {
+                enable_icon_shadow = temp_settings.get(SETTINGS_ICON_SHADOW).deep_unpack();
+            }
 
             if (enable_icon_shadow) {
                 let icon_shadow = settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
@@ -762,6 +783,9 @@ function buildPrefsWidget() {
             temp_settings.restart_required(true);
 
             let enable_icon_shadow = settings.get_boolean(SETTINGS_ICON_SHADOW);
+            if (temp_settings.has(SETTINGS_ICON_SHADOW)) {
+                enable_icon_shadow = temp_settings.get(SETTINGS_ICON_SHADOW).deep_unpack();
+            }
 
             if (enable_icon_shadow) {
                 let icon_shadow = settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
