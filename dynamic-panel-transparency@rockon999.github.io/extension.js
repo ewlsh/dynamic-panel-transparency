@@ -298,7 +298,6 @@ function initialize_settings() {
     Settings.add_app_setting({
         settings_key: 'enable-background-tweaks',
         name: 'enable_background_tweaks',
-        getter: 'enable_background_tweaks',
         type: 'b'
     });
     Settings.add_app_override({
