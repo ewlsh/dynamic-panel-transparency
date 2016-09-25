@@ -286,6 +286,13 @@ const AppSettingsManager = new Lang.Class({
         this.settings = {};
         this.settingsBoundIds = {};
 
+        for (let setting_key of Object.keys(params)) {
+            let setting = params[setting_key];
+            this[setting.name] = {};
+
+            this.values.push(setting);
+        }
+
         for (let a = 0; a < apps.length; ++a) {
             let app_id = apps[a];
             let app_path = path + app_id + '/';
@@ -298,20 +305,20 @@ const AppSettingsManager = new Lang.Class({
 
             for (let setting_key of Object.keys(params)) {
                 let setting = params[setting_key];
-                this.values.push(setting);
+
                 if (Util.is_undef(setting) || this.settings[app_id].list_keys().indexOf(setting.key) === -1) {
                     continue;
                 }
-                if (Util.is_undef(this.settingsBoundIds[app_id]))
+
+                if (Util.is_undef(this.settingsBoundIds[app_id])) {
                     this.settingsBoundIds[app_id] = [];
+                }
+
                 this.settingsBoundIds[app_id].push(this.settings[app_id].connect('changed::' + setting.key, Lang.bind(this, function () {
                     this.update(setting, app_id);
                 })));
-                let variant = GLib.VariantType.new(setting.type);
 
-                if (Util.is_undef(this[setting.name])) {
-                    this[setting.name] = {};
-                }
+                let variant = GLib.VariantType.new(setting.type);
 
                 if (variant.is_array() || variant.is_tuple()) {
                     this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).deep_unpack();
