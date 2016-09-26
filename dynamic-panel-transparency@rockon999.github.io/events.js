@@ -1,4 +1,4 @@
-/* exported init, cleanup, _workspacesChanged, _windowRestacked, _screenShieldActivated, _workspaceSwitched, get_current_maximized_window */
+/* exported init, cleanup, _workspacesChanged, _windowMinimized, _windowDestroyed, _windowRestacked, _screenShieldActivated, _workspaceSwitched, get_current_maximized_window */
 
 const Lang = imports.lang;
 
@@ -12,6 +12,21 @@ const Theming = Me.imports.theming;
 const Util = Me.imports.util;
 
 const Main = imports.ui.main;
+
+/**
+ * Signal Connections
+ * hidden: occurs after the overview is hidden
+ * showing: occurs as the overview is opening
+ * unminimize: occurs as the window is unminimized
+ * active-changed: occurs when the screen shield is toggled.
+ * notify::n-workspaces: occurs when the number of workspaces changes
+ * restacked: occurs when the window Z-ordering changes
+ * switch-workspace: occurs after a workspace is switched
+ * minimize: occurs as the window is minimized
+ * map: monitors both new windows and unminimizing windows
+ * destroy: occurs as the window is destroyed
+ *
+ */
 
 
 /**
@@ -45,31 +60,14 @@ function init() {
         this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, this._screenShieldActivated));
     }
 
-    this._workspacesChangedSig = global.screen.connect('notify::n-workspaces', Lang.bind(this, this._workspacesChanged));
-    this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, this._windowRestacked));
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
-    this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, function (wm, window_actor) {
-        this._windowUpdated({ excluded_window: window_actor.get_meta_window() });
-    }));
-    this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, function () {
-        this._windowUpdated();
-    }));
+    this._workspacesChangedSig = global.screen.connect('notify::n-workspaces', Lang.bind(this, this._workspacesChanged));
+    this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowMinimized));
+    this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, this._windowDestroyed));
+    this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, this._windowRestacked));
+    this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
 
-    // TODO: Seperate function.
-    this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, function (wm, window_actor) {
-        if (!Util.is_undef(window_actor.get_meta_window().dpt_tracking)) {
-            delete window_actor.get_meta_window().dpt_tracking;
-        }
 
-        let index = this.windows.indexOf(window_actor.get_meta_window());
-        if (index !== -1) {
-            this.windows.splice(index, 1);
-        }
-
-        this._windowUpdated({
-            excluded_window: window_actor.get_meta_window()
-        });
-    }));
 }
 
 /**
@@ -127,20 +125,20 @@ function cleanup() {
 
 /* Event Handlers */
 
-/**
- * Signal Connections
- * hidden: occurs after the overview is hidden
- * showing: occurs as the overview is opening
- * unminimize: occurs as the window is unminimized
- * active-changed: occurs when the screen shield is toggled.
- * notify::n-workspaces: occurs when the number of workspaces changes
- * restacked: occurs when the window Z-ordering changes
- * switch-workspace: occurs after a workspace is switched
- * minimize: occurs as the window is minimized
- * map: monitors both new windows and unminimizing windows
- * destroy: occurs as the window is destroyed
- */
+function _windowDestroyed(wm, window_actor) {
+    if (!Util.is_undef(window_actor.get_meta_window().dpt_tracking)) {
+        delete window_actor.get_meta_window().dpt_tracking;
+    }
 
+    let index = this.windows.indexOf(window_actor.get_meta_window());
+    if (index !== -1) {
+        this.windows.splice(index, 1);
+    }
+
+    this._windowUpdated({
+        excluded_window: window_actor.get_meta_window()
+    });
+}
 
 /**
  * Called whenever a workspace changes.
@@ -327,6 +325,14 @@ function _windowUpdated(params) {
 }
 
 /**
+ * SPECIAL CASE: Exclude the minimized window from the event.
+ *
+ */
+function _windowMinimized(wm, window_actor) {
+    this._windowUpdated({ excluded_window: window_actor.get_meta_window() });
+}
+
+/**
  * SPECIAL CASE: Handle the screenShield when the lock screen isn't active.
  *
  */
@@ -343,7 +349,6 @@ function _screenShieldActivated() {
         });
     }
 }
-
 
 /**
  * SPECIAL_CASE: Only update if we're using per-app settings.

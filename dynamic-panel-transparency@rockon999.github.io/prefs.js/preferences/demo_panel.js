@@ -41,6 +41,8 @@ const DemoPanel = new Lang.Class({
         }
         if (shadow === null)
             return;
+
+        // COMPATIBILITY: Gtk CSS added '-gtk-icon-shadow' to replace 'icon-shadow'.
         this.icon_shadow_provider.load_from_data(Compatibility.parse_css('.demo-panel-shadow { -gtk-icon-shadow: ' + shadow.h_offset + 'px ' + shadow.y_offset + 'px ' + shadow.blur + 'px rgba(' + shadow.color.red + ', ' + shadow.color.green + ', ' + shadow.color.blue + ', ' + shadow.color.alpha + '); }'));
 
         for (let lbl of this.icon_labels) {

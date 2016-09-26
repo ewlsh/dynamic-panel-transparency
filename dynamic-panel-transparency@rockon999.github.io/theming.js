@@ -33,6 +33,8 @@ function init() {
 function cleanup() {
     for (let sheet of this.stylesheets) {
         let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+
+        // COMPATIBILITY: st_theme used strings, not file objects in 3.14
         Compatibility.st_theme_unload_stylesheet(theme, sheet);
         Util.remove_file(sheet);
     }
@@ -442,6 +444,8 @@ function apply_stylesheet_css(css, name) {
         log('Dynamic Panel Transparency does not have write access to its own directory. Dynamic Panel Transparency cannot be installed as a system extension.');
     }
     let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+
+    // COMPATIBILITY: st_theme used strings, not file objects in 3.14
     if (Compatibility.st_theme_load_stylesheet(theme, file_name)) {
         this.stylesheets.push(file_name);
     } else {
