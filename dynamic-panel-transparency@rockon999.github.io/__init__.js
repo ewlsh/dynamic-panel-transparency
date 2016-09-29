@@ -1,8 +1,8 @@
 /* exported prefs */
 
 /* Get the extension path. */
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const PREFS_PATH = Me['path'] + '/prefs.js/';
+const CURRENT = imports.misc.extensionUtils.getCurrentExtension();
+const PREFS_PATH = CURRENT['path'] + '/prefs.js/';
 
 /* Add the prefs.js files to the searchPath */
 if (imports.searchPath.indexOf(PREFS_PATH) === -1) {

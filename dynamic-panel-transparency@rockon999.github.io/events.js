@@ -117,9 +117,9 @@ function cleanup() {
     this._windowUnminimizeSig = null;
     this._workspaceSwitchSig = null;
     this._workspacesChangedSig = null;
+
     this.workspaces = null;
     this.windows = null;
-
 }
 
 
