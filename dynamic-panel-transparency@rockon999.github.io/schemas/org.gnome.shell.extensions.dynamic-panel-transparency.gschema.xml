@@ -96,9 +96,9 @@
       <description>Whether to enable secondary custom text coloring when the overview is visible.</description>
     </key>
     <key name="remove-panel-styling" type="b">
-      <default>false</default>
-      <summary>What color the panel text should be.</summary>
-      <description>Used to determine what color the panel text should be.</description>
+      <default>true</default>
+      <summary>Remove usually incompatibly theming</summary>
+      <description>Whether certain usually incompatible theme styles should be removed.</description>
     </key>
     <key name="app-overrides" type="as">
       <default>[]</default>
