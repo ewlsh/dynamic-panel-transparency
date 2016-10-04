@@ -16,8 +16,8 @@ const Events = Me.imports.events;
 /* settings.js takes a key and watches for it to change in Gio.Settings & creates a getter for it. */
 /* Also can parse, handle, etc. a setting. */
 
-const WINDOW_OVERRIDES_SCHEMA_PATH = '/org/gnome/shell/extensions/dynamic-shell-transparency/windowOverrides/';
-const APP_OVERRIDES_SCHEMA_PATH = '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/';
+const WINDOW_OVERRIDES_SCHEMA_PATH = '/org/gnome/shell/extensions/dynamic-panel-transparency/windowOverrides/';
+const APP_OVERRIDES_SCHEMA_PATH = '/org/gnome/shell/extensions/dynamic-panel-transparency/appOverrides/';
 const OVERRIDES_SCHEMA_ID = 'org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides';
 
 const SETTINGS_WINDOW_OVERRIDES = 'window-overrides';

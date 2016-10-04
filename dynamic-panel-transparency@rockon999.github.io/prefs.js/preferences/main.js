@@ -1131,8 +1131,8 @@ function buildPrefsWidget() {
             dialog.destroy();
         });
 
-        let app_cfg = function (a, b) { cfg.call(this, a, b, '/org/gnome/shell/extensions/dynamic-shell-transparency/appOverrides/'); };
-        let window_cfg = function (a) { cfg.call(this, a, a, '/org/gnome/shell/extensions/dynamic-shell-transparency/windowOverrides/'); };
+        let app_cfg = function (a, b) { cfg.call(this, a, b, '/org/gnome/shell/extensions/dynamic-panel-transparency/appOverrides/'); };
+        let window_cfg = function (a) { cfg.call(this, a, a, '/org/gnome/shell/extensions/dynamic-panel-transparency/windowOverrides/'); };
 
         for (let override of app_overrides) {
             let app_info = Gio.DesktopAppInfo.new(override);
