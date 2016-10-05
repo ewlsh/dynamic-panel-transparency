@@ -1,10 +1,11 @@
-/* exported init, cleanup, add_text_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, exported remove_text_shadow, remove_icon_shadow, register_text_color, register_style, exported get_background_alpha, set_background_alpha, set_text_color, set_corner_color, set_panel_color, remove_text_color, strip_panel_background, strip_panel_styling, reapply_panel_background, reapply_panel_styling, clear_corner_color, set_theme_background_color, set_theme_opacity, get_maximized_opacity, get_unmaximized_opacity */
+/* exported init, cleanup, add_text_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, exported remove_text_shadow, remove_icon_shadow, register_text_color, register_style, exported get_background_alpha, set_background_alpha, get_background_image_color, set_text_color, set_corner_color, set_panel_color, remove_text_color, strip_panel_background, strip_panel_styling, reapply_panel_background, reapply_panel_styling, clear_corner_color, set_theme_background_color, set_theme_opacity, get_maximized_opacity, get_unmaximized_opacity */
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Compatibility = Me.imports.compatibility;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 
+const GdkPixbuf = imports.gi.GdkPixbuf;
 const Clutter = imports.gi.Clutter;
 const St = imports.gi.St;
 
@@ -14,8 +15,17 @@ const Main = imports.ui.main;
 
 const Panel = Main.panel;
 
-const THEME_DETECTION_MINIMUM_OPACITY = 150;
+/* Constants for theme opacity detection. */
+const THEME_OPACITY_THRESHOLD = 150;
+
+/* Constants for color averaging. */
+const SATURATION_WEIGHT = 1.5;
+const WEIGHT_THRESHOLD = 1.0;
+const ALPHA_THRESHOLD = 24;
+
+/* Scale factor for color conversion. */
 const SCALE_FACTOR = 255;
+
 
 /**
  * Intialize.
@@ -55,7 +65,6 @@ function cleanup() {
  */
 function set_theme_background_color(color) {
     this.theme_background_color = color;
-    Object.freeze(this.theme_background_color);
 }
 
 /**
@@ -316,6 +325,46 @@ function clear_corner_color() {
     Panel._rightCorner.actor.set_style(null);
 }
 
+
+/**
+ * Gets the RGBA color of the background/border image in a theme.
+ *
+ * @param {Object} theme - An st-theme-node to retrieve the color from.
+ *
+ * @returns {Object} RGBA color retrieved from the theme node.
+ */
+function get_background_image_color(theme) {
+    let file = theme.get_background_image();
+
+    if (Util.is_undef(file)) {
+        log('[Dynamic Panel Transparency] No background image found in theme.');
+        file = theme.get_border_image();
+
+        if (Util.is_undef(file)) {
+            log('[Dynamic Panel Transparency] No border image found in theme.');
+            return null;
+        } else {
+            file = file.get_file();
+        }
+    }
+
+    try {
+        let background = GdkPixbuf.Pixbuf.new_from_file(file.get_path());
+
+        if (Util.is_undef(background)) {
+            log('The background is null.');
+            return null;
+        }
+
+        return average_color(background);
+    } catch (error) {
+        log('[Dynamic Panel Transparency] Could not load the background and/or border image for your theme.');
+        log(error);
+        return null;
+    }
+
+}
+
 /**
  * Returns the user's desired panel color from Settings. Handles theme detection again.
  *
@@ -360,7 +409,7 @@ function get_maximized_opacity() {
         }
 
         if (!Settings.enable_custom_opacity()) {
-            if (this.theme_opacity >= THEME_DETECTION_MINIMUM_OPACITY) {
+            if (this.theme_opacity >= THEME_OPACITY_THRESHOLD) {
                 return this.theme_opacity;
             } else {
                 /* Get the default value */
@@ -374,7 +423,7 @@ function get_maximized_opacity() {
 
     /* 1) Make sure we want a custom opacity. 2) If custom.app_info !== null that means the setting is overriden. */
     if (!Settings.enable_custom_opacity()) {
-        if (this.theme_opacity >= THEME_DETECTION_MINIMUM_OPACITY) {
+        if (this.theme_opacity >= THEME_OPACITY_THRESHOLD) {
             return this.theme_opacity;
         } else {
             return Settings.get_maximized_opacity({ default: true });
@@ -454,6 +503,116 @@ function apply_stylesheet_css(css, name) {
     return file_name;
 }
 
+/**
+ * Taken from Plank. Used to calculate the average color of a theme's images.
+ * src: http://bazaar.launchpad.net/~docky-core/plank/trunk/view/head:/lib/Drawing/DrawingService.vala
+ *
+ * @param {Object} source - A Gtk.Pixbuf
+ */
+function average_color(source) {
+    let r, g, b, a, min, max;
+    let delta;
+
+    let rTotal = 0.0;
+    let gTotal = 0.0;
+    let bTotal = 0.0;
+
+    let bTotal2 = 0.0;
+    let gTotal2 = 0.0;
+    let rTotal2 = 0.0;
+    let aTotal2 = 0.0;
+
+    let dataPtr = source.get_pixels();
+
+    let width = source.get_width();
+    let height = source.get_height();
+    let length = width * height;
+
+    let scoreTotal = 0.0;
+
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let i = y * width * 4 + x * 4;
+            r = dataPtr[i];
+            g = dataPtr[i + 1];
+            b = dataPtr[i + 2];
+            a = dataPtr[i + 3];
+
+            // skip (nearly) invisible pixels
+            if (a <= ALPHA_THRESHOLD) {
+                length--;
+                continue;
+            }
+
+            min = Math.min(r, Math.min(g, b));
+            max = Math.max(r, Math.max(g, b));
+            delta = max - min;
+
+            // prefer colored pixels over shades of grey
+            let score = SATURATION_WEIGHT * (delta === 0 ? 0.0 : delta / max);
+
+            // weighted sums, revert pre-multiplied alpha value
+            bTotal += score * b / a;
+            gTotal += score * g / a;
+            rTotal += score * r / a;
+            scoreTotal += score;
+
+            // not weighted sums
+            bTotal2 += b;
+            gTotal2 += g;
+            rTotal2 += r;
+            aTotal2 += a;
+        }
+    }
+
+    // looks like a fully transparent image
+    if (length <= 0) {
+        return { red: 0, green: 0, blue: 0, alpha: 0 };
+    }
+
+    scoreTotal /= length;
+    bTotal /= length;
+    gTotal /= length;
+    rTotal /= length;
+
+    if (scoreTotal > 0.0) {
+        bTotal /= scoreTotal;
+        gTotal /= scoreTotal;
+        rTotal /= scoreTotal;
+    }
+
+    bTotal2 /= length * 255;
+    gTotal2 /= length * 255;
+    rTotal2 /= length * 255;
+    aTotal2 /= length * 255;
+
+    // combine weighted and not weighted sum depending on the average "saturation"
+    // if saturation isn't reasonable enough
+    // s = 0.0 -> f = 0.0 ; s = WEIGHT_THRESHOLD -> f = 1.0
+    if (scoreTotal <= WEIGHT_THRESHOLD) {
+        let f = 1.0 / WEIGHT_THRESHOLD * scoreTotal;
+        let rf = 1.0 - f;
+        bTotal = bTotal * f + bTotal2 * rf;
+        gTotal = gTotal * f + gTotal2 * rf;
+        rTotal = rTotal * f + rTotal2 * rf;
+    }
+
+    // there shouldn't be values larger then 1.0
+    let max_val = Math.max(rTotal, Math.max(gTotal, bTotal));
+    if (max_val > 1.0) {
+        bTotal /= max_val;
+        gTotal /= max_val;
+        rTotal /= max_val;
+    }
+
+    rTotal = Math.round(rTotal * 255);
+    gTotal = Math.round(gTotal * 255);
+    bTotal = Math.round(bTotal * 255);
+    aTotal2 = Math.round(aTotal2 * 255);
+
+    return { red: rTotal, green: gTotal, blue: bTotal, alpha: aTotal2 };
+}
+
 // TODO: Document?
 
 /* Methods to extend Tweener's properties. */
@@ -475,6 +634,7 @@ function set_background_alpha(actor, alpha) {
         alpha: alpha
     }));
 }
+
 
 
 

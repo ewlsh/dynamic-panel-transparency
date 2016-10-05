@@ -40,13 +40,21 @@ function enable() {
 
     /* Delay the extension so we can retreive the theme background color (why are user themes an extensions?). */
     Mainloop.idle_add(Lang.bind(this, function () {
-        let theme_background = Panel.actor.get_theme_node().get_background_color();
+        let theme = Panel.actor.get_theme_node();
+        let theme_background = theme.get_background_color();
 
         /* Store user theme values. */
-        Theming.set_theme_background_color(Util.clutter_to_native_color(theme_background));
-        Theming.set_theme_opacity(theme_background.alpha);
+        let image_background = Theming.get_background_image_color(theme);
 
-        log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + theme_background.red + ', ' + theme_background.green + ', ' + theme_background.blue + ', ' + theme_background.alpha + ')');
+        if (image_background !== null) {
+            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + image_background.red + ', ' + image_background.green + ', ' + image_background.blue + ', ' + image_background.alpha + ')');
+            Theming.set_theme_background_color(Util.clutter_to_native_color(image_background));
+            Theming.set_theme_opacity(image_background.alpha);
+        } else {
+            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + theme_background.red + ', ' + theme_background.green + ', ' + theme_background.blue + ', ' + theme_background.alpha + ')');
+            Theming.set_theme_background_color(Util.clutter_to_native_color(theme_background));
+            Theming.set_theme_opacity(theme_background.alpha);
+        }
 
         /* Start the event loop. */
         Events.init();
