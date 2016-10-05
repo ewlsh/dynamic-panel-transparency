@@ -106,14 +106,14 @@ function minimum_fade_in(params) {
     /* Avoid Tweener if the time or opacity don't require it. */
     if (time <= 0 || Theming.get_unmaximized_opacity() <= 0) {
         Theming.set_background_alpha(Panel.actor, Theming.get_unmaximized_opacity());
-        this.fade_in_complete();
+        this.minimum_fade_in_complete();
         this.animation_status.done();
     } else {
         this.tweener.addTween(Panel.actor, {
             time: time,
             transition: transition,
             background_alpha: Theming.get_unmaximized_opacity(),
-            onComplete: Lang.bind(this, fade_in_complete)
+            onComplete: Lang.bind(this, minimum_fade_in_complete)
         });
     }
 }
@@ -157,6 +157,23 @@ function fade_in(params) {
             onComplete: Lang.bind(this, fade_in_complete)
         });
     }
+}
+
+/**
+ * Callback for when a minimum_fade_in transition is completed.
+ *
+ */
+function minimum_fade_in_complete() {
+    if (Main.overview._shown) {
+        blank_fade_out();
+        return;
+    }
+
+    if (!Settings.get_hide_corners()) {
+        update_corner_alpha();
+    }
+
+    this.animation_status.done();
 }
 
 /**

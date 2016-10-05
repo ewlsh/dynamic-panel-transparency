@@ -1,5 +1,6 @@
-/* exported init, cleanup, _workspacesChanged, _windowMinimized, _windowDestroyed, _windowRestacked, _screenShieldActivated, _workspaceSwitched, get_current_maximized_window */
+/* exported init, cleanup, _workspacesChanged, _userThemeChanged, _windowMinimized, _windowDestroyed, _windowRestacked, _screenShieldActivated, _workspaceSwitched, get_current_maximized_window */
 
+const Mainloop = imports.mainloop;
 const Lang = imports.lang;
 
 const Params = imports.misc.params;
@@ -11,7 +12,15 @@ const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
 const Util = Me.imports.util;
 
+const Gio = imports.gi.Gio;
+
 const Main = imports.ui.main;
+const Panel = Main.panel;
+
+const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
+const EXTENSION_SCHEMA = 'org.gnome.shell';
+
+// TODO: Do I still need this? const USER_THEME_EXTENSION_UUID = 'user-theme@gnome-shell-extensions.gcampax.github.com';
 
 /**
  * Signal Connections
@@ -25,6 +34,8 @@ const Main = imports.ui.main;
  * minimize: occurs as the window is minimized
  * map: monitors both new windows and unminimizing windows
  * destroy: occurs as the window is destroyed
+ * changed::enabled-extensions: occurs when an extension is disabled and/or enabled.
+ * user-theme/changed::name: occurs when the user's theme changes
  *
  */
 
@@ -67,7 +78,16 @@ function init() {
     this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, this._windowRestacked));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
 
+    this._theme_settings = new Gio.Settings({
+        schema_id: USER_THEME_SCHEMA
+    });
 
+    this._extension_settings = new Gio.Settings({
+        schema_id: EXTENSION_SCHEMA
+    });
+
+    this._extensionsChangedSig = this._extension_settings.connect('changed::enabled-extensions', Lang.bind(this, this._userThemeChanged));
+    this._userThemeChangedSig = this._theme_settings.connect('changed::name', Lang.bind(this, this._userThemeChanged));
 }
 
 /**
@@ -93,6 +113,9 @@ function cleanup() {
     global.screen.disconnect(this._windowRestackedSig);
     global.screen.disconnect(this._workspacesChangedSig);
 
+    this._theme_settings.disconnect(this._userThemeChangedSig);
+    this._extension_settings.disconnect(this._extensionsChangedSig);
+
     /* Remove window tracking properties. */
     for (let container of this.workspaces) {
         if (!Util.is_undef(container) && !Util.is_undef(container.workspace)) {
@@ -117,6 +140,11 @@ function cleanup() {
     this._windowUnminimizeSig = null;
     this._workspaceSwitchSig = null;
     this._workspacesChangedSig = null;
+    this._extensionsChangedSig = null;
+    this._userThemeChangedSig = null;
+
+    this._extension_settings = null;
+    this._theme_settings = null;
 
     this.workspaces = null;
     this.windows = null;
@@ -138,6 +166,41 @@ function _windowDestroyed(wm, window_actor) {
     this._windowUpdated({
         excluded_window: window_actor.get_meta_window()
     });
+}
+
+/**
+ * Called whenever the User Theme extension updates the current theme.
+ *
+ */
+function _userThemeChanged() {
+    log('[Dynamic Panel Transparency] User theme changed.');
+
+    /* Remove Our Styling */
+    Theming.reapply_panel_styling();
+    Theming.reapply_panel_background();
+
+    Mainloop.idle_add(Lang.bind(this, function () {
+        let theme = Panel.actor.get_theme_node();
+        let theme_background = theme.get_background_color();
+
+        /* Store user theme values. */
+        let image_background = Theming.get_background_image_color(theme);
+
+        if (image_background !== null) {
+            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + image_background.red + ', ' + image_background.green + ', ' + image_background.blue + ', ' + image_background.alpha + ')');
+            Theming.set_theme_background_color(Util.clutter_to_native_color(image_background));
+            Theming.set_theme_opacity(image_background.alpha);
+        } else {
+            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + theme_background.red + ', ' + theme_background.green + ', ' + theme_background.blue + ', ' + theme_background.alpha + ')');
+            Theming.set_theme_background_color(Util.clutter_to_native_color(theme_background));
+            Theming.set_theme_opacity(theme_background.alpha);
+        }
+
+        /* Simulate window changes. */
+        _windowUpdated({
+            force: true
+        });
+    }));
 }
 
 /**
