@@ -11,27 +11,26 @@ const SHELL_VERSION = Util.get_shell_version();
 /* st-border-image in 3.14 uses strings, not Gio.File */
 const st_border_image_get_file = function (border_image) {
     if (SHELL_VERSION.major === Compatibility.st_border_image_get_file.major && SHELL_VERSION.minor > Compatibility.st_border_image_get_file.minor) {
-        return Util.get_file(border_image.get_filename());
+        return border_image.get_file();
     }
-    return border_image.get_file();
-
+    return Util.get_file(border_image.get_filename());
 };
 
 /* st-theme in 3.14 uses strings, not Gio.File */
-const st_theme_load_stylesheet = function (theme, file) {
+const st_theme_load_stylesheet = function (theme, file_name) {
     if (SHELL_VERSION.major === Compatibility.st_theme_load_stylesheet.major && SHELL_VERSION.minor > Compatibility.st_theme_load_stylesheet.minor) {
-        file = Util.get_file(file);
+        file_name = Util.get_file(file_name);
     }
-    return theme.load_stylesheet(file);
+    return theme.load_stylesheet(file_name);
 
 };
 
 /* st-theme in 3.14 uses strings, not Gio.File */
-const st_theme_unload_stylesheet = function (theme, file) {
+const st_theme_unload_stylesheet = function (theme, file_name) {
     if (SHELL_VERSION.major === Compatibility.st_theme_unload_stylesheet.major && SHELL_VERSION.minor > Compatibility.st_theme_unload_stylesheet.minor) {
-        file = Util.get_file(file);
+        file_name = Util.get_file(file_name);
     }
-    return theme.unload_stylesheet(file);
+    return theme.unload_stylesheet(file_name);
 };
 
 /* Filters for signals that don't exist. */
