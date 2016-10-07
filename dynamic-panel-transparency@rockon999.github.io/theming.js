@@ -337,11 +337,11 @@ function get_background_image_color(theme) {
     let file = theme.get_background_image();
 
     if (Util.is_undef(file)) {
-        log('[Dynamic Panel Transparency] No background image found in theme.');
+        log('[Dynamic Panel Transparency] No background image found in user theme.');
         file = theme.get_border_image();
 
         if (Util.is_undef(file)) {
-            log('[Dynamic Panel Transparency] No border image found in theme.');
+            log('[Dynamic Panel Transparency] No border image found in user theme.');
             return null;
         } else {
             file = file.get_file();
@@ -532,11 +532,17 @@ function average_color(source) {
 
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
+
+            /* eslint-disable */
+
             let i = y * width * 4 + x * 4;
+
             r = dataPtr[i];
             g = dataPtr[i + 1];
             b = dataPtr[i + 2];
             a = dataPtr[i + 3];
+
+            /* eslint-enable */
 
             // skip (nearly) invisible pixels
             if (a <= ALPHA_THRESHOLD) {
