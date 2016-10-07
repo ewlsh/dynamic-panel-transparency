@@ -1,4 +1,4 @@
-/* exported st_theme_load_stylesheet, st_theme_unload_stylesheet, g_signal_connect, gtk_color_button_set_show_editor, parse_css */
+/* exported st_border_image_get_file, st_theme_load_stylesheet, st_theme_unload_stylesheet, g_signal_connect, gtk_color_button_set_show_editor, parse_css */
 
 /* Provides a version compatibility layer for Gtk, GObject, St, etc. functions.*/
 /* Uses C function names. */
@@ -7,6 +7,15 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Util = Me.imports.util;
 
 const SHELL_VERSION = Util.get_shell_version();
+
+/* st-border-image in 3.14 uses strings, not Gio.File */
+const st_border_image_get_file = function (border_image) {
+    if (SHELL_VERSION.major === Compatibility.st_border_image_get_file.major && SHELL_VERSION.minor > Compatibility.st_border_image_get_file.minor) {
+        return Util.get_file(border_image.get_filename());
+    }
+    return border_image.get_file();
+
+};
 
 /* st-theme in 3.14 uses strings, not Gio.File */
 const st_theme_load_stylesheet = function (theme, file) {
@@ -46,7 +55,7 @@ const gtk_color_button_set_show_editor = function (widget, value) {
 };
 
 /* Parses CSS... not a C function */
-const parse_css = function(css) {
+const parse_css = function (css) {
     for (let key of Object.keys(Compatibility.css)) {
         if (SHELL_VERSION.major === Compatibility.css[key].major && SHELL_VERSION.minor <= Compatibility.css[key].minor) {
             css = css.replace(key, Compatibility.css[key].fallback);
@@ -58,6 +67,7 @@ const parse_css = function(css) {
 const Compatibility = {
     st_theme_load_stylesheet: { major: 3, minor: 14 },
     st_theme_unload_stylesheet: { major: 3, minor: 14 },
+    st_border_image_get_file: { major: 3, minor: 14 },
     gtk_color_button_set_show_editor: { major: 3, minor: 18 },
     g_signal_connect: { 'unminimize': { major: 3, minor: 14 } },
     css: { '-gtk-icon-shadow': { major: 3, minor: 18, fallback: 'icon-shadow' } }

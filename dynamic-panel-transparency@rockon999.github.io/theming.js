@@ -44,7 +44,7 @@ function cleanup() {
     for (let sheet of this.stylesheets) {
         let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
 
-        // COMPATIBILITY: st_theme used strings, not file objects in 3.14
+        // COMPATIBILITY: st-theme used strings, not file objects in 3.14
         Compatibility.st_theme_unload_stylesheet(theme, sheet);
         Util.remove_file(sheet);
     }
@@ -338,13 +338,14 @@ function get_background_image_color(theme) {
 
     if (Util.is_undef(file)) {
         log('[Dynamic Panel Transparency] No background image found in user theme.');
-        file = theme.get_border_image();
+        let image = theme.get_border_image();
 
-        if (Util.is_undef(file)) {
+        if (Util.is_undef(image)) {
             log('[Dynamic Panel Transparency] No border image found in user theme.');
             return null;
         } else {
-            file = file.get_file();
+            // COMPATIBILITY: st-border-image used strings in 3.14, not Gio.File.
+            file = Compatibility.st_border_image_get_file(image);
         }
     }
 
@@ -494,7 +495,7 @@ function apply_stylesheet_css(css, name) {
     }
     let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
 
-    // COMPATIBILITY: st_theme used strings, not file objects in 3.14
+    // COMPATIBILITY: st-theme used strings, not file objects in 3.14
     if (Compatibility.st_theme_load_stylesheet(theme, file_name)) {
         this.stylesheets.push(file_name);
     } else {
