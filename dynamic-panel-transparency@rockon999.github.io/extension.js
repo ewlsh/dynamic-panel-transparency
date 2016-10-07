@@ -38,7 +38,7 @@ function enable() {
     Transitions.init();
     Theming.init();
 
-    /* Delay the extension so we can retreive the theme background color (why are user themes an extensions?). */
+    /* Delay the extension so we can retreive the theme background color (why are user themes an extension?). */
     Mainloop.idle_add(Lang.bind(this, function () {
         let theme = Panel.actor.get_theme_node();
         let theme_background = theme.get_background_color();
