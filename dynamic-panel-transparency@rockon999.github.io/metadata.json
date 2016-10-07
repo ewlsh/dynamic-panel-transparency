@@ -6,7 +6,7 @@
   ],
   "uuid": "dynamic-panel-transparency@rockon999.github.io",
   "settings-schema": "org.gnome.shell.extensions.dynamic-panel-transparency",
-  "version": 11,
+  "version": 13,
   "gettext-domain": "dynamic-panel-transparency",
   "url": "http://github.com/rockon999/dynamic-panel-transparency/"
 }
