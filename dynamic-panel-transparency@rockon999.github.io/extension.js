@@ -10,6 +10,7 @@ const Theming = Me.imports.theming;
 const Events = Me.imports.events;
 const Util = Me.imports.util;
 
+const ExtensionSystem = imports.ui.extensionSystem;
 const Main = imports.ui.main;
 const Panel = Main.panel;
 
@@ -40,6 +41,12 @@ function enable() {
 
     /* Delay the extension so we can retreive the theme background color (why are user themes an extension?). */
     Mainloop.idle_add(Lang.bind(this, function () {
+        let extension = imports.misc.extensionUtils.getCurrentExtension();
+
+        if (!Util.is_undef(extension) && extension.extensionState === ExtensionSystem.ExtensionState.DISABLED) {
+            return false;
+        }
+
         let theme = Panel.actor.get_theme_node();
         let theme_background = theme.get_background_color();
 
@@ -81,22 +88,20 @@ function disable() {
     /* Disconnect & Null Signals */
     Events.cleanup();
 
-    Mainloop.idle_add(Lang.bind(this, function () {
-        /* Remove our custom styling *again* just to be sure no events and/or enabling restyled it while we were cleaning up. */
-        unmodify_panel();
+    /* Cleanup Settings */
+    Settings.unbind();
+    Settings.cleanup();
 
-        /* Cleanup Theming */
-        Theming.cleanup();
+    /* Cleanup Transitions */
+    Transitions.cleanup();
 
-        /* Cleanup Transitions */
-        Transitions.cleanup();
+    /* Remove our custom styling *again* just to be sure no events and/or enabling restyled it while we were cleaning up. */
+    unmodify_panel();
 
-        /* Cleanup Settings */
-        Settings.unbind();
-        Settings.cleanup();
+    /* Cleanup Theming */
+    Theming.cleanup();
 
-        return false;
-    }));
+    return false;
 }
 
 function modify_panel() {

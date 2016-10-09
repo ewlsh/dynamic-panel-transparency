@@ -51,6 +51,7 @@ function cleanup() {
     for (let style of this.styles) {
         Panel.actor.remove_style_class_name(style);
     }
+
     this.stylesheets = null;
     this.styles = null;
 }
@@ -264,7 +265,12 @@ function deregister_style(style) {
  * @param {Number} color.alpha - Alpha value ranging from 0-255.
  */
 function set_panel_color(color) {
-    let panel_color = get_background_color();
+    let panel_color = { red: 0, green: 0, blue: 0, alpha: 0 };
+
+    if (!Util.is_undef(Settings.get_panel_color)) {
+        panel_color = get_background_color();
+    }
+
     let current_alpha = get_background_alpha(Panel.actor);
 
     color = Params.parse(color, {
@@ -396,6 +402,7 @@ function get_background_color() {
 
 /**
  * Returns the user's desired maximized panel opacity from Settings or their theme.
+ * DEPENDENCY: Settings
  *
  * @returns {Number} Alpha value from 0-255.
  */
@@ -436,6 +443,7 @@ function get_maximized_opacity() {
 
 /**
  * Returns the user's desired unmaximized panel opacity from Settings or their theme.
+ * DEPENDENCY: Settings
  *
  * @returns {Number} Alpha value from 0-255.
  */
