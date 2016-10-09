@@ -56,11 +56,11 @@ function enable() {
             Theming.set_theme_opacity(theme_background.alpha);
         }
 
-        /* Start the event loop. */
-        Events.init();
-
         /* Modify the panel. */
         modify_panel();
+
+        /* Start the event loop. */
+        Events.init();
 
         /* Setup maximization listeners. */
         Events._workspacesChanged();
@@ -69,52 +69,34 @@ function enable() {
         Events._windowUpdated({
             force: true
         });
+
+        return false;
     }));
 }
 
 function disable() {
     /* Do this first in case any of the upcoming methods fail. */
-    Theming.set_panel_color({ red: 0, green: 0, blue: 0, alpha: 0 });
+    unmodify_panel();
 
     /* Disconnect & Null Signals */
     Events.cleanup();
 
-    /* Remove our custom coloring *again* just to be sure no events recolored it while we were cleaning up. */
-    Theming.set_panel_color({
-        red: 0,
-        green: 0,
-        blue: 0,
-        alpha: 0
-    });
+    Mainloop.idle_add(Lang.bind(this, function () {
+        /* Remove our custom styling *again* just to be sure no events and/or enabling restyled it while we were cleaning up. */
+        unmodify_panel();
 
-    /* Remove shadowing */
-    if (Theming.has_text_shadow()) {
-        Theming.remove_text_shadow();
-    }
-    if (Theming.has_icon_shadow()) {
-        Theming.remove_icon_shadow();
-    }
+        /* Cleanup Theming */
+        Theming.cleanup();
 
-    /* Remove text coloring */
-    Theming.remove_text_color();
+        /* Cleanup Transitions */
+        Transitions.cleanup();
 
-    /* Remove Our Corner Coloring */
-    Theming.clear_corner_color();
+        /* Cleanup Settings */
+        Settings.unbind();
+        Settings.cleanup();
 
-    /* Remove Our Styling */
-    Theming.reapply_panel_styling();
-    Theming.reapply_panel_background();
-    Theming.reapply_panel_background_image();
-
-    /* Cleanup Theming */
-    Theming.cleanup();
-
-    /* Cleanup Transitions */
-    Transitions.cleanup();
-
-    /* Cleanup Settings */
-    Settings.unbind();
-    Settings.cleanup();
+        return false;
+    }));
 }
 
 function modify_panel() {
@@ -145,6 +127,32 @@ function modify_panel() {
     if (Settings.get_enable_text_color()) {
         Theming.set_text_color();
     }
+}
+
+function unmodify_panel() {
+    Theming.set_panel_color({ red: 0, green: 0, blue: 0, alpha: 0 });
+
+    /* Remove shadowing */
+    if (Theming.has_text_shadow()) {
+        Theming.remove_text_shadow();
+    }
+    if (Theming.has_icon_shadow()) {
+        Theming.remove_icon_shadow();
+    }
+
+    /* Remove corner styling */
+    Theming.clear_corner_color();
+
+    /* Remove text coloring */
+    Theming.remove_text_color();
+
+    /* Remove Our Corner Coloring */
+    Theming.clear_corner_color();
+
+    /* Remove Our Styling */
+    Theming.reapply_panel_styling();
+    Theming.reapply_panel_background();
+    Theming.reapply_panel_background_image();
 }
 
 function initialize_settings() {
