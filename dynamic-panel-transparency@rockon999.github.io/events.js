@@ -55,10 +55,13 @@ function init() {
         if (!Transitions.get_transparency_status().is_blank()) {
             Transitions.blank_fade_out();
         }
-        if (Settings.get_enable_overview_text_color()) {
-            Theming.set_text_color('maximized');
-        } else {
-            Theming.set_text_color();
+
+        if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
+            if (Settings.get_enable_overview_text_color()) {
+                Theming.set_text_color('maximized');
+            } else {
+                Theming.set_text_color();
+            }
         }
     }));
 
