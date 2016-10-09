@@ -190,7 +190,25 @@ function fade_in_complete() {
         update_corner_alpha();
     }
 
+    let custom = Settings.get_panel_color({ app_info: true });
+
     if (!Settings.remove_panel_styling()) {
+        if (custom.app_info !== null && Settings.check_overrides()) {
+            if (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info]) {
+                Theming.strip_panel_background_image();
+            } else {
+                if (!Settings.enable_custom_background_color()) {
+                    Theming.reapply_panel_background_image();
+                }
+            }
+        } else {
+            if (!Settings.enable_custom_background_color()) {
+                Theming.reapply_panel_background_image();
+            } else {
+                Theming.strip_panel_background_image();
+            }
+        }
+
         Theming.reapply_panel_styling();
     }
 
@@ -229,6 +247,7 @@ function fade_out(params) {
         update_corner_alpha(0);
     }
 
+    Theming.strip_panel_background_image();
     Theming.strip_panel_styling();
 
     if (time <= 0 && !Main.overview._shown) {
@@ -280,6 +299,9 @@ function blank_fade_out(params) {
     /* always hide to update preference changes */
 
     update_corner_alpha(0);
+
+    Theming.strip_panel_background_image();
+    Theming.strip_panel_styling();
 
     if (time <= 0) {
         Theming.set_background_alpha(Panel.actor, 0);

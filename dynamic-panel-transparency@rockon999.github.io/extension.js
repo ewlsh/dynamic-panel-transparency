@@ -104,16 +104,17 @@ function disable() {
     /* Remove Our Styling */
     Theming.reapply_panel_styling();
     Theming.reapply_panel_background();
+    Theming.reapply_panel_background_image();
 
     /* Cleanup Theming */
     Theming.cleanup();
 
+    /* Cleanup Transitions */
+    Transitions.cleanup();
+
     /* Cleanup Settings */
     Settings.unbind();
     Settings.cleanup();
-
-    /* Cleanup Transitions */
-    Transitions.cleanup();
 }
 
 function modify_panel() {

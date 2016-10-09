@@ -178,6 +178,7 @@ function _userThemeChanged() {
     /* Remove Our Styling */
     Theming.reapply_panel_styling();
     Theming.reapply_panel_background();
+    Theming.reapply_panel_background_image();
 
     Mainloop.idle_add(Lang.bind(this, function () {
         let theme = Panel.actor.get_theme_node();
@@ -195,6 +196,8 @@ function _userThemeChanged() {
             Theming.set_theme_background_color(Util.clutter_to_native_color(theme_background));
             Theming.set_theme_opacity(theme_background.alpha);
         }
+
+        Theming.strip_panel_background();
 
         /* Simulate window changes. */
         _windowUpdated({

@@ -1,4 +1,4 @@
-/* exported init, cleanup, add_text_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, exported remove_text_shadow, remove_icon_shadow, register_text_color, register_style, exported get_background_alpha, set_background_alpha, get_background_image_color, set_text_color, set_corner_color, set_panel_color, remove_text_color, strip_panel_background, strip_panel_styling, reapply_panel_background, reapply_panel_styling, clear_corner_color, set_theme_background_color, set_theme_opacity, get_maximized_opacity, get_unmaximized_opacity */
+/* exported init, cleanup, add_text_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, register_style, get_background_alpha, set_background_alpha, get_background_image_color, set_text_color, set_corner_color, set_panel_color, remove_text_color, strip_panel_background, strip_panel_styling, reapply_panel_background, reapply_panel_styling, clear_corner_color, set_theme_background_color, set_theme_opacity, get_maximized_opacity, get_unmaximized_opacity, strip_panel_background_image, reapply_panel_background_image */
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Compatibility = Me.imports.compatibility;
@@ -448,35 +448,63 @@ function get_unmaximized_opacity() {
 }
 
 /**
- * Applies the style class 'panel-full-transparency' and removes the basic CSS preventing this extension's transitions.
+ * Applies the style class 'panel-effect-transparency' and removes the basic CSS preventing this extension's transitions.
  *
  */
 function strip_panel_styling() {
-    Panel.actor.add_style_class_name('panel-full-transparency');
+    if (!Panel.actor.has_style_class_name('panel-effect-transparency')) {
+        Panel.actor.add_style_class_name('panel-effect-transparency');
+    }
 }
 
 /**
- * Removes the style class 'panel-full-transparency' and enables the stock CSS preventing this extension's transitions.
+ * Removes the style class 'panel-effect-transparency' and enables the stock CSS preventing this extension's transitions.
  *
  */
 function reapply_panel_styling() {
-    Panel.actor.remove_style_class_name('panel-full-transparency');
+    if (Panel.actor.has_style_class_name('panel-effect-transparency')) {
+        Panel.actor.remove_style_class_name('panel-effect-transparency');
+    }
 }
 
 /**
- * Applies the style class 'panel-strip-background' and removes any CSS embellishments.
+ * Applies the style class 'panel-background-image-transparency' and removes the basic CSS preventing this extension's transitions.
+ *
+ */
+function strip_panel_background_image() {
+    if (!Panel.actor.has_style_class_name('panel-background-image-transparency')) {
+        Panel.actor.add_style_class_name('panel-background-image-transparency');
+    }
+}
+
+/**
+ * Removes the style class 'panel-background-image-transparency' and enables the stock CSS preventing this extension's transitions.
+ *
+ */
+function reapply_panel_background_image() {
+    if (Panel.actor.has_style_class_name('panel-background-image-transparency')) {
+        Panel.actor.remove_style_class_name('panel-background-image-transparency');
+    }
+}
+
+/**
+ * Applies the style class 'panel-background-color-transparency' and removes any CSS embellishments.
  *
  */
 function strip_panel_background() {
-    Panel.actor.add_style_class_name('panel-strip-background');
+    if (!Panel.actor.has_style_class_name('panel-background-color-transparency')) {
+        Panel.actor.add_style_class_name('panel-background-color-transparency');
+    }
 }
 
 /**
- * Reapplies the style class 'panel-strip-background' and enables any CSS embellishments.
+ * Reapplies the style class 'panel-background-color-transparency' and enables any CSS embellishments.
  *
  */
 function reapply_panel_background() {
-    Panel.actor.remove_style_class_name('panel-strip-background');
+    if (Panel.actor.has_style_class_name('panel-background-color-transparency')) {
+        Panel.actor.remove_style_class_name('panel-background-color-transparency');
+    }
 }
 
 /**
