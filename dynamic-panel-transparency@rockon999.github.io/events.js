@@ -81,16 +81,24 @@ function init() {
     this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, this._windowRestacked));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
 
-    this._theme_settings = new Gio.Settings({
-        schema_id: USER_THEME_SCHEMA
-    });
+    try {
+        this._theme_settings = new Gio.Settings({
+            schema_id: USER_THEME_SCHEMA
+        });
+    } catch (error) {
+        log(error);
+    }
 
     this._extension_settings = new Gio.Settings({
         schema_id: EXTENSION_SCHEMA
     });
 
+
     this._extensionsChangedSig = this._extension_settings.connect('changed::enabled-extensions', Lang.bind(this, this._userThemeChanged));
-    this._userThemeChangedSig = this._theme_settings.connect('changed::name', Lang.bind(this, this._userThemeChanged));
+
+    if (!Util.is_undef(this._theme_settings)) {
+        this._userThemeChangedSig = this._theme_settings.connect('changed::name', Lang.bind(this, this._userThemeChanged));
+    }
 }
 
 /**
@@ -116,7 +124,10 @@ function cleanup() {
     global.screen.disconnect(this._windowRestackedSig);
     global.screen.disconnect(this._workspacesChangedSig);
 
-    this._theme_settings.disconnect(this._userThemeChangedSig);
+    if (!Util.is_undef(this._theme_settings)) {
+        this._theme_settings.disconnect(this._userThemeChangedSig);
+    }
+
     this._extension_settings.disconnect(this._extensionsChangedSig);
 
     /* Remove window tracking properties. */
