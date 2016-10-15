@@ -159,26 +159,37 @@ function buildPrefsWidget() {
 
     let panel_wallpaper = builder.get_object('panel_wallpaper');
 
-    let bg_settings = new Gio.Settings({
-        schema_id: GNOME_BACKGROUND_SCHEMA
-    });
 
-    let wallpaper_path = bg_settings.get_string('picture-uri').replace('file://', '');
 
-    if (wallpaper_path.endsWith('.xml')) {
-        log('[Dynamic Panel Transparency] Demo panel is not compatible with timed wallpapers.');
-    } else {
-        try {
-            let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper_path, PANEL_WIDTH, -1, true);
-            panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+    let bg_settings = null;
 
-            panel_background.connect('size-allocate', Lang.bind(this, function (widget, rect) {
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper_path, rect.width, -1, true);
-                panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, rect.width, PANEL_HEIGHT);
-            }));
-        } catch (error) {
-            log('[Dynamic Panel Transparency] Could not load user\'s wallpaper settings for demo panel.');
-            log(error);
+    try {
+        bg_settings = new Gio.Settings({
+            schema_id: GNOME_BACKGROUND_SCHEMA
+        });
+    } catch (error) {
+        log('[Dynamic Panel Transparency] Failed to retrieve user\'s wallpaper settings.');
+        log(error);
+    }
+
+    if (!Util.is_undef(bg_settings)) {
+        let wallpaper_path = bg_settings.get_string('picture-uri').replace('file://', '');
+
+        if (wallpaper_path.endsWith('.xml')) {
+            log('[Dynamic Panel Transparency] Demo panel is not compatible with timed wallpapers.');
+        } else {
+            try {
+                let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper_path, PANEL_WIDTH, -1, true);
+                panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+
+                panel_background.connect('size-allocate', Lang.bind(this, function (widget, rect) {
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper_path, rect.width, -1, true);
+                    panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, rect.width, PANEL_HEIGHT);
+                }));
+            } catch (error) {
+                log('[Dynamic Panel Transparency] Could not load user\'s wallpaper settings for demo panel.');
+                log(error);
+            }
         }
     }
 
@@ -1029,7 +1040,7 @@ function buildPrefsWidget() {
                 title: app_name
             });
 
-            dialog.get_header_bar().set_subtitle( _("App Tweaks"));
+            dialog.get_header_bar().set_subtitle(_("App Tweaks"));
 
             dialog.add_button(gtk30_('_Cancel'), Gtk.ResponseType.CANCEL);
             dialog.add_button(gtk30_('_Apply'), Gtk.ResponseType.APPLY);

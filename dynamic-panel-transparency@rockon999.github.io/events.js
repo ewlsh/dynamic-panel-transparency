@@ -81,20 +81,32 @@ function init() {
     this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, this._windowRestacked));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
 
+    /* Apparently Ubuntu is wierd and does this different than a common Gnome installation. */
+    // TODO: Look into this.
+
     try {
         this._theme_settings = new Gio.Settings({
             schema_id: USER_THEME_SCHEMA
         });
     } catch (error) {
+        log('[Dynamic Panel Transparency] Failed find User Themes extension.');
         log(error);
     }
 
-    this._extension_settings = new Gio.Settings({
-        schema_id: EXTENSION_SCHEMA
-    });
+    /* This should never fail, but let's be careful */
 
+    try {
+        this._extension_settings = new Gio.Settings({
+            schema_id: EXTENSION_SCHEMA
+        });
+    } catch (error) {
+        log('[Dynamic Panel Transparency] Failed to find Gnome Shell settings. This should not occur.');
+        log(error);
+    }
 
-    this._extensionsChangedSig = this._extension_settings.connect('changed::enabled-extensions', Lang.bind(this, this._userThemeChanged));
+    if (!Util.is_undef(this._extension_settings)) {
+        this._extensionsChangedSig = this._extension_settings.connect('changed::enabled-extensions', Lang.bind(this, this._userThemeChanged));
+    }
 
     if (!Util.is_undef(this._theme_settings)) {
         this._userThemeChangedSig = this._theme_settings.connect('changed::name', Lang.bind(this, this._userThemeChanged));
@@ -124,11 +136,13 @@ function cleanup() {
     global.screen.disconnect(this._windowRestackedSig);
     global.screen.disconnect(this._workspacesChangedSig);
 
-    if (!Util.is_undef(this._theme_settings)) {
+    if (!Util.is_undef(this._theme_settings) && !Util.is_undef(this._userThemeChangedSig)) {
         this._theme_settings.disconnect(this._userThemeChangedSig);
     }
 
-    this._extension_settings.disconnect(this._extensionsChangedSig);
+    if (!Util.is_undef(this._extension_settings) && !Util.is_undef(this._extensionsChangedSig)) {
+        this._extension_settings.disconnect(this._extensionsChangedSig);
+    }
 
     /* Remove window tracking properties. */
     for (let container of this.workspaces) {
