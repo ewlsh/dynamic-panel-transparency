@@ -7,6 +7,7 @@ const Params = imports.misc.params;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Compatibility = Me.imports.compatibility;
+const Convenience = Me.imports.convenience;
 const Transitions = Me.imports.transitions;
 const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
@@ -81,27 +82,35 @@ function init() {
     this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, this._windowRestacked));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
 
-    /* Apparently Ubuntu is wierd and does this different than a common Gnome installation. */
-    // TODO: Look into this.
-
-    try {
-        this._theme_settings = new Gio.Settings({
-            schema_id: USER_THEME_SCHEMA
-        });
-    } catch (error) {
-        log('[Dynamic Panel Transparency] Failed find User Themes extension.');
-        log(error);
-    }
 
     /* This should never fail, but let's be careful */
 
     try {
-        this._extension_settings = new Gio.Settings({
-            schema_id: EXTENSION_SCHEMA
-        });
+        let schemaObj = Convenience.getSchemaObj(EXTENSION_SCHEMA, true);
+
+        if (!Util.is_undef(schemaObj)) {
+            this._extension_settings = new Gio.Settings({
+                settings_schema: schemaObj
+            });
+        }
+    } catch (error) {
+        log('[Dynamic Panel Transparency] Failed find User Themes extension.');
+    }
+
+
+    /* Apparently Ubuntu is wierd and does this different than a common Gnome installation. */
+    // TODO: Look into this.
+
+    try {
+        let schemaObj = Convenience.getSchemaObj(USER_THEME_SCHEMA, true);
+
+        if (!Util.is_undef(schemaObj)) {
+            this._theme_settings = new Gio.Settings({
+                settings_schema: schemaObj
+            });
+        }
     } catch (error) {
         log('[Dynamic Panel Transparency] Failed to find Gnome Shell settings. This should not occur.');
-        log(error);
     }
 
     if (!Util.is_undef(this._extension_settings)) {

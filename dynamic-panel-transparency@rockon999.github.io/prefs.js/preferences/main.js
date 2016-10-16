@@ -164,13 +164,14 @@ function buildPrefsWidget() {
     let bg_settings = null;
 
     try {
-        bg_settings = new Gio.Settings({
-            schema_id: GNOME_BACKGROUND_SCHEMA
-        });
-    } catch (error) {
-        log('[Dynamic Panel Transparency] Failed to retrieve user\'s wallpaper settings.');
-        log(error);
-    }
+        let schemaObj = Convenience.getSchemaObj(GNOME_BACKGROUND_SCHEMA, true);
+
+        if (!Util.is_undef(schemaObj)) {
+            bg_settings = new Gio.Settings({
+                settings_schema: schemaObj
+            });
+        }
+    } catch (error) {} // eslint-disable-line
 
     if (!Util.is_undef(bg_settings)) {
         let wallpaper_path = bg_settings.get_string('picture-uri').replace('file://', '');
@@ -187,10 +188,12 @@ function buildPrefsWidget() {
                     panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, rect.width, PANEL_HEIGHT);
                 }));
             } catch (error) {
-                log('[Dynamic Panel Transparency] Could not load user\'s wallpaper settings for demo panel.');
+                log('[Dynamic Panel Transparency] Could not open user\'s wallpaper settings for demo panel.');
                 log(error);
             }
         }
+    } else {
+        log('[Dynamic Panel Transparency] Failed to retrieve user\'s wallpaper settings.');
     }
 
     let demo_panel_activities_label = builder.get_object('panel_demo_activities_label');
