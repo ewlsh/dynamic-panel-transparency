@@ -79,7 +79,7 @@ function getSettings(schema) {
  *
  * @returns {Object} A GSettingsSchema found based on the given schema path.
  */
-function getSchemaObj(schema) {
+function getSchemaObj(schema, defaultSource = false) {
     let extension = ExtensionUtils.getCurrentExtension();
 
     schema = schema || extension.metadata['settings-schema'];
@@ -92,9 +92,9 @@ function getSchemaObj(schema) {
     // same prefix as gnome-shell (and therefore schemas are available
     // in the standard folders)
     let schemaDir = extension.dir.get_child('schemas');
-    let schemaSource;
+    let schemaSource = null;
 
-    if (schemaDir.query_exists(null)) {
+    if (schemaDir.query_exists(null) && !defaultSource) {
         schemaSource = GioSSS.new_from_directory(schemaDir.get_path(), GioSSS.get_default(), false);
     } else {
         schemaSource = GioSSS.get_default();
