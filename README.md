@@ -21,6 +21,8 @@ Reload your shell using <code>Alt+F2</code> <code>r</code> <code>Enter</code> an
 
 Report bugs [here](https://github.com/rockon999/dynamic-panel-transparency/issues).
 
+Please include a list of your installed extensions, current theme, relevant data from `journalctl --since "X seconds ago"`, and any other information you believe is necessary for me to understand your issue.
+
 ## License
 Dynamic Panel Transparency is distributed under the terms of the GNU General Public License v2.
 See the COPYING and LICENSE files for details.
