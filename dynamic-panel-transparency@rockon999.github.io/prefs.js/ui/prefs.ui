@@ -7,7 +7,7 @@
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
     <property name="program_name">Dynamic Panel Transparency</property>
-    <property name="version">v11</property>
+    <property name="version">v15</property>
     <property name="comments" translatable="yes">Classy transparency for your panel.</property>
     <property name="website">https://rockon999.github.io/dynamic-panel-transparency/</property>
     <property name="website_label" translatable="yes">Website</property>
