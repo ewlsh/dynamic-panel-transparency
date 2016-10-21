@@ -163,8 +163,11 @@ function cleanup() {
     }
 
     for (let window_container of this.windows) {
-        window_container.window.disconnect(window_container.signalId);
+        for (let signalId of window_container.signalIds) {
+            window_container.window.disconnect(signalId);
+        }
         delete window_container.window.dpt_tracking;
+
     }
 
     /* Cleanup Signals */
@@ -240,6 +243,8 @@ function _userThemeChanged() {
         _windowUpdated({
             force: true
         });
+
+        return false;
     }));
 }
 
@@ -260,8 +265,11 @@ function _workspacesChanged() {
             }
         }
     }
+
     for (let window_container of this.windows) {
-        window_container.window.disconnect(window_container.signalId);
+        for (let signalId of window_container.signalIds) {
+            window_container.window.disconnect(signalId);
+        }
     }
 
     for (let i = 0; i < global.screen.get_n_workspaces(); i++) {
@@ -271,32 +279,38 @@ function _workspacesChanged() {
             continue;
         }
 
-        const nId = workspace.connect('notify::workspace-index', Lang.bind(this, this._workspacesChanged));
+        const connect_maximized = function (workspace, window) {
+            if (!Util.is_undef(window) && Util.is_undef(window.dpt_tracking)) {
+                window.dpt_tracking = true;
 
-        const id = workspace.connect('window-added', Lang.bind(this, function (workspace, window) {
-            if (!Util.is_undef(window)) {
-                if (Util.is_undef(window.dpt_tracking)) {
-                    window.dpt_tracking = true;
-                    const wId = window.connect('notify::maximized-vertically', Lang.bind(this, function () {
-                        this._windowUpdated();
-                    }));
-                    this.windows.push({ 'window': window, 'signalId': wId });
-                }
+                const v_wId = window.connect('notify::maximized-vertically', Lang.bind(this, function (obj, property) {
+                    if (!obj['maximized_vertically']) {
+                        this._windowUpdated({ trigger_window: obj });
+                        return;
+                    }
+                    this._windowUpdated();
+                }));
+                const h_wId = window.connect('notify::maximized-horizontally', Lang.bind(this, function (obj, property) {
+                    if (!obj['maximized_horizontally']) {
+                        this._windowUpdated({ trigger_window: obj });
+                        return;
+                    }
+                    this._windowUpdated();
+                }));
+
+                this.windows.push({ 'window': window, 'signalIds': [v_wId, h_wId] });
             }
-        }));
+        };
 
+        const nId = workspace.connect('notify::workspace-index', Lang.bind(this, this._workspacesChanged));
+        const id = workspace.connect('window-added', Lang.bind(this, connect_maximized));
 
         for (let w = 0; w < workspace.list_windows().length; w++) {
             let window = workspace.list_windows()[w];
-            if (!Util.is_undef(window) && Util.is_undef(window.dpt_tracking)) {
-                window.dpt_tracking = true;
-                const wId = window.connect('notify::maximized-vertically', Lang.bind(this, function () {
-                    this._windowUpdated();
-                }));
-                this.windows.push({ 'window': window, 'signalId': wId });
-            }
+            connect_maximized(workspace, window);
         }
-        this.workspaces.push({ 'workspace': workspace, 'signalIds': [nId, id], index: i });
+
+        this.workspaces.push({ 'workspace': workspace, index: i, 'signalIds': [nId, id] });
     }
 }
 
@@ -317,11 +331,13 @@ function _windowUpdated(params) {
     params = Params.parse(params, {
         workspace: global.screen.get_active_workspace(),
         excluded_window: null,
+        trigger_window: null,
         blank: false,
         force: false
     }, true);
 
     let excluded_window = params.excluded_window;
+    let trigger_window = params.trigger_window;
     let workspace = params.workspace;
 
     let focused_window = global.display.get_focus_window();
@@ -337,7 +353,7 @@ function _windowUpdated(params) {
     /* Save processing time by checking the current focused window (most likely to be maximized) */
     /* Check that the focused window is in the right workspace. (I really hope it always is...) */
     /* Don't do the 'quick check' if we have trigger apps/windows as they might not be focused. */
-    if (!Util.is_undef(focused_window) && focused_window !== excluded_window && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && focused_window.get_workspace().index() === workspace.index() && !focused_window.minimized && !Settings.check_triggers()) {
+    if (!Util.is_undef(focused_window) && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && focused_window.get_workspace().index() === workspace.index() && !focused_window.minimized && !Settings.check_triggers()) {
         add_transparency = false;
         this.maximized_window = focused_window;
     } else {
@@ -371,7 +387,7 @@ function _windowUpdated(params) {
             }
 
             /* Make sure the window is on the correct monitor, isn't minimized, isn't supposed to be excluded, and is actually maximized. */
-            if (current_window !== excluded_window && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
+            if (current_window !== excluded_window && current_window !== trigger_window && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
                 if (Util.is_undef(this.maximized_window) && !is_trigger) {
                     this.maximized_window = current_window;
                     add_transparency = false;
