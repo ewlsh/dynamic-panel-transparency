@@ -298,7 +298,12 @@ function set_panel_color(color) {
  * @param {Number} color.alpha - Alpha value ranging from 0-255.
  */
 function set_corner_color(color) {
-    let panel_color = get_background_color();
+    let panel_color = { red: 0, green: 0, blue: 0, alpha: 0 };
+
+    if (!Util.is_undef(Settings.get_panel_color)) {
+        panel_color = get_background_color();
+    }
+
     let current_alpha = get_background_alpha(Panel._leftCorner.actor);
 
     color = Params.parse(color, {

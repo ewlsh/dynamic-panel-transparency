@@ -271,15 +271,11 @@ function _windowCreated(display, window) {
             }
             this._windowUpdated();
         }));
-        const h_wId = window.connect('notify::maximized-horizontally', Lang.bind(this, function (obj, property) {
-            if (!obj['maximized_horizontally']) {
-                this._windowUpdated({ trigger_window: obj });
-                return;
-            }
-            this._windowUpdated();
-        }));
 
-        this.windows.push({ 'window': window, 'signalIds': [v_wId, h_wId] });
+        // TODO: Would this help?
+        /* const h_wId=window.connect('notify::maximized-horizontally',Lang.bind(this,function(obj,property){if(!obj.maximized_horizontally){this._windowUpdated({trigger_window:obj});return} this._windowUpdated()})) */
+
+        this.windows.push({ 'window': window, 'signalIds': [v_wId] });
     }
 }
 
@@ -322,7 +318,7 @@ function _windowUpdated(params) {
     /* Save processing time by checking the current focused window (most likely to be maximized) */
     /* Check that the focused window is in the right workspace. (I really hope it always is...) */
     /* Don't do the 'quick check' if we have trigger apps/windows as they might not be focused. */
-    if (!Util.is_undef(focused_window) && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && focused_window.get_workspace().index() === workspace.index() && !focused_window.minimized && !Settings.check_triggers()) {
+    if (!Settings.check_triggers() && !Util.is_undef(focused_window) && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && !focused_window.minimized) {
         add_transparency = false;
         this.maximized_window = focused_window;
     } else {
