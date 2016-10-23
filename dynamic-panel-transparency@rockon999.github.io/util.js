@@ -1,9 +1,10 @@
-/* exported get_maximized_width_buffer, get_shell_version,validate, is_undef, clamp, is_maximized, is_valid, match_colors, remove_file, get_file, write_to_file, get_app_for_window, get_app_for_wmclass, gdk_to_css_color, clutter_to_native_color, deep_freeze */
+/* exported get_maximized_width_buffer, get_maximized_height_buffer, get_shell_version,validate, is_undef, clamp, is_maximized, is_valid, match_colors, remove_file, get_file, write_to_file, get_app_for_window, get_app_for_wmclass, gdk_to_css_color, clutter_to_native_color, deep_freeze */
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
 /* Global Utility Variables */
+const MAXIMIZED_HEIGHT_BUFFER = 1;
 const MAXIMIZED_WIDTH_BUFFER = 5;
 
 /* Gnome Versioning */
@@ -17,13 +18,23 @@ const PERMISSIONS_MODE = parseInt('0744', 8);
 /* Utility Variable Access */
 
 /**
- * Returns the width buffer for horiztonally maximized windows.
+ * Returns the width buffer for horizontally maximized windows.
  *
  * @returns {Number} The width buffer.
  *
  */
 function get_maximized_width_buffer() {
     return MAXIMIZED_WIDTH_BUFFER;
+}
+
+/**
+ * Returns the height buffer for horizontally maximized windows.
+ *
+ * @returns {Number} The height buffer.
+ *
+ */
+function get_maximized_height_buffer() {
+    return MAXIMIZED_HEIGHT_BUFFER;
 }
 
 /**
@@ -93,8 +104,13 @@ function is_maximized(window) {
 
     let frame = window.get_frame_rect();
 
-    if (frame.y <= imports.ui.main.panel.actor.get_height()) {
-        return (window.maximized_horizontally || frame.width >= (window.get_screen().get_size()[0] - MAXIMIZED_WIDTH_BUFFER));
+    // TODO: let scale_factor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+
+    let width_buffer = MAXIMIZED_WIDTH_BUFFER; // * scale_factor;
+    let height_buffer = MAXIMIZED_HEIGHT_BUFFER; // * scale_factor;
+
+    if (frame.y <= (imports.ui.main.panel.actor.get_height() + height_buffer)) {
+        return (window.maximized_horizontally || frame.width >= (window.get_screen().get_size()[0] - width_buffer));
     }
 
     return false;
