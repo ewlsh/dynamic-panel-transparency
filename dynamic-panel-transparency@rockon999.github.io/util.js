@@ -1,4 +1,4 @@
-/* exported get_maximized_width_buffer, get_shell_version,validate, is_undef, clamp, is_maximized, match_colors, remove_file, get_file, write_to_file, get_app_for_window, get_app_for_wmclass, gdk_to_css_color, clutter_to_native_color, deep_freeze */
+/* exported get_maximized_width_buffer, get_shell_version,validate, is_undef, clamp, is_maximized, is_valid, match_colors, remove_file, get_file, write_to_file, get_app_for_window, get_app_for_wmclass, gdk_to_css_color, clutter_to_native_color, deep_freeze */
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
@@ -87,12 +87,6 @@ function clamp(value, min, max) {
  *
  */
 function is_maximized(window) {
-    let type = window.get_window_type();
-
-    if (type === imports.gi.Meta.WindowType.DESKTOP) {
-        return false;
-    }
-
     if (window.maximized_vertically) {
         return true;
     }
@@ -104,6 +98,20 @@ function is_maximized(window) {
     }
 
     return false;
+}
+
+/**
+ * Determines if 'window' is a valid window to watch.
+ *
+ * @param {Object} window - Window to check.
+ *
+ * @returns {Boolean} Whether 'window' is a valid window to watch.
+ *
+ */
+function is_valid(window) {
+    let type = window.get_window_type();
+
+    return (type !== imports.gi.Meta.WindowType.DESKTOP);
 }
 
 /**
@@ -167,25 +175,6 @@ function remove_file(file_path) {
     }
 
     return false;
-}
-
-/**
- * Retrieve GAppInfo for a given MetaWindow.
- *
- * @param {Object} window - MetaWindow object.
- *
- * @returns {Object} GAppInfo describing the given MetaWindow.
- *
- */
-function get_app_for_window(window) {
-    const Shell = imports.gi.Shell;
-
-    let shell_app = Shell.WindowTracker.get_default().get_app_from_pid(window.get_pid());
-    if (is_undef(shell_app))
-        shell_app = Shell.AppSystem.get_default().lookup_startup_wmclass(window.get_wm_class());
-    if (is_undef(shell_app))
-        shell_app = Shell.AppSystem.get_default().lookup_desktop_wmclass(window.get_wm_class());
-    return shell_app;
 }
 
 /**

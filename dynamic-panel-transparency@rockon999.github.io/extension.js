@@ -69,9 +69,6 @@ function enable() {
         /* Start the event loop. */
         Events.init();
 
-        /* Setup maximization listeners. */
-        Events._workspacesChanged();
-
         /* Simulate window changes. */
         Events._windowUpdated({
             force: true
