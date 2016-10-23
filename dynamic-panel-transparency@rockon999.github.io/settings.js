@@ -201,8 +201,8 @@ function bind() {
                             }
                         }
                     }
-                    if (!Util.is_undef(this.app_settings_manager[setting.name])) {
-                        let shell_app = Util.get_app_for_window(maximized_window);
+                    if (!Util.is_undef(Events._wm_tracker) && !Util.is_undef(this.app_settings_manager[setting.name])) {
+                        let shell_app = Events._wm_tracker.get_window_app(maximized_window);
                         if (!Util.is_undef(shell_app) && !Util.is_undef(shell_app.get_id())) {
                             let app_id = shell_app.get_id();
                             let app_setting = this.app_keys[setting.key];
