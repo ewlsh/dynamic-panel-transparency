@@ -171,7 +171,7 @@ function buildPrefsWidget() {
                 settings_schema: schemaObj
             });
         }
-    } catch (error) {} // eslint-disable-line
+    } catch (error) { } // eslint-disable-line
 
     if (!Util.is_undef(bg_settings)) {
         let wallpaper_path = bg_settings.get_string('picture-uri').replace('file://', '');
@@ -1263,6 +1263,8 @@ function buildPrefsWidget() {
     {
         /* Find the stack */
         let about_dialog = builder.get_object('about_dialog');
+        about_dialog.set_version('v' + Me.metadata['version']);
+
         let contents = about_dialog.get_child();
 
         let stack = find(contents, ['box', 'stack']);
