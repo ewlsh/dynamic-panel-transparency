@@ -254,8 +254,8 @@ function match_colors(a, b, alpha = false) {
  *
  */
 function deep_freeze(type, recursive = false) {
-    const freeze_children = function (obj) {
-        Object.keys(obj).forEach(function (value, index, arr) {
+    const freeze_children = function(obj) {
+        Object.keys(obj).forEach(function(value, index, arr) {
             if (typeof (value) === 'object' && !Object.isFrozen(value)) {
                 Object.freeze(value);
                 if (recursive) {

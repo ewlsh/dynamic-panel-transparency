@@ -33,23 +33,23 @@ function init() {
     this._app_overrides = this.settings.get_strv(SETTINGS_APP_OVERRIDES);
     this._window_overrides = this.settings.get_strv(SETTINGS_WINDOW_OVERRIDES);
 
-    this.settingsBoundIds.push(this.settings.connect('changed::' + SETTINGS_APP_OVERRIDES, Lang.bind(this, function () {
+    this.settingsBoundIds.push(this.settings.connect('changed::' + SETTINGS_APP_OVERRIDES, Lang.bind(this, function() {
         this._app_overrides = this.settings.get_strv(SETTINGS_APP_OVERRIDES);
         this.app_settings_manager.unbind();
         this.app_settings_manager = new AppSettingsManager(this.app_keys, this.get_app_overrides(), APP_OVERRIDES_SCHEMA_PATH);
     })));
 
-    this.settingsBoundIds.push(this.settings.connect('changed::' + SETTINGS_WINDOW_OVERRIDES, Lang.bind(this, function () {
+    this.settingsBoundIds.push(this.settings.connect('changed::' + SETTINGS_WINDOW_OVERRIDES, Lang.bind(this, function() {
         this._window_overrides = this.settings.get_strv(SETTINGS_WINDOW_OVERRIDES);
         this.window_settings_manager.unbind();
         this.window_settings_manager = new AppSettingsManager(this.app_keys, this.get_window_overrides(), WINDOW_OVERRIDES_SCHEMA_PATH);
     })));
 
-    this.get_app_overrides = function () {
+    this.get_app_overrides = function() {
         return this._app_overrides;
     };
 
-    this.get_window_overrides = function () {
+    this.get_window_overrides = function() {
         return this._window_overrides;
     };
 }
@@ -131,12 +131,12 @@ function bind() {
         let setting = this.keys[i];
 
         /* Watch for changes */
-        this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, Lang.bind(this, function () {
+        this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, Lang.bind(this, function() {
             this.settings_manager.update(setting);
         })));
 
         if (!Util.is_undef(setting.handler)) {
-            this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, function () {
+            this.settingsBoundIds.push(this.settings.connect('changed::' + setting.key, function() {
                 // TODO: Find a better way to handle settings being changed right as the extension starts up.
                 try {
                     setting.handler.call(this);
@@ -147,11 +147,11 @@ function bind() {
             }));
         }
 
-        let parser = (setting.parser !== null ? setting.parser : function (input) {
+        let parser = (setting.parser !== null ? setting.parser : function(input) {
             return input;
         });
 
-        let getter = function (params) {
+        let getter = function(params) {
             params = Params.parse(params, { app_settings: true, app_info: false, default: false });
 
             if (params.app_info) {
@@ -171,7 +171,7 @@ function bind() {
         /* Add function */
 
         if (this.overriden_keys.indexOf(setting.key) !== -1) {
-            getter = function (params) {
+            getter = function(params) {
                 params = Params.parse(params, { app_settings: true, app_info: false, default: false });
 
                 if (params.app_info && params.default) {
@@ -189,7 +189,7 @@ function bind() {
                         let value = this.window_settings_manager[setting.name][maximized_window.get_wm_class()];
                         if (!Util.is_undef(value)) {
                             let window_setting = this.app_keys[setting.key];
-                            let window_parser = ((!Util.is_undef(window_setting) && window_setting.parser !== null) ? window_setting.parser : function (input) {
+                            let window_parser = ((!Util.is_undef(window_setting) && window_setting.parser !== null) ? window_setting.parser : function(input) {
                                 return input;
                             });
                             if (!Util.is_undef(value)) {
@@ -206,7 +206,7 @@ function bind() {
                         if (!Util.is_undef(shell_app) && !Util.is_undef(shell_app.get_id())) {
                             let app_id = shell_app.get_id();
                             let app_setting = this.app_keys[setting.key];
-                            let app_parser = ((!Util.is_undef(app_setting) && app_setting.parser !== null) ? app_setting.parser : function (input) {
+                            let app_parser = ((!Util.is_undef(app_setting) && app_setting.parser !== null) ? app_setting.parser : function(input) {
                                 return input;
                             });
                             let value = this.app_settings_manager[setting.name][app_id];
@@ -247,7 +247,7 @@ function unbind() {
 /* Basic class to hold settings values */
 const SettingsManager = new Lang.Class({
     Name: 'DynamicPanelTransparency_SettingsManager',
-    _init: function (settings, params) {
+    _init: function(settings, params) {
 
         this.values = [];
         this.settings = settings;
@@ -265,7 +265,7 @@ const SettingsManager = new Lang.Class({
             }
         }
     },
-    update: function (setting) {
+    update: function(setting) {
         if (this.settings.list_keys().indexOf(setting.key) === -1)
             return;
 
@@ -281,7 +281,7 @@ const SettingsManager = new Lang.Class({
 
 const AppSettingsManager = new Lang.Class({
     Name: 'DynamicPanelTransparency_AppSettingsManager',
-    _init: function (params, apps, path) {
+    _init: function(params, apps, path) {
         this.values = [];
         this.settings = {};
         this.settingsBoundIds = {};
@@ -314,7 +314,7 @@ const AppSettingsManager = new Lang.Class({
                     this.settingsBoundIds[app_id] = [];
                 }
 
-                this.settingsBoundIds[app_id].push(this.settings[app_id].connect('changed::' + setting.key, Lang.bind(this, function () {
+                this.settingsBoundIds[app_id].push(this.settings[app_id].connect('changed::' + setting.key, Lang.bind(this, function() {
                     this.update(setting, app_id);
                 })));
 
@@ -328,7 +328,7 @@ const AppSettingsManager = new Lang.Class({
             }
         }
     },
-    update: function (setting, app_id) {
+    update: function(setting, app_id) {
         if (Util.is_undef(setting) || this.settings[app_id].list_keys().indexOf(setting.key) === -1)
             return;
         let variant = GLib.VariantType.new(setting.type);
@@ -340,7 +340,7 @@ const AppSettingsManager = new Lang.Class({
             this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).unpack();
         }
     },
-    unbind: function () {
+    unbind: function() {
         for (let app_id of Object.keys(this.settings)) {
             for (let id of this.settingsBoundIds[app_id]) {
                 this.settings[app_id].disconnect(id);

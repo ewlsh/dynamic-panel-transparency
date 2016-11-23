@@ -40,7 +40,7 @@ function enable() {
     Theming.init();
 
     /* Delay the extension so we can retreive the theme background color (why are user themes an extension?). */
-    Mainloop.idle_add(Lang.bind(this, function () {
+    Mainloop.idle_add(Lang.bind(this, function() {
         let extension = imports.misc.extensionUtils.getCurrentExtension();
 
         if (!Util.is_undef(extension) && extension.extensionState === ExtensionSystem.ExtensionState.DISABLED) {
@@ -166,7 +166,7 @@ function initialize_settings() {
         settings_key: 'hide-corners',
         name: 'hide_corners',
         type: 'b',
-        handler: Lang.bind(this, function () {
+        handler: Lang.bind(this, function() {
             Events._windowUpdated({
                 force: true
             });
@@ -187,7 +187,7 @@ function initialize_settings() {
         name: 'unmaximized_opacity',
         type: 'i',
         getter: 'get_unmaximized_opacity',
-        handler: Lang.bind(this, function () {
+        handler: Lang.bind(this, function() {
             Events._windowUpdated({
                 force: true
             });
@@ -198,7 +198,7 @@ function initialize_settings() {
         name: 'maximized_opacity',
         type: 'i',
         getter: 'get_maximized_opacity',
-        handler: Lang.bind(this, function () {
+        handler: Lang.bind(this, function() {
             Events._windowUpdated({
                 force: true
             });
@@ -209,7 +209,7 @@ function initialize_settings() {
         name: 'panel_color',
         type: 'ai',
         parser: COLOR_PARSER,
-        handler: Lang.bind(this, function () {
+        handler: Lang.bind(this, function() {
             Theming.set_panel_color();
         })
     });
@@ -295,7 +295,7 @@ function initialize_settings() {
         settings_key: 'transition-type',
         name: 'transition_type',
         type: 'i',
-        handler: Lang.bind(this, function () {
+        handler: Lang.bind(this, function() {
             Transitions.update_transition_type();
         })
     });

@@ -54,7 +54,7 @@ function init() {
 
     this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, _windowUpdated));
 
-    this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function () {
+    this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function() {
         if (!Transitions.get_transparency_status().is_blank()) {
             Transitions.blank_fade_out();
         }
@@ -232,7 +232,7 @@ function _userThemeChanged() {
     Theming.reapply_panel_background();
     Theming.reapply_panel_background_image();
 
-    Mainloop.idle_add(Lang.bind(this, function () {
+    Mainloop.idle_add(Lang.bind(this, function() {
         let theme = Panel.actor.get_theme_node();
         let theme_background = theme.get_background_color();
 
@@ -264,7 +264,7 @@ function _windowCreated(display, window) {
     if (!Util.is_undef(window) && Util.is_valid(window) && Util.is_undef(window.dpt_tracking)) {
         window.dpt_tracking = true;
 
-        const v_wId = window.connect('notify::maximized-vertically', Lang.bind(this, function (obj, property) {
+        const v_wId = window.connect('notify::maximized-vertically', Lang.bind(this, function(obj, property) {
             if (!obj['maximized_vertically']) {
                 this._windowUpdated({ trigger_window: obj });
                 return;
