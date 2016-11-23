@@ -126,7 +126,7 @@ function minimum_fade_in(params) {
         };
 
         if (!Settings.get_hide_corners()) {
-            tweening_params.onUpdate = Lang.bind(this, function (a) {
+            tweening_params.onUpdate = Lang.bind(this, function(a) {
                 // TODO: Setting for frequency?
                 if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
                     update_corner_alpha(Theming.get_background_alpha(Panel.actor));
@@ -185,7 +185,7 @@ function fade_in(params) {
         };
 
         if (!Settings.get_hide_corners()) {
-            tweening_params.onUpdate = Lang.bind(this, function (a) {
+            tweening_params.onUpdate = Lang.bind(this, function(a) {
                 // TODO: Setting for frequency?
                 if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
                     update_corner_alpha(Theming.get_background_alpha(Panel.actor));
@@ -297,14 +297,14 @@ function fade_out(params) {
             time: time,
             transition: transition,
             background_alpha: Theming.get_unmaximized_opacity(),
-            onComplete: Lang.bind(this, function () {
+            onComplete: Lang.bind(this, function() {
                 Theming.set_panel_color();
                 this.animation_status.done();
             })
         };
 
         if (!Settings.get_hide_corners()) {
-            tweening_params.onUpdate = Lang.bind(this, function (a) {
+            tweening_params.onUpdate = Lang.bind(this, function(a) {
                 // TODO: Setting for frequency?
                 if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
                     update_corner_alpha(Theming.get_background_alpha(Panel.actor));
@@ -360,14 +360,14 @@ function blank_fade_out(params) {
             time: time,
             transition: transition,
             background_alpha: 0,
-            onComplete: Lang.bind(this, function () {
+            onComplete: Lang.bind(this, function() {
                 Theming.set_panel_color();
                 this.animation_status.done();
             })
         };
 
         if (!Settings.get_hide_corners()) {
-            tweening_params.onUpdate = Lang.bind(this, function (a) {
+            tweening_params.onUpdate = Lang.bind(this, function(a) {
                 // TODO: Setting for frequency?
                 if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
                     update_corner_alpha(Theming.get_background_alpha(Panel.actor));
@@ -401,48 +401,48 @@ function update_corner_alpha(alpha = null) {
 
 const TransparencyStatus = new Lang.Class({
     Name: 'DynamicPanelTransparency_TransparencyStatus',
-    _init: function () {
+    _init: function() {
         this.transparent = false;
         this.blank = false;
     },
-    is_transparent: function () {
+    is_transparent: function() {
         return this.transparent;
     },
-    is_blank: function () {
+    is_blank: function() {
         return this.blank;
     },
-    set_transparent: function (transparent) {
+    set_transparent: function(transparent) {
         this.transparent = transparent;
     },
-    set_blank: function (blank) {
+    set_blank: function(blank) {
         this.blank = blank;
     }
 });
 
 const AnimationStatus = new Lang.Class({
     Name: 'DynamicPanelTransparency_AnimationStatus',
-    _init: function () {
+    _init: function() {
         this.destination = null;
         this.action = null;
     },
-    get_action: function () {
+    get_action: function() {
         return this.action;
     },
-    get_destination: function () {
+    get_destination: function() {
         return this.destination;
     },
-    set: function (action, destination) {
+    set: function(action, destination) {
         this.action = action;
         this.destination = destination;
     },
-    done: function () {
+    done: function() {
         this.action = null;
         this.destination = null;
     },
-    same: function (action, destination) {
+    same: function(action, destination) {
         return (this.action === action && this.destination === destination);
     },
-    ready: function () {
+    ready: function() {
         return (this.action === null && this.destination === null);
     }
 });
@@ -459,7 +459,7 @@ const TransitionType = {
     BACK: { code: 'Back', name: 'Back', index: 15 },
     ELASTIC: { code: 'Elastic', name: 'Elastic', index: 9 },
     BOUNCE: { code: 'Bounce', name: 'Bounce', index: 10 },
-    from_index: function (search_index) {
+    from_index: function(search_index) {
         for (let key in this) {
             let value = this[key];
             if (typeof (value) === 'object' && search_index === value.index) {
@@ -468,7 +468,7 @@ const TransitionType = {
         }
         return null;
     },
-    to_code_string: function (type, action) {
+    to_code_string: function(type, action) {
         /* 'linear' is a special case. It doesn't have in/out modes. */
         if (type.code === this.LINEAR.code) {
             return this.LINEAR.code;

@@ -15,8 +15,8 @@ const gtk30_ = imports.gettext.domain('gtk30').gettext;
 const AppChooser = new Lang.Class({
     Name: 'DynamicPanelTransparency_AppChooser',
     Extends: Gtk.Dialog,
-    _init: function (main_window, excluded_apps) {
-        this.parent({ title: gtk30_('Select Application'), use_header_bar: true });
+    _init: function(main_window, excluded_apps) {
+        this.parent({ title: gtk30_("Select Application"), use_header_bar: true });
         this.all = {};
         this.entry = new Gtk.SearchEntry();
         this.entry.set_width_chars(30);
@@ -30,7 +30,7 @@ const AppChooser = new Lang.Class({
         list_box.set_header_func(Lang.bind(this, list_header_func), null);
         list_box.set_filter_func(Lang.bind(this, this.list_filter_func), null);
         this.entry.connect('search-changed', Lang.bind(this, this.on_search_entry_changed));
-        list_box.connect('row-activated', Lang.bind(this, function (b, r) {
+        list_box.connect('row-activated', Lang.bind(this, function(b, r) {
             return this.response(Gtk.ResponseType.OK) ? r.get_mapped() : null;
         }));
         list_box.connect('row-selected', Lang.bind(this, this.on_row_selected));
@@ -53,8 +53,8 @@ const AppChooser = new Lang.Class({
         scrolled_window.add(list_box);
         scrolled_window.margin = 5;
 
-        this.add_button(gtk30_('_Close'), Gtk.ResponseType.CANCEL);
-        this.add_button(gtk30_('_Select'), Gtk.ResponseType.OK);
+        this.add_button(gtk30_("_Close"), Gtk.ResponseType.CANCEL);
+        this.add_button(gtk30_("_Select"), Gtk.ResponseType.OK);
         this.set_default_response(Gtk.ResponseType.OK);
         let searchbtn = new Gtk.ToggleButton();
         searchbtn.valign = Gtk.Align.CENTER;
@@ -75,7 +75,7 @@ const AppChooser = new Lang.Class({
         this.connect('key-press-event', Lang.bind(this, this.on_key_press));
     },
 
-    sort_apps: function (a, b, user_data) {
+    sort_apps: function(a, b, user_data) {
 
         let aname = this.all[a].get_name();
         let bname = this.all[b].get_name();
@@ -89,7 +89,7 @@ const AppChooser = new Lang.Class({
 
     },
 
-    build_widget: function (a) {
+    build_widget: function(a) {
         let row = new Gtk.ListBoxRow();
 
         let g = new Gtk.Grid();
@@ -120,7 +120,7 @@ const AppChooser = new Lang.Class({
         return row;
     },
 
-    list_filter_func: function (row, unused) {
+    list_filter_func: function(row, unused) {
         let txt = this.entry.get_text().toLowerCase();
         let grid = row.get_child();
         for (let sib of grid.get_children()) {
@@ -133,7 +133,7 @@ const AppChooser = new Lang.Class({
         return false;
     },
 
-    on_search_entry_changed: function (editable) {
+    on_search_entry_changed: function(editable) {
         this.listbox.invalidate_filter();
         let selected = this.listbox.get_selected_row();
         if (selected && selected.get_mapped()) {
@@ -143,7 +143,7 @@ const AppChooser = new Lang.Class({
         }
     },
 
-    on_row_selected: function (box, row) {
+    on_row_selected: function(box, row) {
         if (row && row.get_mapped()) {
             this.set_response_sensitive(Gtk.ResponseType.OK, true);
         } else {
@@ -151,7 +151,7 @@ const AppChooser = new Lang.Class({
         }
     },
 
-    on_key_press: function (widget, event) {
+    on_key_press: function(widget, event) {
         let mods = event.state & Gtk.accelerator_get_default_mod_mask();
         if (event.keyval === this.search_key && mods === this.search_mods) {
             this.searchbar.set_search_mode(!this.searchbar.get_search_mode());
@@ -179,7 +179,7 @@ const AppChooser = new Lang.Class({
         return false;
     },
 
-    get_selected_app: function () {
+    get_selected_app: function() {
         let row = this.listbox.get_selected_row();
         if (row) {
             return this.all[row];

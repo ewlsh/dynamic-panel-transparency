@@ -11,7 +11,7 @@ const SCALE_FACTOR = 255.9999999;
 
 const DemoPanel = new Lang.Class({
     Name: 'DynamicPanelTransparency_DemoPanel',
-    _init: function (eventbox, text_labels, icon_labels) {
+    _init: function(eventbox, text_labels, icon_labels) {
         this.panel = eventbox;
         this.text_labels = text_labels;
         this.icon_labels = icon_labels;
@@ -24,7 +24,7 @@ const DemoPanel = new Lang.Class({
         this.icon_shadow = { h_offset: 0, y_offset: 0, blur: 0, color: { red: 0, green: 0, blue: 0, alpha: 1.0 } };
         this.text_shadow = { h_offset: 0, y_offset: 0, blur: 0, color: { red: 0, green: 0, blue: 0, alpha: 1.0 } };
     },
-    set_background_color: function (color) {
+    set_background_color: function(color) {
         this.panel.get_style_context().remove_provider(this.background_color_provider);
 
         /* Make sure that the alpha parameter is correct. */
@@ -35,7 +35,7 @@ const DemoPanel = new Lang.Class({
         this.panel.get_style_context().add_class('demo-panel-color');
         this.background_color = color;
     },
-    set_icon_shadow: function (shadow) {
+    set_icon_shadow: function(shadow) {
         for (let lbl of this.icon_labels) {
             lbl.get_style_context().remove_provider(this.icon_shadow_provider);
         }
@@ -51,7 +51,7 @@ const DemoPanel = new Lang.Class({
         }
         this.icon_shadow = shadow;
     },
-    set_text_shadow: function (shadow) {
+    set_text_shadow: function(shadow) {
         for (let lbl of this.text_labels) {
             lbl.get_style_context().remove_provider(this.text_shadow_provider);
         }
@@ -65,14 +65,14 @@ const DemoPanel = new Lang.Class({
         }
         this.text_shadow = shadow;
     },
-    set_text_color: function (color) {
+    set_text_color: function(color) {
         this.panel.get_style_context().remove_provider(this.text_color_provider);
         this.text_color_provider.load_from_data('.demo-panel-text-color { color: rgba(' + color.red + ', ' + color.green + ', ' + color.blue + ', ' + color.alpha + '); }');
         this.panel.get_style_context().add_provider(this.text_color_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
         this.panel.get_style_context().add_class('demo-panel-text-color');
         this.color = color;
     },
-    set_opacity: function (opacity, force_change = false) {
+    set_opacity: function(opacity, force_change = false) {
         if (!this.background_color) {
             this.background_color = {};
         }

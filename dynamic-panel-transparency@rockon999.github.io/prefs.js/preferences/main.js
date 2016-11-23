@@ -84,30 +84,30 @@ function buildPrefsWidget() {
         storage: {},
         enum_storage: {},
         _foreground: false,
-        store: function (key, value) {
+        store: function(key, value) {
             this.storage[key] = value;
-        }, store_enum: function (key, value) {
+        }, store_enum: function(key, value) {
             this.enum_storage[key] = value;
-        }, get: function (key) {
+        }, get: function(key) {
             let a = this.enum_storage[key];
             if (!Util.is_undef(a))
                 return this.enum_storage[key];
             return this.storage[key];
-        }, has: function (key) {
+        }, has: function(key) {
             let a = this.get(key);
             return (typeof (a) !== 'undefined' && a !== null);
-        }, apply: function () {
-            Object.keys(this.enum_storage).forEach(function (key) {
+        }, apply: function() {
+            Object.keys(this.enum_storage).forEach(function(key) {
                 if (this.has(key)) {
                     settings.set_enum(key, this.get(key));
                 }
             }, this);
-            Object.keys(this.storage).forEach(function (key) {
+            Object.keys(this.storage).forEach(function(key) {
                 if (this.has(key)) {
                     settings.set_value(key, this.get(key));
                 }
             }, this);
-        }, restart_required: function (b) {
+        }, restart_required: function(b) {
             if (typeof (b) !== 'undefined' && b !== null)
                 this._foreground = b;
             return this._foreground;
@@ -137,7 +137,7 @@ function buildPrefsWidget() {
 
 
     /* Only show the panel & extra button on relevant pages. */
-    main_notebook.connect('switch-page', Lang.bind(this, function (notebook, page, index) {
+    main_notebook.connect('switch-page', Lang.bind(this, function(notebook, page, index) {
         if (index === Page.FOREGROUND || index === Page.BACKGROUND) {
             panel_revealer.set_reveal_child(true);
         } else {
@@ -183,7 +183,7 @@ function buildPrefsWidget() {
                 let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper_path, PANEL_WIDTH, -1, true);
                 panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
 
-                panel_background.connect('size-allocate', Lang.bind(this, function (widget, rect) {
+                panel_background.connect('size-allocate', Lang.bind(this, function(widget, rect) {
                     pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpaper_path, rect.width, -1, true);
                     panel_wallpaper.pixbuf = pixbuf.new_subpixbuf(0, 0, rect.width, PANEL_HEIGHT);
                 }));
@@ -204,7 +204,7 @@ function buildPrefsWidget() {
 
     let panel_demo = new DemoPanel.DemoPanel(panel_background, text_labels, icons);
 
-    demo_panel_activities_label.set_label(gs_('Activities'));
+    demo_panel_activities_label.set_label(gs_("Activities"));
     demo_panel_clock_label.set_label(((new Date()).toLocaleTimeString()));
 
     let enable_bg_color = settings.get_boolean(SETTINGS_ENABLE_BACKGROUND_COLOR);
@@ -246,15 +246,15 @@ function buildPrefsWidget() {
         /* Add default marking. */
         speed_scale.add_mark(settings.get_default_value(SETTINGS_TRANSITION_SPEED).unpack(), Gtk.PositionType.BOTTOM, _("default"));
         /* Add formatting */
-        speed_scale.connect('format-value', Lang.bind(this, function (scale, value) {
+        speed_scale.connect('format-value', Lang.bind(this, function(scale, value) {
             return value + 'ms';
         }));
-        speed_scale.connect('value-changed', Lang.bind(this, function (widget) {
+        speed_scale.connect('value-changed', Lang.bind(this, function(widget) {
             temp_settings.store(SETTINGS_TRANSITION_SPEED, new GLib.Variant('i', widget.adjustment.get_value()));
         }));
 
         let transition_type_box = builder.get_object('transition_type_box');
-        transition_type_box.connect('changed', Lang.bind(this, function (box) {
+        transition_type_box.connect('changed', Lang.bind(this, function(box) {
             temp_settings.store('transition-type', new GLib.Variant('i', +(box.get_active_id())));
         }));
         transition_type_box.set_active_id('' + settings.get_int(SETTINGS_TRANSITION_TYPE) + '');
@@ -263,7 +263,7 @@ function buildPrefsWidget() {
         let force_transition = builder.get_object('force_transition_check');
         force_transition.set_active(settings.get_boolean(SETTINGS_FORCE_ANIMATION));
 
-        force_transition.connect('toggled', Lang.bind(this, function (widget) {
+        force_transition.connect('toggled', Lang.bind(this, function(widget) {
             temp_settings.store(SETTINGS_FORCE_ANIMATION, new GLib.Variant('b', widget.get_active()));
             temp_settings.restart_required(true);
         }));
@@ -275,7 +275,7 @@ function buildPrefsWidget() {
         let text_color_revealer = builder.get_object('text_color_revealer');
 
         text_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR));
-        text_color_switch.connect('state-set', Lang.bind(this, function (widget, state) {
+        text_color_switch.connect('state-set', Lang.bind(this, function(widget, state) {
             temp_settings.store(SETTINGS_ENABLE_TEXT_COLOR, new GLib.Variant('b', state));
             text_color_revealer.set_reveal_child(state);
 
@@ -304,7 +304,7 @@ function buildPrefsWidget() {
         let maximized_text_color_switch = builder.get_object('maximized_text_color_check');
         maximized_text_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR));
 
-        maximized_text_color_switch.connect('toggled', Lang.bind(this, function (widget) {
+        maximized_text_color_switch.connect('toggled', Lang.bind(this, function(widget) {
             temp_settings.store(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR, new GLib.Variant('b', widget.get_active()));
 
             let enable_text_color = settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR);
@@ -335,14 +335,14 @@ function buildPrefsWidget() {
         let overview_text_color_switch = builder.get_object('overview_text_color_check');
         overview_text_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_OVERVIEW_TEXT_COLOR));
 
-        overview_text_color_switch.connect('toggled', Lang.bind(this, function (widget) {
+        overview_text_color_switch.connect('toggled', Lang.bind(this, function(widget) {
             temp_settings.store(SETTINGS_ENABLE_OVERVIEW_TEXT_COLOR, new GLib.Variant('b', widget.get_active()));
         }));
 
         let remove_panel_styling_check = builder.get_object('remove_panel_styling_check');
         remove_panel_styling_check.set_active(settings.get_boolean(SETTINGS_REMOVE_PANEL_STYLING));
 
-        remove_panel_styling_check.connect('toggled', Lang.bind(this, function (widget) {
+        remove_panel_styling_check.connect('toggled', Lang.bind(this, function(widget) {
             temp_settings.store(SETTINGS_REMOVE_PANEL_STYLING, new GLib.Variant('b', widget.get_active()));
         }));
 
@@ -357,7 +357,7 @@ function buildPrefsWidget() {
             maximized_text_color_btn.set_rgba(scaled_color);
         }
 
-        maximized_text_color_btn.connect('color-set', Lang.bind(this, function (color_btn) {
+        maximized_text_color_btn.connect('color-set', Lang.bind(this, function(color_btn) {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
             let rgb = [color.red, color.green, color.blue];
 
@@ -400,7 +400,7 @@ function buildPrefsWidget() {
             text_color_btn.set_rgba(scaled_color);
         }
 
-        text_color_btn.connect('color-set', Lang.bind(this, function (color_btn) {
+        text_color_btn.connect('color-set', Lang.bind(this, function(color_btn) {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
             let rgb = [color.red, color.green, color.blue];
 
@@ -413,7 +413,7 @@ function buildPrefsWidget() {
         let text_shadow_switch = builder.get_object('text_shadow_switch');
         text_shadow_switch.set_active(settings.get_boolean(SETTINGS_TEXT_SHADOW));
 
-        text_shadow_switch.connect('state-set', Lang.bind(this, function (widget, state) {
+        text_shadow_switch.connect('state-set', Lang.bind(this, function(widget, state) {
             temp_settings.store(SETTINGS_TEXT_SHADOW, new GLib.Variant('b', state));
             temp_settings.restart_required(true);
 
@@ -465,7 +465,7 @@ function buildPrefsWidget() {
         let text_shadow_vertical_offset = builder.get_object('text_shadow_vertical_offset');
         temp_settings.store(SETTINGS_TEXT_SHADOW_POSITION, settings.get_value(SETTINGS_TEXT_SHADOW_POSITION));
         text_shadow_vertical_offset.set_value(settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack()[VERTICAL_OFFSET]);
-        text_shadow_vertical_offset.connect('value-changed', Lang.bind(this, function (widget) {
+        text_shadow_vertical_offset.connect('value-changed', Lang.bind(this, function(widget) {
             let position = temp_settings.get(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
             position[VERTICAL_OFFSET] = widget.get_value_as_int();
             temp_settings.store(SETTINGS_TEXT_SHADOW_POSITION, new GLib.Variant('(iii)', position));
@@ -500,7 +500,7 @@ function buildPrefsWidget() {
 
         let text_shadow_horizontal_offset = builder.get_object('text_shadow_horizontal_offset');
         text_shadow_horizontal_offset.set_value(settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack()[HORIZONTAL_OFFSET]);
-        text_shadow_horizontal_offset.connect('value-changed', Lang.bind(this, function (widget) {
+        text_shadow_horizontal_offset.connect('value-changed', Lang.bind(this, function(widget) {
             let position = temp_settings.get(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
             position[HORIZONTAL_OFFSET] = widget.get_value_as_int();
             temp_settings.store(SETTINGS_TEXT_SHADOW_POSITION, new GLib.Variant('(iii)', position));
@@ -535,7 +535,7 @@ function buildPrefsWidget() {
 
         let text_shadow_radius = builder.get_object('text_shadow_radius');
         text_shadow_radius.set_value(settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack()[BLUR_RADIUS]);
-        text_shadow_radius.connect('value-changed', Lang.bind(this, function (widget) {
+        text_shadow_radius.connect('value-changed', Lang.bind(this, function(widget) {
             let position = temp_settings.get(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
             position[BLUR_RADIUS] = widget.get_value_as_int();
             temp_settings.store(SETTINGS_TEXT_SHADOW_POSITION, new GLib.Variant('(iii)', position));
@@ -580,7 +580,7 @@ function buildPrefsWidget() {
         if (scaled_color.parse(css_color))
             text_shadow_color_btn.set_rgba(scaled_color);
 
-        text_shadow_color_btn.connect('color-set', Lang.bind(this, function (color_btn) {
+        text_shadow_color_btn.connect('color-set', Lang.bind(this, function(color_btn) {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
             let alpha = +(color_btn.get_rgba().alpha.toFixed(2));
 
@@ -642,7 +642,7 @@ function buildPrefsWidget() {
             panel_demo.set_icon_shadow(null);
         }
 
-        icon_shadow.connect('state-set', Lang.bind(this, function (widget, state) {
+        icon_shadow.connect('state-set', Lang.bind(this, function(widget, state) {
             temp_settings.store(SETTINGS_ICON_SHADOW, new GLib.Variant('b', state));
             temp_settings.restart_required(true);
 
@@ -672,7 +672,7 @@ function buildPrefsWidget() {
 
         temp_settings.store(SETTINGS_ICON_SHADOW_POSITION, settings.get_value(SETTINGS_ICON_SHADOW_POSITION));
         icon_shadow_vertical_offset.set_value(settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack()[VERTICAL_OFFSET]);
-        icon_shadow_vertical_offset.connect('value-changed', Lang.bind(this, function (widget) {
+        icon_shadow_vertical_offset.connect('value-changed', Lang.bind(this, function(widget) {
             let position = temp_settings.get(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
             position[VERTICAL_OFFSET] = widget.get_value_as_int();
             temp_settings.store(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
@@ -706,7 +706,7 @@ function buildPrefsWidget() {
         }));
         let icon_shadow_horizontal_offset = builder.get_object('icon_shadow_horizontal_offset');
         icon_shadow_horizontal_offset.set_value(settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack()[HORIZONTAL_OFFSET]);
-        icon_shadow_horizontal_offset.connect('value-changed', Lang.bind(this, function (widget) {
+        icon_shadow_horizontal_offset.connect('value-changed', Lang.bind(this, function(widget) {
             let position = temp_settings.get(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
             position[HORIZONTAL_OFFSET] = widget.get_value_as_int();
             temp_settings.store(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
@@ -740,7 +740,7 @@ function buildPrefsWidget() {
         }));
         let icon_shadow_radius = builder.get_object('icon_shadow_radius');
         icon_shadow_radius.set_value(settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack()[BLUR_RADIUS]);
-        icon_shadow_radius.connect('value-changed', Lang.bind(this, function (widget) {
+        icon_shadow_radius.connect('value-changed', Lang.bind(this, function(widget) {
             let position = temp_settings.get(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
             position[BLUR_RADIUS] = widget.get_value_as_int();
             temp_settings.store(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
@@ -786,7 +786,7 @@ function buildPrefsWidget() {
 
             icon_shadow_color_btn.set_rgba(scaled_color);
 
-        icon_shadow_color_btn.connect('color-set', Lang.bind(this, function (color_btn) {
+        icon_shadow_color_btn.connect('color-set', Lang.bind(this, function(color_btn) {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
             let alpha = +(color_btn.get_rgba().alpha.toFixed(2));
 
@@ -834,7 +834,7 @@ function buildPrefsWidget() {
         let opacity_revealer = builder.get_object('opacity_revealer');
 
         background_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_BACKGROUND_COLOR));
-        background_color_switch.connect('state-set', Lang.bind(this, function (widget, state) {
+        background_color_switch.connect('state-set', Lang.bind(this, function(widget, state) {
 
             if (state) {
                 let rgb = settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack();
@@ -848,7 +848,7 @@ function buildPrefsWidget() {
         }));
 
         opacity_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_OPACITY));
-        opacity_switch.connect('state-set', Lang.bind(this, function (widget, state) {
+        opacity_switch.connect('state-set', Lang.bind(this, function(widget, state) {
             temp_settings.store(SETTINGS_ENABLE_OPACITY, new GLib.Variant('b', state));
             opacity_revealer.set_reveal_child(state);
             let opacity = settings.get_int(SETTINGS_MAXIMIZED_OPACITY);
@@ -867,10 +867,10 @@ function buildPrefsWidget() {
         /* Init value. */
         maximum_scale.adjustment.set_value(settings.get_int(SETTINGS_MAXIMIZED_OPACITY));
         /* Add formatting */
-        maximum_scale.connect('format-value', Lang.bind(this, function (scale, value) {
+        maximum_scale.connect('format-value', Lang.bind(this, function(scale, value) {
             return (((value / SCALE_FACTOR) * 100).toFixed(0) + '%'); // eslint-disable-line no-magic-numbers
         }));
-        maximum_scale.connect('value-changed', Lang.bind(this, function (widget) {
+        maximum_scale.connect('value-changed', Lang.bind(this, function(widget) {
             panel_demo.set_opacity(widget.get_value(), true);
 
             let enable_text_color = settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR);
@@ -909,10 +909,10 @@ function buildPrefsWidget() {
         /* Init value. */
         minimum_scale.adjustment.set_value(settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY));
         /* Add formatting */
-        minimum_scale.connect('format-value', Lang.bind(this, function (scale, value) {
+        minimum_scale.connect('format-value', Lang.bind(this, function(scale, value) {
             return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%'; // eslint-disable-line no-magic-numbers
         }));
-        minimum_scale.connect('value-changed', Lang.bind(this, function (widget) {
+        minimum_scale.connect('value-changed', Lang.bind(this, function(widget) {
             panel_demo.set_opacity(widget.get_value(), true);
 
             let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
@@ -940,7 +940,7 @@ function buildPrefsWidget() {
         if (scaled_color.parse(css_color)) {
             color_btn.set_rgba(scaled_color);
         }
-        color_btn.connect('color-set', Lang.bind(this, function (color_btn) {
+        color_btn.connect('color-set', Lang.bind(this, function(color_btn) {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
             let rgb = [color.red, color.green, color.blue];
 
@@ -952,7 +952,7 @@ function buildPrefsWidget() {
         let hide_corners = builder.get_object('hide_corners_check');
         hide_corners.set_active(settings.get_boolean(SETTINGS_HIDE_CORNERS));
 
-        hide_corners.connect('toggled', Lang.bind(this, function (widget) {
+        hide_corners.connect('toggled', Lang.bind(this, function(widget) {
             temp_settings.store(SETTINGS_HIDE_CORNERS, new GLib.Variant('b', widget.get_active()));
         }));
     }
@@ -962,7 +962,7 @@ function buildPrefsWidget() {
     /* Setup App Settings Tab */
     {
         let app_list = builder.get_object('app_list');
-        app_list.set_sort_func(Lang.bind(this, function (a, b) {
+        app_list.set_sort_func(Lang.bind(this, function(a, b) {
             if (a.constructor === AppRow.AddAppRow) {
                 return 1;
             } else if (b.constructor === AppRow.AddAppRow) {
@@ -988,7 +988,7 @@ function buildPrefsWidget() {
         let app_overrides = settings.get_strv('app-overrides');
         let window_overrides = settings.get_strv('window-overrides');
 
-        let window_rmv = Lang.bind(this, function (wm_class, row) {
+        let window_rmv = Lang.bind(this, function(wm_class, row) {
             let overrides = settings.get_strv('window-overrides');
             let index = overrides.indexOf(wm_class);
             if (index !== -1) {
@@ -1005,7 +1005,7 @@ function buildPrefsWidget() {
 
             app_list.remove(row);
         });
-        let rmv = Lang.bind(this, function (app_id, row) {
+        let rmv = Lang.bind(this, function(app_id, row) {
             let overrides = settings.get_strv('app-overrides');
             let index = overrides.indexOf(app_id);
             if (index !== -1) {
@@ -1023,7 +1023,7 @@ function buildPrefsWidget() {
             app_list.remove(row);
         });
 
-        let cfg = Lang.bind(this, function (app_name, app_id, path) {
+        let cfg = Lang.bind(this, function(app_name, app_id, path) {
             let temp_app_settings = {
                 background_tweaks: null,
                 maximum_opacity: null,
@@ -1045,8 +1045,8 @@ function buildPrefsWidget() {
 
             dialog.get_header_bar().set_subtitle(_("App Tweaks"));
 
-            dialog.add_button(gtk30_('_Cancel'), Gtk.ResponseType.CANCEL);
-            dialog.add_button(gtk30_('_Apply'), Gtk.ResponseType.APPLY);
+            dialog.add_button(gtk30_("_Cancel"), Gtk.ResponseType.CANCEL);
+            dialog.add_button(gtk30_("_Apply"), Gtk.ResponseType.APPLY);
 
             dialog.transient_for = main_widget.get_toplevel();
             let custom_path = path + '' + app_id + '/';
@@ -1061,7 +1061,7 @@ function buildPrefsWidget() {
             let background_tweaks_revealer = app_prefs_builder.get_object('background_tweaks_revealer');
             background_tweaks_switch.set_active(app_settings.get_boolean(SETTINGS_ENABLE_BACKGROUND_TWEAKS));
             background_tweaks_revealer.set_reveal_child(background_tweaks_switch.get_active());
-            background_tweaks_switch.connect('state-set', Lang.bind(this, function (widget, state) {
+            background_tweaks_switch.connect('state-set', Lang.bind(this, function(widget, state) {
                 temp_app_settings.background_tweaks = state;
                 background_tweaks_revealer.set_reveal_child(state);
             }));
@@ -1070,15 +1070,15 @@ function buildPrefsWidget() {
             /* Init value. */
             _maximum_scale.adjustment.set_value(app_settings.get_int(SETTINGS_MAXIMIZED_OPACITY));
             /* Add formatting */
-            _maximum_scale.connect('format-value', Lang.bind(this, function (scale, value) {
+            _maximum_scale.connect('format-value', Lang.bind(this, function(scale, value) {
                 return (((value / SCALE_FACTOR) * 100).toFixed(0) + '%'); // eslint-disable-line no-magic-numbers
             }));
-            _maximum_scale.connect('value-changed', Lang.bind(this, function (widget) {
+            _maximum_scale.connect('value-changed', Lang.bind(this, function(widget) {
                 temp_app_settings.maximum_opacity = widget.adjustment.get_value();
             }));
 
             let _always_trigger = app_prefs_builder.get_object('always_trigger');
-            _always_trigger.connect('toggled', Lang.bind(this, function (widget) {
+            _always_trigger.connect('toggled', Lang.bind(this, function(widget) {
                 temp_app_settings.always_trigger = widget.get_active();
             }));
 
@@ -1102,7 +1102,7 @@ function buildPrefsWidget() {
             if (scaled_color.parse(css_color))
                 _color_btn.set_rgba(scaled_color);
 
-            _color_btn.connect('color-set', Lang.bind(this, function (color_btn) {
+            _color_btn.connect('color-set', Lang.bind(this, function(color_btn) {
                 let color = Util.gdk_to_css_color(color_btn.get_rgba());
                 let rgb = [color.red, color.green, color.blue];
 
@@ -1145,8 +1145,12 @@ function buildPrefsWidget() {
             dialog.destroy();
         });
 
-        let app_cfg = function (a, b) { cfg.call(this, a, b, '/org/gnome/shell/extensions/dynamic-panel-transparency/appOverrides/'); };
-        let window_cfg = function (a) { cfg.call(this, a, a, '/org/gnome/shell/extensions/dynamic-panel-transparency/windowOverrides/'); };
+        let app_cfg = function(a, b) {
+            cfg.call(this, a, b, '/org/gnome/shell/extensions/dynamic-panel-transparency/appOverrides/');
+        };
+        let window_cfg = function(a) {
+            cfg.call(this, a, a, '/org/gnome/shell/extensions/dynamic-panel-transparency/windowOverrides/');
+        };
 
         for (let override of app_overrides) {
             let app_info = Gio.DesktopAppInfo.new(override);
@@ -1164,7 +1168,7 @@ function buildPrefsWidget() {
         }
 
         let add = new AppRow.AddAppRow();
-        add.btn.connect('clicked', Lang.bind(this, function () {
+        add.btn.connect('clicked', Lang.bind(this, function() {
             Gio.Application.get_default().mark_busy();
             let overrides = settings.get_strv('app-overrides');
             let a2 = new AppChooser.AppChooser(main_widget.get_toplevel(), overrides);
@@ -1187,7 +1191,7 @@ function buildPrefsWidget() {
             a2.destroy();
         }));
 
-        extra_btn.connect('clicked', Lang.bind(this, function () {
+        extra_btn.connect('clicked', Lang.bind(this, function() {
             if (main_notebook.get_current_page() === Page.APP_TWEAKS) {
 
                 let dialog = new Gtk.Dialog({
@@ -1195,8 +1199,8 @@ function buildPrefsWidget() {
                     title: _("Add a Custom WM_CLASS")
                 });
 
-                dialog.add_button(gtk30_('_Cancel'), Gtk.ResponseType.CANCEL);
-                dialog.add_button(gtk30_('_OK'), Gtk.ResponseType.OK);
+                dialog.add_button(gtk30_("_Cancel"), Gtk.ResponseType.CANCEL);
+                dialog.add_button(gtk30_("_OK"), Gtk.ResponseType.OK);
 
 
                 let content_area = dialog.get_content_area();
@@ -1205,7 +1209,7 @@ function buildPrefsWidget() {
                 let revealer = builder.get_object('error_revealer');
                 let entry = builder.get_object('wm_class_entry');
 
-                dialog.connect('response', Lang.bind(this, function (dialog, response) {
+                dialog.connect('response', Lang.bind(this, function(dialog, response) {
                     if (response === Gtk.ResponseType.OK) {
                         let text = entry.get_text();
                         if ((Util.is_undef(text) || text === null || text === '')) {
@@ -1246,7 +1250,7 @@ function buildPrefsWidget() {
     /* Util function to find UI elements in a GTK dialog. */
     function find(container, names, level = 0) {
         let target = null;
-        container.forall(function (child) {
+        container.forall(function(child) {
             if (child.get_name() === names[level]) {
                 if (++level === names.length) {
                     target = child;
@@ -1299,7 +1303,7 @@ function buildPrefsWidget() {
     let widget_parent = main_widget.get_toplevel();
 
     /* Fix revealer sizing issues. */
-    widget_parent.connect('realize', Lang.bind(this, function () {
+    widget_parent.connect('realize', Lang.bind(this, function() {
         panel_revealer.set_reveal_child(false);
         extra_btn.hide();
         /* We have to regrab this object as it isn't in this scope. */
@@ -1318,7 +1322,7 @@ function buildPrefsWidget() {
     let apply_btn = builder.get_object('apply_btn');
     let cancel_btn = builder.get_object('cancel_btn');
 
-    apply_btn.connect('clicked', Lang.bind(this, function () {
+    apply_btn.connect('clicked', Lang.bind(this, function() {
         let widget_parent = main_widget.get_toplevel();
         if (temp_settings.restart_required()) {
             let response = restart_dialog.run();
@@ -1332,7 +1336,7 @@ function buildPrefsWidget() {
         widget_parent.close();
     }));
 
-    cancel_btn.connect('clicked', Lang.bind(this, function () {
+    cancel_btn.connect('clicked', Lang.bind(this, function() {
         let widget_parent = main_widget.get_toplevel();
         widget_parent.close();
     }));

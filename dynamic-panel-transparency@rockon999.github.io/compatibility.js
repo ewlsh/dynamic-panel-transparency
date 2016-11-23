@@ -9,7 +9,7 @@ const Util = Me.imports.util;
 const SHELL_VERSION = Util.get_shell_version();
 
 /* st-border-image in 3.14 uses strings, not Gio.File */
-const st_border_image_get_file = function (border_image) {
+const st_border_image_get_file = function(border_image) {
     if (SHELL_VERSION.major === Compatibility.st_border_image_get_file.major && SHELL_VERSION.minor > Compatibility.st_border_image_get_file.minor) {
         return border_image.get_file();
     }
@@ -17,7 +17,7 @@ const st_border_image_get_file = function (border_image) {
 };
 
 /* st-theme in 3.14 uses strings, not Gio.File */
-const st_theme_load_stylesheet = function (theme, file_name) {
+const st_theme_load_stylesheet = function(theme, file_name) {
     if (SHELL_VERSION.major === Compatibility.st_theme_load_stylesheet.major && SHELL_VERSION.minor > Compatibility.st_theme_load_stylesheet.minor) {
         file_name = Util.get_file(file_name);
     }
@@ -26,7 +26,7 @@ const st_theme_load_stylesheet = function (theme, file_name) {
 };
 
 /* st-theme in 3.14 uses strings, not Gio.File */
-const st_theme_unload_stylesheet = function (theme, file_name) {
+const st_theme_unload_stylesheet = function(theme, file_name) {
     if (SHELL_VERSION.major === Compatibility.st_theme_unload_stylesheet.major && SHELL_VERSION.minor > Compatibility.st_theme_unload_stylesheet.minor) {
         file_name = Util.get_file(file_name);
     }
@@ -34,7 +34,7 @@ const st_theme_unload_stylesheet = function (theme, file_name) {
 };
 
 /* Filters for signals that don't exist. */
-const g_signal_connect = function (instance, signal, callback) {
+const g_signal_connect = function(instance, signal, callback) {
     if (typeof (Compatibility.g_signal_connect[signal]) !== 'undefined') {
         if (SHELL_VERSION.major === Compatibility.g_signal_connect[signal].major && SHELL_VERSION.minor > Compatibility.g_signal_connect[signal].minor) {
             return instance.connect(signal, callback);
@@ -47,14 +47,14 @@ const g_signal_connect = function (instance, signal, callback) {
 };
 
 /* show-editor apparently only exists in 3.20+. */
-const gtk_color_button_set_show_editor = function (widget, value) {
+const gtk_color_button_set_show_editor = function(widget, value) {
     if (SHELL_VERSION.major === Compatibility.gtk_color_button_set_show_editor.major && SHELL_VERSION.minor > Compatibility.gtk_color_button_set_show_editor.minor) {
         widget.show_editor = value;
     }
 };
 
 /* Parses CSS... not a C function */
-const parse_css = function (css) {
+const parse_css = function(css) {
     for (let key of Object.keys(Compatibility.css)) {
         if (SHELL_VERSION.major === Compatibility.css[key].major && SHELL_VERSION.minor <= Compatibility.css[key].minor) {
             css = css.replace(key, Compatibility.css[key].fallback);
