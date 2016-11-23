@@ -15,6 +15,10 @@ const Util = Me.imports.util;
 
 const TIME_SCALE_FACTOR = 1000;
 
+const BEGINNING_THRESHOLD_PERCENTAGE = 0.20;
+const ENDING_THRESHOLD_PERCENTAGE = 0.80;
+const FRAME_RATE_DIVIDER = 8;
+
 /**
  * Intialize.
  *
@@ -92,8 +96,6 @@ function minimum_fade_in(params) {
         return;
     }
 
-
-
     let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
 
     this.status.set_transparent(true);
@@ -108,13 +110,31 @@ function minimum_fade_in(params) {
         Theming.set_background_alpha(Panel.actor, Theming.get_unmaximized_opacity());
         this.minimum_fade_in_complete();
         this.animation_status.done();
+
+        Theming.update_corner_alpha();
     } else {
-        this.tweener.addTween(Panel.actor, {
+        let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
+        let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
+        let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
+        let i = 0;
+
+        let tweening_params = {
             time: time,
             transition: transition,
             background_alpha: Theming.get_unmaximized_opacity(),
             onComplete: Lang.bind(this, minimum_fade_in_complete)
-        });
+        };
+
+        if (!Settings.get_hide_corners()) {
+            tweening_params.onUpdate = Lang.bind(this, function (a) {
+                // TODO: Setting for frequency?
+                if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
+                    update_corner_alpha(Theming.get_background_alpha(Panel.actor));
+                }
+            });
+        }
+
+        this.tweener.addTween(Panel.actor, tweening_params);
     }
 }
 
@@ -149,13 +169,31 @@ function fade_in(params) {
         Theming.set_background_alpha(Panel.actor, Theming.get_maximized_opacity());
         this.fade_in_complete();
         this.animation_status.done();
+
+        Theming.update_corner_alpha();
     } else {
-        this.tweener.addTween(Panel.actor, {
+        let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
+        let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
+        let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
+        let i = 0;
+
+        let tweening_params = {
             time: time,
             transition: transition,
             background_alpha: Theming.get_maximized_opacity(),
             onComplete: Lang.bind(this, fade_in_complete)
-        });
+        };
+
+        if (!Settings.get_hide_corners()) {
+            tweening_params.onUpdate = Lang.bind(this, function (a) {
+                // TODO: Setting for frequency?
+                if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
+                    update_corner_alpha(Theming.get_background_alpha(Panel.actor));
+                }
+            });
+        }
+
+        this.tweener.addTween(Panel.actor, tweening_params);
     }
 }
 
@@ -169,9 +207,7 @@ function minimum_fade_in_complete() {
         return;
     }
 
-    if (!Settings.get_hide_corners()) {
-        update_corner_alpha();
-    }
+    update_corner_alpha();
 
     this.animation_status.done();
 }
@@ -186,9 +222,7 @@ function fade_in_complete() {
         return;
     }
 
-    if (!Settings.get_hide_corners()) {
-        update_corner_alpha();
-    }
+    update_corner_alpha();
 
     let custom = Settings.get_panel_color({ app_info: true });
 
@@ -239,14 +273,6 @@ function fade_out(params) {
 
     let time = params.time / TIME_SCALE_FACTOR;
 
-    /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
-    /* always hide to update preference changes */
-    if (!Settings.get_hide_corners()) {
-        update_corner_alpha();
-    } else {
-        update_corner_alpha(0);
-    }
-
     Theming.strip_panel_background_image();
     Theming.strip_panel_styling();
 
@@ -254,12 +280,20 @@ function fade_out(params) {
         Theming.set_background_alpha(Panel.actor, Theming.get_unmaximized_opacity());
         Theming.set_panel_color();
         this.animation_status.done();
+
+        Theming.update_corner_alpha();
+
     } else if (Main.overview._shown) {
         blank_fade_out({
             time: 0
         });
     } else {
-        this.tweener.addTween(Panel.actor, {
+        let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
+        let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
+        let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
+        let i = 0;
+
+        let tweening_params = {
             time: time,
             transition: transition,
             background_alpha: Theming.get_unmaximized_opacity(),
@@ -267,7 +301,18 @@ function fade_out(params) {
                 Theming.set_panel_color();
                 this.animation_status.done();
             })
-        });
+        };
+
+        if (!Settings.get_hide_corners()) {
+            tweening_params.onUpdate = Lang.bind(this, function (a) {
+                // TODO: Setting for frequency?
+                if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
+                    update_corner_alpha(Theming.get_background_alpha(Panel.actor));
+                }
+            });
+        }
+
+        this.tweener.addTween(Panel.actor, tweening_params);
     }
 
 }
@@ -295,11 +340,6 @@ function blank_fade_out(params) {
 
     let time = params.time / TIME_SCALE_FACTOR;
 
-    /* we can't actually fade these, so we'll attempt to hide the fact we're jerkily removing them */
-    /* always hide to update preference changes */
-
-    update_corner_alpha(0);
-
     Theming.strip_panel_background_image();
     Theming.strip_panel_styling();
 
@@ -307,8 +347,16 @@ function blank_fade_out(params) {
         Theming.set_background_alpha(Panel.actor, 0);
         Theming.set_panel_color();
         this.animation_status.done();
+
+        update_corner_alpha(0);
     } else {
-        this.tweener.addTween(Panel.actor, {
+
+        let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
+        let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
+        let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
+        let i = 0;
+
+        let tweening_params = {
             time: time,
             transition: transition,
             background_alpha: 0,
@@ -316,7 +364,18 @@ function blank_fade_out(params) {
                 Theming.set_panel_color();
                 this.animation_status.done();
             })
-        });
+        };
+
+        if (!Settings.get_hide_corners()) {
+            tweening_params.onUpdate = Lang.bind(this, function (a) {
+                // TODO: Setting for frequency?
+                if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
+                    update_corner_alpha(Theming.get_background_alpha(Panel.actor));
+                }
+            });
+        }
+
+        this.tweener.addTween(Panel.actor, tweening_params);
     }
 }
 
@@ -328,7 +387,11 @@ function blank_fade_out(params) {
  */
 function update_corner_alpha(alpha = null) {
     if (alpha === null) {
-        alpha = this.status.is_transparent() ? Theming.get_unmaximized_opacity() : Theming.get_maximized_opacity();
+        if (Settings.get_hide_corners()) {
+            alpha = 0;
+        } else {
+            alpha = this.status.is_transparent() ? Theming.get_unmaximized_opacity() : Theming.get_maximized_opacity();
+        }
     }
 
     Theming.set_corner_color({
