@@ -282,12 +282,13 @@ frnogueira
             <property name="right_padding">10</property>
             <child>
               <object class="GtkOverlay" id="panel_overlay">
+                <property name="height_request">30</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkScrolledWindow">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can_focus">False</property>
                     <property name="vscrollbar_policy">never</property>
                     <property name="shadow_type">in</property>
                     <child>
