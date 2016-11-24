@@ -111,13 +111,8 @@ function minimum_fade_in(params) {
         this.minimum_fade_in_complete();
         this.animation_status.done();
 
-        Theming.update_corner_alpha();
+        update_corner_alpha();
     } else {
-        let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
-        let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
-        let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
-        let i = 0;
-
         let tweening_params = {
             time: time,
             transition: transition,
@@ -126,6 +121,11 @@ function minimum_fade_in(params) {
         };
 
         if (!Settings.get_hide_corners()) {
+            let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
+            let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
+            let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
+            let i = 0;
+
             tweening_params.onUpdate = Lang.bind(this, function(a) {
                 // TODO: Setting for frequency?
                 if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
@@ -170,13 +170,8 @@ function fade_in(params) {
         this.fade_in_complete();
         this.animation_status.done();
 
-        Theming.update_corner_alpha();
+        update_corner_alpha();
     } else {
-        let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
-        let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
-        let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
-        let i = 0;
-
         let tweening_params = {
             time: time,
             transition: transition,
@@ -185,6 +180,11 @@ function fade_in(params) {
         };
 
         if (!Settings.get_hide_corners()) {
+            let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
+            let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
+            let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
+            let i = 0;
+
             tweening_params.onUpdate = Lang.bind(this, function(a) {
                 // TODO: Setting for frequency?
                 if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
@@ -281,18 +281,13 @@ function fade_out(params) {
         Theming.set_panel_color();
         this.animation_status.done();
 
-        Theming.update_corner_alpha();
+        update_corner_alpha();
 
     } else if (Main.overview._shown) {
         blank_fade_out({
             time: 0
         });
     } else {
-        let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
-        let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
-        let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
-        let i = 0;
-
         let tweening_params = {
             time: time,
             transition: transition,
@@ -300,10 +295,17 @@ function fade_out(params) {
             onComplete: Lang.bind(this, function() {
                 Theming.set_panel_color();
                 this.animation_status.done();
+
+                update_corner_alpha();
             })
         };
 
         if (!Settings.get_hide_corners()) {
+            let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
+            let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
+            let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
+            let i = 0;
+
             tweening_params.onUpdate = Lang.bind(this, function(a) {
                 // TODO: Setting for frequency?
                 if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
@@ -350,12 +352,6 @@ function blank_fade_out(params) {
 
         update_corner_alpha(0);
     } else {
-
-        let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
-        let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
-        let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
-        let i = 0;
-
         let tweening_params = {
             time: time,
             transition: transition,
@@ -363,10 +359,17 @@ function blank_fade_out(params) {
             onComplete: Lang.bind(this, function() {
                 Theming.set_panel_color();
                 this.animation_status.done();
+
+                update_corner_alpha(0);
             })
         };
 
         if (!Settings.get_hide_corners()) {
+            let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
+            let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
+            let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
+            let i = 0;
+
             tweening_params.onUpdate = Lang.bind(this, function(a) {
                 // TODO: Setting for frequency?
                 if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
