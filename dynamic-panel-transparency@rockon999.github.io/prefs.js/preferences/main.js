@@ -415,7 +415,6 @@ function buildPrefsWidget() {
 
         text_shadow_switch.connect('state-set', Lang.bind(this, function(widget, state) {
             temp_settings.store(SETTINGS_TEXT_SHADOW, new GLib.Variant('b', state));
-            temp_settings.restart_required(true);
 
             if (state) {
                 let text_shadow = settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
@@ -644,7 +643,6 @@ function buildPrefsWidget() {
 
         icon_shadow.connect('state-set', Lang.bind(this, function(widget, state) {
             temp_settings.store(SETTINGS_ICON_SHADOW, new GLib.Variant('b', state));
-            temp_settings.restart_required(true);
 
             if (state) {
                 let icon_shadow = settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
