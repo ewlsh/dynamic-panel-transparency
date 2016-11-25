@@ -20,9 +20,6 @@ const Main = imports.ui.main;
 const Panel = Main.panel;
 
 const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
-const EXTENSION_SCHEMA = 'org.gnome.shell';
-
-// TODO: Do I still need this? const USER_THEME_EXTENSION_UUID = 'user-theme@gnome-shell-extensions.gcampax.github.com';
 
 /**
  * Signal Connections
@@ -100,23 +97,6 @@ function init() {
     this._windowCreatedSig = global.screen.get_display().connect_after('window-created', Lang.bind(this, this._windowCreated));
     this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, this._windowRestacked));
 
-
-
-    /* This should never fail, but let's be careful */
-
-    try {
-        let schemaObj = Convenience.getSchemaObj(EXTENSION_SCHEMA, true);
-
-        if (!Util.is_undef(schemaObj)) {
-            this._extension_settings = new Gio.Settings({
-                settings_schema: schemaObj
-            });
-        }
-    } catch (error) {
-        log('[Dynamic Panel Transparency] Failed find User Themes extension.');
-    }
-
-
     /* Apparently Ubuntu is wierd and does this different than a common Gnome installation. */
     // TODO: Look into this.
 
@@ -130,10 +110,6 @@ function init() {
         }
     } catch (error) {
         log('[Dynamic Panel Transparency] Failed to find Gnome Shell settings. This should not occur.');
-    }
-
-    if (!Util.is_undef(this._extension_settings)) {
-        this._extensionsChangedSig = this._extension_settings.connect('changed::enabled-extensions', Lang.bind(this, this._userThemeChanged));
     }
 
     if (!Util.is_undef(this._theme_settings)) {
@@ -168,10 +144,6 @@ function cleanup() {
         this._theme_settings.disconnect(this._userThemeChangedSig);
     }
 
-    if (!Util.is_undef(this._extension_settings) && !Util.is_undef(this._extensionsChangedSig)) {
-        this._extension_settings.disconnect(this._extensionsChangedSig);
-    }
-
     for (let window_container of this.windows) {
         for (let signalId of window_container.signalIds) {
             window_container.window.disconnect(signalId);
@@ -189,11 +161,9 @@ function cleanup() {
     this._windowMinimizeSig = null;
     this._windowUnminimizeSig = null;
     this._workspaceSwitchSig = null;
-    this._extensionsChangedSig = null;
     this._userThemeChangedSig = null;
     this._windowCreatedSig = null;
 
-    this._extension_settings = null;
     this._theme_settings = null;
 
     this._wm_tracker = null;
@@ -271,9 +241,6 @@ function _windowCreated(display, window) {
             }
             this._windowUpdated();
         }));
-
-        // TODO: Would this help?
-        /* const h_wId=window.connect('notify::maximized-horizontally',Lang.bind(this,function(obj,property){if(!obj.maximized_horizontally){this._windowUpdated({trigger_window:obj});return} this._windowUpdated()})) */
 
         this.windows.push({ 'window': window, 'signalIds': [v_wId] });
     }
@@ -397,8 +364,10 @@ function _windowUpdated(params) {
 
     if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
         if (!add_transparency && Settings.get_enable_maximized_text_color()) {
+            Theming.remove_text_color();
             Theming.set_text_color('maximized');
         } else {
+            Theming.remove_text_color('maximized');
             Theming.set_text_color();
         }
     }

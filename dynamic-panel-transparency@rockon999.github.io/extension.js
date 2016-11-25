@@ -113,21 +113,37 @@ function modify_panel() {
     /* Update the corners. */
     Transitions.update_corner_alpha(0);
 
-    /* Add Shadowing */
+    let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
+    let [icon_shadow, arrow_shadow] = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
+
+    /* Add Text Shadowing */
     if (Settings.add_text_shadow()) {
-        Theming.add_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
+        if (text_shadow !== null) {
+            Theming.add_text_shadow();
+        } else {
+            log('[Dynamic Panel Transparency] Failed to enabled text shadowing.');
+        }
     }
 
+    /* Add Icon Shadowing */
     if (Settings.add_icon_shadow()) {
-        Theming.add_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
+        if (icon_shadow !== null && arrow_shadow !== null) {
+            Theming.add_icon_shadow();
+        } else {
+            log('[Dynamic Panel Transparency] Failed to enabled icon shadowing.');
+        }
     }
 
     /* Register text color styling. */
-    Theming.register_text_color(Settings.get_text_color());
-    Theming.register_text_color(Settings.get_maximized_text_color(), 'maximized');
+    let [text, icon, arrow] = Theming.register_text_color(Settings.get_text_color()); // eslint-disable-line no-unused-vars
+    let [maximized_text, maximized_icon, maximized_arrow] = Theming.register_text_color(Settings.get_maximized_text_color(), 'maximized'); // eslint-disable-line no-unused-vars
 
     if (Settings.get_enable_text_color()) {
-        Theming.set_text_color();
+        if (text !== null) {
+            Theming.set_text_color();
+        } else {
+            log('[Dynamic Panel Transparency] Failed to enabled text coloring.');
+        }
     }
 }
 
@@ -151,12 +167,6 @@ function unmodify_panel() {
     /* Remove maximized text coloring */
     Theming.remove_text_color('maximized');
 
-    /* Remove text coloring */
-    Theming.deregister_text_color();
-
-    /* Remove maximized text coloring */
-    Theming.deregister_text_color('maximized');
-
     /* Remove Our Corner Coloring */
     Theming.clear_corner_color();
 
@@ -176,9 +186,7 @@ function initialize_settings() {
         name: 'hide_corners',
         type: 'b',
         handler: Lang.bind(this, function() {
-            Events._windowUpdated({
-                force: true
-            });
+            Transitions.update_corner_alpha();
         })
     });
     Settings.add({
@@ -236,13 +244,27 @@ function initialize_settings() {
         settings_key: 'text-shadow',
         name: 'text_shadow',
         type: 'b',
-        getter: 'add_text_shadow'
+        getter: 'add_text_shadow',
+        handler: Lang.bind(this, function() {
+            if (Settings.add_text_shadow()) {
+                Theming.add_text_shadow();
+            } else {
+                Theming.remove_text_shadow();
+            }
+        })
     });
     Settings.add({
         settings_key: 'icon-shadow',
         name: 'icon_shadow',
         type: 'b',
-        getter: 'add_icon_shadow'
+        getter: 'add_icon_shadow',
+        handler: Lang.bind(this, function() {
+            if (Settings.add_icon_shadow()) {
+                Theming.add_icon_shadow();
+            } else {
+                Theming.remove_icon_shadow();
+            }
+        })
     });
     Settings.add({
         settings_key: 'text-shadow-position',
@@ -281,7 +303,12 @@ function initialize_settings() {
     Settings.add({
         settings_key: 'enable-maximized-text-color',
         name: 'enable_maximized_text_color',
-        type: 'b'
+        type: 'b',
+        handler: Lang.bind(this, function() {
+            Events._windowUpdated({
+                force: true
+            });
+        })
     });
     Settings.add({
         settings_key: 'remove-panel-styling',
@@ -299,13 +326,14 @@ function initialize_settings() {
         name: 'enable_text_color',
         type: 'b',
         handler: Lang.bind(this, function() {
-            if (!Settings.get_enable_text_color()) {
+            if (Settings.get_enable_text_color()) {
+                Theming.set_text_color();
+            } else {
                 Theming.remove_text_color();
                 Theming.remove_text_color('maximized');
             }
         })
     });
-
     Settings.add({
         settings_key: 'transition-type',
         name: 'transition_type',
