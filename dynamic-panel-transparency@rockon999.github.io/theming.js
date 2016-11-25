@@ -1,4 +1,4 @@
-/* exported init, cleanup, add_text_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, register_style, get_background_alpha, set_background_alpha, get_background_image_color, set_text_color, set_corner_color, set_panel_color, remove_text_color, strip_panel_background, strip_panel_styling, reapply_panel_background, reapply_panel_styling, clear_corner_color, set_theme_background_color, set_theme_opacity, get_maximized_opacity, get_unmaximized_opacity, strip_panel_background_image, reapply_panel_background_image */
+/* exported init, cleanup, add_text_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, register_style, deregister_text_color, get_background_alpha, set_background_alpha, get_background_image_color, set_text_color, set_corner_color, set_panel_color, remove_text_color, strip_panel_background, strip_panel_styling, reapply_panel_background, reapply_panel_styling, clear_corner_color, set_theme_background_color, set_theme_opacity, get_maximized_opacity, get_unmaximized_opacity, strip_panel_background_image, reapply_panel_background_image */
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Compatibility = Me.imports.compatibility;
@@ -112,7 +112,6 @@ function add_icon_shadow(icon_color, icon_position) {
     let icon_color_css = 'rgba(' + icon_color.red + ', ' + icon_color.green + ', ' + icon_color.blue + ', ' + icon_color.alpha.toFixed(2) + ')';
     let icon_position_css = '' + icon_position[0] + 'px ' + icon_position[1] + 'px ' + icon_position[2] + 'px';
 
-
     apply_stylesheet_css('.dpt-panel-icon-shadow .system-status-icon { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'panel-icon-shadow');
     apply_stylesheet_css('.dpt-panel-arrow-shadow .popup-menu-arrow { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'panel-arrow-shadow');
 
@@ -213,9 +212,8 @@ function set_text_color(prefix) {
     Panel.actor.add_style_class_name('dpt-panel' + prefix + 'arrow-color');
 }
 
-
 /**
- * Remove a registered text color stylesheet from the text coloring. @see register_text_color
+ * Remove a registered text color stylesheet from the panel. @see set_text_color
  *
  * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
  */
@@ -226,13 +224,26 @@ function remove_text_color(prefix) {
         prefix = '-';
     }
 
-    deregister_style('dpt-panel' + prefix + 'text-color');
-    deregister_style('dpt-panel' + prefix + 'icon-color');
-    deregister_style('dpt-panel' + prefix + 'arrow-color');
-
     Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'text-color');
     Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'icon-color');
     Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'arrow-color');
+}
+
+/**
+ * Remove a registered text color stylesheet from the current styles. @see register_text_color
+ *
+ * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
+ */
+function deregister_text_color(prefix) {
+    if (!Util.is_undef(prefix)) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    deregister_style('dpt-panel' + prefix + 'text-color');
+    deregister_style('dpt-panel' + prefix + 'icon-color');
+    deregister_style('dpt-panel' + prefix + 'arrow-color');
 }
 
 /**
@@ -252,7 +263,7 @@ function register_style(style) {
  */
 function deregister_style(style) {
     let index = this.styles.indexOf(style);
-    this.styles.splice(index, 1);//.concat(this.styles.splice(index + 1, this.styles.length));
+    this.styles.splice(index, 1);
 }
 
 /**
@@ -268,7 +279,12 @@ function set_panel_color(color) {
     let panel_color = { red: 0, green: 0, blue: 0, alpha: 0 };
 
     if (!Util.is_undef(Settings.get_panel_color)) {
-        panel_color = get_background_color();
+        let background = get_background_color();
+
+        // TODO: Why would this be undefined?
+        if (!Util.is_undef(background)) {
+            panel_color = background;
+        }
     }
 
     let current_alpha = get_background_alpha(Panel.actor);
@@ -335,7 +351,6 @@ function clear_corner_color() {
     Panel._leftCorner.actor.set_style(null);
     Panel._rightCorner.actor.set_style(null);
 }
-
 
 /**
  * Gets the RGBA color of the background/border image in a theme.
