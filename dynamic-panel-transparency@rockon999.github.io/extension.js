@@ -148,6 +148,15 @@ function unmodify_panel() {
     /* Remove text coloring */
     Theming.remove_text_color();
 
+    /* Remove maximized text coloring */
+    Theming.remove_text_color('maximized');
+
+    /* Remove text coloring */
+    Theming.deregister_text_color();
+
+    /* Remove maximized text coloring */
+    Theming.deregister_text_color('maximized');
+
     /* Remove Our Corner Coloring */
     Theming.clear_corner_color();
 
@@ -288,7 +297,13 @@ function initialize_settings() {
     Settings.add({
         settings_key: 'enable-text-color',
         name: 'enable_text_color',
-        type: 'b'
+        type: 'b',
+        handler: Lang.bind(this, function() {
+            if (!Settings.get_enable_text_color()) {
+                Theming.remove_text_color();
+                Theming.remove_text_color('maximized');
+            }
+        })
     });
 
     Settings.add({
