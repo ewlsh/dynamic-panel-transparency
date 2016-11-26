@@ -1,4 +1,4 @@
-/* exported init, cleanup, add, add_app_override, check_overrides, check_triggers, bind, unbind, bind_app_settings */
+/* exported init, cleanup, add, add_app_setting, add_app_override, check_overrides, check_triggers, bind, unbind */
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
