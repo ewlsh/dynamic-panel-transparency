@@ -1,4 +1,4 @@
-/* exported init, cleanup, _workspacesChanged, _userThemeChanged, _windowMinimized, _windowDestroyed, _windowRestacked, _screenShieldActivated, _workspaceSwitched, get_current_maximized_window */
+/* exported init, cleanup, get_current_maximized_window */
 
 const Mainloop = imports.mainloop;
 const Lang = imports.lang;
@@ -81,21 +81,21 @@ function init() {
     }
 
     // COMPATIBILITY: No unminimize signal on 3.14
-    this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, this._windowUpdated));
+    this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, _windowUpdated));
 
 
     /* Check to see if the screenShield exists (doesn't if user can't lock) */
     if (Main.screenShield !== null) {
-        this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, this._screenShieldActivated));
+        this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, _screenShieldActivated));
     }
 
-    this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, this._workspaceSwitched));
-    this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, this._windowMinimized));
-    this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, this._windowDestroyed));
-    this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, this._windowUpdated));
+    this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, _workspaceSwitched));
+    this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, _windowMinimized));
+    this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, _windowDestroyed));
+    this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, _windowUpdated));
 
-    this._windowCreatedSig = global.screen.get_display().connect_after('window-created', Lang.bind(this, this._windowCreated));
-    this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, this._windowRestacked));
+    this._windowCreatedSig = global.screen.get_display().connect_after('window-created', Lang.bind(this, _windowCreated));
+    this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, _windowRestacked));
 
     /* Apparently Ubuntu is wierd and does this different than a common Gnome installation. */
     // TODO: Look into this.
@@ -113,7 +113,7 @@ function init() {
     }
 
     if (!Util.is_undef(this._theme_settings)) {
-        this._userThemeChangedSig = this._theme_settings.connect('changed::name', Lang.bind(this, this._userThemeChanged));
+        this._userThemeChangedSig = this._theme_settings.connect('changed::name', Lang.bind(this, _userThemeChanged));
     }
 }
 

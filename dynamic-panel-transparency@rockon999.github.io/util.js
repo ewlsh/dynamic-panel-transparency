@@ -51,19 +51,6 @@ function get_shell_version() {
 /* Utility Functions */
 
 /**
- * Evaluates parameter 'a' and returns 'b' if 'a' is undefined or null.
- *
- * @param {Object} a - Test value.
- * @param {Object} b - Default return value.
- *
- * @returns {Object} 'b' when 'a' is null or undefined, 'a' otherwise.
- *
- */
-function validate(a, b) {
-    return (is_undef(a) === false ? a : b);
-}
-
-/**
  * Evaluates parameter 'a' and returns true if 'a' is undefined or null or false when not.
  *
  * @param {Object} a - Test value.
