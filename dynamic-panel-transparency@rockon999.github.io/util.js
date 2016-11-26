@@ -1,4 +1,4 @@
-/* exported get_maximized_width_buffer, get_maximized_height_buffer, get_shell_version,validate, is_undef, clamp, is_maximized, is_valid, match_colors, remove_file, get_file, write_to_file, gdk_to_css_color, clutter_to_native_color, deep_freeze */
+/* exported get_maximized_width_buffer, get_maximized_height_buffer, get_shell_version, is_undef, clamp, is_maximized, is_valid, match_colors, remove_file, get_file, write_to_file, gdk_to_css_color, clutter_to_native_color, deep_freeze */
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
