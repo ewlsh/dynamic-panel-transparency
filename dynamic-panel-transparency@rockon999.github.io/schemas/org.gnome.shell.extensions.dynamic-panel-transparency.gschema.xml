@@ -106,7 +106,7 @@
       <description>Contains a list of the ids for all apps with custom settings.</description>
     </key>
     <key name="window-overrides" type="as">
-      <default>['DropDownTerminalWindow']</default>
+      <default>[]</default>
       <summary>Overrides settings for a WM_CLASS.</summary>
       <description>Contains a list of the WM_CLASS for all apps with custom settings.</description>
     </key>
@@ -116,7 +116,7 @@
       <description>List of app ids that trigger the panel when a window of the app is in focus.</description>
     </key>
     <key name="trigger-windows" type="as">
-      <default>['DropDownTerminalWindow']</default>
+      <default>[]</default>
       <summary>Windows that will always trigger the panel when focused.</summary>
       <description>List of windows that triggers the panel when a window of the app is open.</description>
     </key>
