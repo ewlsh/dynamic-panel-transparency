@@ -96,6 +96,7 @@ function init() {
 
     this._windowCreatedSig = global.screen.get_display().connect_after('window-created', Lang.bind(this, _windowCreated));
     this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, _windowRestacked));
+    this._windowInFullscreenSig = global.screen.connect('in-fullscreen-changed', Lang.bind(this, _windowUpdated));
 
     /* Apparently Ubuntu is wierd and does this different than a common Gnome installation. */
     // TODO: Look into this.
@@ -139,6 +140,7 @@ function cleanup() {
     global.window_manager.disconnect(this._workspaceSwitchSig);
     global.screen.get_display().disconnect(this._windowCreatedSig);
     global.screen.disconnect(this._windowRestackedSig);
+    global.screen.connect(this._windowInFullscreenSig);
 
     if (!Util.is_undef(this._theme_settings) && !Util.is_undef(this._userThemeChangedSig)) {
         this._theme_settings.disconnect(this._userThemeChangedSig);
@@ -163,6 +165,7 @@ function cleanup() {
     this._workspaceSwitchSig = null;
     this._userThemeChangedSig = null;
     this._windowCreatedSig = null;
+    this._windowInFullscreenSig = null;
 
     this._theme_settings = null;
 

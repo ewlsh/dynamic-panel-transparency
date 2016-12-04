@@ -1,4 +1,4 @@
-/* exported st_border_image_get_file, st_theme_load_stylesheet, st_theme_unload_stylesheet, g_signal_connect, gtk_color_button_set_show_editor, parse_css */
+/* exported st_border_image_get_file, st_theme_load_stylesheet, st_theme_unload_stylesheet, g_signal_connect, gtk_color_button_set_show_editor, gtk_scrolled_window_set_overlay_scrolling, parse_css */
 
 /* Provides a version compatibility layer for Gtk, GObject, St, etc. functions.*/
 /* Uses C function names. */
@@ -53,6 +53,12 @@ const gtk_color_button_set_show_editor = function(widget, value) {
     }
 };
 
+const gtk_scrolled_window_set_overlay_scrolling = function(widget, value) {
+    if (SHELL_VERSION.major === Compatibility.gtk_scrolled_window_set_overlay_scrolling.major && SHELL_VERSION.minor > Compatibility.gtk_scrolled_window_set_overlay_scrolling.minor) {
+        widget.set_overlay_scrolling(value);
+    }
+};
+
 /* Parses CSS... not a C function */
 const parse_css = function(css) {
     for (let key of Object.keys(Compatibility.css)) {
@@ -68,6 +74,7 @@ const Compatibility = {
     st_theme_unload_stylesheet: { major: 3, minor: 14 },
     st_border_image_get_file: { major: 3, minor: 14 },
     gtk_color_button_set_show_editor: { major: 3, minor: 18 },
+    gtk_scrolled_window_set_overlay_scrolling: { major: 3, minor: 14 },
     g_signal_connect: { 'unminimize': { major: 3, minor: 14 } },
     css: { '-gtk-icon-shadow': { major: 3, minor: 18, fallback: 'icon-shadow' } }
 };

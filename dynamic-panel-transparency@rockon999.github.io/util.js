@@ -93,11 +93,10 @@ function is_maximized(window) {
 
     // TODO: let scale_factor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
 
-    let width_buffer = MAXIMIZED_WIDTH_BUFFER; // * scale_factor;
     let height_buffer = MAXIMIZED_HEIGHT_BUFFER; // * scale_factor;
 
     if (frame.y <= (imports.ui.main.panel.actor.get_height() + height_buffer)) {
-        return (window.maximized_horizontally || frame.width >= (window.get_screen().get_size()[0] - width_buffer));
+        return window.maximized_horizontally;
     }
 
     return false;
