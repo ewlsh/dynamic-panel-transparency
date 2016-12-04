@@ -153,9 +153,12 @@ function buildPrefsWidget() {
 
     /* Panel used to demonstrate the user's settings. */
     // TODO: Theme detection in the preview.
+    let panel_scrolled_window = builder.get_object('panel_scrolled_window');
     let panel_background = builder.get_object('panel_demo_background');
     let panel_overlay = builder.get_object('panel_overlay');
     panel_overlay.add_overlay(panel_background);
+
+    Compatibility.gtk_scrolled_window_set_overlay_scrolling(panel_scrolled_window, true);
 
     let panel_wallpaper = builder.get_object('panel_wallpaper');
 
