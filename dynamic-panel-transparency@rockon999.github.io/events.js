@@ -70,7 +70,7 @@ function init() {
     for (let i = 0; i < global.screen.get_n_workspaces(); i++) {
         let workspace = global.screen.get_workspace_by_index(i);
 
-        if (Util.is_undef(workspace)) {
+        if (!workspace) {
             continue;
         }
 
@@ -85,7 +85,7 @@ function init() {
 
 
     /* Check to see if the screenShield exists (doesn't if user can't lock) */
-    if (Main.screenShield !== null) {
+    if (Main.screenShield) {
         this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, _screenShieldActivated));
     }
 
@@ -94,9 +94,10 @@ function init() {
     this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, _windowDestroyed));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, _windowUpdated));
 
-    this._windowCreatedSig = global.screen.get_display().connect_after('window-created', Lang.bind(this, _windowCreated));
     this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, _windowRestacked));
-    this._windowInFullscreenSig = global.screen.connect('in-fullscreen-changed', Lang.bind(this, _windowUpdated));
+
+    this._windowCreatedSig = display.connect_after('window-created', Lang.bind(this, _windowCreated));
+
 
     /* Apparently Ubuntu is wierd and does this different than a common Gnome installation. */
     // TODO: Look into this.
@@ -128,7 +129,7 @@ function cleanup() {
         global.window_manager.disconnect(this._windowUnminimizeSig);
     }
 
-    if (!Util.is_undef(Main.screenShield) && !Util.is_undef(this._lockScreenSig)) {
+    if (Main.screenShield && !Util.is_undef(this._lockScreenSig)) {
         Main.screenShield.disconnect(this._lockScreenSig);
     }
 
@@ -140,7 +141,6 @@ function cleanup() {
     global.window_manager.disconnect(this._workspaceSwitchSig);
     global.screen.get_display().disconnect(this._windowCreatedSig);
     global.screen.disconnect(this._windowRestackedSig);
-    global.screen.connect(this._windowInFullscreenSig);
 
     if (!Util.is_undef(this._theme_settings) && !Util.is_undef(this._userThemeChangedSig)) {
         this._theme_settings.disconnect(this._userThemeChangedSig);
@@ -165,7 +165,6 @@ function cleanup() {
     this._workspaceSwitchSig = null;
     this._userThemeChangedSig = null;
     this._windowCreatedSig = null;
-    this._windowInFullscreenSig = null;
 
     this._theme_settings = null;
 
@@ -234,7 +233,7 @@ function _userThemeChanged() {
 }
 
 function _windowCreated(display, window) {
-    if (!Util.is_undef(window) && Util.is_valid(window) && Util.is_undef(window.dpt_tracking)) {
+    if (window && Util.is_valid(window) && Util.is_undef(window.dpt_tracking)) {
         window.dpt_tracking = true;
 
         const v_wId = window.connect('notify::maximized-vertically', Lang.bind(this, function(obj, property) {
@@ -245,7 +244,11 @@ function _windowCreated(display, window) {
             this._windowUpdated();
         }));
 
-        this.windows.push({ 'window': window, 'signalIds': [v_wId] });
+        const f_wId = window.connect('notify::fullscreen', Lang.bind(this, function(obj, property) {
+            this._windowUpdated();
+        }));
+
+        this.windows.push({ 'window': window, 'signalIds': [v_wId, f_wId] });
     }
 }
 
@@ -288,7 +291,7 @@ function _windowUpdated(params) {
     /* Save processing time by checking the current focused window (most likely to be maximized) */
     /* Check that the focused window is in the right workspace. (I really hope it always is...) */
     /* Don't do the 'quick check' if we have trigger apps/windows as they might not be focused. */
-    if (!Settings.check_triggers() && !Util.is_undef(focused_window) && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && !focused_window.minimized && focused_window.get_workspace().index() === workspace.index()) {
+    if (!Settings.check_triggers() && focused_window && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && !focused_window.minimized && focused_window.get_workspace().index() === workspace.index()) {
         add_transparency = false;
         this.maximized_window = focused_window;
     } else {
@@ -309,7 +312,7 @@ function _windowUpdated(params) {
                 let app = this._wm_tracker.get_window_app(current_window);
 
                 /* Check if the found app exists and if it is a trigger app. */
-                if (!Util.is_undef(app) && Settings.get_trigger_apps().indexOf(app.get_id()) !== -1) {
+                if (app && Settings.get_trigger_apps().indexOf(app.get_id()) !== -1) {
                     /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
                     if (current_window !== excluded_window && Util.is_valid(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
                         add_transparency = false;
@@ -390,16 +393,14 @@ function _windowMinimized(wm, window_actor) {
  *
  */
 function _screenShieldActivated() {
-    if (Main.screenShield !== null && !Main.screenShield._isActive) {
-        _windowUpdated({
-            blank: true,
-            time: 0
-        });
-    } else {
-        /* Make sure we don't have any odd coloring on the screenShield */
-        Transitions.blank_fade_out({
-            time: 0
-        });
+    if (Main.screenShield) {
+        if (Main.screenShield._isActive) {
+            Transitions.blank_fade_out({
+                time: 0
+            });
+        } else {
+            _windowUpdated();
+        }
     }
 }
 

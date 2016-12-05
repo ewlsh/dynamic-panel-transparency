@@ -43,7 +43,8 @@ function enable() {
     Mainloop.idle_add(Lang.bind(this, function() {
         let extension = imports.misc.extensionUtils.getCurrentExtension();
 
-        if (!Util.is_undef(extension) && extension.extensionState === ExtensionSystem.ExtensionState.DISABLED) {
+        if (!extension || (extension && !Util.is_undef(extension.extensionState) && extension.extensionState === ExtensionSystem.ExtensionState.DISABLED)) {
+            log('[Dynamic Panel Transparency] Extension disabled.');
             return false;
         }
 

@@ -17,6 +17,8 @@ const AppChooser = imports.preferences.app_chooser;
 const AppRow = imports.preferences.app_row;
 const DemoPanel = imports.preferences.demo_panel;
 
+const Tweaks = imports.preferences.tweaks;
+
 const Gettext = imports.gettext.domain('dynamic-panel-transparency');
 const _ = Gettext.gettext;
 
@@ -89,10 +91,8 @@ function buildPrefsWidget() {
         }, store_enum: function(key, value) {
             this.enum_storage[key] = value;
         }, get: function(key) {
-            let a = this.enum_storage[key];
-            if (!Util.is_undef(a))
-                return this.enum_storage[key];
-            return this.storage[key];
+            let stored = this.enum_storage[key];
+            return stored ? stored : this.storage[key];
         }, has: function(key) {
             let a = this.get(key);
             return (typeof (a) !== 'undefined' && a !== null);
@@ -162,8 +162,6 @@ function buildPrefsWidget() {
 
     let panel_wallpaper = builder.get_object('panel_wallpaper');
 
-
-
     let bg_settings = null;
 
     try {
@@ -176,7 +174,7 @@ function buildPrefsWidget() {
         }
     } catch (error) { } // eslint-disable-line
 
-    if (!Util.is_undef(bg_settings)) {
+    if (bg_settings) {
         let wallpaper_path = bg_settings.get_string('picture-uri').replace('file://', '');
 
         if (wallpaper_path.endsWith('.xml')) {
@@ -1179,14 +1177,35 @@ function buildPrefsWidget() {
             if (response === Gtk.ResponseType.OK) {
                 let selected_app = a2.get_selected_app();
                 if (selected_app) {
-                    let row = new AppRow.AppRow(selected_app, app_cfg, rmv);
-                    row.show_all();
-                    app_list.add(row);
-                    overrides = settings.get_strv('app-overrides');
-                    if (overrides.indexOf(selected_app.get_id()) === -1) {
-                        overrides.push(selected_app.get_id());
+                    if (typeof selected_app === 'string') {
+                        let tweak = Tweaks.by_uuid(selected_app);
+                        if (tweak) {
+                            let row = new AppRow.CustomRow(tweak.wm_class, window_cfg, window_rmv);
+                            row.show_all();
+                            app_list.add(row);
+                            overrides = settings.get_strv('window-overrides');
+                            if (overrides.indexOf(tweak.wm_class) === -1) {
+                                overrides.push(tweak.wm_class);
+                            }
+                            settings.set_strv('window-overrides', overrides);
+
+                            if (!Util.is_undef(tweak.trigger) && tweak.trigger) {
+                                let triggers = settings.get_strv('trigger-windows');
+                                if (triggers.indexOf(tweak.wm_class) === -1) {
+                                    triggers.push(tweak.wm_class);
+                                }
+                            }
+                        }
+                    } else {
+                        let row = new AppRow.AppRow(selected_app, app_cfg, rmv);
+                        row.show_all();
+                        app_list.add(row);
+                        overrides = settings.get_strv('app-overrides');
+                        if (overrides.indexOf(selected_app.get_id()) === -1) {
+                            overrides.push(selected_app.get_id());
+                        }
+                        settings.set_strv('app-overrides', overrides);
                     }
-                    settings.set_strv('app-overrides', overrides);
                 }
             }
             a2.destroy();
@@ -1213,7 +1232,7 @@ function buildPrefsWidget() {
                 dialog.connect('response', Lang.bind(this, function(dialog, response) {
                     if (response === Gtk.ResponseType.OK) {
                         let text = entry.get_text();
-                        if ((Util.is_undef(text) || text === null || text === '')) {
+                        if (!text) {
                             revealer.set_reveal_child(true);
                             GObject.signal_stop_emission_by_name(dialog, 'response');
                         }
