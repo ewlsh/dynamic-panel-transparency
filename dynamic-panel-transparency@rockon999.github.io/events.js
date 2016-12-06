@@ -283,7 +283,6 @@ function _windowUpdated(params) {
     let windows = workspace.list_windows();
     windows = global.display.sort_windows_by_stacking(windows);
 
-    // TODO: Faster way than nulling & updating?
     this.maximized_window = null;
 
     let add_transparency = true;
