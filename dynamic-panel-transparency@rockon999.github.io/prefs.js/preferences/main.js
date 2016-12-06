@@ -1194,6 +1194,7 @@ function buildPrefsWidget() {
                                 if (triggers.indexOf(tweak.wm_class) === -1) {
                                     triggers.push(tweak.wm_class);
                                 }
+                                settings.set_strv('trigger-windows', triggers);
                             }
                         }
                     } else {
