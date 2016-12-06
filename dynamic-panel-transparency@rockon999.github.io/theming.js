@@ -695,7 +695,3 @@ function set_background_alpha(actor, alpha) {
         alpha: alpha
     }));
 }
-
-
-
-
