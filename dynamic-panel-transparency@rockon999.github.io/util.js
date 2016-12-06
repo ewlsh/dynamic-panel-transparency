@@ -170,7 +170,8 @@ function write_to_file(file_path, text) {
 function remove_file(file_path) {
     try {
         let file = get_file(file_path);
-        return file.delete(null);
+        let result = file.delete(null);
+        return result;
     } catch (error) {
         log('[Dynamic Panel Transparency] Error removing file: ' + file_path);
         log(error);

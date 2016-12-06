@@ -27,6 +27,8 @@ const COLOR_PARSER = function (input) {
 
 /* eslint-enable */
 
+/* Only way to prevent multiple runs apparently. Hacky. */
+let modified = false;
 
 /* Initialize */
 function init() { }
@@ -43,10 +45,17 @@ function enable() {
     Mainloop.idle_add(Lang.bind(this, function() {
         let extension = imports.misc.extensionUtils.getCurrentExtension();
 
-        if (!extension || (extension && !Util.is_undef(extension.extensionState) && extension.extensionState === ExtensionSystem.ExtensionState.DISABLED)) {
-            log('[Dynamic Panel Transparency] Extension disabled.');
+        if (modified) {
+            log('[Dynamic Panel Transparency] Attempted to run modifications multiple times.');
             return false;
         }
+
+        if (!extension || (extension && !Util.is_undef(extension.extensionState) && extension.extensionState === ExtensionSystem.ExtensionState.DISABLED)) {
+            log('[Dynamic Panel Transparency] Tried to modify the panel while disabled.');
+            return false;
+        }
+
+        modified = true;
 
         let theme = Panel.actor.get_theme_node();
         let theme_background = theme.get_background_color();
@@ -99,20 +108,37 @@ function disable() {
     /* Cleanup Theming */
     Theming.cleanup();
 
+    /* Shouldn't be an issue, but let's make sure it isn't. */
+    modified = false;
+
     return false;
 }
 
 function modify_panel() {
-    /* Get Rid of the Panel's CSS Background */
-    Theming.strip_panel_background();
-
     /* Initial Coloring */
+
+    let theme_color = Theming.theme_background_color;
+    let theme_opacity = Theming.theme_opacity;
+
+    /* Hack to avoid "flashing" */
+
     Theming.set_panel_color({
-        alpha: 0.0
+        red: theme_color.red,
+        green: theme_color.green,
+        blue: theme_color.blue,
+        alpha: theme_opacity
     });
 
     /* Update the corners. */
-    Transitions.update_corner_alpha(0);
+
+    Theming.set_corner_color({
+        red: theme_color.red,
+        green: theme_color.green,
+        blue: theme_color.blue
+    });
+
+    /* Get Rid of the Panel's CSS Background */
+    Theming.strip_panel_background();
 
     let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
     let [icon_shadow, arrow_shadow] = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
@@ -151,6 +177,14 @@ function modify_panel() {
 function unmodify_panel() {
     Theming.set_panel_color({ red: 0, green: 0, blue: 0, alpha: 0 });
 
+    /* Remove corner styling */
+    Theming.clear_corner_color();
+
+    /* Remove Our Styling */
+    Theming.reapply_panel_styling();
+    Theming.reapply_panel_background();
+    Theming.reapply_panel_background_image();
+
     /* Remove shadowing */
     if (Theming.has_text_shadow()) {
         Theming.remove_text_shadow();
@@ -159,22 +193,11 @@ function unmodify_panel() {
         Theming.remove_icon_shadow();
     }
 
-    /* Remove corner styling */
-    Theming.clear_corner_color();
-
     /* Remove text coloring */
     Theming.remove_text_color();
 
     /* Remove maximized text coloring */
     Theming.remove_text_color('maximized');
-
-    /* Remove Our Corner Coloring */
-    Theming.clear_corner_color();
-
-    /* Remove Our Styling */
-    Theming.reapply_panel_styling();
-    Theming.reapply_panel_background();
-    Theming.reapply_panel_background_image();
 }
 
 function initialize_settings() {
