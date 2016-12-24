@@ -27,14 +27,14 @@ const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
  * hidden: occurs after the overview is hidden
  * showing: occurs as the overview is opening
  * unminimize: occurs as the window is unminimized
- * active-changed: occurs when the screen shield is toggled.
+ * [REMOVED] active-changed: occurs when the screen shield is toggled
  * notify::n-workspaces: occurs when the number of workspaces changes
  * restacked: occurs when the window Z-ordering changes
+ * window-created: occurs when a new window is created
  * switch-workspace: occurs after a workspace is switched
  * minimize: occurs as the window is minimized
  * map: monitors both new windows and unminimizing windows
  * destroy: occurs as the window is destroyed
- * changed::enabled-extensions: occurs when an extension is disabled and/or enabled.
  * user-theme/changed::name: occurs when the user's theme changes
  *
  */
@@ -80,12 +80,6 @@ function init() {
     // COMPATIBILITY: No unminimize signal on 3.14
     this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, _windowUpdated));
 
-
-    /* Check to see if the screenShield exists (doesn't if user can't lock) */
-    if (Main.screenShield) {
-        this._lockScreenSig = Main.screenShield.connect('active-changed', Lang.bind(this, _screenShieldActivated));
-    }
-
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, _workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, _windowMinimized));
     this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, _windowDestroyed));
@@ -124,10 +118,6 @@ function cleanup() {
     /* Disconnect Signals */
     if (!Util.is_undef(this._windowUnminimizeSig)) {
         global.window_manager.disconnect(this._windowUnminimizeSig);
-    }
-
-    if (Main.screenShield && !Util.is_undef(this._lockScreenSig)) {
-        Main.screenShield.disconnect(this._lockScreenSig);
     }
 
     Main.overview.disconnect(this._overviewShowingSig);
@@ -389,22 +379,6 @@ function _windowUpdated(params) {
  */
 function _windowMinimized(wm, window_actor) {
     this._windowUpdated({ excluded_window: window_actor.get_meta_window() });
-}
-
-/**
- * SPECIAL CASE: Handle the screenShield when the lock screen isn't active.
- *
- */
-function _screenShieldActivated() {
-    if (Main.screenShield) {
-        if (Main.screenShield._isActive) {
-            Transitions.blank_fade_out({
-                time: 0
-            });
-        } else {
-            _windowUpdated();
-        }
-    }
 }
 
 /**
