@@ -111,9 +111,21 @@ function is_maximized(window) {
  *
  */
 function is_valid(window) {
+    const Meta = imports.gi.Meta;
+
+    let windowTypes = [
+        Meta.WindowType.NORMAL,
+        Meta.WindowType.DOCK,
+        Meta.WindowType.DIALOG,
+        Meta.WindowType.MODAL_DIALOG,
+        Meta.WindowType.TOOLBAR,
+        Meta.WindowType.MENU,
+        Meta.WindowType.UTILITY,
+    ];
+
     let type = window.get_window_type();
 
-    return (type !== imports.gi.Meta.WindowType.DESKTOP);
+    return (windowTypes.indexOf(type) !== -1);
 }
 
 /**

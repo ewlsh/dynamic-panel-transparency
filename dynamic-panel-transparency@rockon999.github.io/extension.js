@@ -14,6 +14,8 @@ const ExtensionSystem = imports.ui.extensionSystem;
 const Main = imports.ui.main;
 const Panel = Main.panel;
 
+// TODO: Something isn't obeying custom coloring...
+
 /* eslint-disable */
 
 /* Simple function that converts stored color tuples and/or arrays into js objects. */
