@@ -1313,11 +1313,20 @@ function buildPrefsWidget() {
         about_box.add(contents);
 
         /* Add some space to the about page. Was a little cramped... */
-        let website_label = find(stack, ['page_vbox', 'hbox', 'website_label']);
-        if (website_label !== null) {
-            website_label.set_selectable(false);
-            website_label.set_margin_top(WEBSITE_LABEL_TOP_MARGIN);
-            website_label.set_margin_bottom(WEBSITE_LABEL_BOTTOM_MARGIN);
+        let found_box = find(stack, ['page_vbox', 'hbox']);
+        if (found_box !== null) {
+
+            let website_label = find(found_box, ['website_label']);
+
+            if (website_label !== null) {
+                found_box.remove(website_label);
+
+                let new_label = Gtk.LinkButton.new_with_label('http://evanwelsh.com', 'rockon999.github.io');
+
+                new_label.set_margin_top(WEBSITE_LABEL_TOP_MARGIN);
+                new_label.set_margin_bottom(WEBSITE_LABEL_BOTTOM_MARGIN);
+                found_box.add(new_label);
+            }
         }
     }
 

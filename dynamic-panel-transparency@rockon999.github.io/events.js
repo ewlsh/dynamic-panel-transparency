@@ -14,6 +14,7 @@ const Theming = Me.imports.theming;
 const Util = Me.imports.util;
 
 const Shell = imports.gi.Shell;
+const Meta = imports.gi.Meta;
 const Gio = imports.gi.Gio;
 
 const Main = imports.ui.main;
@@ -65,20 +66,16 @@ function init() {
         }
     }));
 
+    let windows = global.get_window_actors();
     let display = global.screen.get_display();
 
-    for (let i = 0; i < global.screen.get_n_workspaces(); i++) {
-        let workspace = global.screen.get_workspace_by_index(i);
 
-        if (!workspace) {
-            continue;
-        }
-
-        for (let window of workspace.list_windows()) {
+    for (let window_actor of windows) {
             /* Simulate window creation event */
-            _windowCreated(display, window);
-        }
+        let window = window_actor.get_meta_window();
+        _windowCreated(display, window);
     }
+
 
     // COMPATIBILITY: No unminimize signal on 3.14
     this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, _windowUpdated));
@@ -233,22 +230,24 @@ function _userThemeChanged() {
 }
 
 function _windowCreated(display, window) {
-    if (window && Util.is_valid(window) && Util.is_undef(window.dpt_tracking)) {
-        window.dpt_tracking = true;
+    if (window && Util.is_undef(window.dpt_tracking)) {
+        if (Util.is_valid(window) ) {
+            window.dpt_tracking = true;
 
-        const v_wId = window.connect('notify::maximized-vertically', Lang.bind(this, function(obj, property) {
-            if (!obj['maximized_vertically']) {
-                this._windowUpdated({ trigger_window: obj });
-                return;
-            }
-            this._windowUpdated();
-        }));
+            const v_wId = window.connect('notify::maximized-vertically', Lang.bind(this, function(obj, property) {
+                if (!obj['maximized_vertically']) {
+                    this._windowUpdated({ trigger_window: obj });
+                    return;
+                }
+                this._windowUpdated();
+            }));
 
-        const f_wId = window.connect('notify::fullscreen', Lang.bind(this, function(obj, property) {
-            this._windowUpdated();
-        }));
+            const f_wId = window.connect('notify::fullscreen', Lang.bind(this, function(obj, property) {
+                this._windowUpdated();
+            }));
 
-        this.windows.push({ 'window': window, 'signalIds': [v_wId, f_wId] });
+            this.windows.push({ 'window': window, 'signalIds': [v_wId, f_wId] });
+        }
     }
 }
 
@@ -331,6 +330,11 @@ function _windowUpdated(params) {
                 }
             }
         }
+    }
+
+    if (focused_window && focused_window.get_window_type() === Meta.WindowType.DESKTOP) {
+        add_transparency = true;
+        this.maximized_window =  focused_window;
     }
 
     let transition_params = {};
