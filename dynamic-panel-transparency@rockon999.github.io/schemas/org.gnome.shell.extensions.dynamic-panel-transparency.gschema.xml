@@ -30,6 +30,21 @@
       <summary>Panel Color</summary>
       <description>The background color of the panel.</description>
     </key>
+    <key name="current-user-theme" type="s">
+      <default>"Adwaita"</default>
+      <summary>Current User Theme</summary>
+      <description>The name of the current theme that this extension has analyzed.</description>
+    </key>
+    <key name="panel-theme-color" type="(iii)">
+      <default>(0,0,0)</default>
+      <summary>Panel Theme Color</summary>
+      <description>The background color of the panel as described by the user's theme.</description>
+    </key>
+    <key name="theme-opacity" type="i">
+      <default>255</default>
+      <summary>Panel Theme Opacity</summary>
+      <description>The background opacity of the panel as described by the user's theme.</description>
+    </key>
     <key name="enable-opacity" type="b">
       <default>false</default>
       <summary>Enable custom opacities</summary>

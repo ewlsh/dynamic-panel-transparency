@@ -249,10 +249,9 @@ function fade_in_complete() {
     this.animation_status.done();
 }
 
-// TODO: Could this be used for minimum_fade_in?
-
 /**
  * Fades the panel into the unmaximized (minimum) alpha.
+ * TODO: Could this be used for minimum_fade_in?
  *
  * @param {Object} params [params=null] - Parameters for the transition.
  * @param {Number} params.time - Transition speed in milliseconds.
@@ -282,7 +281,6 @@ function fade_out(params) {
         this.animation_status.done();
 
         update_corner_alpha();
-
     } else if (Main.overview._shown) {
         blank_fade_out({
             time: 0
