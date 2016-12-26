@@ -3,7 +3,11 @@
 const Mainloop = imports.mainloop;
 const Lang = imports.lang;
 
+const GLib = imports.gi.GLib;
+const Gio = imports.gi.Gio;
+
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Convenience = Me.imports.convenience;
 const Transitions = Me.imports.transitions;
 const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
@@ -13,6 +17,8 @@ const Util = Me.imports.util;
 const ExtensionSystem = imports.ui.extensionSystem;
 const Main = imports.ui.main;
 const Panel = Main.panel;
+
+const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 
 // TODO: Something isn't obeying custom coloring...
 
@@ -43,6 +49,59 @@ function enable() {
     Transitions.init();
     Theming.init();
 
+    let theme_settings = null;
+
+    /* Try to load settings for the User Theme plugin. */
+    // TODO: Why doesn't this work on some Ubuntu installations?
+    try {
+        let schemaObj = Convenience.getSchemaObj(USER_THEME_SCHEMA, true);
+
+        if (!Util.is_undef(schemaObj)) {
+            theme_settings = new Gio.Settings({
+                settings_schema: schemaObj
+            });
+        }
+    } catch (error) {
+        log('[Dynamic Panel Transparency] Failed to find the user theme extension.');
+    }
+
+    if (!theme_settings) {
+        idle_enable(false);
+    } else {
+        /* Is our data current? */
+        let theme_name = theme_settings.get_string('name');
+        let current = Settings.get_current_user_theme();
+
+        if (current !== theme_name) {
+            /* Wait for the theme extension to initialize and enable. */
+            idle_enable(true, theme_settings);
+        } else {
+            /* Start the plugin. We have our data. */
+            let color = Settings.get_panel_theme_color();
+            let opacity = Settings.get_theme_opacity();
+
+            let background = {red: color.red, blue: color.blue, green: color.green, alpha: opacity};
+
+            log('[Dynamic Panel Transparency] Using theme data for: ' + Settings._settings.get_string('current-user-theme'));
+
+            Theming.set_theme_background_color(Util.clutter_to_native_color(background));
+            Theming.set_theme_opacity(background.alpha);
+
+            /* Modify the panel. */
+            modify_panel();
+
+            /* Start the event loop. */
+            Events.init();
+
+            /* Simulate window changes. */
+            Events._windowUpdated({
+                force: true
+            });
+        }
+    }
+}
+
+function idle_enable(update, theme_settings = null) {
     /* Delay the extension so we can retreive the theme background color (why are user themes an extension?). */
     Mainloop.idle_add(Lang.bind(this, function() {
         let extension = imports.misc.extensionUtils.getCurrentExtension();
@@ -59,21 +118,34 @@ function enable() {
 
         modified = true;
 
-        let theme = Panel.actor.get_theme_node();
-        let theme_background = theme.get_background_color();
+        let background = null;
 
-        /* Store user theme values. */
-        let image_background = Theming.get_background_image_color(theme);
+        if (update) {
+            log('[Dynamic Panel Transparency] Updating user theme data.');
 
-        if (image_background !== null) {
-            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + image_background.red + ', ' + image_background.green + ', ' + image_background.blue + ', ' + image_background.alpha + ')');
-            Theming.set_theme_background_color(Util.clutter_to_native_color(image_background));
-            Theming.set_theme_opacity(image_background.alpha);
+            let theme = Panel.actor.get_theme_node();
+
+            let image_background = Theming.get_background_image_color(theme);
+            let theme_background = theme.get_background_color();
+
+            background = (image_background !== null ? image_background : theme_background);
+
+            Settings._settings.set_string('current-user-theme', theme_settings.get_string('name'));
+            Settings._settings.set_value('panel-theme-color', new GLib.Variant('(iii)', [background.red, background.green, background.blue]));
+            Settings._settings.set_value('theme-opacity', new GLib.Variant('i', background.alpha));
+
+            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' +background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
         } else {
-            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + theme_background.red + ', ' + theme_background.green + ', ' + theme_background.blue + ', ' + theme_background.alpha + ')');
-            Theming.set_theme_background_color(Util.clutter_to_native_color(theme_background));
-            Theming.set_theme_opacity(theme_background.alpha);
+            let color = Settings.get_panel_theme_color();
+            let opacity = Settings.get_theme_opacity();
+
+            background = {red: color.red, blue: color.blue, green: color.green, alpha: opacity};
         }
+
+        log('[Dynamic Panel Transparency] Using theme data for: ' + Settings.get_current_user_theme());
+
+        Theming.set_theme_background_color(Util.clutter_to_native_color(background));
+        Theming.set_theme_opacity(background.alpha);
 
         /* Modify the panel. */
         modify_panel();
@@ -119,8 +191,8 @@ function disable() {
 function modify_panel() {
     /* Initial Coloring */
 
-    let theme_color = Theming.theme_background_color;
-    let theme_opacity = Theming.theme_opacity;
+    let theme_color = Theming.get_theme_background_color();
+    let theme_opacity = Theming.get_theme_opacity();
 
     /* Hack to avoid "flashing" */
 
@@ -255,6 +327,22 @@ function initialize_settings() {
         handler: Lang.bind(this, function() {
             Theming.set_panel_color();
         })
+    });
+    Settings.add({
+        settings_key: 'panel-theme-color',
+        name: 'panel_theme_color',
+        type: '(iii)',
+        parser: COLOR_PARSER
+    });
+    Settings.add({
+        settings_key: 'theme-opacity',
+        name: 'theme_opacity',
+        type: 'i',
+    });
+    Settings.add({
+        settings_key: 'current-user-theme',
+        name: 'current_user_theme',
+        type: 's',
     });
     Settings.add({
         settings_key: 'trigger-apps',

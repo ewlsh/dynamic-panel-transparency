@@ -15,6 +15,7 @@ const Util = Me.imports.util;
 
 const Shell = imports.gi.Shell;
 const Meta = imports.gi.Meta;
+const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
 const Main = imports.ui.main;
@@ -192,21 +193,31 @@ function _userThemeChanged() {
     Theming.reapply_panel_background_image();
 
     Mainloop.idle_add(Lang.bind(this, function() {
+        log('[Dynamic Panel Transparency] Updating user theme data.');
+
         let theme = Panel.actor.get_theme_node();
-        let theme_background = theme.get_background_color();
 
         /* Store user theme values. */
+        let background = null;
+
         let image_background = Theming.get_background_image_color(theme);
+        let theme_background = theme.get_background_color();
 
         if (image_background !== null) {
-            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + image_background.red + ', ' + image_background.green + ', ' + image_background.blue + ', ' + image_background.alpha + ')');
-            Theming.set_theme_background_color(Util.clutter_to_native_color(image_background));
-            Theming.set_theme_opacity(image_background.alpha);
+            background = image_background;
         } else {
-            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + theme_background.red + ', ' + theme_background.green + ', ' + theme_background.blue + ', ' + theme_background.alpha + ')');
-            Theming.set_theme_background_color(Util.clutter_to_native_color(theme_background));
-            Theming.set_theme_opacity(theme_background.alpha);
+            background = theme_background;
         }
+
+        Theming.set_theme_background_color(Util.clutter_to_native_color(background));
+        Theming.set_theme_opacity(background.alpha);
+
+        Settings._settings.set_string('current-user-theme', this._theme_settings.get_string('name'));
+        Settings._settings.set_value('panel-theme-color', new GLib.Variant('(iii)', [background.red, background.green, background.blue]));
+        Settings._settings.set_value('theme-opacity', new GLib.Variant('i', background.alpha));
+
+        log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
+        log('[Dynamic Panel Transparency] Using theme data for: ' + Settings.get_current_user_theme());
 
         Theming.strip_panel_background();
 

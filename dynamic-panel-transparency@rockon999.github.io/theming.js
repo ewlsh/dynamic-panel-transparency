@@ -1,4 +1,4 @@
-/* exported init, cleanup, set_theme_background_color, set_theme_opacity, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
+/* exported init, cleanup, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Compatibility = Me.imports.compatibility;
@@ -67,6 +67,24 @@ function cleanup() {
  */
 function set_theme_background_color(color) {
     this.theme_background_color = color;
+}
+
+/**
+ * Gets the theme opacity.
+ *
+ * @returns {Number} alpha - Alpha value ranging from 0-255.
+ */
+function get_theme_opacity() {
+    return this.theme_opacity;
+}
+
+/**
+ * Gets the theme background color.
+ *
+ * @returns {Object} color - Object representing an RGBA color.
+ */
+function get_theme_background_color() {
+    return this.theme_background_color;
 }
 
 /**
@@ -419,11 +437,10 @@ function get_background_color() {
 /**
  * Returns the user's desired maximized panel opacity from Settings or their theme.
  * DEPENDENCY: Settings
+ * TODO: Needs better system to determine when default theme opacities are too low.
  *
  * @returns {Number} Alpha value from 0-255.
  */
-
-// TODO: Needs better system to determine when default theme opacities are too low.
 function get_maximized_opacity() {
     let custom = Settings.get_maximized_opacity({ app_info: true });
 
@@ -445,7 +462,8 @@ function get_maximized_opacity() {
         return original;
     }
 
-    /* 1) Make sure we want a custom opacity. 2) If custom.app_info !== null that means the setting is overriden. */
+    /* 1) Make sure we want a custom opacity. */
+    /* 2) If custom.app_info !== null that means the setting is overriden. */
     if (!Settings.enable_custom_opacity()) {
         if (this.theme_opacity >= THEME_OPACITY_THRESHOLD) {
             return this.theme_opacity;
