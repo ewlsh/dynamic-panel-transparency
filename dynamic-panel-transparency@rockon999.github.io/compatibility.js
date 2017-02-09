@@ -53,6 +53,7 @@ const gtk_color_button_set_show_editor = function(widget, value) {
     }
 };
 
+/* 3.14 lacks a lot of useful features */
 const gtk_scrolled_window_set_overlay_scrolling = function(widget, value) {
     if (SHELL_VERSION.major === Compatibility.gtk_scrolled_window_set_overlay_scrolling.major && SHELL_VERSION.minor > Compatibility.gtk_scrolled_window_set_overlay_scrolling.minor) {
         widget.set_overlay_scrolling(value);
