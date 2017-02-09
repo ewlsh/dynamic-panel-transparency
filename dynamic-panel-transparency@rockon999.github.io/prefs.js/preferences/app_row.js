@@ -73,7 +73,7 @@ const AppRow = new Lang.Class({
 const CustomRow = new Lang.Class({
     Name: 'DynamicPanelTransparency_CustomRow',
     Extends: Gtk.ListBoxRow,
-    _init: function(wm_class, on_configure, on_remove) {
+    _init: function(name, wm_class, on_configure, on_remove, wm_class_extra = []) {
         this.parent();
 
         this.on_configure = on_configure;
@@ -81,10 +81,12 @@ const CustomRow = new Lang.Class({
         this.app_name = wm_class;
         this.app_id = wm_class;
         this.wm_class = wm_class;
+        this.wm_class_extra = wm_class_extra;
+        this.name = name;
 
         let grid = new Gtk.Grid({ column_spacing: 10 });
 
-        let lbl = new Gtk.Label({ label: this.wm_class, xalign: 0.0 });
+        let lbl = new Gtk.Label({ label: this.name, xalign: 0.0 });
         grid.attach(lbl, 0, 0, 1, 1);
         lbl.hexpand = true;
         lbl.halign = Gtk.Align.START;
@@ -115,10 +117,10 @@ const CustomRow = new Lang.Class({
         return false;
     },
     configure: function() {
-        this.on_configure.call(this, this.wm_class);
+        this.on_configure.call(this, this.name, this.wm_class, this.wm_class_extra);
     },
     remove: function() {
-        this.on_remove.call(this, this.app_id, this);
+        this.on_remove.call(this, this.wm_class, this, this.wm_class_extra);
     }
 });
 
