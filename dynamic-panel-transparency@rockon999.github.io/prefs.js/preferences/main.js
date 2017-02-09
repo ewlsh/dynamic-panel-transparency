@@ -1004,6 +1004,39 @@ function buildPrefsWidget() {
 
             app_list.remove(row);
         });
+        let tweak_rmv = Lang.bind(this, function(wm_class, row, extra_wm_class) {
+            let overrides = settings.get_strv('window-overrides');
+            let index = overrides.indexOf(wm_class);
+            if (index !== -1) {
+                overrides.splice(index, 1);
+            }
+            settings.set_strv('window-overrides', overrides);
+
+            let triggers = settings.get_strv('trigger-windows');
+            index = triggers.indexOf(wm_class);
+            if (index !== -1) {
+                triggers.splice(index, 1);
+            }
+            settings.set_strv('trigger-windows', triggers);
+
+            for (let extra of extra_wm_class) {
+                let overrides = settings.get_strv('window-overrides');
+                let index = overrides.indexOf(extra);
+                if (index !== -1) {
+                    overrides.splice(index, 1);
+                }
+                settings.set_strv('window-overrides', overrides);
+
+                let triggers = settings.get_strv('trigger-windows');
+                index = triggers.indexOf(extra);
+                if (index !== -1) {
+                    triggers.splice(index, 1);
+                }
+                settings.set_strv('trigger-windows', triggers);
+            }
+
+            app_list.remove(row);
+        });
         let rmv = Lang.bind(this, function(app_id, row) {
             let overrides = settings.get_strv('app-overrides');
             let index = overrides.indexOf(app_id);
@@ -1022,7 +1055,7 @@ function buildPrefsWidget() {
             app_list.remove(row);
         });
 
-        let cfg = Lang.bind(this, function(app_name, app_id, path) {
+        let cfg = Lang.bind(this, function(app_name, app_id, path, extras = []) {
             let temp_app_settings = {
                 background_tweaks: null,
                 maximum_opacity: null,
@@ -1138,17 +1171,51 @@ function buildPrefsWidget() {
                     }
                     settings.set_strv(trigger_key, triggers);
                 }
-            }
+
+                for (let extra of extras) {
+                    let extra_custom_path = path + '' + extra + '/';
+                    let extra_obj = Convenience.getSchemaObj('org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides');
+                    let extra_settings = new Gio.Settings({ path: extra_custom_path, settings_schema: extra_obj });
+
+                    if (temp_app_settings.background_tweaks !== null)
+                        extra_settings.set_value(SETTINGS_ENABLE_BACKGROUND_TWEAKS, new GLib.Variant('b', temp_app_settings.background_tweaks));
+                    if (temp_app_settings.panel_color !== null)
+                        extra_settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('(iii)', temp_app_settings.panel_color));
+                    if (temp_app_settings.maximum_opacity !== null)
+                        extra_settings.set_value(SETTINGS_MAXIMIZED_OPACITY, new GLib.Variant('i', temp_app_settings.maximum_opacity));
+                    if (temp_app_settings.always_trigger !== null) {
+                        let trigger_key = null;
+
+                        if (path.indexOf('windowOverrides') !== -1) {
+                            trigger_key = 'trigger-windows';
+                        } else {
+                            trigger_key = 'trigger-apps';
+                        }
+
+                        let triggers = settings.get_strv(trigger_key);
+                        let index = triggers.indexOf(app_id);
+
+                        if (temp_app_settings.always_trigger && index === -1) {
+                            triggers.push(app_id);
+                        } else if (!temp_app_settings.always_trigger && index !== -1) {
+                            triggers.splice(index, 1);
+                        }
+                        settings.set_strv(trigger_key, triggers);
+                    }
+                }}
 
             content_area.remove(app_prefs_builder.get_object('main_box'));
             dialog.destroy();
         });
 
-        let app_cfg = function(a, b) {
-            cfg.call(this, a, b, '/org/gnome/shell/extensions/dynamic-panel-transparency/appOverrides/');
+        let app_cfg = function(app_name, app_id) {
+            cfg.call(this, app_name, app_id, '/org/gnome/shell/extensions/dynamic-panel-transparency/appOverrides/');
         };
-        let window_cfg = function(a) {
-            cfg.call(this, a, a, '/org/gnome/shell/extensions/dynamic-panel-transparency/windowOverrides/');
+        let window_cfg = function(name, wm_class) {
+            cfg.call(this, wm_class, wm_class, '/org/gnome/shell/extensions/dynamic-panel-transparency/windowOverrides/');
+        };
+        let tweak_cfg = function(name, wm_class, extra_wm_class) {
+            cfg.call(this, name, wm_class, '/org/gnome/shell/extensions/dynamic-panel-transparency/windowOverrides/', extra_wm_class);
         };
 
         for (let override of app_overrides) {
@@ -1160,10 +1227,32 @@ function buildPrefsWidget() {
             }
         }
 
+        let current_tweaks = [];
+
         for (let override of window_overrides) {
-            let row = new AppRow.CustomRow(override, window_cfg, window_rmv);
-            row.show_all();
-            app_list.add(row);
+            let tweak = Tweaks.by_wm_class(override);
+            if (tweak) {
+                let found = false;
+
+                for (let added_tweak of current_tweaks) {
+                    for (let wm_class of added_tweak.wm_class) {
+                        if (tweak.wm_class.indexOf(wm_class) !== -1) {
+                            found = true;
+                        }
+                    }
+                }
+                if (!found) {
+                    let extra_wm_class = tweak.wm_class.length <= 1 ? [] : tweak.wm_class.slice(1);
+                    let row = new AppRow.CustomRow(tweak.name, tweak.wm_class[0], tweak_cfg, tweak_rmv, extra_wm_class);
+                    row.show_all();
+                    app_list.add(row);
+                    current_tweaks.push(tweak);
+                }
+            } else {
+                let row = new AppRow.CustomRow(override, override, window_cfg, window_rmv);
+                row.show_all();
+                app_list.add(row);
+            }
         }
 
         let add = new AppRow.AddAppRow();
@@ -1180,19 +1269,23 @@ function buildPrefsWidget() {
                     if (typeof selected_app === 'string') {
                         let tweak = Tweaks.by_uuid(selected_app);
                         if (tweak) {
-                            let row = new AppRow.CustomRow(tweak.wm_class, window_cfg, window_rmv);
+                            let row = new AppRow.CustomRow(tweak.name, tweak.wm_class[0], tweak_cfg, tweak_rmv, tweak.wm_class.slice(1));
                             row.show_all();
                             app_list.add(row);
                             overrides = settings.get_strv('window-overrides');
-                            if (overrides.indexOf(tweak.wm_class) === -1) {
-                                overrides.push(tweak.wm_class);
+                            for (let wm_class of tweak.wm_class) {
+                                if (overrides.indexOf(wm_class) === -1) {
+                                    overrides.push(wm_class);
+                                }
                             }
                             settings.set_strv('window-overrides', overrides);
 
                             if (!Util.is_undef(tweak.trigger) && tweak.trigger) {
                                 let triggers = settings.get_strv('trigger-windows');
-                                if (triggers.indexOf(tweak.wm_class) === -1) {
-                                    triggers.push(tweak.wm_class);
+                                for (let wm_class of tweak.wm_class) {
+                                    if (triggers.indexOf(wm_class) === -1) {
+                                        triggers.push(wm_class);
+                                    }
                                 }
                                 settings.set_strv('trigger-windows', triggers);
                             }

@@ -281,6 +281,10 @@ function _windowUpdated(params) {
     let focused_window = global.display.get_focus_window();
 
     let windows = workspace.list_windows();
+    //for (let i = windows.length - 1; i >= 0; i--) {
+    //    let current_window = windows[i];
+    //    log(current_window.get_wm_class());
+    //}
     windows = global.display.sort_windows_by_stacking(windows);
 
     this.maximized_window = null;
@@ -296,12 +300,11 @@ function _windowUpdated(params) {
     } else {
         for (let i = windows.length - 1; i >= 0; i--) {
             let current_window = windows[i];
-
             if (Settings.check_triggers()) {
                 /* Check if the current WM_CLASS is a trigger. */
                 if (Settings.get_trigger_windows().indexOf(current_window.get_wm_class()) !== -1) {
                     /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
-                    if (current_window !== excluded_window && Util.is_valid(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
+                    if (current_window !== excluded_window && current_window.is_on_primary_monitor() && !current_window.minimized) {
                         add_transparency = false;
                         this.maximized_window = current_window;
                         break;
@@ -313,18 +316,20 @@ function _windowUpdated(params) {
                 /* Check if the found app exists and if it is a trigger app. */
                 if (app && Settings.get_trigger_apps().indexOf(app.get_id()) !== -1) {
                     /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
-                    if (current_window !== excluded_window && Util.is_valid(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
+                    if (current_window !== excluded_window && current_window.is_on_primary_monitor() && !current_window.minimized) {
                         add_transparency = false;
                         this.maximized_window = current_window;
                         break;
                     }
                 }
-
             }
 
             /* Make sure the window is on the correct monitor, isn't minimized, isn't supposed to be excluded, and is actually maximized. */
             if (current_window !== excluded_window && current_window !== trigger_window && Util.is_valid(current_window) && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
-                this.maximized_window = current_window;
+                /* Make sure the top-most window is selected */
+                if (this.maximized_window === null) {
+                    this.maximized_window = current_window;
+                }
                 add_transparency = false;
                 if (!Settings.check_triggers()) {
                     break;
