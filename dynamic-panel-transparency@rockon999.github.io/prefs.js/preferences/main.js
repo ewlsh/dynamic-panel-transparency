@@ -1407,14 +1407,17 @@ function buildPrefsWidget() {
 
         /* Add some space to the about page. Was a little cramped... */
         let found_box = find(stack, ['page_vbox', 'hbox']);
-        if (found_box !== null) {
+        if (found_box === null) {
+            found_box = find(stack, ['page_vbox']);
+        }
 
+        if (found_box !== null) {
             let website_label = find(found_box, ['website_label']);
 
             if (website_label !== null) {
                 found_box.remove(website_label);
 
-                let new_label = Gtk.LinkButton.new_with_label('http://evanwelsh.com', 'rockon999.github.io');
+                let new_label = Gtk.LinkButton.new_with_label('http://evanwelsh.com/dynamic-panel-transparency', 'Website');
 
                 new_label.set_margin_top(WEBSITE_LABEL_TOP_MARGIN);
                 new_label.set_margin_bottom(WEBSITE_LABEL_BOTTOM_MARGIN);
