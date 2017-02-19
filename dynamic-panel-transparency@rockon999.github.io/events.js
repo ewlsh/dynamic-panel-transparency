@@ -87,6 +87,7 @@ function init() {
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, _windowUpdated));
 
     this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, _windowRestacked));
+    this._windowLeftSig = global.screen.connect('window-left-monitor', Lang.bind(this, _windowLeft));
 
     this._windowCreatedSig = display.connect_after('window-created', Lang.bind(this, _windowCreated));
 
@@ -405,6 +406,15 @@ function _windowRestacked() {
     if (Settings.check_overrides() || Settings.check_triggers()) {
         _windowUpdated();
     }
+}
+
+/**
+ * SPECIAL_CASE: Only update if we're using per-app settings.
+ *
+ */
+function _windowLeft() {
+    // TODO: Determine any special cases.
+    _windowUpdated();
 }
 
 /**
