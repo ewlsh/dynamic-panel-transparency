@@ -51,7 +51,7 @@ function init() {
 
     this._wm_tracker = Shell.WindowTracker.get_default();
 
-    this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, _windowUpdated));
+    this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, Util.strip_args(_windowUpdated)));
 
     this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function() {
         if (!Transitions.get_transparency_status().is_blank()) {
@@ -79,15 +79,16 @@ function init() {
 
 
     // COMPATIBILITY: No unminimize signal on 3.14
-    this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, _windowUpdated));
+    this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, Util.strip_args(_windowUpdated)));
 
     this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, _workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, _windowMinimized));
     this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, _windowDestroyed));
-    this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, _windowUpdated));
+    this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, Util.strip_args(_windowUpdated)));
 
     this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, _windowRestacked));
     this._windowLeftSig = global.screen.connect('window-left-monitor', Lang.bind(this, _windowLeft));
+    this._windowEnteredSig = global.screen.connect('window-entered-monitor', Lang.bind(this, Util.strip_args(_windowUpdated)));
 
     this._windowCreatedSig = display.connect_after('window-created', Lang.bind(this, _windowCreated));
 
@@ -124,12 +125,17 @@ function cleanup() {
 
     Main.overview.disconnect(this._overviewShowingSig);
     Main.overview.disconnect(this._overviewHiddenSig);
+
     global.window_manager.disconnect(this._windowMapSig);
     global.window_manager.disconnect(this._windowDestroySig);
     global.window_manager.disconnect(this._windowMinimizeSig);
     global.window_manager.disconnect(this._workspaceSwitchSig);
+
     global.screen.get_display().disconnect(this._windowCreatedSig);
+
     global.screen.disconnect(this._windowRestackedSig);
+    global.screen.disconnect(this._windowLeftSig);
+    global.screen.disconnect(this._windowEnteredSig);
 
     if (!Util.is_undef(this._theme_settings) && !Util.is_undef(this._userThemeChangedSig)) {
         this._theme_settings.disconnect(this._userThemeChangedSig);
@@ -412,9 +418,9 @@ function _windowRestacked() {
  * SPECIAL_CASE: Only update if we're using per-app settings.
  *
  */
-function _windowLeft() {
+function _windowLeft(screen, index, window) {
     // TODO: Determine any special cases.
-    _windowUpdated();
+    _windowUpdated({ excluded_window: window});
 }
 
 /**
