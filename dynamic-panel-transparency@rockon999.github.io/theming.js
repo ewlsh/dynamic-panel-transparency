@@ -9,11 +9,10 @@ const GdkPixbuf = imports.gi.GdkPixbuf;
 const Clutter = imports.gi.Clutter;
 const St = imports.gi.St;
 
+const ExtensionUtils = imports.misc.extensionUtils;
 const Params = imports.misc.params;
 
 const Main = imports.ui.main;
-
-const Panel = Main.panel;
 
 /* Constants for theme opacity detection. */
 const THEME_OPACITY_THRESHOLD = 150;
@@ -34,6 +33,17 @@ const SCALE_FACTOR = 255;
 function init() {
     this.stylesheets = [];
     this.styles = [];
+
+    this.panels = [];
+
+    // TODO: Extension name.
+    if (ExtensionUtils.extensions['multi-monitors-add-on@spin83']) {
+        if (!Util.is_undef(Main.mmPanel)) {
+            this.panels = Main.mmPanel;
+        }
+    }
+
+    this.panels.push(Main.panel);
 }
 
 /**
@@ -50,7 +60,9 @@ function cleanup() {
     }
 
     for (let style of this.styles) {
-        Panel.actor.remove_style_class_name(style);
+        for (let panel of this.panels) {
+            panel.actor.remove_style_class_name(style);
+        }
     }
 
     this.stylesheets = null;
@@ -127,7 +139,9 @@ function register_text_shadow(text_color, text_position) {
  * @param {Number[]} text_position - Integer array containing horizontal offset, vertical offset, radius. (in that order)
  */
 function add_text_shadow() {
-    Panel.actor.add_style_class_name('dpt-panel-text-shadow');
+    for (let panel of this.panels) {
+        panel.actor.add_style_class_name('dpt-panel-text-shadow');
+    }
 }
 
 /**
@@ -159,8 +173,12 @@ function register_icon_shadow(icon_color, icon_position) {
  *
  */
 function add_icon_shadow() {
-    Panel.actor.add_style_class_name('dpt-panel-icon-shadow');
-    Panel.actor.add_style_class_name('dpt-panel-arrow-shadow');
+    for (let panel of this.panels) {
+        panel.actor.add_style_class_name('dpt-panel-icon-shadow');
+    }
+    for (let panel of this.panels) {
+        panel.actor.add_style_class_name('dpt-panel-arrow-shadow');
+    }
 }
 
 /**
@@ -169,7 +187,9 @@ function add_icon_shadow() {
  * @returns {Boolean} If the panel has text shadowing.
  */
 function has_text_shadow() {
-    return Panel.actor.has_style_class_name('dpt-panel-text-shadow');
+    return this.panels.some(function(panel) {
+        return panel.actor.has_style_class_name('dpt-panel-text-shadow');
+    });
 }
 
 /**
@@ -178,7 +198,9 @@ function has_text_shadow() {
  * @returns {Boolean} If the panel has icon shadowing.
  */
 function has_icon_shadow() {
-    return (Panel.actor.has_style_class_name('dpt-panel-icon-shadow') || Panel.actor.has_style_class_name('dpt-panel-arrow-shadow'));
+    return this.panels.some(function(panel) {
+        return panel.actor.has_style_class_name('dpt-panel-icon-shadow') || panel.actor.has_style_class_name('dpt-panel-arrow-shadow');
+    });
 }
 
 /**
@@ -186,7 +208,9 @@ function has_icon_shadow() {
  *
  */
 function remove_text_shadow() {
-    Panel.actor.remove_style_class_name('dpt-panel-text-shadow');
+    for (let panel of this.panels) {
+        panel.actor.remove_style_class_name('dpt-panel-text-shadow');
+    }
 }
 
 /**
@@ -194,8 +218,12 @@ function remove_text_shadow() {
  *
  */
 function remove_icon_shadow() {
-    Panel.actor.remove_style_class_name('dpt-panel-icon-shadow');
-    Panel.actor.remove_style_class_name('dpt-panel-arrow-shadow');
+    for (let panel of this.panels) {
+        panel.actor.remove_style_class_name('dpt-panel-icon-shadow');
+    }
+    for (let panel of this.panels) {
+        panel.actor.remove_style_class_name('dpt-panel-arrow-shadow');
+    }
 }
 
 /**
@@ -234,9 +262,15 @@ function register_text_color(color, prefix) {
  */
 function set_text_color(prefix) {
     if (!Util.is_undef(this.current_prefix)) {
-        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'text-color');
-        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'icon-color');
-        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'arrow-color');
+        for (let panel of this.panels) {
+            panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'text-color');
+        }
+        for (let panel of this.panels) {
+            panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'icon-color');
+        }
+        for (let panel of this.panels) {
+            panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'arrow-color');
+        }
     }
 
     if (!Util.is_undef(prefix)) {
@@ -247,9 +281,15 @@ function set_text_color(prefix) {
 
     this.current_prefix = prefix;
 
-    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'text-color');
-    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'icon-color');
-    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'arrow-color');
+    for (let panel of this.panels) {
+        panel.actor.add_style_class_name('dpt-panel' + prefix + 'text-color');
+    }
+    for (let panel of this.panels) {
+        panel.actor.add_style_class_name('dpt-panel' + prefix + 'icon-color');
+    }
+    for (let panel of this.panels) {
+        panel.actor.add_style_class_name('dpt-panel' + prefix + 'arrow-color');
+    }
 }
 
 /**
@@ -264,9 +304,15 @@ function remove_text_color(prefix) {
         prefix = '-';
     }
 
-    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'text-color');
-    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'icon-color');
-    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'arrow-color');
+    for (let panel of this.panels) {
+        panel.actor.remove_style_class_name('dpt-panel' + prefix + 'text-color');
+    }
+    for (let panel of this.panels) {
+        panel.actor.remove_style_class_name('dpt-panel' + prefix + 'icon-color');
+    }
+    for (let panel of this.panels) {
+        panel.actor.remove_style_class_name('dpt-panel' + prefix + 'arrow-color');
+    }
 }
 
 /**
@@ -301,7 +347,7 @@ function set_panel_color(color) {
         }
     }
 
-    let current_alpha = get_background_alpha(Panel.actor);
+    let current_alpha = get_background_alpha(Main.panel.actor);
 
     color = Params.parse(color, {
         red: panel_color.red,
@@ -310,12 +356,16 @@ function set_panel_color(color) {
         alpha: current_alpha
     });
 
-    Panel.actor.set_background_color(new Clutter.Color({
-        red: color.red,
-        green: color.green,
-        blue: color.blue,
-        alpha: color.alpha
-    }));
+    for (let panel of this.panels) {
+        panel.actor.set_background_color(new Clutter.Color({
+            red: color.red,
+            green: color.green,
+            blue: color.blue,
+            alpha: color.alpha
+        }));
+    }
+
+
 }
 
 /**
@@ -334,7 +384,7 @@ function set_corner_color(color) {
         panel_color = get_background_color();
     }
 
-    let current_alpha = get_background_alpha(Panel._leftCorner.actor);
+    let current_alpha = get_background_alpha(Main.panel._leftCorner.actor);
 
     color = Params.parse(color, {
         red: panel_color.red,
@@ -353,8 +403,11 @@ function set_corner_color(color) {
         '' + '-panel-corner-border-color: transparent;';
 
     // TODO: Update this code. We're using @deprecated code.
-    Panel._leftCorner.actor.set_style(coloring);
-    Panel._rightCorner.actor.set_style(coloring);
+    for (let panel of this.panels) {
+        panel._leftCorner.actor.set_style(coloring);
+        panel._rightCorner.actor.set_style(coloring);
+    }
+
 }
 
 /**
@@ -362,8 +415,10 @@ function set_corner_color(color) {
  *
  */
 function clear_corner_color() {
-    Panel._leftCorner.actor.set_style(null);
-    Panel._rightCorner.actor.set_style(null);
+    for (let panel of this.panels) {
+        panel._leftCorner.actor.set_style(null);
+        panel._rightCorner.actor.set_style(null);
+    }
 }
 
 /**
@@ -494,8 +549,11 @@ function get_unmaximized_opacity() {
  *
  */
 function strip_panel_styling() {
-    if (!Panel.actor.has_style_class_name('panel-effect-transparency')) {
-        Panel.actor.add_style_class_name('panel-effect-transparency');
+
+    for (let panel of this.panels) {
+        if (!panel.actor.has_style_class_name('panel-effect-transparency')) {
+            panel.actor.add_style_class_name('panel-effect-transparency');
+        }
     }
 }
 
@@ -504,8 +562,10 @@ function strip_panel_styling() {
  *
  */
 function reapply_panel_styling() {
-    if (Panel.actor.has_style_class_name('panel-effect-transparency')) {
-        Panel.actor.remove_style_class_name('panel-effect-transparency');
+    for (let panel of this.panels) {
+        if (panel.actor.has_style_class_name('panel-effect-transparency')) {
+            panel.actor.remove_style_class_name('panel-effect-transparency');
+        }
     }
 }
 
@@ -514,8 +574,11 @@ function reapply_panel_styling() {
  *
  */
 function strip_panel_background_image() {
-    if (!Panel.actor.has_style_class_name('panel-background-image-transparency')) {
-        Panel.actor.add_style_class_name('panel-background-image-transparency');
+
+    for (let panel of this.panels) {
+        if (!panel.actor.has_style_class_name('panel-background-image-transparency')) {
+            panel.actor.add_style_class_name('panel-background-image-transparency');
+        }
     }
 }
 
@@ -524,8 +587,11 @@ function strip_panel_background_image() {
  *
  */
 function reapply_panel_background_image() {
-    if (Panel.actor.has_style_class_name('panel-background-image-transparency')) {
-        Panel.actor.remove_style_class_name('panel-background-image-transparency');
+
+    for (let panel of this.panels) {
+        if (panel.actor.has_style_class_name('panel-background-image-transparency')) {
+            panel.actor.remove_style_class_name('panel-background-image-transparency');
+        }
     }
 }
 
@@ -534,8 +600,11 @@ function reapply_panel_background_image() {
  *
  */
 function strip_panel_background() {
-    if (!Panel.actor.has_style_class_name('panel-background-color-transparency')) {
-        Panel.actor.add_style_class_name('panel-background-color-transparency');
+
+    for (let panel of this.panels) {
+        if (!panel.actor.has_style_class_name('panel-background-color-transparency')) {
+            panel.actor.add_style_class_name('panel-background-color-transparency');
+        }
     }
 }
 
@@ -544,8 +613,11 @@ function strip_panel_background() {
  *
  */
 function reapply_panel_background() {
-    if (Panel.actor.has_style_class_name('panel-background-color-transparency')) {
-        Panel.actor.remove_style_class_name('panel-background-color-transparency');
+
+    for (let panel of this.panels) {
+        if (panel.actor.has_style_class_name('panel-background-color-transparency')) {
+            panel.actor.remove_style_class_name('panel-background-color-transparency');
+        }
     }
 }
 
