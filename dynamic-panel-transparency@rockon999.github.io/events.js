@@ -407,7 +407,10 @@ function _windowMinimized(wm, window_actor) {
  *
  */
 function _windowRestacked() {
-    if (Settings.check_overrides() || Settings.check_triggers()) {
+    //let focused_window = global.display.get_focus_window();
+    //let desktop_icons_enabled = focused_window && focused_window.get_window_type() === Meta.WindowType.DESKTOP;
+
+    if (Settings.show_desktop_icons_enabled || Settings.check_overrides() || Settings.check_triggers()) {
         _windowUpdated();
     }
 }

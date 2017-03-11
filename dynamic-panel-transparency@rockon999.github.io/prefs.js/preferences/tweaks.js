@@ -7,7 +7,7 @@ const get_tweaks = function() {
             'name': 'Drop Down Terminal',
             'wm_class': ['DropDownTerminalWindow', 'drop-down-terminal'],
             'trigger': true
-        },
+        }
     ];
 };
 
