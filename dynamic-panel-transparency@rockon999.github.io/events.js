@@ -72,7 +72,7 @@ function init() {
 
 
     for (let window_actor of windows) {
-            /* Simulate window creation event */
+        /* Simulate window creation event */
         let window = window_actor.get_meta_window();
         _windowCreated(display, window);
     }
@@ -81,12 +81,12 @@ function init() {
     // COMPATIBILITY: No unminimize signal on 3.14
     this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, Util.strip_args(_windowUpdated)));
 
-    this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, _workspaceSwitched));
+    this._workspaceSwitchSig = global.window_manager.connect_after('switch-workspace', Lang.bind(this, _workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, _windowMinimized));
     this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, _windowDestroyed));
     this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, Util.strip_args(_windowUpdated)));
 
-    this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, _windowRestacked));
+    this._windowRestackedSig = global.screen.connect_after('restacked', Lang.bind(this, _windowRestacked));
     this._windowLeftSig = global.screen.connect('window-left-monitor', Lang.bind(this, _windowLeft));
     this._windowEnteredSig = global.screen.connect('window-entered-monitor', Lang.bind(this, Util.strip_args(_windowUpdated)));
 
@@ -146,7 +146,6 @@ function cleanup() {
             window_container.window.disconnect(signalId);
         }
         delete window_container.window.dpt_tracking;
-
     }
 
     /* Cleanup Signals */
@@ -239,7 +238,7 @@ function _userThemeChanged() {
 
 function _windowCreated(display, window) {
     if (window && Util.is_undef(window.dpt_tracking)) {
-        if (Util.is_valid(window) ) {
+        if (Util.is_valid(window)) {
             window.dpt_tracking = true;
 
             const v_wId = window.connect('notify::maximized-vertically', Lang.bind(this, function(obj, property) {
@@ -278,20 +277,18 @@ function _windowUpdated(params) {
         excluded_window: null,
         trigger_window: null,
         blank: false,
-        force: false
+        force: false,
+        is_switching: false
     }, true);
 
     let excluded_window = params.excluded_window;
     let trigger_window = params.trigger_window;
     let workspace = params.workspace;
+    let is_switching = params.is_switching;
 
     let focused_window = global.display.get_focus_window();
 
     let windows = workspace.list_windows();
-    //for (let i = windows.length - 1; i >= 0; i--) {
-    //    let current_window = windows[i];
-    //    log(current_window.get_wm_class());
-    //}
     windows = global.display.sort_windows_by_stacking(windows);
 
     this.maximized_window = null;
@@ -307,6 +304,7 @@ function _windowUpdated(params) {
     } else {
         for (let i = windows.length - 1; i >= 0; i--) {
             let current_window = windows[i];
+
             if (Settings.check_triggers()) {
                 /* Check if the current WM_CLASS is a trigger. */
                 if (Settings.get_trigger_windows().indexOf(current_window.get_wm_class()) !== -1) {
@@ -345,9 +343,9 @@ function _windowUpdated(params) {
         }
     }
 
-    if (focused_window && focused_window.get_window_type() === Meta.WindowType.DESKTOP) {
+    if (!is_switching && focused_window && focused_window.get_window_type() === Meta.WindowType.DESKTOP) {
         add_transparency = true;
-        this.maximized_window =  focused_window;
+        this.maximized_window = focused_window;
     }
 
     let transition_params = {};
@@ -419,8 +417,7 @@ function _windowRestacked() {
  *
  */
 function _windowLeft(screen, index, window) {
-    // TODO: Determine any special cases.
-    _windowUpdated({ excluded_window: window});
+    _windowUpdated({ excluded_window: window });
 }
 
 /**
@@ -428,14 +425,19 @@ function _windowLeft(screen, index, window) {
  *
  */
 function _workspaceSwitched(wm, from, to, direction) {
-    let workspace_to = global.screen.get_workspace_by_index(to);
-    if (workspace_to !== null) {
-        this._windowUpdated({
-            workspace: workspace_to
-        });
-    } else {
-        /* maybe this will do something? */
-        this._windowUpdated();
+    if (!Settings.check_overrides() && !Settings.check_triggers()) {
+        let workspace_to = global.screen.get_workspace_by_index(to);
+        if (workspace_to !== null) {
+            this._windowUpdated({
+                workspace: workspace_to,
+                is_switching: true
+            });
+        } else {
+            /* maybe this will do something? */
+            this._windowUpdated({
+                is_switching: true
+            });
+        }
     }
 }
 
