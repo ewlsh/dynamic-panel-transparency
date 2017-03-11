@@ -23,8 +23,25 @@ const OVERRIDES_SCHEMA_ID = 'org.gnome.shell.extensions.dynamic-panel-transparen
 const SETTINGS_WINDOW_OVERRIDES = 'window-overrides';
 const SETTINGS_APP_OVERRIDES = 'app-overrides';
 
+const GNOME_BACKGROUND_SCHEMA = 'org.gnome.desktop.background';
+const SETTINGS_SHOW_DESKTOP_ICONS = 'show-desktop-icons';
+
 function init() {
     this._settings = Convenience.getSettings();
+    this._background_settings = null;
+
+    /* Setup background settings. */
+
+    try {
+        let schemaObj = Convenience.getSchemaObj(GNOME_BACKGROUND_SCHEMA, true);
+
+        if (!Util.is_undef(schemaObj)) {
+            this._background_settings = new Gio.Settings({
+                settings_schema: schemaObj
+            });
+        }
+    } catch (error) { } // eslint-disable-line
+
     this._keys = [];
     this._app_keys = {};
     this._overriden_keys = [];
@@ -33,6 +50,11 @@ function init() {
 
     this._app_overrides = this._settings.get_strv(SETTINGS_APP_OVERRIDES);
     this._window_overrides = this._settings.get_strv(SETTINGS_WINDOW_OVERRIDES);
+    this._show_desktop_icons = null;
+
+    if (this._background_settings) {
+        this._show_desktop_icons = this._background_settings.get_boolean(SETTINGS_SHOW_DESKTOP_ICONS);
+    }
 
     this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_APP_OVERRIDES, Lang.bind(this, function() {
         this._app_overrides = this._settings.get_strv(SETTINGS_APP_OVERRIDES);
@@ -46,12 +68,22 @@ function init() {
         this.window_settings_manager = new AppSettingsManager(this._app_keys, this.get_window_overrides(), WINDOW_OVERRIDES_SCHEMA_PATH);
     })));
 
+    if (this._background_settings) {
+        this.settingsBoundIds.push(this._background_settings.connect('changed::' + SETTINGS_SHOW_DESKTOP_ICONS, Lang.bind(this, function() {
+            this._show_desktop_icons = this._background_settings.get_boolean(SETTINGS_SHOW_DESKTOP_ICONS);
+        })));
+    }
+
     this.get_app_overrides = function() {
         return this._app_overrides;
     };
 
     this.get_window_overrides = function() {
         return this._window_overrides;
+    };
+
+    this.show_desktop_icons_enabled = function() {
+        return this._show_desktop_icons;
     };
 }
 
