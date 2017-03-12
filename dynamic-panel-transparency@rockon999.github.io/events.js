@@ -277,14 +277,12 @@ function _windowUpdated(params) {
         excluded_window: null,
         trigger_window: null,
         blank: false,
-        force: false,
-        is_switching: false
+        force: false
     }, true);
 
     let excluded_window = params.excluded_window;
     let trigger_window = params.trigger_window;
     let workspace = params.workspace;
-    let is_switching = params.is_switching;
 
     let focused_window = global.display.get_focus_window();
 
@@ -343,7 +341,7 @@ function _windowUpdated(params) {
         }
     }
 
-    if (!is_switching && focused_window && focused_window.get_window_type() === Meta.WindowType.DESKTOP) {
+    if (focused_window && focused_window.get_window_type() === Meta.WindowType.DESKTOP) {
         add_transparency = true;
         this.maximized_window = focused_window;
     }
@@ -403,14 +401,12 @@ function _windowMinimized(wm, window_actor) {
 }
 
 /**
- * SPECIAL_CASE: Only update if we're using per-app settings.
+ * SPECIAL_CASE: Only update if we're using per-app settings or is desktop icons are enabled.
  *
  */
 function _windowRestacked() {
-    //let focused_window = global.display.get_focus_window();
-    //let desktop_icons_enabled = focused_window && focused_window.get_window_type() === Meta.WindowType.DESKTOP;
-
-    if (Settings.show_desktop_icons_enabled || Settings.check_overrides() || Settings.check_triggers()) {
+    /* Detect if desktop icons are enabled. */
+    if (Settings.gs_show_desktop_icons() || Settings.check_overrides() || Settings.check_triggers()) {
         _windowUpdated();
     }
 }
@@ -428,18 +424,15 @@ function _windowLeft(screen, index, window) {
  *
  */
 function _workspaceSwitched(wm, from, to, direction) {
-    if (!Settings.check_overrides() && !Settings.check_triggers()) {
+    if (!Settings.gs_show_desktop_icons() && !Settings.check_overrides() && !Settings.check_triggers()) {
         let workspace_to = global.screen.get_workspace_by_index(to);
         if (workspace_to !== null) {
             this._windowUpdated({
-                workspace: workspace_to,
-                is_switching: true
+                workspace: workspace_to
             });
         } else {
             /* maybe this will do something? */
-            this._windowUpdated({
-                is_switching: true
-            });
+            this._windowUpdated();
         }
     }
 }

@@ -82,7 +82,7 @@ function init() {
         return this._window_overrides;
     };
 
-    this.show_desktop_icons_enabled = function() {
+    this.gs_show_desktop_icons = function() {
         return this._show_desktop_icons;
     };
 }
