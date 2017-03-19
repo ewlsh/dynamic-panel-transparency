@@ -28,7 +28,6 @@ const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
  * hidden: occurs after the overview is hidden
  * showing: occurs as the overview is opening
  * unminimize: occurs as the window is unminimized
- * [REMOVED] active-changed: occurs when the screen shield is toggled
  * notify::n-workspaces: occurs when the number of workspaces changes
  * restacked: occurs when the window Z-ordering changes
  * window-created: occurs when a new window is created
