@@ -50,12 +50,17 @@ function init() {
 
     this._wm_tracker = Shell.WindowTracker.get_default();
 
-    this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, Util.strip_args(_windowUpdated)));
+    this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, function() {
+        log('overview hiding: ' + global.display.get_current_time_roundtrip());
+        _windowUpdated();
+    }));
 
-    this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function() {
+    this._overviewShowingSig = Main.overview.connect('shown', Lang.bind(this, function() {
         if (!Transitions.get_transparency_status().is_blank()) {
             Transitions.blank_fade_out();
         }
+
+        log('overview showing: ' + global.display.get_current_time_roundtrip());
 
         if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
             if (Settings.get_enable_overview_text_color()) {
@@ -405,8 +410,12 @@ function _windowMinimized(wm, window_actor) {
  */
 function _windowRestacked() {
     /* Detect if desktop icons are enabled. */
-    if (Settings.gs_show_desktop_icons() || Settings.check_overrides() || Settings.check_triggers()) {
-        _windowUpdated();
+    if (!Main.overview.visible) {
+        log('restack: ' + global.display.get_current_time_roundtrip());
+        if (Settings.gs_show_desktop_icons() || Settings.check_overrides() || Settings.check_triggers()) {
+            log('restack success');
+            _windowUpdated();
+        }
     }
 }
 
