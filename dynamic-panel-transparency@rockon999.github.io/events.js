@@ -33,7 +33,6 @@ const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
  * window-created: occurs when a new window is created
  * switch-workspace: occurs after a workspace is switched
  * minimize: occurs as the window is minimized
- * map: monitors both new windows and unminimizing windows
  * destroy: occurs as the window is destroyed
  * user-theme/changed::name: occurs when the user's theme changes
  *
@@ -74,13 +73,11 @@ function init() {
     let windows = global.get_window_actors();
     let display = global.screen.get_display();
 
-
     for (let window_actor of windows) {
         /* Simulate window creation event */
         let window = window_actor.get_meta_window();
         _windowCreated(display, window);
     }
-
 
     // COMPATIBILITY: No unminimize signal on 3.14
     this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, Util.strip_args(_windowUpdated)));
@@ -88,7 +85,6 @@ function init() {
     this._workspaceSwitchSig = global.window_manager.connect_after('switch-workspace', Lang.bind(this, _workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, _windowMinimized));
     this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, _windowDestroyed));
-    this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, Util.strip_args(_windowUpdated)));
 
     this._windowRestackedSig = global.screen.connect_after('restacked', Lang.bind(this, _windowRestacked));
     this._windowLeftSig = global.screen.connect('window-left-monitor', Lang.bind(this, _windowLeft));
@@ -258,6 +254,8 @@ function _windowCreated(display, window) {
             }));
 
             this.windows.push({ 'window': window, 'signalIds': [v_wId, f_wId] });
+
+            _windowUpdated();
         }
     }
 }
@@ -337,7 +335,9 @@ function _windowUpdated(params) {
                 if (this.maximized_window === null) {
                     this.maximized_window = current_window;
                 }
+
                 add_transparency = false;
+
                 if (!Settings.check_triggers()) {
                     break;
                 }
@@ -376,8 +376,8 @@ function _windowUpdated(params) {
     } else if (Settings.check_overrides() || Settings.check_triggers()) {
         // TODO: Debug this more.
 
-        /* Mark as interruptible in case another more important transition is needed. */
-        transition_params.interruptible = true;
+        ///* Mark as interrupt in case another more important transition is needed. */
+        //transition_params.interrupt = true;
 
         if (!add_transparency) {
             Transitions.fade_in(transition_params);

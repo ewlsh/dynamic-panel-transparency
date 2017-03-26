@@ -88,9 +88,9 @@ function minimum_fade_in(params) {
     if (Main.overview.visible || Main.overview._shown)
         return;
 
-    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interruptible: false });
+    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interrupt: false });
 
-    if (params.interruptible || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_IN, AnimationDestination.MINIMUM)) {
+    if (params.interrupt || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_IN, AnimationDestination.MINIMUM)) {
         this.animation_status.set(AnimationAction.FADE_IN, AnimationDestination.MINIMUM);
     } else {
         return;
@@ -148,9 +148,9 @@ function fade_in(params) {
     if (Main.overview.visible || Main.overview._shown)
         return;
 
-    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interruptible: false });
+    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interrupt: false });
 
-    if (params.interruptible || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM)) {
+    if (params.interrupt || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM)) {
         this.animation_status.set(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM);
     } else {
         return;
@@ -257,9 +257,9 @@ function fade_in_complete() {
  * @param {Number} params.time - Transition speed in milliseconds.
  */
 function fade_out(params) {
-    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interruptible: false });
+    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interrupt: false });
 
-    if (params.interruptible || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM)) {
+    if (params.interrupt || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM)) {
         this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM);
     } else {
         return;
@@ -325,9 +325,9 @@ function fade_out(params) {
  * @param {Number} params.time - Transition speed in milliseconds.
  */
 function blank_fade_out(params) {
-    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interruptible: false });
+    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interrupt: false });
 
-    if (params.interruptible || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.BLANK)) {
+    if (params.interrupt || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.BLANK)) {
         this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.BLANK);
     } else {
         return;
