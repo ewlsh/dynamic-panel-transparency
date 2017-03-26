@@ -126,7 +126,7 @@ function cleanup() {
     Main.overview.disconnect(this._overviewShowingSig);
     Main.overview.disconnect(this._overviewHiddenSig);
 
-    global.window_manager.disconnect(this._windowMapSig);
+    //global.window_manager.disconnect(this._windowMapSig);
     global.window_manager.disconnect(this._windowDestroySig);
     global.window_manager.disconnect(this._windowMinimizeSig);
     global.window_manager.disconnect(this._workspaceSwitchSig);
@@ -152,7 +152,7 @@ function cleanup() {
     this._windowRestackedSig = null;
     this._overviewShowingSig = null;
     this._overviewHiddenSig = null;
-    this._windowMapSig = null;
+    //this._windowMapSig = null;
     this._windowDestroySig = null;
     this._windowMinimizeSig = null;
     this._windowUnminimizeSig = null;
