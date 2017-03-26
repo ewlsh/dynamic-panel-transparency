@@ -126,7 +126,6 @@ function cleanup() {
     Main.overview.disconnect(this._overviewShowingSig);
     Main.overview.disconnect(this._overviewHiddenSig);
 
-    //global.window_manager.disconnect(this._windowMapSig);
     global.window_manager.disconnect(this._windowDestroySig);
     global.window_manager.disconnect(this._windowMinimizeSig);
     global.window_manager.disconnect(this._workspaceSwitchSig);
@@ -152,7 +151,6 @@ function cleanup() {
     this._windowRestackedSig = null;
     this._overviewShowingSig = null;
     this._overviewHiddenSig = null;
-    //this._windowMapSig = null;
     this._windowDestroySig = null;
     this._windowMinimizeSig = null;
     this._windowUnminimizeSig = null;
@@ -374,16 +372,12 @@ function _windowUpdated(params) {
             Transitions.fade_in(transition_params);
         }
     } else if (Settings.check_overrides() || Settings.check_triggers()) {
-        // TODO: Debug this more.
-
-        ///* Mark as interrupt in case another more important transition is needed. */
-        //transition_params.interrupt = true;
-
         if (!add_transparency) {
             Transitions.fade_in(transition_params);
         }
     }
 
+    /* Reset text coloring. */
     if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
         if (!add_transparency && Settings.get_enable_maximized_text_color()) {
             Theming.remove_text_color();
