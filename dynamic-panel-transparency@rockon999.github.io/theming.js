@@ -4,12 +4,12 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Compatibility = Me.imports.compatibility;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
+const Extension = Me.imports.extension;
 
 const GdkPixbuf = imports.gi.GdkPixbuf;
 const Clutter = imports.gi.Clutter;
 const St = imports.gi.St;
 
-const ExtensionUtils = imports.misc.extensionUtils;
 const Params = imports.misc.params;
 
 const Main = imports.ui.main;
@@ -33,17 +33,6 @@ const SCALE_FACTOR = 255;
 function init() {
     this.stylesheets = [];
     this.styles = [];
-
-    this.panels = [];
-
-    // TODO: Extension name.
-    if (ExtensionUtils.extensions['multi-monitors-add-on@spin83']) {
-        if (!Util.is_undef(Main.mmPanel)) {
-            this.panels = Main.mmPanel;
-        }
-    }
-
-    this.panels.push(Main.panel);
 }
 
 /**
@@ -60,7 +49,7 @@ function cleanup() {
     }
 
     for (let style of this.styles) {
-        for (let panel of this.panels) {
+        for (let panel of Extension.panels) {
             panel.actor.remove_style_class_name(style);
         }
     }
@@ -139,7 +128,7 @@ function register_text_shadow(text_color, text_position) {
  * @param {Number[]} text_position - Integer array containing horizontal offset, vertical offset, radius. (in that order)
  */
 function add_text_shadow() {
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.add_style_class_name('dpt-panel-text-shadow');
     }
 }
@@ -173,10 +162,10 @@ function register_icon_shadow(icon_color, icon_position) {
  *
  */
 function add_icon_shadow() {
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.add_style_class_name('dpt-panel-icon-shadow');
     }
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.add_style_class_name('dpt-panel-arrow-shadow');
     }
 }
@@ -187,7 +176,7 @@ function add_icon_shadow() {
  * @returns {Boolean} If the panel has text shadowing.
  */
 function has_text_shadow() {
-    return this.panels.some(function(panel) {
+    return Extension.panels.some(function(panel) {
         return panel.actor.has_style_class_name('dpt-panel-text-shadow');
     });
 }
@@ -198,7 +187,7 @@ function has_text_shadow() {
  * @returns {Boolean} If the panel has icon shadowing.
  */
 function has_icon_shadow() {
-    return this.panels.some(function(panel) {
+    return Extension.panels.some(function(panel) {
         return panel.actor.has_style_class_name('dpt-panel-icon-shadow') || panel.actor.has_style_class_name('dpt-panel-arrow-shadow');
     });
 }
@@ -208,7 +197,7 @@ function has_icon_shadow() {
  *
  */
 function remove_text_shadow() {
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.remove_style_class_name('dpt-panel-text-shadow');
     }
 }
@@ -218,10 +207,10 @@ function remove_text_shadow() {
  *
  */
 function remove_icon_shadow() {
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.remove_style_class_name('dpt-panel-icon-shadow');
     }
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.remove_style_class_name('dpt-panel-arrow-shadow');
     }
 }
@@ -262,13 +251,13 @@ function register_text_color(color, prefix) {
  */
 function set_text_color(prefix) {
     if (!Util.is_undef(this.current_prefix)) {
-        for (let panel of this.panels) {
+        for (let panel of Extension.panels) {
             panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'text-color');
         }
-        for (let panel of this.panels) {
+        for (let panel of Extension.panels) {
             panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'icon-color');
         }
-        for (let panel of this.panels) {
+        for (let panel of Extension.panels) {
             panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'arrow-color');
         }
     }
@@ -281,13 +270,13 @@ function set_text_color(prefix) {
 
     this.current_prefix = prefix;
 
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.add_style_class_name('dpt-panel' + prefix + 'text-color');
     }
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.add_style_class_name('dpt-panel' + prefix + 'icon-color');
     }
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.add_style_class_name('dpt-panel' + prefix + 'arrow-color');
     }
 }
@@ -304,13 +293,13 @@ function remove_text_color(prefix) {
         prefix = '-';
     }
 
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.remove_style_class_name('dpt-panel' + prefix + 'text-color');
     }
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.remove_style_class_name('dpt-panel' + prefix + 'icon-color');
     }
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.remove_style_class_name('dpt-panel' + prefix + 'arrow-color');
     }
 }
@@ -335,7 +324,8 @@ function register_style(style) {
  * @param {Number} color.blue - Blue value ranging from 0-255.
  * @param {Number} color.alpha - Alpha value ranging from 0-255.
  */
-function set_panel_color(color) {
+// TODO: Per extension alpha
+function set_panel_color(panel, color) {
     let panel_color = { red: 0, green: 0, blue: 0, alpha: 0 };
 
     if (!Util.is_undef(Settings.get_panel_color)) {
@@ -356,7 +346,7 @@ function set_panel_color(color) {
         alpha: current_alpha
     });
 
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel.actor.set_background_color(new Clutter.Color({
             red: color.red,
             green: color.green,
@@ -377,7 +367,7 @@ function set_panel_color(color) {
  * @param {Number} color.blue - Blue value ranging from 0-255.
  * @param {Number} color.alpha - Alpha value ranging from 0-255.
  */
-function set_corner_color(color) {
+function set_corner_color(panel, color) {
     let panel_color = { red: 0, green: 0, blue: 0, alpha: 0 };
 
     if (!Util.is_undef(Settings.get_panel_color)) {
@@ -403,7 +393,7 @@ function set_corner_color(color) {
         '' + '-panel-corner-border-color: transparent;';
 
     // TODO: Update this code. We're using @deprecated code.
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         panel._leftCorner.actor.set_style(coloring);
         panel._rightCorner.actor.set_style(coloring);
     }
@@ -414,8 +404,8 @@ function set_corner_color(color) {
  * Removes any corner styling this extension has applied.
  *
  */
-function clear_corner_color() {
-    for (let panel of this.panels) {
+function clear_corner_color(panel) {
+    for (let panel of Extension.panels) {
         panel._leftCorner.actor.set_style(null);
         panel._rightCorner.actor.set_style(null);
     }
@@ -548,9 +538,9 @@ function get_unmaximized_opacity() {
  * Applies the style class 'panel-effect-transparency' and removes the basic CSS preventing this extension's transitions.
  *
  */
-function strip_panel_styling() {
+function strip_panel_styling(panel) {
 
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         if (!panel.actor.has_style_class_name('panel-effect-transparency')) {
             panel.actor.add_style_class_name('panel-effect-transparency');
         }
@@ -561,8 +551,8 @@ function strip_panel_styling() {
  * Removes the style class 'panel-effect-transparency' and enables the stock CSS preventing this extension's transitions.
  *
  */
-function reapply_panel_styling() {
-    for (let panel of this.panels) {
+function reapply_panel_styling(panel) {
+    for (let panel of Extension.panels) {
         if (panel.actor.has_style_class_name('panel-effect-transparency')) {
             panel.actor.remove_style_class_name('panel-effect-transparency');
         }
@@ -573,9 +563,9 @@ function reapply_panel_styling() {
  * Applies the style class 'panel-background-image-transparency' and removes the basic CSS preventing this extension's transitions.
  *
  */
-function strip_panel_background_image() {
+function strip_panel_background_image(panel) {
 
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         if (!panel.actor.has_style_class_name('panel-background-image-transparency')) {
             panel.actor.add_style_class_name('panel-background-image-transparency');
         }
@@ -586,9 +576,9 @@ function strip_panel_background_image() {
  * Removes the style class 'panel-background-image-transparency' and enables the stock CSS preventing this extension's transitions.
  *
  */
-function reapply_panel_background_image() {
+function reapply_panel_background_image(panel) {
 
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         if (panel.actor.has_style_class_name('panel-background-image-transparency')) {
             panel.actor.remove_style_class_name('panel-background-image-transparency');
         }
@@ -599,9 +589,9 @@ function reapply_panel_background_image() {
  * Applies the style class 'panel-background-color-transparency' and removes any CSS embellishments.
  *
  */
-function strip_panel_background() {
+function strip_panel_background(panel) {
 
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         if (!panel.actor.has_style_class_name('panel-background-color-transparency')) {
             panel.actor.add_style_class_name('panel-background-color-transparency');
         }
@@ -612,9 +602,9 @@ function strip_panel_background() {
  * Reapplies the style class 'panel-background-color-transparency' and enables any CSS embellishments.
  *
  */
-function reapply_panel_background() {
+function reapply_panel_background(panel) {
 
-    for (let panel of this.panels) {
+    for (let panel of Extension.panels) {
         if (panel.actor.has_style_class_name('panel-background-color-transparency')) {
             panel.actor.remove_style_class_name('panel-background-color-transparency');
         }

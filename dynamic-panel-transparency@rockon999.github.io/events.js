@@ -13,6 +13,8 @@ const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
 const Util = Me.imports.util;
 
+const Extension = Me.imports.extension;
+
 const Shell = imports.gi.Shell;
 const Meta = imports.gi.Meta;
 const GLib = imports.gi.GLib;
@@ -72,7 +74,7 @@ function init() {
 
 
     for (let window_actor of windows) {
-            /* Simulate window creation event */
+        /* Simulate window creation event */
         let window = window_actor.get_meta_window();
         _windowCreated(display, window);
     }
@@ -239,7 +241,7 @@ function _userThemeChanged() {
 
 function _windowCreated(display, window) {
     if (window && Util.is_undef(window.dpt_tracking)) {
-        if (Util.is_valid(window) ) {
+        if (Util.is_valid(window)) {
             window.dpt_tracking = true;
 
             const v_wId = window.connect('notify::maximized-vertically', Lang.bind(this, function(obj, property) {
@@ -298,20 +300,45 @@ function _windowUpdated(params) {
 
     let add_transparency = true;
 
+    let monitor_has_panel = false;
+    let index;
+
+    if (focused_window) {
+        focused_window.get_monitor();
+
+        for (let panel of Extension.panels) {
+            if (panel._monitorIndex === index) {
+                monitor_has_panel = true;
+            }
+        }
+    }
+
+    //Util.monitor_has_panel(focused_window.get_monitor());
+
     /* Save processing time by checking the current focused window (most likely to be maximized) */
     /* Check that the focused window is in the right workspace. (I really hope it always is...) */
     /* Don't do the 'quick check' if we have trigger apps/windows as they might not be focused. */
-    if (!Settings.check_triggers() && focused_window && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && !focused_window.minimized && focused_window.get_workspace().index() === workspace.index()) {
+    if (!Settings.check_triggers() && focused_window && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && monitor_has_panel /*focused_window.is_on_primary_monitor()*/ && !focused_window.minimized && focused_window.get_workspace().index() === workspace.index()) {
         add_transparency = false;
         this.maximized_window = focused_window;
     } else {
         for (let i = windows.length - 1; i >= 0; i--) {
             let current_window = windows[i];
+
+            monitor_has_panel = false;
+            index = current_window.get_monitor();
+
+            for (let panel of Extension.panels) {
+                if (panel._monitorIndex === index) {
+                    monitor_has_panel = true;
+                }
+            }
+
             if (Settings.check_triggers()) {
                 /* Check if the current WM_CLASS is a trigger. */
                 if (Settings.get_trigger_windows().indexOf(current_window.get_wm_class()) !== -1) {
                     /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
-                    if (current_window !== excluded_window && current_window.is_on_primary_monitor() && !current_window.minimized) {
+                    if (current_window !== excluded_window && monitor_has_panel && !current_window.minimized) {
                         add_transparency = false;
                         this.maximized_window = current_window;
                         break;
@@ -323,7 +350,7 @@ function _windowUpdated(params) {
                 /* Check if the found app exists and if it is a trigger app. */
                 if (app && Settings.get_trigger_apps().indexOf(app.get_id()) !== -1) {
                     /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
-                    if (current_window !== excluded_window && current_window.is_on_primary_monitor() && !current_window.minimized) {
+                    if (current_window !== excluded_window && monitor_has_panel && !current_window.minimized) {
                         add_transparency = false;
                         this.maximized_window = current_window;
                         break;
@@ -332,7 +359,7 @@ function _windowUpdated(params) {
             }
 
             /* Make sure the window is on the correct monitor, isn't minimized, isn't supposed to be excluded, and is actually maximized. */
-            if (current_window !== excluded_window && current_window !== trigger_window && Util.is_valid(current_window) && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
+            if (current_window !== excluded_window && current_window !== trigger_window && Util.is_valid(current_window) && Util.is_maximized(current_window) && monitor_has_panel && !current_window.minimized) {
                 /* Make sure the top-most window is selected */
                 if (this.maximized_window === null) {
                     this.maximized_window = current_window;
@@ -347,7 +374,7 @@ function _windowUpdated(params) {
 
     if (focused_window && focused_window.get_window_type() === Meta.WindowType.DESKTOP) {
         add_transparency = true;
-        this.maximized_window =  focused_window;
+        this.maximized_window = focused_window;
     }
 
     let transition_params = {};
@@ -420,7 +447,7 @@ function _windowRestacked() {
  */
 function _windowLeft(screen, index, window) {
     // TODO: Determine any special cases.
-    _windowUpdated({ excluded_window: window});
+    _windowUpdated({ excluded_window: window });
 }
 
 /**

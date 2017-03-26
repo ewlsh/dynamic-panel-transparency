@@ -14,6 +14,8 @@ const Theming = Me.imports.theming;
 const Events = Me.imports.events;
 const Util = Me.imports.util;
 
+const ExtensionUtils = imports.misc.extensionUtils;
+
 const ExtensionSystem = imports.ui.extensionSystem;
 const Main = imports.ui.main;
 const Panel = Main.panel;
@@ -25,7 +27,7 @@ const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 /* eslint-disable */
 
 /* Simple function that converts stored color tuples and/or arrays into js objects. */
-const COLOR_PARSER = function (input) {
+const COLOR_PARSER = function(input) {
     let color = { red: input[0], green: input[1], blue: input[2] };
     if (input.length === 4) {
         color.alpha = input[3];
@@ -65,9 +67,15 @@ function enable() {
         log('[Dynamic Panel Transparency] Failed to find the user theme extension.');
     }
 
+    this.panels = [];
+
+    this.panels.push(Main.panel);
+
     if (!theme_settings) {
         idle_enable(false);
     } else {
+        Mainloop.idle_add(Lang.bind(this, find_other_panels));
+
         /* Is our data current? */
         let theme_name = theme_settings.get_string('name');
         let current = Settings.get_current_user_theme();
@@ -80,7 +88,7 @@ function enable() {
             let color = Settings.get_panel_theme_color();
             let opacity = Settings.get_theme_opacity();
 
-            let background = {red: color.red, blue: color.blue, green: color.green, alpha: opacity};
+            let background = { red: color.red, blue: color.blue, green: color.green, alpha: opacity };
 
             log('[Dynamic Panel Transparency] Using theme data for: ' + Settings._settings.get_string('current-user-theme'));
 
@@ -120,6 +128,8 @@ function idle_enable(update, theme_settings = null) {
 
         let background = null;
 
+        find_other_panels();
+
         if (update) {
             log('[Dynamic Panel Transparency] Updating user theme data.');
 
@@ -134,12 +144,12 @@ function idle_enable(update, theme_settings = null) {
             Settings._settings.set_value('panel-theme-color', new GLib.Variant('(iii)', [background.red, background.green, background.blue]));
             Settings._settings.set_value('theme-opacity', new GLib.Variant('i', background.alpha));
 
-            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' +background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
+            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
         } else {
             let color = Settings.get_panel_theme_color();
             let opacity = Settings.get_theme_opacity();
 
-            background = {red: color.red, blue: color.blue, green: color.green, alpha: opacity};
+            background = { red: color.red, blue: color.blue, green: color.green, alpha: opacity };
         }
 
         log('[Dynamic Panel Transparency] Using theme data for: ' + Settings.get_current_user_theme());
@@ -186,6 +196,17 @@ function disable() {
     modified = false;
 
     return false;
+}
+
+function find_other_panels() {
+    // TODO: Extension name.
+    if (ExtensionUtils.extensions['multi-monitors-add-on@spin83']) {
+        if (!Util.is_undef(Main.mmPanel)) {
+            for (let panel of Main.mmPanel) {
+                this.panels.push(panel);
+            }
+        }
+    }
 }
 
 function modify_panel() {

@@ -19,6 +19,8 @@ const BEGINNING_THRESHOLD_PERCENTAGE = 0.20;
 const ENDING_THRESHOLD_PERCENTAGE = 0.80;
 const FRAME_RATE_DIVIDER = 8;
 
+// TODO: Add panel to params...
+
 /**
  * Intialize.
  *
