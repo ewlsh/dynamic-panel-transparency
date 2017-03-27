@@ -22,7 +22,6 @@ const st_theme_load_stylesheet = function(theme, file_name) {
         file_name = Util.get_file(file_name);
     }
     return theme.load_stylesheet(file_name);
-
 };
 
 /* st-theme in 3.14 uses strings, not Gio.File */

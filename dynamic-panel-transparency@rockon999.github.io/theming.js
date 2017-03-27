@@ -1,4 +1,4 @@
-/* exported init, cleanup, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
+/* exported init, cleanup, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, clear_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Compatibility = Me.imports.compatibility;
@@ -33,7 +33,6 @@ const SCALE_FACTOR = 255;
  */
 function init() {
     this.stylesheets = [];
-    this.styles = [];
 }
 
 /**
@@ -49,12 +48,7 @@ function cleanup() {
         Util.remove_file(sheet);
     }
 
-    for (let style of this.styles) {
-        Panel.actor.remove_style_class_name(style);
-    }
-
     this.stylesheets = null;
-    this.styles = null;
 }
 
 /**
@@ -110,9 +104,6 @@ function register_text_shadow(text_color, text_position) {
     let text_color_css = 'rgba(' + text_color.red + ', ' + text_color.green + ', ' + text_color.blue + ', ' + text_color.alpha.toFixed(2) + ')';
     let text_position_css = '' + text_position[0] + 'px ' + text_position[1] + 'px ' + text_position[2] + 'px';
 
-
-    register_style('dpt-panel-text-shadow');
-
     return apply_stylesheet_css('.dpt-panel-text-shadow .panel-button { text-shadow: ' + text_position_css + ' ' + text_color_css + '; }', 'panel-text-shadow');
 }
 
@@ -147,10 +138,6 @@ function register_icon_shadow(icon_color, icon_position) {
     let icon = apply_stylesheet_css('.dpt-panel-icon-shadow .system-status-icon { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'panel-icon-shadow');
     let arrow = apply_stylesheet_css('.dpt-panel-arrow-shadow .popup-menu-arrow { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'panel-arrow-shadow');
 
-
-    register_style('dpt-panel-icon-shadow');
-    register_style('dpt-panel-arrow-shadow');
-
     return [icon, arrow];
 }
 
@@ -179,6 +166,23 @@ function has_text_shadow() {
  */
 function has_icon_shadow() {
     return (Panel.actor.has_style_class_name('dpt-panel-icon-shadow') || Panel.actor.has_style_class_name('dpt-panel-arrow-shadow'));
+}
+
+/**
+ * Determines if the panel currently has text coloring applied.
+ *
+ * @returns {Boolean} If the panel has text coloring.
+ */
+function has_text_coloring(prefix) {
+    if (!Util.is_undef(prefix)) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    return (Panel.actor.has_style_class_name('dpt-panel' + prefix + 'text-color') ||
+        Panel.actor.has_style_class_name('dpt-panel' + prefix + 'icon-color') ||
+        Panel.actor.has_style_class_name('dpt-panel' + prefix + 'arrow-color'));
 }
 
 /**
@@ -216,13 +220,9 @@ function register_text_color(color, prefix) {
         prefix = '-';
     }
 
-    let text = apply_stylesheet_css('.dpt-panel' + prefix + 'text-color .panel-button { ' + color_css + ' }', 'panel' + prefix + 'text-color');
-    let icon = apply_stylesheet_css('.dpt-panel' + prefix + 'icon-color .system-status-icon { ' + color_css + ' }', 'panel' + prefix + 'icon-color');
-    let arrow = apply_stylesheet_css('.dpt-panel' + prefix + 'arrow-color .popup-menu-arrow { ' + color_css + ' }', 'panel' + prefix + 'arrow-color');
-
-    register_style('dpt-panel' + prefix + 'text-color');
-    register_style('dpt-panel' + prefix + 'icon-color');
-    register_style('dpt-panel' + prefix + 'arrow-color');
+    let text = apply_stylesheet_css('.dpt-panel' + prefix + 'text-color' + ' .panel-button { ' + color_css + ' }', 'panel' + prefix + 'text-color');
+    let icon = apply_stylesheet_css('.dpt-panel' + prefix + 'icon-color' + ' .system-status-icon { ' + color_css + ' }', 'panel' + prefix + 'icon-color');
+    let arrow = apply_stylesheet_css('.dpt-panel' + prefix + 'arrow-color' + ' .popup-menu-arrow { ' + color_css + ' }', 'panel' + prefix + 'arrow-color');
 
     return [text, icon, arrow];
 }
@@ -232,51 +232,31 @@ function register_text_color(color, prefix) {
  *
  * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
  */
-function set_text_color(prefix) {
-    if (!Util.is_undef(this.current_prefix)) {
-        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'text-color');
-        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'icon-color');
-        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'arrow-color');
-    }
 
-    if (!Util.is_undef(prefix)) {
-        prefix = '-' + prefix + '-';
-    } else {
-        prefix = '-';
-    }
-
-    this.current_prefix = prefix;
-
-    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'text-color');
-    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'icon-color');
-    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'arrow-color');
+function clear_text_color() {
+    Panel.actor.remove_style_class_name('dpt-panel-text-color');
+    Panel.actor.remove_style_class_name('dpt-panel-icon-color');
+    Panel.actor.remove_style_class_name('dpt-panel-arrow-color');
+    Panel.actor.remove_style_class_name('dpt-panel-maximized-text-color');
+    Panel.actor.remove_style_class_name('dpt-panel-maximized-icon-color');
+    Panel.actor.remove_style_class_name('dpt-panel-maximized-arrow-color');
 }
 
-/**
- * Remove a registered text color stylesheet from the panel. @see set_text_color
- *
- * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
- */
-function remove_text_color(prefix) {
-    if (!Util.is_undef(prefix)) {
-        prefix = '-' + prefix + '-';
+function set_text_color(secondary = false) {
+    if (secondary) {
+        Panel.actor.remove_style_class_name('dpt-panel-text-color');
+        Panel.actor.remove_style_class_name('dpt-panel-icon-color');
+        Panel.actor.remove_style_class_name('dpt-panel-arrow-color');
+        Panel.actor.add_style_class_name('dpt-panel-maximized-text-color');
+        Panel.actor.add_style_class_name('dpt-panel-maximized-icon-color');
+        Panel.actor.add_style_class_name('dpt-panel-maximized-arrow-color');
     } else {
-        prefix = '-';
-    }
-
-    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'text-color');
-    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'icon-color');
-    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'arrow-color');
-}
-
-/**
- * Registers any custom style so that it can be removed when the extension is disabled.
- *
- * @param {string} style - The name of a CSS styling.
- */
-function register_style(style) {
-    if (this.styles.indexOf(style) === -1) {
-        this.styles.push(style);
+        Panel.actor.remove_style_class_name('dpt-panel-maximized-text-color');
+        Panel.actor.remove_style_class_name('dpt-panel-maximized-icon-color');
+        Panel.actor.remove_style_class_name('dpt-panel-maximized-arrow-color');
+        Panel.actor.add_style_class_name('dpt-panel-text-color');
+        Panel.actor.add_style_class_name('dpt-panel-icon-color');
+        Panel.actor.add_style_class_name('dpt-panel-arrow-color');
     }
 }
 
@@ -485,6 +465,7 @@ function get_unmaximized_opacity() {
     if (Settings.enable_custom_opacity()) {
         return Settings.get_unmaximized_opacity();
     } else {
+
         return Settings.get_unmaximized_opacity({ default: true });
     }
 }

@@ -25,13 +25,25 @@ const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 /* eslint-disable */
 
 /* Simple function that converts stored color tuples and/or arrays into js objects. */
-const COLOR_PARSER = function (input) {
+const COLOR_PARSER = function(input) {
     let color = { red: input[0], green: input[1], blue: input[2] };
     if (input.length === 4) {
         color.alpha = input[3];
     }
     return color;
 };
+
+/* Simple handler that reloads all style-related parts of the extension so the new setting is reflected. */
+const RELOAD_HANDLER = Lang.bind(this, function() {
+    unmodify_panel();
+
+    Theming.cleanup();
+    Theming.init();
+
+    modify_panel();
+
+    Theming.set_text_color();
+});
 
 /* eslint-enable */
 
@@ -80,7 +92,7 @@ function enable() {
             let color = Settings.get_panel_theme_color();
             let opacity = Settings.get_theme_opacity();
 
-            let background = {red: color.red, blue: color.blue, green: color.green, alpha: opacity};
+            let background = { red: color.red, blue: color.blue, green: color.green, alpha: opacity };
 
             log('[Dynamic Panel Transparency] Using theme data for: ' + Settings._settings.get_string('current-user-theme'));
 
@@ -134,12 +146,12 @@ function idle_enable(update, theme_settings = null) {
             Settings._settings.set_value('panel-theme-color', new GLib.Variant('(iii)', [background.red, background.green, background.blue]));
             Settings._settings.set_value('theme-opacity', new GLib.Variant('i', background.alpha));
 
-            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' +background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
+            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
         } else {
             let color = Settings.get_panel_theme_color();
             let opacity = Settings.get_theme_opacity();
 
-            background = {red: color.red, blue: color.blue, green: color.green, alpha: opacity};
+            background = { red: color.red, blue: color.blue, green: color.green, alpha: opacity };
         }
 
         log('[Dynamic Panel Transparency] Using theme data for: ' + Settings.get_current_user_theme());
@@ -238,14 +250,6 @@ function modify_panel() {
     /* Register text color styling. */
     let [text, icon, arrow] = Theming.register_text_color(Settings.get_text_color()); // eslint-disable-line no-unused-vars
     let [maximized_text, maximized_icon, maximized_arrow] = Theming.register_text_color(Settings.get_maximized_text_color(), 'maximized'); // eslint-disable-line no-unused-vars
-
-    if (Settings.get_enable_text_color()) {
-        if (text !== null) {
-            Theming.set_text_color();
-        } else {
-            log('[Dynamic Panel Transparency] Failed to enabled text coloring.');
-        }
-    }
 }
 
 function unmodify_panel() {
@@ -268,10 +272,7 @@ function unmodify_panel() {
     }
 
     /* Remove text coloring */
-    Theming.remove_text_color();
-
-    /* Remove maximized text coloring */
-    Theming.remove_text_color('maximized');
+    Theming.clear_text_color();
 }
 
 function initialize_settings() {
@@ -295,7 +296,11 @@ function initialize_settings() {
     Settings.add({
         settings_key: 'force-animation',
         name: 'force_animation',
-        type: 'b'
+        type: 'b',
+        handler: Lang.bind(this, function() {
+            Transitions.cleanup();
+            Transitions.init();
+        })
     });
     Settings.add({
         settings_key: 'unmaximized-opacity',
@@ -383,36 +388,42 @@ function initialize_settings() {
     Settings.add({
         settings_key: 'text-shadow-position',
         name: 'text_shadow_position',
-        type: '(iii)'
+        type: '(iii)',
+        handler: RELOAD_HANDLER
     });
     Settings.add({
         settings_key: 'icon-shadow-position',
         name: 'icon_shadow_position',
-        type: '(iii)'
+        type: '(iii)',
+        handler: RELOAD_HANDLER
     });
     Settings.add({
         settings_key: 'icon-shadow-color',
         name: 'icon_shadow_color',
         type: '(iiid)',
-        parser: COLOR_PARSER
+        parser: COLOR_PARSER,
+        handler: RELOAD_HANDLER
     });
     Settings.add({
         settings_key: 'text-shadow-color',
         name: 'text_shadow_color',
         type: '(iiid)',
-        parser: COLOR_PARSER
+        parser: COLOR_PARSER,
+        handler: RELOAD_HANDLER
     });
     Settings.add({
         settings_key: 'text-color',
         name: 'text_color',
         type: '(iii)',
-        parser: COLOR_PARSER
+        parser: COLOR_PARSER,
+        handler: RELOAD_HANDLER
     });
     Settings.add({
         settings_key: 'maximized-text-color',
         name: 'maximized_text_color',
         type: '(iii)',
-        parser: COLOR_PARSER
+        parser: COLOR_PARSER,
+        handler: RELOAD_HANDLER
     });
     Settings.add({
         settings_key: 'enable-maximized-text-color',
@@ -443,8 +454,7 @@ function initialize_settings() {
             if (Settings.get_enable_text_color()) {
                 Theming.set_text_color();
             } else {
-                Theming.remove_text_color();
-                Theming.remove_text_color('maximized');
+                Theming.clear_text_color();
             }
         })
     });

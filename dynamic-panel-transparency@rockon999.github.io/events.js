@@ -63,7 +63,7 @@ function init() {
 
         if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
             if (Settings.get_enable_overview_text_color()) {
-                Theming.set_text_color('maximized');
+                Theming.set_text_color(true);
             } else {
                 Theming.set_text_color();
             }
@@ -365,29 +365,44 @@ function _windowUpdated(params) {
         } else {
             Transitions.fade_in(transition_params);
         }
+
+        /* Reset text coloring. */
+        if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
+            if (!add_transparency && Settings.get_enable_maximized_text_color()) {
+                Theming.set_text_color(true);
+            } else {
+                Theming.set_text_color();
+            }
+        }
     } else if (Transitions.get_transparency_status().is_blank()) {
         if (add_transparency) {
             Transitions.minimum_fade_in(transition_params);
         } else {
             Transitions.fade_in(transition_params);
         }
+
+        /* Reset text coloring. */
+        if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
+            if (!add_transparency && Settings.get_enable_maximized_text_color()) {
+                Theming.set_text_color(true);
+            } else {
+                Theming.set_text_color();
+            }
+        }
     } else if (Settings.check_overrides() || Settings.check_triggers()) {
         if (!add_transparency) {
             Transitions.fade_in(transition_params);
         }
-    }
 
-    /* Reset text coloring. */
-    if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
-        if (!add_transparency && Settings.get_enable_maximized_text_color()) {
-            Theming.remove_text_color();
-            Theming.set_text_color('maximized');
-        } else {
-            Theming.remove_text_color('maximized');
-            Theming.set_text_color();
+         /* Reset text coloring. */
+        if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
+            if (!add_transparency && Settings.get_enable_maximized_text_color()) {
+                Theming.set_text_color(true);
+            } else {
+                Theming.set_text_color();
+            }
         }
     }
-
 }
 
 /**

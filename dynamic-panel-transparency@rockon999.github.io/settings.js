@@ -170,7 +170,7 @@ function bind() {
         })));
 
         if (!Util.is_undef(setting.handler)) {
-            this.settingsBoundIds.push(this._settings.connect('changed::' + setting.key, function() {
+            this.settingsBoundIds.push(this._settings.connect_after('changed::' + setting.key, function() {
                 // TODO: Find a better way to handle settings being changed right as the extension starts up.
                 try {
                     setting.handler.call(this);
