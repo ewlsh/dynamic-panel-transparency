@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the dynamic-panel-transparency package.
 #
 # Evan Welsh <contact@evanwelsh.com>, 2017.
-# varlesh <varlesh@gmail.com>, 2016.
+# Alexey Varfolomeev <varlesh@gmail.com>, 2016.
 msgid ""
 msgstr ""
 "Project-Id-Version: GNOME Shell Extension Dynamic Panel Transparency\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-09-19 20:57-0500\n"
 "PO-Revision-Date: 2016-03-07 12:21+0300\n"
-"Last-Translator: varlesh <varlesh@gmail.com>\n"
+"Last-Translator: Alexey Varfolomeev <varlesh@gmail.com>\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
