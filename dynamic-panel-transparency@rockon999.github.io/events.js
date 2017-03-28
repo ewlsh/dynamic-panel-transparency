@@ -13,6 +13,8 @@ const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
 const Util = Me.imports.util;
 
+const St = imports.gi.St;
+
 const Shell = imports.gi.Shell;
 const Meta = imports.gi.Meta;
 const GLib = imports.gi.GLib;
@@ -50,8 +52,12 @@ function init() {
     this._wm_tracker = Shell.WindowTracker.get_default();
 
     this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, function() {
-        log('overview hiding: ' + global.display.get_current_time_roundtrip());
-        _windowUpdated();
+        log('overview actual: ' + global.display.get_current_time_roundtrip());
+
+        Mainloop.timeout_add(100 * St.get_slow_down_factor(), Lang.bind(this, function() {
+            _windowUpdated();
+            return false;
+        }));
     }));
 
     this._overviewShowingSig = Main.overview.connect('shown', Lang.bind(this, function() {
@@ -271,6 +277,8 @@ function _windowCreated(display, window) {
 function _windowUpdated(params) {
     if (Main.overview._shown)
         return;
+
+    log('event happened: ' + global.display.get_current_time_roundtrip());
 
     params = Params.parse(params, {
         workspace: global.screen.get_active_workspace(),
