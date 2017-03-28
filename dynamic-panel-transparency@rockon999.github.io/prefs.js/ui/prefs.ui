@@ -12,10 +12,13 @@
     <property name="website">http://evanwelsh.com/dynamic-panel-transparency</property>
     <property name="website_label" translatable="yes">Website</property>
     <property name="authors">Evan Welsh (rockon999)</property>
-    <property name="translator_credits">narzb
-varlesh
-jonnius
-frnogueira
+    <property name="translator_credits">Alexey Varfolomeev (varlesh)
+Jonatan Hatakeyama Zeidler (jonnius)
+Fábio Nogueira (frnogueira)
+Mosaab Alzoubi (moceap)
+Alonso Lara (AlonsoLP)
+Dingzhong Chen (wsxy162)
+narzb
 </property>
     <property name="logo_icon_name">computer</property>
     <property name="license_type">gpl-2-0-only</property>
