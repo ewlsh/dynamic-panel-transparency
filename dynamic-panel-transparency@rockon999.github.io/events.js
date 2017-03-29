@@ -13,8 +13,6 @@ const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
 const Util = Me.imports.util;
 
-const St = imports.gi.St;
-
 const Shell = imports.gi.Shell;
 const Meta = imports.gi.Meta;
 const GLib = imports.gi.GLib;
@@ -52,12 +50,9 @@ function init() {
     this._wm_tracker = Shell.WindowTracker.get_default();
 
     this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, function() {
-        log('overview actual: ' + global.display.get_current_time_roundtrip());
+        log('overview hiding: ' + global.display.get_current_time_roundtrip());
 
-        Mainloop.timeout_add(100 * St.get_slow_down_factor(), Lang.bind(this, function() {
-            _windowUpdated();
-            return false;
-        }));
+        _windowUpdated();
     }));
 
     this._overviewShowingSig = Main.overview.connect('shown', Lang.bind(this, function() {
@@ -86,7 +81,10 @@ function init() {
     }
 
     // COMPATIBILITY: No unminimize signal on 3.14
-    this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, Util.strip_args(_windowUpdated)));
+    this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, function() {
+        log('unmin: ' + global.display.get_current_time_roundtrip());
+        _windowUpdated();
+    }));
 
     this._workspaceSwitchSig = global.window_manager.connect_after('switch-workspace', Lang.bind(this, _workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, _windowMinimized));
@@ -94,7 +92,18 @@ function init() {
 
     this._windowRestackedSig = global.screen.connect_after('restacked', Lang.bind(this, _windowRestacked));
     this._windowLeftSig = global.screen.connect('window-left-monitor', Lang.bind(this, _windowLeft));
-    this._windowEnteredSig = global.screen.connect('window-entered-monitor', Lang.bind(this, Util.strip_args(_windowUpdated)));
+    this._windowEnteredSig = global.screen.connect('window-entered-monitor', Lang.bind(this, function(screen, index, window) {
+        log('enter... ' + global.display.get_current_time_roundtrip());
+        log(Main.overview.visible);
+        log(index);
+        log(global.screen.get_primary_monitor());
+        log('enter doneish');
+        if (!Main.overview.visible && index === global.screen.get_primary_monitor()) {
+            log('enter happening?');
+
+            _windowUpdated({ focused_window: window });
+        }
+    }));
 
     this._windowCreatedSig = display.connect_after('window-created', Lang.bind(this, _windowCreated));
 
@@ -179,6 +188,8 @@ function _windowDestroyed(wm, window_actor) {
     if (!Util.is_undef(window_actor.get_meta_window().dpt_tracking)) {
         delete window_actor.get_meta_window().dpt_tracking;
     }
+
+    log('destroy... ' + global.display.get_current_time_roundtrip());
 
     let index = this.windows.indexOf(window_actor.get_meta_window());
     if (index !== -1) {
@@ -275,13 +286,15 @@ function _windowCreated(display, window) {
  * @param {Number} params.time - Optional. The amount of time any invoked transition should take.
  */
 function _windowUpdated(params) {
-    if (Main.overview._shown)
+    if (Main.overview._shown) {
+        log('update rejected: ' + global.display.get_current_time_roundtrip());
         return;
-
-    log('event happened: ' + global.display.get_current_time_roundtrip());
+    }
+    log('update happened: ' + global.display.get_current_time_roundtrip());
 
     params = Params.parse(params, {
         workspace: global.screen.get_active_workspace(),
+        focused_window: global.display.get_focus_window(),
         excluded_window: null,
         trigger_window: null,
         blank: false,
@@ -289,13 +302,9 @@ function _windowUpdated(params) {
     }, true);
 
     let excluded_window = params.excluded_window;
+    let focused_window = params.focused_window;
     let trigger_window = params.trigger_window;
     let workspace = params.workspace;
-
-    let focused_window = global.display.get_focus_window();
-
-    let windows = workspace.list_windows();
-    windows = global.display.sort_windows_by_stacking(windows);
 
     this.maximized_window = null;
 
@@ -308,6 +317,9 @@ function _windowUpdated(params) {
         add_transparency = false;
         this.maximized_window = focused_window;
     } else {
+        let windows = workspace.list_windows();
+        windows = global.display.sort_windows_by_stacking(windows);
+
         for (let i = windows.length - 1; i >= 0; i--) {
             let current_window = windows[i];
 
@@ -403,6 +415,7 @@ function _windowUpdated(params) {
  *
  */
 function _windowMinimized(wm, window_actor) {
+    log('min... ' + global.display.get_current_time_roundtrip());
     this._windowUpdated({ excluded_window: window_actor.get_meta_window() });
 }
 
@@ -426,7 +439,10 @@ function _windowRestacked() {
  *
  */
 function _windowLeft(screen, index, window) {
-    _windowUpdated({ excluded_window: window });
+    log('left. ' + global.display.get_current_time_roundtrip());
+    if (!Main.overview.visible && index !== global.screen.get_primary_monitor()) {
+        _windowUpdated({ excluded_window: window });
+    }
 }
 
 /**
@@ -434,6 +450,7 @@ function _windowLeft(screen, index, window) {
  *
  */
 function _workspaceSwitched(wm, from, to, direction) {
+    log('switch. ' + global.display.get_current_time_roundtrip());
     if (!Settings.gs_show_desktop_icons() && !Settings.check_overrides() && !Settings.check_triggers()) {
         let workspace_to = global.screen.get_workspace_by_index(to);
         if (workspace_to !== null) {

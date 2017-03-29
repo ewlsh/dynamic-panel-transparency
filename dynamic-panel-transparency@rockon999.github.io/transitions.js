@@ -85,8 +85,8 @@ function get_animation_status() {
  * @param {Number} params.time - Transition speed in milliseconds.
  */
 function minimum_fade_in(params) {
-    if (Main.overview.visible || Main.overview._shown)
-        return;
+    //if (Main.overview.visible || Main.overview._shown)
+    //    return;
 
     params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interrupt: false });
 
