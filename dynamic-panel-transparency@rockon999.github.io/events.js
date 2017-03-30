@@ -89,7 +89,7 @@ function init() {
             });
         }
     } catch (error) {
-        log('[Dynamic Panel Transparency] Failed to find Gnome Shell settings. This should not occur.');
+        log('[Dynamic Panel Transparency] Failed to find shell theme settings. Ignore this if you are not using a custom theme.');
     }
 
     if (!Util.is_undef(this._theme_settings)) {
@@ -432,13 +432,15 @@ function _windowRestacked() {
     }
 }
 
+// TODO: Combine these event handlers.
+
 /**
  * SPECIAL_CASE: Don't update during overview transitions or for the incorrect monitor.
  *
  */
 function _windowEntered(screen, index, window) {
     /* Don't detect windows leaving while the overview is transitioning and/or shown. */
-    //TODO: correct? /* Avoid windows leaving windows that are not the primary. */
+    /* Avoid windows entering monitors that are not the primary. */
     if (!Main.overview.visible && index === global.screen.get_primary_monitor()) {
         _windowUpdated({ focused_window: window });
     }
@@ -450,8 +452,8 @@ function _windowEntered(screen, index, window) {
  */
 function _windowLeft(screen, index, window) {
     /* Don't detect windows leaving while the overview is transitioning and/or shown. */
-    //TODO: correct? /* Avoid windows leaving windows that are not the primary. */
-    if (!Main.overview.visible && index !== global.screen.get_primary_monitor()) {
+    /* Avoid windows leaving monitors that are not the primary. */
+    if (!Main.overview.visible && index === global.screen.get_primary_monitor()) {
         _windowUpdated({ excluded_window: window });
     }
 }
