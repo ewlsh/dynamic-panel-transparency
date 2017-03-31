@@ -61,7 +61,6 @@ function update_transition_type() {
     this.transition_type = TransitionType.from_index(Settings.get_transition_type());
 }
 
-
 /**
  * Get the current status of the panel's transparency.
  *
@@ -319,7 +318,6 @@ function fade_out(params) {
 
 }
 
-
 /**
  * Fades the panel's alpha to 0. Used for opening the overview & displaying the screenShield.
  *
@@ -381,7 +379,6 @@ function blank_fade_out(params) {
         this.tweener.addTween(Panel.actor, tweening_params);
     }
 }
-
 
 /**
  * Updates the alpha value of the corners' coloring. Slightly awkward overlap is unavoidable.

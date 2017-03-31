@@ -12,7 +12,6 @@ const Util = Me.imports.util;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
-
 /* This might impair visibility of the code, but it makes my life a thousand times simpler */
 /* settings.js takes a key and watches for it to change in Gio.Settings & creates a getter for it. */
 /* Also can parse, handle, etc. a setting. */

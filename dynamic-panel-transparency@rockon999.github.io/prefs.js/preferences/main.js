@@ -26,7 +26,6 @@ const _ = Gettext.gettext;
 const gs_ = imports.gettext.domain('gnome-shell').gettext;
 const gtk30_ = imports.gettext.domain('gtk30').gettext;
 
-
 const GNOME_BACKGROUND_SCHEMA = 'org.gnome.desktop.background';
 
 /* Settings Keys */
@@ -139,7 +138,6 @@ function buildPrefsWidget() {
     /* Used for special functions occasionally. */
     let extra_btn = builder.get_object('extra_btn');
 
-
     /* Only show the panel & extra button on relevant pages. */
     main_notebook.connect('switch-page', Lang.bind(this, function(notebook, page, index) {
         if (index === Page.FOREGROUND || index === Page.BACKGROUND) {
@@ -220,7 +218,6 @@ function buildPrefsWidget() {
         panel_demo.set_background_color({ red: 0, green: 0, blue: 0 });
     }
 
-
     let enable_text_color = settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR);
     let enable_maximized_text_color = settings.get_boolean(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR);
 
@@ -263,7 +260,6 @@ function buildPrefsWidget() {
             temp_settings.store('transition-type', new GLib.Variant('i', +(box.get_active_id())));
         }));
         transition_type_box.set_active_id('' + settings.get_int(SETTINGS_TRANSITION_TYPE) + '');
-
 
         let force_transition = builder.get_object('force_transition_check');
         force_transition.set_active(settings.get_boolean(SETTINGS_FORCE_ANIMATION));
@@ -351,7 +347,6 @@ function buildPrefsWidget() {
             temp_settings.store(SETTINGS_REMOVE_PANEL_STYLING, new GLib.Variant('b', widget.get_active()));
         }));
 
-
         let maximized_text_color_btn = builder.get_object('maximized_text_color_btn');
         let maximized_text_color = settings.get_value(SETTINGS_MAXIMIZED_TEXT_COLOR).deep_unpack();
 
@@ -394,7 +389,6 @@ function buildPrefsWidget() {
             }
         }));
 
-
         let text_color_btn = builder.get_object('text_color_btn');
         let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
 
@@ -413,7 +407,6 @@ function buildPrefsWidget() {
             temp_settings.restart_required(true);
             panel_demo.set_text_color({ red: rgb[RED], green: rgb[GREEN], blue: rgb[BLUE], alpha: 1.0 });
         }));
-
 
         let text_shadow_switch = builder.get_object('text_shadow_switch');
         text_shadow_switch.set_active(settings.get_boolean(SETTINGS_TEXT_SHADOW));
@@ -619,7 +612,6 @@ function buildPrefsWidget() {
             }
         }));
 
-
         let icon_shadow = builder.get_object('icon_shadow_switch');
         icon_shadow.set_active(settings.get_boolean(SETTINGS_ICON_SHADOW));
 
@@ -793,7 +785,6 @@ function buildPrefsWidget() {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
             let alpha = +(color_btn.get_rgba().alpha.toFixed(2));
 
-
             let rgba = [color.red, color.green, color.blue, alpha];
 
             temp_settings.store(SETTINGS_ICON_SHADOW_COLOR, new GLib.Variant('(iiid)', rgba));
@@ -826,8 +817,6 @@ function buildPrefsWidget() {
             }
         }));
     }
-
-
 
     /* Setup Background Tab */
     {
@@ -905,8 +894,6 @@ function buildPrefsWidget() {
             temp_settings.store(SETTINGS_MAXIMIZED_OPACITY, new GLib.Variant('i', widget.adjustment.get_value()));
         }));
 
-
-
         /* Minimum opacity control */
         let minimum_scale = builder.get_object('minimum_scale');
         /* Init value. */
@@ -932,7 +919,6 @@ function buildPrefsWidget() {
             temp_settings.store(SETTINGS_UNMAXIMIZED_OPACITY, new GLib.Variant('i', widget.adjustment.get_value()));
         }));
 
-
         /* Convert & scale color. */
         let panel_color = settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack();
 
@@ -951,7 +937,6 @@ function buildPrefsWidget() {
             panel_demo.set_background_color({ red: rgb[RED], green: rgb[GREEN], blue: rgb[BLUE] });
         }));
 
-
         let hide_corners = builder.get_object('hide_corners_check');
         hide_corners.set_active(settings.get_boolean(SETTINGS_HIDE_CORNERS));
 
@@ -959,8 +944,6 @@ function buildPrefsWidget() {
             temp_settings.store(SETTINGS_HIDE_CORNERS, new GLib.Variant('b', widget.get_active()));
         }));
     }
-
-
 
     /* Setup App Settings Tab */
     {
@@ -1088,7 +1071,6 @@ function buildPrefsWidget() {
             let custom_path = path + '' + app_id + '/';
             let obj = Convenience.getSchemaObj('org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides');
             let app_settings = new Gio.Settings({ path: custom_path, settings_schema: obj });
-
 
             let content_area = dialog.get_content_area();
             content_area.add(app_prefs_builder.get_object('main_box'));
@@ -1321,7 +1303,6 @@ function buildPrefsWidget() {
                 dialog.add_button(gtk30_("_Cancel"), Gtk.ResponseType.CANCEL);
                 dialog.add_button(gtk30_("_OK"), Gtk.ResponseType.OK);
 
-
                 let content_area = dialog.get_content_area();
                 content_area.add(builder.get_object('wm_class_contents'));
 
@@ -1359,12 +1340,8 @@ function buildPrefsWidget() {
                 dialog.destroy();
             }
         }));
-
         app_list.add(add);
-
-
     }
-
 
     /* Util function to find UI elements in a GTK dialog. */
     function find(container, names, level = 0) {
@@ -1381,7 +1358,6 @@ function buildPrefsWidget() {
         return target;
     }
 
-
     /* Setup About Tab */
     {
         /* Find the stack */
@@ -1391,7 +1367,6 @@ function buildPrefsWidget() {
         let contents = about_dialog.get_child();
 
         let stack = find(contents, ['box', 'stack']);
-
 
         /* Find the license page. */
         let license_page = find(stack, ['license_page']);
@@ -1445,7 +1420,6 @@ function buildPrefsWidget() {
         let opacity_revealer = builder.get_object('opacity_revealer');
         opacity_revealer.set_reveal_child(settings.get_boolean(SETTINGS_ENABLE_OPACITY));
     }));
-
 
     let restart_dialog = builder.get_object('restart_dialog');
 

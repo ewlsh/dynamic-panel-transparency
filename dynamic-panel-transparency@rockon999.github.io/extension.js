@@ -18,9 +18,6 @@ const Theming = Me.imports.theming;
 const Transitions = Me.imports.transitions;
 const Util = Me.imports.util;
 
-
-
-
 const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 
 // TODO: Something isn't obeying custom coloring...

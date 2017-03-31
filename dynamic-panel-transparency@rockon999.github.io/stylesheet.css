@@ -4,7 +4,6 @@
   background-color: rgba(0, 0, 0, 0);
 }
 
-
 /* Used to remove odd effects when full transparency is needed. */
 
 .panel-effect-transparency {
@@ -15,7 +14,6 @@
   background-gradient-start: transparent;
   background-gradient-end: transparent;
 }
-
 
 /* Used to remove backgrounds when full transparency is needed. */
 
