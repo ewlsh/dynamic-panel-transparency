@@ -76,6 +76,9 @@ const WEBSITE_LABEL_TOP_MARGIN = 20;
 /* Color Scaling Factor (Byte to Decimal) */
 const SCALE_FACTOR = 255.9999999;
 
+/* Timeout for all dbus requests (in milliseconds) */
+const DBUS_TIMEOUT = 1000;
+
 function init() {
     Convenience.initTranslations();
 }
@@ -1203,7 +1206,8 @@ function buildPrefsWidget() {
                         }
                         settings.set_strv(trigger_key, triggers);
                     }
-                }}
+                }
+            }
 
             content_area.remove(app_prefs_builder.get_object('main_box'));
             dialog.destroy();
@@ -1456,7 +1460,15 @@ function buildPrefsWidget() {
             restart_dialog.destroy();
 
             if (response === Gtk.ResponseType.YES) {
-                GLib.spawn_command_line_async('dbus-send --type=method_call --print-reply --dest=org.gnome.Shell /org/gnome/Shell org.gnome.Shell.Eval string:\'global.reexec_self()\'');
+                let bus = Gio.bus_get_sync(Gio.BusType.SESSION, null);
+                let proxy = Gio.DBusProxy.new_sync(bus, Gio.DBusProxyFlags.NONE, null, 'org.gnome.SessionManager', '/org/gnome/SessionManager', 'org.gnome.SessionManager', null);
+
+                proxy.call('Logout', new GLib.Variant('(u)', [0]), Gio.DBusCallFlags.NONE, DBUS_TIMEOUT, null, Lang.bind(this, function() {
+                    temp_settings.apply();
+                    widget_parent.close();
+                }));
+
+                return;
             }
         }
         temp_settings.apply();
