@@ -1,22 +1,25 @@
 /* exported init, enable, disable */
 
-const Mainloop = imports.mainloop;
 const Lang = imports.lang;
+const Mainloop = imports.mainloop;
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
-const Transitions = Me.imports.transitions;
-const Settings = Me.imports.settings;
-const Theming = Me.imports.theming;
-const Events = Me.imports.events;
-const Util = Me.imports.util;
-
 const ExtensionSystem = imports.ui.extensionSystem;
 const Main = imports.ui.main;
-const Panel = Main.panel;
+
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+
+const Convenience = Me.imports.convenience;
+const Events = Me.imports.events;
+const Settings = Me.imports.settings;
+const Theming = Me.imports.theming;
+const Transitions = Me.imports.transitions;
+const Util = Me.imports.util;
+
+
+
 
 const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 
@@ -123,7 +126,7 @@ function idle_enable(update, theme_settings = null) {
         if (update) {
             log('[Dynamic Panel Transparency] Updating user theme data.');
 
-            let theme = Panel.actor.get_theme_node();
+            let theme = Main.panel.actor.get_theme_node();
 
             let image_background = Theming.get_background_image_color(theme);
             let theme_background = theme.get_background_color();

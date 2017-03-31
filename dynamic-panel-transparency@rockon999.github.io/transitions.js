@@ -4,14 +4,14 @@
 const Lang = imports.lang;
 
 const Main = imports.ui.main;
-const Panel = Main.panel;
-
-const Params = imports.misc.params;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Params = imports.misc.params;
+
 const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
 const Util = Me.imports.util;
+
 
 const TIME_SCALE_FACTOR = 1000;
 
@@ -107,7 +107,7 @@ function minimum_fade_in(params) {
 
     /* Avoid Tweener if the time or opacity don't require it. */
     if (time <= 0 || Theming.get_unmaximized_opacity() <= 0) {
-        Theming.set_background_alpha(Panel.actor, Theming.get_unmaximized_opacity());
+        Theming.set_background_alpha(Main.panel.actor, Theming.get_unmaximized_opacity());
         this.minimum_fade_in_complete();
         this.animation_status.done();
 
@@ -129,12 +129,12 @@ function minimum_fade_in(params) {
             tweening_params.onUpdate = Lang.bind(this, function(a) {
                 // TODO: Setting for frequency?
                 if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
-                    update_corner_alpha(Theming.get_background_alpha(Panel.actor));
+                    update_corner_alpha(Theming.get_background_alpha(Main.panel.actor));
                 }
             });
         }
 
-        this.tweener.addTween(Panel.actor, tweening_params);
+        this.tweener.addTween(Main.panel.actor, tweening_params);
     }
 }
 
@@ -166,7 +166,7 @@ function fade_in(params) {
     Theming.set_panel_color();
 
     if (time <= 0) {
-        Theming.set_background_alpha(Panel.actor, Theming.get_maximized_opacity());
+        Theming.set_background_alpha(Main.panel.actor, Theming.get_maximized_opacity());
         this.fade_in_complete();
         this.animation_status.done();
 
@@ -188,12 +188,12 @@ function fade_in(params) {
             tweening_params.onUpdate = Lang.bind(this, function(a) {
                 // TODO: Setting for frequency?
                 if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
-                    update_corner_alpha(Theming.get_background_alpha(Panel.actor));
+                    update_corner_alpha(Theming.get_background_alpha(Main.panel.actor));
                 }
             });
         }
 
-        this.tweener.addTween(Panel.actor, tweening_params);
+        this.tweener.addTween(Main.panel.actor, tweening_params);
     }
 }
 
@@ -276,7 +276,7 @@ function fade_out(params) {
     Theming.strip_panel_styling();
 
     if (time <= 0 && !Main.overview._shown) {
-        Theming.set_background_alpha(Panel.actor, Theming.get_unmaximized_opacity());
+        Theming.set_background_alpha(Main.panel.actor, Theming.get_unmaximized_opacity());
         Theming.set_panel_color();
         this.animation_status.done();
 
@@ -307,12 +307,12 @@ function fade_out(params) {
             tweening_params.onUpdate = Lang.bind(this, function(a) {
                 // TODO: Setting for frequency?
                 if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
-                    update_corner_alpha(Theming.get_background_alpha(Panel.actor));
+                    update_corner_alpha(Theming.get_background_alpha(Main.panel.actor));
                 }
             });
         }
 
-        this.tweener.addTween(Panel.actor, tweening_params);
+        this.tweener.addTween(Main.panel.actor, tweening_params);
     }
 
 }
@@ -344,7 +344,7 @@ function blank_fade_out(params) {
     Theming.strip_panel_styling();
 
     if (time <= 0) {
-        Theming.set_background_alpha(Panel.actor, 0);
+        Theming.set_background_alpha(Main.panel.actor, 0);
         Theming.set_panel_color();
         this.animation_status.done();
 
@@ -371,12 +371,12 @@ function blank_fade_out(params) {
             tweening_params.onUpdate = Lang.bind(this, function(a) {
                 // TODO: Setting for frequency?
                 if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
-                    update_corner_alpha(Theming.get_background_alpha(Panel.actor));
+                    update_corner_alpha(Theming.get_background_alpha(Main.panel.actor));
                 }
             });
         }
 
-        this.tweener.addTween(Panel.actor, tweening_params);
+        this.tweener.addTween(Main.panel.actor, tweening_params);
     }
 }
 

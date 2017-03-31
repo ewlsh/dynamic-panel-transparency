@@ -2,55 +2,56 @@
 
 const Lang = imports.lang;
 
-const GObject = imports.gi.GObject;
-const GdkPixbuf = imports.gi.GdkPixbuf;
 const GLib = imports.gi.GLib;
-const Gtk = imports.gi.Gtk;
+const GObject = imports.gi.GObject;
 const Gdk = imports.gi.Gdk;
+const GdkPixbuf = imports.gi.GdkPixbuf;
 const Gio = imports.gi.Gio;
+const Gtk = imports.gi.Gtk;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+
 const Compatibility = Me.imports.compatibility;
 const Convenience = Me.imports.convenience;
 const Util = Me.imports.util;
+
 const AppChooser = imports.preferences.app_chooser;
 const AppRow = imports.preferences.app_row;
 const DemoPanel = imports.preferences.demo_panel;
-
 const Tweaks = imports.preferences.tweaks;
 
 const Gettext = imports.gettext.domain('dynamic-panel-transparency');
 const _ = Gettext.gettext;
 
+const gs_ = imports.gettext.domain('gnome-shell').gettext;
 const gtk30_ = imports.gettext.domain('gtk30').gettext;
 
-const gs_ = imports.gettext.domain('gnome-shell').gettext;
 
 const GNOME_BACKGROUND_SCHEMA = 'org.gnome.desktop.background';
 
 /* Settings Keys */
-const SETTINGS_HIDE_CORNERS = 'hide-corners';
-const SETTINGS_TRANSITION_SPEED = 'transition-speed';
-const SETTINGS_TRANSITION_TYPE = 'transition-type';
-const SETTINGS_TEXT_SHADOW = 'text-shadow';
-const SETTINGS_TEXT_SHADOW_COLOR = 'text-shadow-color';
+const SETTINGS_ENABLE_BACKGROUND_COLOR = 'enable-background-color';
+const SETTINGS_ENABLE_BACKGROUND_TWEAKS = 'enable-background-tweaks';
+const SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR = 'enable-maximized-text-color';
+const SETTINGS_ENABLE_OPACITY = 'enable-opacity';
+const SETTINGS_ENABLE_OVERVIEW_TEXT_COLOR = 'enable-overview-text-color';
+const SETTINGS_ENABLE_TEXT_COLOR = 'enable-text-color';
 const SETTINGS_FORCE_ANIMATION = 'force-animation';
-const SETTINGS_UNMAXIMIZED_OPACITY = 'unmaximized-opacity';
-const SETTINGS_MAXIMIZED_OPACITY = 'maximized-opacity';
-const SETTINGS_PANEL_COLOR = 'panel-color';
+const SETTINGS_HIDE_CORNERS = 'hide-corners';
 const SETTINGS_ICON_SHADOW = 'icon-shadow';
-const SETTINGS_TEXT_COLOR = 'text-color';
 const SETTINGS_ICON_SHADOW_COLOR = 'icon-shadow-color';
 const SETTINGS_ICON_SHADOW_POSITION = 'icon-shadow-position';
-const SETTINGS_TEXT_SHADOW_POSITION = 'text-shadow-position';
+const SETTINGS_MAXIMIZED_OPACITY = 'maximized-opacity';
 const SETTINGS_MAXIMIZED_TEXT_COLOR = 'maximized-text-color';
-const SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR = 'enable-maximized-text-color';
-const SETTINGS_ENABLE_TEXT_COLOR = 'enable-text-color';
+const SETTINGS_PANEL_COLOR = 'panel-color';
 const SETTINGS_REMOVE_PANEL_STYLING = 'remove-panel-styling';
-const SETTINGS_ENABLE_OVERVIEW_TEXT_COLOR = 'enable-overview-text-color';
-const SETTINGS_ENABLE_BACKGROUND_TWEAKS = 'enable-background-tweaks';
-const SETTINGS_ENABLE_BACKGROUND_COLOR = 'enable-background-color';
-const SETTINGS_ENABLE_OPACITY = 'enable-opacity';
+const SETTINGS_TEXT_COLOR = 'text-color';
+const SETTINGS_TEXT_SHADOW = 'text-shadow';
+const SETTINGS_TEXT_SHADOW_COLOR = 'text-shadow-color';
+const SETTINGS_TEXT_SHADOW_POSITION = 'text-shadow-position';
+const SETTINGS_TRANSITION_SPEED = 'transition-speed';
+const SETTINGS_TRANSITION_TYPE = 'transition-type';
+const SETTINGS_UNMAXIMIZED_OPACITY = 'unmaximized-opacity';
 
 const Page = { TRANSITIONS: 0, FOREGROUND: 1, BACKGROUND: 2, APP_TWEAKS: 3, ABOUT: 4 };
 Object.freeze(Page);
@@ -69,8 +70,8 @@ const BLUR_RADIUS = 2;
 /* UI spacing & similar values. */
 const PANEL_HEIGHT = 30;
 const PANEL_WIDTH = 700;
-const WEBSITE_LABEL_TOP_MARGIN = 20;
 const WEBSITE_LABEL_BOTTOM_MARGIN = 50;
+const WEBSITE_LABEL_TOP_MARGIN = 20;
 
 /* Color Scaling Factor (Byte to Decimal) */
 const SCALE_FACTOR = 255.9999999;

@@ -3,13 +3,13 @@
 const Lang = imports.lang;
 
 const GObject = imports.gi.GObject;
-const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
 const Gio = imports.gi.Gio;
-
-const Tweaks = imports.preferences.tweaks;
+const Gtk = imports.gi.Gtk;
 
 const ExtensionUtils = imports.misc.extensionUtils;
+
+const Tweaks = imports.preferences.tweaks;
 
 const gtk30_ = imports.gettext.domain('gtk30').gettext;
 

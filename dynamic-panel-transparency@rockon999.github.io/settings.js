@@ -1,16 +1,17 @@
 /* exported init, cleanup, add, add_app_setting, add_app_override, check_overrides, check_triggers, bind, unbind */
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
-
-const Util = Me.imports.util;
 const Lang = imports.lang;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Params = imports.misc.params;
+
+const Convenience = Me.imports.convenience;
+const Events = Me.imports.events;
+const Util = Me.imports.util;
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
-const Events = Me.imports.events;
+
 
 /* This might impair visibility of the code, but it makes my life a thousand times simpler */
 /* settings.js takes a key and watches for it to change in Gio.Settings & creates a getter for it. */
