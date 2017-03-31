@@ -128,9 +128,9 @@ const AppChooser = new Lang.Class({
         let img = null;
 
         if (icon) {
-            img =  Gtk.Image.new_from_gicon(icon, Gtk.IconSize.MENU);
+            img = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.MENU);
         } else {
-            img =  Gtk.Image.new_from_icon_name('dialog-question', Gtk.IconSize.MENU);
+            img = Gtk.Image.new_from_icon_name('dialog-question', Gtk.IconSize.MENU);
         }
 
         row_grid.attach(img, 0, 0, 1, 1);
@@ -140,7 +140,7 @@ const AppChooser = new Lang.Class({
         let list_box = new Gtk.Label({
             label: name,
             xalign: 0,
-            hexpand:true,
+            hexpand: true,
             vexpand: false,
             halign: Gtk.Align.START,
             valign: Gtk.Align.CENTER
