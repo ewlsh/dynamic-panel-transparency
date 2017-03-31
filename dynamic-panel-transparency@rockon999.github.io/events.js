@@ -3,23 +3,23 @@
 const Mainloop = imports.mainloop;
 const Lang = imports.lang;
 
-const Params = imports.misc.params;
-
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Compatibility = Me.imports.compatibility;
-const Convenience = Me.imports.convenience;
-const Transitions = Me.imports.transitions;
-const Settings = Me.imports.settings;
-const Theming = Me.imports.theming;
-const Util = Me.imports.util;
-
-const Shell = imports.gi.Shell;
-const Meta = imports.gi.Meta;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
+const Meta = imports.gi.Meta;
+const Shell = imports.gi.Shell;
 
 const Main = imports.ui.main;
-const Panel = Main.panel;
+
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Params = imports.misc.params;
+
+const Compatibility = Me.imports.compatibility;
+const Convenience = Me.imports.convenience;
+const Settings = Me.imports.settings;
+const Theming = Me.imports.theming;
+const Transitions = Me.imports.transitions;
+const Util = Me.imports.util;
+
 
 const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 
@@ -210,7 +210,7 @@ function _userThemeChanged() {
     Mainloop.idle_add(Lang.bind(this, function() {
         log('[Dynamic Panel Transparency] Updating user theme data.');
 
-        let theme = Panel.actor.get_theme_node();
+        let theme = Main.panel.actor.get_theme_node();
 
         /* Store user theme values. */
         let background = null;

@@ -3,6 +3,7 @@
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
+
 /* Global Utility Variables */
 const MAXIMIZED_HEIGHT_BUFFER = 1;
 const MAXIMIZED_WIDTH_BUFFER = 5;
