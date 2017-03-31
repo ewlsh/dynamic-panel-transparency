@@ -235,19 +235,11 @@ function register_text_color(color, prefix) {
  * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
  */
 function set_text_color(prefix) {
-    if (!Util.is_undef(this.current_prefix)) {
-        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'text-color');
-        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'icon-color');
-        Panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'arrow-color');
-    }
-
     if (!Util.is_undef(prefix)) {
         prefix = '-' + prefix + '-';
     } else {
         prefix = '-';
     }
-
-    this.current_prefix = prefix;
 
     Panel.actor.add_style_class_name('dpt-panel' + prefix + 'text-color');
     Panel.actor.add_style_class_name('dpt-panel' + prefix + 'icon-color');

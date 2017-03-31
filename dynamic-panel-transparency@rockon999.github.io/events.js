@@ -164,8 +164,10 @@ function _overviewShown() {
 
     if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
         if (Settings.get_enable_overview_text_color()) {
+            Theming.remove_text_color();
             Theming.set_text_color('maximized');
         } else {
+            Theming.remove_text_color('maximized');
             Theming.set_text_color();
         }
     }
