@@ -1484,7 +1484,3 @@ function buildPrefsWidget() {
     main_widget.show_all();
     return main_widget;
 }
-
-
-
-
