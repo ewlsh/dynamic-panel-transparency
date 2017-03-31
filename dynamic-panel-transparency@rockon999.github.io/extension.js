@@ -28,7 +28,7 @@ const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 /* eslint-disable */
 
 /* Simple function that converts stored color tuples and/or arrays into js objects. */
-const COLOR_PARSER = function (input) {
+const COLOR_PARSER = function(input) {
     let color = { red: input[0], green: input[1], blue: input[2] };
     if (input.length === 4) {
         color.alpha = input[3];
@@ -83,7 +83,7 @@ function enable() {
             let color = Settings.get_panel_theme_color();
             let opacity = Settings.get_theme_opacity();
 
-            let background = {red: color.red, blue: color.blue, green: color.green, alpha: opacity};
+            let background = { red: color.red, blue: color.blue, green: color.green, alpha: opacity };
 
             log('[Dynamic Panel Transparency] Using theme data for: ' + Settings._settings.get_string('current-user-theme'));
 
@@ -137,12 +137,12 @@ function idle_enable(update, theme_settings = null) {
             Settings._settings.set_value('panel-theme-color', new GLib.Variant('(iii)', [background.red, background.green, background.blue]));
             Settings._settings.set_value('theme-opacity', new GLib.Variant('i', background.alpha));
 
-            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' +background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
+            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
         } else {
             let color = Settings.get_panel_theme_color();
             let opacity = Settings.get_theme_opacity();
 
-            background = {red: color.red, blue: color.blue, green: color.green, alpha: opacity};
+            background = { red: color.red, blue: color.blue, green: color.green, alpha: opacity };
         }
 
         log('[Dynamic Panel Transparency] Using theme data for: ' + Settings.get_current_user_theme());
@@ -444,7 +444,9 @@ function initialize_settings() {
         type: 'b',
         handler: Lang.bind(this, function() {
             if (Settings.get_enable_text_color()) {
-                Theming.set_text_color();
+                Events._windowUpdated({
+                    force: true
+                });
             } else {
                 Theming.remove_text_color();
                 Theming.remove_text_color('maximized');
