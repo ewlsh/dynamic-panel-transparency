@@ -3,7 +3,6 @@
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
-
 /* Global Utility Variables */
 const MAXIMIZED_HEIGHT_BUFFER = 1;
 const MAXIMIZED_WIDTH_BUFFER = 5;
@@ -14,7 +13,6 @@ const MINOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[1]
 
 /* Permission setting for created files. */
 const PERMISSIONS_MODE = parseInt('0744', 8);
-
 
 /* Utility Variable Access */
 
@@ -47,7 +45,6 @@ function get_maximized_height_buffer() {
 function get_shell_version() {
     return { major: MAJOR_VERSION, minor: MINOR_VERSION };
 }
-
 
 /* Utility Functions */
 

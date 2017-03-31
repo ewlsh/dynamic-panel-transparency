@@ -8,7 +8,6 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Compatibility = Me.imports.compatibility;
 
-
 const SCALE_FACTOR = 255.9999999;
 
 const DemoPanel = new Lang.Class({

@@ -33,7 +33,6 @@ const Gio = imports.gi.Gio;
 const Config = imports.misc.config;
 const ExtensionUtils = imports.misc.extensionUtils;
 
-
 /**
  * initTranslations:
  * @domain: (optional): the gettext domain to use

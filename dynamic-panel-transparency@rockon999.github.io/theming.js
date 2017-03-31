@@ -16,7 +16,6 @@ const Util = Me.imports.util;
 /* Convenience constant for the shell panel. */
 const Panel = Main.panel;
 
-
 /* Constants for theme opacity detection. */
 const THEME_OPACITY_THRESHOLD = 150;
 
@@ -27,7 +26,6 @@ const ALPHA_THRESHOLD = 24;
 
 /* Scale factor for color conversion. */
 const SCALE_FACTOR = 255;
-
 
 /**
  * Intialize.
@@ -112,7 +110,6 @@ function register_text_shadow(text_color, text_position) {
     let text_color_css = 'rgba(' + text_color.red + ', ' + text_color.green + ', ' + text_color.blue + ', ' + text_color.alpha.toFixed(2) + ')';
     let text_position_css = '' + text_position[0] + 'px ' + text_position[1] + 'px ' + text_position[2] + 'px';
 
-
     register_style('dpt-panel-text-shadow');
 
     return apply_stylesheet_css('.dpt-panel-text-shadow .panel-button { text-shadow: ' + text_position_css + ' ' + text_color_css + '; }', 'panel-text-shadow');
@@ -148,7 +145,6 @@ function register_icon_shadow(icon_color, icon_position) {
 
     let icon = apply_stylesheet_css('.dpt-panel-icon-shadow .system-status-icon { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'panel-icon-shadow');
     let arrow = apply_stylesheet_css('.dpt-panel-arrow-shadow .popup-menu-arrow { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'panel-arrow-shadow');
-
 
     register_style('dpt-panel-icon-shadow');
     register_style('dpt-panel-arrow-shadow');
@@ -338,7 +334,6 @@ function set_corner_color(color) {
     });
 
     let opacity = Util.clamp(color.alpha / SCALE_FACTOR, 0, 1);
-
 
     /* I strongly dislike using a deprecated method (set_style)
      * but this is a hold over from the older extension code and

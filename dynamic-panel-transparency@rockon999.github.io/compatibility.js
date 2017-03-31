@@ -7,7 +7,6 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Util = Me.imports.util;
 
-
 const SHELL_VERSION = Util.get_shell_version();
 
 /* st-border-image in 3.14 uses strings, not Gio.File */

@@ -20,7 +20,6 @@ const Theming = Me.imports.theming;
 const Transitions = Me.imports.transitions;
 const Util = Me.imports.util;
 
-
 const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 
 /**
@@ -38,7 +37,6 @@ const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
  * user-theme/changed::name: occurs when the user's theme changes
  *
  */
-
 
 /**
  * Intialize.
@@ -75,7 +73,6 @@ function init() {
     this._windowLeftSig = global.screen.connect('window-left-monitor', Lang.bind(this, _windowLeft));
 
     this._windowCreatedSig = display.connect_after('window-created', Lang.bind(this, _windowCreated));
-
 
     /* Apparently Ubuntu is wierd and does this different than a common Gnome installation. */
     // TODO: Look into this.
@@ -149,7 +146,6 @@ function cleanup() {
     this.workspaces = null;
     this.windows = null;
 }
-
 
 /* Event Handlers */
 
@@ -274,7 +270,6 @@ function _windowCreated(display, window) {
         }
     }
 }
-
 
 /**
  * Handles any window updates. Contains the core logic of this extension.
