@@ -5,6 +5,7 @@ const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+
 const Compatibility = Me.imports.compatibility;
 
 const SCALE_FACTOR = 255.9999999;

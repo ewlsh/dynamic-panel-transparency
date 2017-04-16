@@ -1,16 +1,16 @@
 /* exported init, cleanup, add, add_app_setting, add_app_override, check_overrides, check_triggers, bind, unbind */
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
-
-const Util = Me.imports.util;
 const Lang = imports.lang;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Params = imports.misc.params;
+
+const Convenience = Me.imports.convenience;
+const Events = Me.imports.events;
+const Util = Me.imports.util;
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
-const Events = Me.imports.events;
 
 /* This might impair visibility of the code, but it makes my life a thousand times simpler */
 /* settings.js takes a key and watches for it to change in Gio.Settings & creates a getter for it. */
@@ -23,8 +23,8 @@ const OVERRIDES_SCHEMA_ID = 'org.gnome.shell.extensions.dynamic-panel-transparen
 const SETTINGS_WINDOW_OVERRIDES = 'window-overrides';
 const SETTINGS_APP_OVERRIDES = 'app-overrides';
 
-const GNOME_BACKGROUND_SCHEMA = 'org.gnome.desktop.background';
-const SETTINGS_SHOW_DESKTOP_ICONS = 'show-desktop-icons';
+const GNOME_BACKGROUND_SCHEMA = 'org.gnome.desktop.wm.keybindings';
+const SETTINGS_SHOW_DESKTOP = 'show-desktop';
 
 function init() {
     this._settings = Convenience.getSettings();
@@ -50,10 +50,10 @@ function init() {
 
     this._app_overrides = this._settings.get_strv(SETTINGS_APP_OVERRIDES);
     this._window_overrides = this._settings.get_strv(SETTINGS_WINDOW_OVERRIDES);
-    this._show_desktop_icons = null;
+    this._show_desktop = null;
 
     if (this._background_settings) {
-        this._show_desktop_icons = this._background_settings.get_boolean(SETTINGS_SHOW_DESKTOP_ICONS);
+        this._show_desktop = this._background_settings.get_strv(SETTINGS_SHOW_DESKTOP).length > 0;
     }
 
     this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_APP_OVERRIDES, Lang.bind(this, function() {
@@ -69,8 +69,8 @@ function init() {
     })));
 
     if (this._background_settings) {
-        this.settingsBoundIds.push(this._background_settings.connect('changed::' + SETTINGS_SHOW_DESKTOP_ICONS, Lang.bind(this, function() {
-            this._show_desktop_icons = this._background_settings.get_boolean(SETTINGS_SHOW_DESKTOP_ICONS);
+        this.settingsBoundIds.push(this._background_settings.connect('changed::' + SETTINGS_SHOW_DESKTOP, Lang.bind(this, function() {
+            this._show_desktop = this._background_settings.get_strv(SETTINGS_SHOW_DESKTOP).length > 0;
         })));
     }
 
@@ -82,8 +82,8 @@ function init() {
         return this._window_overrides;
     };
 
-    this.gs_show_desktop_icons = function() {
-        return this._show_desktop_icons;
+    this.gs_show_desktop = function() {
+        return this._show_desktop;
     };
 }
 

@@ -4,6 +4,7 @@
 /* Uses C function names. */
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+
 const Util = Me.imports.util;
 
 const SHELL_VERSION = Util.get_shell_version();

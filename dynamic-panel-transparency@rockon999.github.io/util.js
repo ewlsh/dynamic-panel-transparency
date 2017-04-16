@@ -14,7 +14,6 @@ const MINOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[1]
 /* Permission setting for created files. */
 const PERMISSIONS_MODE = parseInt('0744', 8);
 
-
 /* Utility Variable Access */
 
 /**
@@ -46,7 +45,6 @@ function get_maximized_height_buffer() {
 function get_shell_version() {
     return { major: MAJOR_VERSION, minor: MINOR_VERSION };
 }
-
 
 /* Utility Functions */
 
@@ -111,8 +109,6 @@ function is_maximized(window) {
  * @returns {Boolean} Whether 'window' is a valid window to watch.
  *
  */
-
-//
 function is_valid(window) {
     const Meta = imports.gi.Meta;
 

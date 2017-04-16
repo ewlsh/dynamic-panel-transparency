@@ -1,22 +1,23 @@
 /* exported init, cleanup, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, clear_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Compatibility = Me.imports.compatibility;
-const Settings = Me.imports.settings;
-const Util = Me.imports.util;
-
 const GdkPixbuf = imports.gi.GdkPixbuf;
 const Clutter = imports.gi.Clutter;
 const St = imports.gi.St;
 
-const Params = imports.misc.params;
-
 const Main = imports.ui.main;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Params = imports.misc.params;
+
+const Compatibility = Me.imports.compatibility;
+const Settings = Me.imports.settings;
+const Util = Me.imports.util;
+
+/* Convenience constant for the shell panel. */
 const Panel = Main.panel;
 
 /* Constants for theme opacity detection. */
-const THEME_OPACITY_THRESHOLD = 150;
+const THEME_OPACITY_THRESHOLD = 50;
 
 /* Constants for color averaging. */
 const SATURATION_WEIGHT = 1.5;
@@ -25,7 +26,6 @@ const ALPHA_THRESHOLD = 24;
 
 /* Scale factor for color conversion. */
 const SCALE_FACTOR = 255;
-
 
 /**
  * Intialize.
@@ -169,23 +169,6 @@ function has_icon_shadow() {
 }
 
 /**
- * Determines if the panel currently has text coloring applied.
- *
- * @returns {Boolean} If the panel has text coloring.
- */
-function has_text_coloring(prefix) {
-    if (!Util.is_undef(prefix)) {
-        prefix = '-' + prefix + '-';
-    } else {
-        prefix = '-';
-    }
-
-    return (Panel.actor.has_style_class_name('dpt-panel' + prefix + 'text-color') ||
-        Panel.actor.has_style_class_name('dpt-panel' + prefix + 'icon-color') ||
-        Panel.actor.has_style_class_name('dpt-panel' + prefix + 'arrow-color'));
-}
-
-/**
  * Removes any text shadowing; deregistering the stylesheet and removing the css.
  *
  */
@@ -232,14 +215,16 @@ function register_text_color(color, prefix) {
  *
  * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
  */
+function set_text_color(prefix) {
+    if (!Util.is_undef(prefix)) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
 
-function clear_text_color() {
-    Panel.actor.remove_style_class_name('dpt-panel-text-color');
-    Panel.actor.remove_style_class_name('dpt-panel-icon-color');
-    Panel.actor.remove_style_class_name('dpt-panel-arrow-color');
-    Panel.actor.remove_style_class_name('dpt-panel-maximized-text-color');
-    Panel.actor.remove_style_class_name('dpt-panel-maximized-icon-color');
-    Panel.actor.remove_style_class_name('dpt-panel-maximized-arrow-color');
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'text-color');
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'icon-color');
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'arrow-color');
 }
 
 function set_text_color(secondary = false) {
@@ -272,6 +257,7 @@ function set_text_color(secondary = false) {
 function set_panel_color(color) {
     let panel_color = { red: 0, green: 0, blue: 0, alpha: 0 };
 
+    /* Make sure settings has been "setup". */
     if (!Util.is_undef(Settings.get_panel_color)) {
         let background = get_background_color();
 
@@ -279,6 +265,8 @@ function set_panel_color(color) {
         if (!Util.is_undef(background)) {
             panel_color = background;
         }
+    } else {
+        log('[Dynamic Panel Transparency] Panel coloring set without proper settings.');
     }
 
     let current_alpha = get_background_alpha(Panel.actor);
@@ -324,7 +312,6 @@ function set_corner_color(color) {
     });
 
     let opacity = Util.clamp(color.alpha / SCALE_FACTOR, 0, 1);
-
 
     /* I strongly dislike using a deprecated method (set_style)
      * but this is a hold over from the older extension code and
@@ -434,7 +421,7 @@ function get_maximized_opacity() {
                 return this.theme_opacity;
             } else {
                 /* Get the default value */
-                return Settings.get_maximized_opacity({ default: true });
+                return THEME_OPACITY_THRESHOLD;
             }
         }
 
@@ -448,7 +435,7 @@ function get_maximized_opacity() {
         if (this.theme_opacity >= THEME_OPACITY_THRESHOLD) {
             return this.theme_opacity;
         } else {
-            return Settings.get_maximized_opacity({ default: true });
+            return THEME_OPACITY_THRESHOLD;
         }
     } else {
         return custom.value;
@@ -563,7 +550,7 @@ function apply_stylesheet_css(css, name) {
  *
  * @param {Object} source - A Gtk.Pixbuf
  */
-function average_color(source) {
+function average_color(source, width, height) {
     let r, g, b, a, min, max;
     let delta;
 
@@ -578,8 +565,8 @@ function average_color(source) {
 
     let dataPtr = source.get_pixels();
 
-    let width = source.get_width();
-    let height = source.get_height();
+    let width = Util.is_undef(width) ? source.get_width() : width;
+    let height = Util.is_undef(width) ? source.get_height() : width;;
     let length = width * height;
 
     let scoreTotal = 0.0;
