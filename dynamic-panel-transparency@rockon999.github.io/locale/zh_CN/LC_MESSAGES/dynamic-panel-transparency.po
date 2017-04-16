@@ -9,28 +9,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-30 22:09+0800\n"
+"POT-Creation-Date: 2017-04-03 18:10-0500\n"
 "PO-Revision-Date: 2016-10-01 15:53+0800\n"
+"Last-Translator: Dingzhong Chen <wsxy162@gmail.com>\n"
 "Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Gtranslator 2.91.7\n"
-"Last-Translator: Dingzhong Chen <wsxy162@gmail.com>\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"Language: zh_CN\n"
-
-#: prefs.js/preferences/main.js:233
-msgid "default"
-msgstr "默认"
-
-#: prefs.js/preferences/main.js:1004 prefs.js/ui/prefs.ui:1430
-msgid "App Tweaks"
-msgstr "应用优化"
-
-#: prefs.js/preferences/main.js:1153
-msgid "Add a Custom WM_CLASS"
-msgstr "添加自定义 WM_CLASS"
 
 #: prefs.js/ui/prefs.ui:11
 msgid "Classy transparency for your panel."
@@ -40,186 +28,190 @@ msgstr "给你的面板加上优雅的透明感。"
 msgid "Website"
 msgstr "网站"
 
-#: prefs.js/ui/prefs.ui:219
+#: prefs.js/ui/prefs.ui:227
 msgid "Shell Restart Required."
 msgstr "需要重启 Shell。"
 
 #. Meant to ask the user if they would like to restart right now or later in a yes/no format.
-#: prefs.js/ui/prefs.ui:220
+#: prefs.js/ui/prefs.ui:228
 msgid ""
 "A shell restart is required to view some of your changes. Do you want to "
 "restart now?"
 msgstr "为了观看你的一些更改的效果需要重启 shell。想现在就重启吗？"
 
 #. How long the transition will take.
-#: prefs.js/ui/prefs.ui:348
+#: prefs.js/ui/prefs.ui:357
 msgid "Transition Speed"
 msgstr "切换速度"
 
-#: prefs.js/ui/prefs.ui:378
+#: prefs.js/ui/prefs.ui:387
 msgid "Overrides 'gtk-enable-animations'."
 msgstr "改写 'gtk-enable-animations'。"
 
 #. Overrides Gnome animation settings and "forces" the animation.
-#: prefs.js/ui/prefs.ui:391
+#: prefs.js/ui/prefs.ui:400
 msgid "Force animation"
 msgstr "强制动画"
 
 #. The function used to animate the panel traansition. See http://hosted.zeh.com.br/tweener/docs/en-us/misc/transitions.html
-#: prefs.js/ui/prefs.ui:410
+#: prefs.js/ui/prefs.ui:419
 msgid "Transition Style"
 msgstr "切换风格"
 
-#: prefs.js/ui/prefs.ui:427
+#: prefs.js/ui/prefs.ui:436
 msgid "Linear (default)"
 msgstr "线性（默认）"
 
-#: prefs.js/ui/prefs.ui:428
+#: prefs.js/ui/prefs.ui:437
 msgid "Sine"
 msgstr "正弦"
 
-#: prefs.js/ui/prefs.ui:429
+#: prefs.js/ui/prefs.ui:438
 msgid "Quadratic"
 msgstr "平方"
 
-#: prefs.js/ui/prefs.ui:430
+#: prefs.js/ui/prefs.ui:439
 msgid "Cubic"
 msgstr "立方"
 
-#: prefs.js/ui/prefs.ui:431
+#: prefs.js/ui/prefs.ui:440
 msgid "Quartic"
 msgstr "四阶"
 
-#: prefs.js/ui/prefs.ui:432
+#: prefs.js/ui/prefs.ui:441
 msgid "Quintic"
 msgstr "五阶"
 
-#: prefs.js/ui/prefs.ui:433
+#: prefs.js/ui/prefs.ui:442
 msgid "Exponential"
 msgstr "指数"
 
-#: prefs.js/ui/prefs.ui:434
+#: prefs.js/ui/prefs.ui:443
 msgid "Circle"
 msgstr "循环"
 
-#: prefs.js/ui/prefs.ui:435
+#: prefs.js/ui/prefs.ui:444
 msgid "Elastic"
 msgstr "弹性"
 
-#: prefs.js/ui/prefs.ui:436
+#: prefs.js/ui/prefs.ui:445
 msgid "Bounce"
 msgstr "跳动"
 
-#: prefs.js/ui/prefs.ui:451
+#: prefs.js/ui/prefs.ui:460
 msgid "Transitions"
 msgstr "切换"
 
 #. Allows the user to set their own text color.
-#: prefs.js/ui/prefs.ui:508
+#: prefs.js/ui/prefs.ui:517
 msgid "Enable custom text coloring"
 msgstr "启用自定义文字颜色"
 
 #. The main color to be used.
-#: prefs.js/ui/prefs.ui:535 prefs.js/ui/prefs.ui:550
+#: prefs.js/ui/prefs.ui:544 prefs.js/ui/prefs.ui:559
 msgid "Primary Color"
 msgstr "主色"
 
 #. Another color for special functions.
-#: prefs.js/ui/prefs.ui:564 prefs.js/ui/prefs.ui:578
+#: prefs.js/ui/prefs.ui:573 prefs.js/ui/prefs.ui:587
 msgid "Secondary Color"
 msgstr "副色"
 
-#: prefs.js/ui/prefs.ui:598
+#: prefs.js/ui/prefs.ui:607
 msgid "Use when a window is maximized"
 msgstr "窗口最大化时使用"
 
-#: prefs.js/ui/prefs.ui:621
+#: prefs.js/ui/prefs.ui:630
 msgid "Use when the overview is visible"
 msgstr "概览视图时使用"
 
-#: prefs.js/ui/prefs.ui:690 prefs.js/ui/prefs.ui:748 prefs.js/ui/prefs.ui:864
-#: prefs.js/ui/prefs.ui:922
+#: prefs.js/ui/prefs.ui:699 prefs.js/ui/prefs.ui:757 prefs.js/ui/prefs.ui:873
+#: prefs.js/ui/prefs.ui:931
 msgid "Shadow Color"
 msgstr "阴影颜色"
 
-#: prefs.js/ui/prefs.ui:761 prefs.js/ui/prefs.ui:935
+#: prefs.js/ui/prefs.ui:770 prefs.js/ui/prefs.ui:944
 msgid "Radius"
 msgstr "半径"
 
-#: prefs.js/ui/prefs.ui:774 prefs.js/ui/prefs.ui:948
+#: prefs.js/ui/prefs.ui:783 prefs.js/ui/prefs.ui:957
 msgid "Horizontal Offset"
 msgstr "水平偏移"
 
-#: prefs.js/ui/prefs.ui:787 prefs.js/ui/prefs.ui:961
+#: prefs.js/ui/prefs.ui:796 prefs.js/ui/prefs.ui:970
 msgid "Vertical Offset"
 msgstr "垂直偏移"
 
-#: prefs.js/ui/prefs.ui:800
+#: prefs.js/ui/prefs.ui:809
 msgid "Enable text shadowing"
 msgstr "启用文字阴影"
 
-#: prefs.js/ui/prefs.ui:974
+#: prefs.js/ui/prefs.ui:983
 msgid "Enable icon shadowing"
 msgstr "启用图标阴影"
 
-#: prefs.js/ui/prefs.ui:1023
+#: prefs.js/ui/prefs.ui:1032
 msgid "Foreground"
 msgstr "前景"
 
 #. Opacity of the panel when no window is maximized.
-#: prefs.js/ui/prefs.ui:1085
+#: prefs.js/ui/prefs.ui:1094
 msgid "Unmaximized Opacity"
 msgstr "非最大化的不透明度"
 
 #. Opacity of the panel when a window is maximized.
-#: prefs.js/ui/prefs.ui:1132 prefs.js/ui/app-prefs.ui:117
+#: prefs.js/ui/prefs.ui:1141 prefs.js/ui/app-prefs.ui:117
 msgid "Maximized Opacity"
 msgstr "最大化的不透明度"
 
 #. Allows the user to set their own opacity.
-#: prefs.js/ui/prefs.ui:1154
+#: prefs.js/ui/prefs.ui:1163
 msgid "Enable custom opacity"
 msgstr "启用自定义不透明度"
 
 #. The panel's background color.
-#: prefs.js/ui/prefs.ui:1221 prefs.js/ui/prefs.ui:1236
+#: prefs.js/ui/prefs.ui:1230 prefs.js/ui/prefs.ui:1245
 #: prefs.js/ui/app-prefs.ui:91
 msgid "Panel Color"
 msgstr "面板颜色"
 
 #. Allows the user to set their own background color for the panel.
-#: prefs.js/ui/prefs.ui:1257
+#: prefs.js/ui/prefs.ui:1266
 msgid "Enable custom panel color"
 msgstr "启用自定义面板颜色"
 
-#: prefs.js/ui/prefs.ui:1311
-msgid "Fixes theme incompatibilities."
-msgstr "修复主题的不兼容性。"
-
 #. Removes any extra styling certain themes may have. Fixes theme issues.
-#: prefs.js/ui/prefs.ui:1318
+#: prefs.js/ui/prefs.ui:1330
 msgid "Remove excess panel styling"
 msgstr "移除过度的面板修饰风格"
 
+#: prefs.js/ui/prefs.ui:1343
+msgid "(Fixes theme incompatibilities.)"
+msgstr "(修复主题的不兼容性。)"
+
 #. Hides the panel corners.
-#: prefs.js/ui/prefs.ui:1340
+#: prefs.js/ui/prefs.ui:1371
 msgid "Hide corners"
 msgstr "隐藏圆角"
 
-#: prefs.js/ui/prefs.ui:1368
+#: prefs.js/ui/prefs.ui:1399
 msgid "Background"
 msgstr "背景"
 
-#: prefs.js/ui/prefs.ui:1470
+#: prefs.js/ui/prefs.ui:1461 prefs.js/preferences/main.js:1065
+msgid "App Tweaks"
+msgstr "应用优化"
+
+#: prefs.js/ui/prefs.ui:1501
 msgid "About"
 msgstr "关于"
 
 #. Adds a 'custom' app tweak. Only visible on the App Tweaks page.
-#: prefs.js/ui/prefs.ui:1528
+#: prefs.js/ui/prefs.ui:1559
 msgid "Advanced..."
 msgstr "高级…"
 
-#: prefs.js/ui/prefs.ui:1564
+#: prefs.js/ui/prefs.ui:1595
 msgid ""
 "A WM_CLASS is a code that identifies a window. Use this setting if the "
 "window you want custom settings for is not part of an application. You can "
@@ -230,7 +222,7 @@ msgstr ""
 "程序的一部分。您可以用命令 'xprop WM_CLASS' 来查找窗口的 WM_CLASS。输入 "
 "'xprop WM_CLASS' 下面的第二个结果，不带引号。"
 
-#: prefs.js/ui/prefs.ui:1613
+#: prefs.js/ui/prefs.ui:1644
 msgid "WM_CLASS cannot be blank."
 msgstr "WM_CLASS 无法为空。"
 
@@ -245,3 +237,11 @@ msgstr "主题来源"
 #: prefs.js/ui/app-prefs.ui:190
 msgid "Always trigger the panel."
 msgstr "总是触发面板。"
+
+#: prefs.js/preferences/main.js:249
+msgid "default"
+msgstr "默认"
+
+#: prefs.js/preferences/main.js:1300
+msgid "Add a Custom WM_CLASS"
+msgstr "添加自定义 WM_CLASS"

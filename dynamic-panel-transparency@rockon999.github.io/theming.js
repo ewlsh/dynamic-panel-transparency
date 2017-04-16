@@ -17,7 +17,7 @@ const Util = Me.imports.util;
 const Panel = Main.panel;
 
 /* Constants for theme opacity detection. */
-const THEME_OPACITY_THRESHOLD = 150;
+const THEME_OPACITY_THRESHOLD = 50;
 
 /* Constants for color averaging. */
 const SATURATION_WEIGHT = 1.5;
@@ -282,6 +282,7 @@ function register_style(style) {
 function set_panel_color(color) {
     let panel_color = { red: 0, green: 0, blue: 0, alpha: 0 };
 
+    /* Make sure settings has been "setup". */
     if (!Util.is_undef(Settings.get_panel_color)) {
         let background = get_background_color();
 
@@ -289,6 +290,8 @@ function set_panel_color(color) {
         if (!Util.is_undef(background)) {
             panel_color = background;
         }
+    } else {
+        log('[Dynamic Panel Transparency] Panel coloring set without proper settings.');
     }
 
     let current_alpha = get_background_alpha(Panel.actor);
@@ -443,7 +446,7 @@ function get_maximized_opacity() {
                 return this.theme_opacity;
             } else {
                 /* Get the default value */
-                return Settings.get_maximized_opacity({ default: true });
+                return THEME_OPACITY_THRESHOLD;
             }
         }
 
@@ -457,7 +460,7 @@ function get_maximized_opacity() {
         if (this.theme_opacity >= THEME_OPACITY_THRESHOLD) {
             return this.theme_opacity;
         } else {
-            return Settings.get_maximized_opacity({ default: true });
+            return THEME_OPACITY_THRESHOLD;
         }
     } else {
         return custom.value;
@@ -571,7 +574,7 @@ function apply_stylesheet_css(css, name) {
  *
  * @param {Object} source - A Gtk.Pixbuf
  */
-function average_color(source) {
+function average_color(source, width, height) {
     let r, g, b, a, min, max;
     let delta;
 
@@ -586,8 +589,8 @@ function average_color(source) {
 
     let dataPtr = source.get_pixels();
 
-    let width = source.get_width();
-    let height = source.get_height();
+    let width = Util.is_undef(width) ? source.get_width() : width;
+    let height = Util.is_undef(width) ? source.get_height() : width;;
     let length = width * height;
 
     let scoreTotal = 0.0;
