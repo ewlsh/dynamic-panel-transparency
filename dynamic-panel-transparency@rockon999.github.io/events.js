@@ -305,64 +305,66 @@ function _windowUpdated(params) {
 
     let add_transparency = true;
 
-    /* Save processing time by checking the current focused window (most likely to be maximized) */
-    /* Check that the focused window is in the right workspace. (I really hope it always is...) */
-    /* Don't do the 'quick check' if we have trigger apps/windows as they might not be focused. */
-    if (!Settings.check_triggers() && focused_window && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && !focused_window.minimized && focused_window.get_workspace().index() === workspace.index()) {
-        add_transparency = false;
-        this.maximized_window = focused_window;
-    } else {
-        let windows = workspace.list_windows();
-        windows = global.display.sort_windows_by_stacking(windows);
-
-        for (let i = windows.length - 1; i >= 0; i--) {
-            let current_window = windows[i];
-
-            if (Settings.check_triggers()) {
-                /* Check if the current WM_CLASS is a trigger. */
-                if (Settings.get_trigger_windows().indexOf(current_window.get_wm_class()) !== -1) {
-                    /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
-                    if (current_window !== excluded_window && current_window.is_on_primary_monitor() && !current_window.minimized) {
-                        add_transparency = false;
-                        this.maximized_window = current_window;
-                        break;
-                    }
-                }
-
-                let app = this._wm_tracker.get_window_app(current_window);
-
-                /* Check if the found app exists and if it is a trigger app. */
-                if (app && Settings.get_trigger_apps().indexOf(app.get_id()) !== -1) {
-                    /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
-                    if (current_window !== excluded_window && current_window.is_on_primary_monitor() && !current_window.minimized) {
-                        add_transparency = false;
-                        this.maximized_window = current_window;
-                        break;
-                    }
-                }
-            }
-
-            /* Make sure the window is on the correct monitor, isn't minimized, isn't supposed to be excluded, and is actually maximized. */
-            if (current_window !== excluded_window && current_window !== trigger_window && Util.is_valid(current_window) && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
-                /* Make sure the top-most window is selected */
-                if (this.maximized_window === null) {
-                    this.maximized_window = current_window;
-                }
-
-                add_transparency = false;
-
-                if (!Settings.check_triggers()) {
-                    break;
-                }
-            }
-        }
-    }
 
     /* Handle desktop icons (they're a window too) */
     if (focused_window && focused_window.get_window_type() === Meta.WindowType.DESKTOP) {
         add_transparency = true;
         this.maximized_window = focused_window;
+    } else {
+        /* Save processing time by checking the current focused window (most likely to be maximized) */
+        /* Check that the focused window is in the right workspace. (I really hope it always is...) */
+        /* Don't do the 'quick check' if we have trigger apps/windows as they might not be focused. */
+        if (!Settings.check_triggers() && focused_window && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && !focused_window.minimized && focused_window.get_workspace().index() === workspace.index()) {
+            add_transparency = false;
+            this.maximized_window = focused_window;
+        } else {
+            let windows = workspace.list_windows();
+            windows = global.display.sort_windows_by_stacking(windows);
+
+            for (let i = windows.length - 1; i >= 0; i--) {
+                let current_window = windows[i];
+
+                if (Settings.check_triggers()) {
+                    /* Check if the current WM_CLASS is a trigger. */
+                    if (Settings.get_trigger_windows().indexOf(current_window.get_wm_class()) !== -1) {
+                        /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
+                        if (current_window !== excluded_window && current_window.is_on_primary_monitor() && !current_window.minimized) {
+                            add_transparency = false;
+                            this.maximized_window = current_window;
+                            break;
+                        }
+                    }
+
+                    let app = this._wm_tracker.get_window_app(current_window);
+
+                    /* Check if the found app exists and if it is a trigger app. */
+                    if (app && Settings.get_trigger_apps().indexOf(app.get_id()) !== -1) {
+                        /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
+                        if (current_window !== excluded_window && current_window.is_on_primary_monitor() && !current_window.minimized) {
+                            add_transparency = false;
+                            this.maximized_window = current_window;
+                            break;
+                        }
+                    }
+                }
+
+                /* Make sure the window is on the correct monitor, isn't minimized, isn't supposed to be excluded, and is actually maximized. */
+                if (current_window !== excluded_window && current_window !== trigger_window && Util.is_valid(current_window) && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
+                    /* Make sure the top-most window is selected */
+                    if (this.maximized_window === null) {
+                        this.maximized_window = current_window;
+                    }
+
+                    add_transparency = false;
+
+                    if (!Settings.check_triggers()) {
+                        break;
+                    }
+                }
+            }
+        }
     }
+
 
     let transition_params = {};
 
@@ -422,7 +424,7 @@ function _windowRestacked() {
     /* Don't allow restacks while the overview is transitioning. */
     if (!Main.overview.visible) {
         /* Detect if desktop icons are enabled. */
-        if (Settings.gs_show_desktop_icons() || Settings.check_overrides() || Settings.check_triggers()) {
+        if (Settings.gs_show_desktop() || Settings.check_overrides() || Settings.check_triggers()) {
             log('restack success');
             _windowUpdated();
         }
@@ -461,7 +463,7 @@ function _windowLeft(screen, index, window) {
  */
 function _workspaceSwitched(wm, from, to, direction) {
     /* Detect if desktop icons are enabled. */
-    if (!Settings.gs_show_desktop_icons() && !Settings.check_overrides() && !Settings.check_triggers()) {
+    if (!Settings.gs_show_desktop() && !Settings.check_overrides() && !Settings.check_triggers()) {
         let workspace_to = global.screen.get_workspace_by_index(to);
 
         if (workspace_to !== null) {

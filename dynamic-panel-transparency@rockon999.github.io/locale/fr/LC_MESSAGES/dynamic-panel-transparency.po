@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-19 20:57-0500\n"
+"POT-Creation-Date: 2017-04-03 18:10-0500\n"
 "PO-Revision-Date: 2016-10-27 23:39+0200\n"
 "Last-Translator: narzb <>\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
@@ -19,18 +19,6 @@ msgstr ""
 "X-Generator: Poedit 1.8.9\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: prefs.js/preferences/main.js:233
-msgid "default"
-msgstr "défaut"
-
-#: prefs.js/preferences/main.js:1004 prefs.js/ui/prefs.ui:1430
-msgid "App Tweaks"
-msgstr "Réglages applications"
-
-#: prefs.js/preferences/main.js:1153
-msgid "Add a Custom WM_CLASS"
-msgstr "Ajouter un WM_CLASS personnalisé"
-
 #: prefs.js/ui/prefs.ui:11
 msgid "Classy transparency for your panel."
 msgstr "Transparence élégante pour votre Barre supérieure."
@@ -39,201 +27,205 @@ msgstr "Transparence élégante pour votre Barre supérieure."
 msgid "Website"
 msgstr "Site web"
 
-#: prefs.js/ui/prefs.ui:219
+#: prefs.js/ui/prefs.ui:227
 msgid "Shell Restart Required."
 msgstr "Redémarrage du shell requis."
 
 #. Meant to ask the user if they would like to restart right now or later in a yes/no format.
-#: prefs.js/ui/prefs.ui:220
+#: prefs.js/ui/prefs.ui:228
 msgid ""
 "A shell restart is required to view some of your changes. Do you want to "
 "restart now?"
-msgstr "Un redémarrage est nécessaire pour visualiser certains de vos changements. "
+msgstr ""
+"Un redémarrage est nécessaire pour visualiser certains de vos changements. "
 "Voulez-vous redémarrer maintenant ?"
 
 #. How long the transition will take.
-#: prefs.js/ui/prefs.ui:348
+#: prefs.js/ui/prefs.ui:357
 msgid "Transition Speed"
 msgstr "Vitesse de transition"
 
-#: prefs.js/ui/prefs.ui:378
+#: prefs.js/ui/prefs.ui:387
 msgid "Overrides 'gtk-enable-animations'."
 msgstr "Outrepasser 'gtk-enable-animations'."
 
 #. Overrides Gnome animation settings and "forces" the animation.
-#: prefs.js/ui/prefs.ui:391
+#: prefs.js/ui/prefs.ui:400
 msgid "Force animation"
 msgstr "Forcer l'animation"
 
 #. The function used to animate the panel traansition. See http://hosted.zeh.com.br/tweener/docs/en-us/misc/transitions.html
-#: prefs.js/ui/prefs.ui:410
+#: prefs.js/ui/prefs.ui:419
 msgid "Transition Style"
 msgstr "Style de transition"
 
-#: prefs.js/ui/prefs.ui:427
+#: prefs.js/ui/prefs.ui:436
 msgid "Linear (default)"
 msgstr "Linéaire (défaut)"
 
-#: prefs.js/ui/prefs.ui:428
+#: prefs.js/ui/prefs.ui:437
 msgid "Sine"
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:429
+#: prefs.js/ui/prefs.ui:438
 msgid "Quadratic"
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:430
+#: prefs.js/ui/prefs.ui:439
 msgid "Cubic"
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:431
+#: prefs.js/ui/prefs.ui:440
 msgid "Quartic"
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:432
+#: prefs.js/ui/prefs.ui:441
 msgid "Quintic"
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:433
+#: prefs.js/ui/prefs.ui:442
 msgid "Exponential"
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:434
+#: prefs.js/ui/prefs.ui:443
 msgid "Circle"
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:435
+#: prefs.js/ui/prefs.ui:444
 msgid "Elastic"
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:436
+#: prefs.js/ui/prefs.ui:445
 msgid "Bounce"
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:451
-#, fuzzy
+#: prefs.js/ui/prefs.ui:460
 msgid "Transitions"
 msgstr "Vitesse de transition"
 
 #. Allows the user to set their own text color.
-#: prefs.js/ui/prefs.ui:508
+#: prefs.js/ui/prefs.ui:517
 msgid "Enable custom text coloring"
 msgstr "Activer personnalisation couleur du texte"
 
 #. The main color to be used.
-#: prefs.js/ui/prefs.ui:535 prefs.js/ui/prefs.ui:550
+#: prefs.js/ui/prefs.ui:544 prefs.js/ui/prefs.ui:559
 msgid "Primary Color"
 msgstr "Couleur Principale"
 
 #. Another color for special functions.
-#: prefs.js/ui/prefs.ui:564 prefs.js/ui/prefs.ui:578
+#: prefs.js/ui/prefs.ui:573 prefs.js/ui/prefs.ui:587
 msgid "Secondary Color"
 msgstr "Couleur secondaire"
 
-#: prefs.js/ui/prefs.ui:598
+#: prefs.js/ui/prefs.ui:607
 msgid "Use when a window is maximized"
 msgstr "Utiliser quand la fenêtre est maximisée"
 
-#: prefs.js/ui/prefs.ui:621
+#: prefs.js/ui/prefs.ui:630
 msgid "Use when the overview is visible"
 msgstr "Utiliser dans la Vue d'ensemble"
 
-#: prefs.js/ui/prefs.ui:690 prefs.js/ui/prefs.ui:748 prefs.js/ui/prefs.ui:864
-#: prefs.js/ui/prefs.ui:922
+#: prefs.js/ui/prefs.ui:699 prefs.js/ui/prefs.ui:757 prefs.js/ui/prefs.ui:873
+#: prefs.js/ui/prefs.ui:931
 msgid "Shadow Color"
 msgstr "Couleur de l'ombre"
 
-#: prefs.js/ui/prefs.ui:761 prefs.js/ui/prefs.ui:935
+#: prefs.js/ui/prefs.ui:770 prefs.js/ui/prefs.ui:944
 msgid "Radius"
 msgstr "Rayon"
 
-#: prefs.js/ui/prefs.ui:774 prefs.js/ui/prefs.ui:948
+#: prefs.js/ui/prefs.ui:783 prefs.js/ui/prefs.ui:957
 msgid "Horizontal Offset"
 msgstr "Décalage horizontal"
 
-#: prefs.js/ui/prefs.ui:787 prefs.js/ui/prefs.ui:961
+#: prefs.js/ui/prefs.ui:796 prefs.js/ui/prefs.ui:970
 msgid "Vertical Offset"
 msgstr "Décalage vertical"
 
-#: prefs.js/ui/prefs.ui:800
+#: prefs.js/ui/prefs.ui:809
 msgid "Enable text shadowing"
 msgstr "Activer l'ombre du texte"
 
-#: prefs.js/ui/prefs.ui:974
+#: prefs.js/ui/prefs.ui:983
 msgid "Enable icon shadowing"
 msgstr "Activer l'ombre de l'icône"
 
-#: prefs.js/ui/prefs.ui:1023
+#: prefs.js/ui/prefs.ui:1032
 msgid "Foreground"
 msgstr "Premier plan"
 
 #. Opacity of the panel when no window is maximized.
-#: prefs.js/ui/prefs.ui:1085
+#: prefs.js/ui/prefs.ui:1094
 msgid "Unmaximized Opacity"
 msgstr "Opacité fenêtre non maximisée"
 
 #. Opacity of the panel when a window is maximized.
-#: prefs.js/ui/prefs.ui:1132 prefs.js/ui/app-prefs.ui:117
+#: prefs.js/ui/prefs.ui:1141 prefs.js/ui/app-prefs.ui:117
 msgid "Maximized Opacity"
 msgstr "Opacité fenêtre maximisée"
 
 #. Allows the user to set their own opacity.
-#: prefs.js/ui/prefs.ui:1154
+#: prefs.js/ui/prefs.ui:1163
 msgid "Enable custom opacity"
 msgstr "Activer la personnalisation de l'opacité"
 
 #. The panel's background color.
-#: prefs.js/ui/prefs.ui:1221 prefs.js/ui/prefs.ui:1236
+#: prefs.js/ui/prefs.ui:1230 prefs.js/ui/prefs.ui:1245
 #: prefs.js/ui/app-prefs.ui:91
 msgid "Panel Color"
 msgstr "Couleur Barre supérieure"
 
 #. Allows the user to set their own background color for the panel.
-#: prefs.js/ui/prefs.ui:1257
+#: prefs.js/ui/prefs.ui:1266
 msgid "Enable custom panel color"
 msgstr "Activer personnalisation couleur Barre supérieure"
 
-#: prefs.js/ui/prefs.ui:1311
-msgid "Fixes theme incompatibilities."
-msgstr "Réparer les incompatibilités de thèmes."
-
 #. Removes any extra styling certain themes may have. Fixes theme issues.
-#: prefs.js/ui/prefs.ui:1318
+#: prefs.js/ui/prefs.ui:1330
 msgid "Remove excess panel styling"
 msgstr ""
 
+#: prefs.js/ui/prefs.ui:1343
+msgid "(Fixes theme incompatibilities.)"
+msgstr "(Réparer les incompatibilités de thèmes.)"
+
 #. Hides the panel corners.
-#: prefs.js/ui/prefs.ui:1340
-#, fuzzy
+#: prefs.js/ui/prefs.ui:1371
 msgid "Hide corners"
 msgstr "Cacher les coins arrondis"
 
-#: prefs.js/ui/prefs.ui:1368
+#: prefs.js/ui/prefs.ui:1399
 msgid "Background"
 msgstr "Arrière-plan"
 
-#: prefs.js/ui/prefs.ui:1470
+#: prefs.js/ui/prefs.ui:1461 prefs.js/preferences/main.js:1065
+msgid "App Tweaks"
+msgstr "Réglages applications"
+
+#: prefs.js/ui/prefs.ui:1501
 msgid "About"
 msgstr "À propos"
 
 #. Adds a 'custom' app tweak. Only visible on the App Tweaks page.
-#: prefs.js/ui/prefs.ui:1528
+#: prefs.js/ui/prefs.ui:1559
 msgid "Advanced..."
 msgstr "Fonctionnalités avancées"
 
-#: prefs.js/ui/prefs.ui:1564
+#: prefs.js/ui/prefs.ui:1595
 msgid ""
 "A WM_CLASS is a code that identifies a window. Use this setting if the "
 "window you want custom settings for is not part of an application. You can "
 "find a window's WM_CLASS with the command 'xprop WM_CLASS'. Enter the second "
 "result from 'xprop WM_CLASS' below without quotation marks."
-msgstr "WM_CLASS est un code qui identifie une fenêtre. Utilisez ce paramètre si la "
+msgstr ""
+"WM_CLASS est un code qui identifie une fenêtre. Utilisez ce paramètre si la "
 "fenêtre que vous voulez personnaliser ne fait pas partie d'une application. "
 "Vous pouvez trouver le WM_CLASS d'une fenêtre avec la commande «xprop "
 "WM_CLASS». Entrez le deuxième résultat de «xprop WM_CLASS» ci-dessous sans "
 "guillemets."
 
-#: prefs.js/ui/prefs.ui:1613
+#: prefs.js/ui/prefs.ui:1644
 msgid "WM_CLASS cannot be blank."
 msgstr "WM_CLASS ne peut pas être vide."
 
@@ -249,38 +241,10 @@ msgstr "Source du Thème"
 msgid "Always trigger the panel."
 msgstr "Toujours déclencher la coloration de la Barre supérieure"
 
-#~ msgid "Panel"
-#~ msgstr "Barre supérieure"
+#: prefs.js/preferences/main.js:249
+msgid "default"
+msgstr "défaut"
 
-#, fuzzy
-#~ msgid "Dash"
-#~ msgstr "Attaque"
-
-#, fuzzy
-#~ msgid "Default"
-#~ msgstr "défaut"
-
-#, fuzzy
-#~ msgid "Text Color"
-#~ msgstr "Couleur Barre supérieure"
-
-#, fuzzy
-#~ msgid "Maximized Color"
-#~ msgstr "Couleur Barre supérieure"
-
-#, fuzzy
-#~ msgid "Text Shadow"
-#~ msgstr "Ajouter ombre du texte"
-
-#~ msgid "Detect User Theme"
-#~ msgstr "Détecter thème utilisateur"
-
-
-#~ msgid "Minimum Opacity"
-#~ msgstr "Opacité minimum"
-
-#~ msgid "Maximum Opacity"
-#~ msgstr "Opacité maximum"
-
-#~ msgid "Some shell themes already do this."
-#~ msgstr "Certains thèmes du shell font déjà ça"
+#: prefs.js/preferences/main.js:1300
+msgid "Add a Custom WM_CLASS"
+msgstr "Ajouter un WM_CLASS personnalisé"

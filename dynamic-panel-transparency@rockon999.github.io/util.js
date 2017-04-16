@@ -109,8 +109,6 @@ function is_maximized(window) {
  * @returns {Boolean} Whether 'window' is a valid window to watch.
  *
  */
-
-//
 function is_valid(window) {
     const Meta = imports.gi.Meta;
 
