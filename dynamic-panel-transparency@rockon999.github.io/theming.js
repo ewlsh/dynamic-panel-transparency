@@ -385,7 +385,7 @@ function get_background_image_color(theme) {
         let background = GdkPixbuf.Pixbuf.new_from_file(file.get_path());
 
         if (Util.is_undef(background)) {
-            log('The background is null.');
+            log('[Dynamic Panel Transparency] Provided background is null.');
             return null;
         }
 
@@ -589,8 +589,9 @@ function average_color(source, width, height) {
 
     let dataPtr = source.get_pixels();
 
-    let width = Util.is_undef(width) ? source.get_width() : width;
-    let height = Util.is_undef(width) ? source.get_height() : width;;
+    width = Util.is_undef(width) ? source.get_width() : width;
+    height = Util.is_undef(width) ? source.get_height() : width;;
+
     let length = width * height;
 
     let scoreTotal = 0.0;

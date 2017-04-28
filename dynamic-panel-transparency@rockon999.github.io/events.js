@@ -426,7 +426,6 @@ function _windowRestacked() {
     if (!Main.overview.visible) {
         /* Detect if desktop icons are enabled. */
         if (Settings.gs_show_desktop() || Settings.check_overrides() || Settings.check_triggers()) {
-            log('restack success');
             _windowUpdated();
         }
     }
