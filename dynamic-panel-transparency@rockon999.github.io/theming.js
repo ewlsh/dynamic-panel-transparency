@@ -49,9 +49,8 @@ function cleanup() {
     }
 
     for (let style of this.styles) {
-        for (let panel of Extension.panels) {
-            panel.actor.remove_style_class_name(style);
-        }
+
+        panel.actor.remove_style_class_name(style);
     }
 
     this.stylesheets = null;
@@ -127,10 +126,8 @@ function register_text_shadow(text_color, text_position) {
  * @param {Number} text_color.alpha - Alpha value ranging from 0-1.0 with support for two decimal places.
  * @param {Number[]} text_position - Integer array containing horizontal offset, vertical offset, radius. (in that order)
  */
-function add_text_shadow() {
-    for (let panel of Extension.panels) {
-        panel.actor.add_style_class_name('dpt-panel-text-shadow');
-    }
+function add_text_shadow(panel) {
+    panel.actor.add_style_class_name('dpt-panel-text-shadow');
 }
 
 /**
@@ -161,13 +158,13 @@ function register_icon_shadow(icon_color, icon_position) {
  * Adds the currently register shadow stylesheet to icons in the panel.
  *
  */
-function add_icon_shadow() {
-    for (let panel of Extension.panels) {
-        panel.actor.add_style_class_name('dpt-panel-icon-shadow');
-    }
-    for (let panel of Extension.panels) {
-        panel.actor.add_style_class_name('dpt-panel-arrow-shadow');
-    }
+function add_icon_shadow(panel) {
+
+    panel.actor.add_style_class_name('dpt-panel-icon-shadow');
+
+
+    panel.actor.add_style_class_name('dpt-panel-arrow-shadow');
+
 }
 
 /**
@@ -175,8 +172,8 @@ function add_icon_shadow() {
  *
  * @returns {Boolean} If the panel has text shadowing.
  */
-function has_text_shadow() {
-    return Extension.panels.some(function(panel) {
+function has_text_shadow(panels) {
+    return panels.some(function(panel) {
         return panel.actor.has_style_class_name('dpt-panel-text-shadow');
     });
 }
@@ -186,8 +183,8 @@ function has_text_shadow() {
  *
  * @returns {Boolean} If the panel has icon shadowing.
  */
-function has_icon_shadow() {
-    return Extension.panels.some(function(panel) {
+function has_icon_shadow(panels) {
+    return panels.some(function(panel) {
         return panel.actor.has_style_class_name('dpt-panel-icon-shadow') || panel.actor.has_style_class_name('dpt-panel-arrow-shadow');
     });
 }
@@ -196,23 +193,23 @@ function has_icon_shadow() {
  * Removes any text shadowing; deregistering the stylesheet and removing the css.
  *
  */
-function remove_text_shadow() {
-    for (let panel of Extension.panels) {
-        panel.actor.remove_style_class_name('dpt-panel-text-shadow');
-    }
+function remove_text_shadow(panel) {
+
+    panel.actor.remove_style_class_name('dpt-panel-text-shadow');
+
 }
 
 /**
  * Removes any icon shadowing; deregistering the stylesheet and removing the css.
  *
  */
-function remove_icon_shadow() {
-    for (let panel of Extension.panels) {
-        panel.actor.remove_style_class_name('dpt-panel-icon-shadow');
-    }
-    for (let panel of Extension.panels) {
-        panel.actor.remove_style_class_name('dpt-panel-arrow-shadow');
-    }
+function remove_icon_shadow(panel) {
+
+    panel.actor.remove_style_class_name('dpt-panel-icon-shadow');
+
+
+    panel.actor.remove_style_class_name('dpt-panel-arrow-shadow');
+
 }
 
 /**
@@ -249,17 +246,17 @@ function register_text_color(color, prefix) {
  *
  * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
  */
-function set_text_color(prefix) {
+function set_text_color(panel, prefix) {
     if (!Util.is_undef(this.current_prefix)) {
-        for (let panel of Extension.panels) {
-            panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'text-color');
-        }
-        for (let panel of Extension.panels) {
-            panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'icon-color');
-        }
-        for (let panel of Extension.panels) {
-            panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'arrow-color');
-        }
+
+        panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'text-color');
+
+
+        panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'icon-color');
+
+
+        panel.actor.remove_style_class_name('dpt-panel' + this.current_prefix + 'arrow-color');
+
     }
 
     if (!Util.is_undef(prefix)) {
@@ -270,15 +267,11 @@ function set_text_color(prefix) {
 
     this.current_prefix = prefix;
 
-    for (let panel of Extension.panels) {
-        panel.actor.add_style_class_name('dpt-panel' + prefix + 'text-color');
-    }
-    for (let panel of Extension.panels) {
-        panel.actor.add_style_class_name('dpt-panel' + prefix + 'icon-color');
-    }
-    for (let panel of Extension.panels) {
-        panel.actor.add_style_class_name('dpt-panel' + prefix + 'arrow-color');
-    }
+
+    panel.actor.add_style_class_name('dpt-panel' + prefix + 'text-color');
+    panel.actor.add_style_class_name('dpt-panel' + prefix + 'icon-color');
+    panel.actor.add_style_class_name('dpt-panel' + prefix + 'arrow-color');
+
 }
 
 /**
@@ -286,22 +279,16 @@ function set_text_color(prefix) {
  *
  * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
  */
-function remove_text_color(prefix) {
+function remove_text_color(panel, prefix) {
     if (!Util.is_undef(prefix)) {
         prefix = '-' + prefix + '-';
     } else {
         prefix = '-';
     }
 
-    for (let panel of Extension.panels) {
-        panel.actor.remove_style_class_name('dpt-panel' + prefix + 'text-color');
-    }
-    for (let panel of Extension.panels) {
-        panel.actor.remove_style_class_name('dpt-panel' + prefix + 'icon-color');
-    }
-    for (let panel of Extension.panels) {
-        panel.actor.remove_style_class_name('dpt-panel' + prefix + 'arrow-color');
-    }
+    panel.actor.remove_style_class_name('dpt-panel' + prefix + 'text-color');
+    panel.actor.remove_style_class_name('dpt-panel' + prefix + 'icon-color');
+    panel.actor.remove_style_class_name('dpt-panel' + prefix + 'arrow-color');
 }
 
 /**
@@ -346,16 +333,12 @@ function set_panel_color(panel, color) {
         alpha: current_alpha
     });
 
-    for (let panel of Extension.panels) {
-        panel.actor.set_background_color(new Clutter.Color({
-            red: color.red,
-            green: color.green,
-            blue: color.blue,
-            alpha: color.alpha
-        }));
-    }
-
-
+    panel.actor.set_background_color(new Clutter.Color({
+        red: color.red,
+        green: color.green,
+        blue: color.blue,
+        alpha: color.alpha
+    }));
 }
 
 /**
@@ -393,11 +376,9 @@ function set_corner_color(panel, color) {
         '' + '-panel-corner-border-color: transparent;';
 
     // TODO: Update this code. We're using @deprecated code.
-    for (let panel of Extension.panels) {
-        panel._leftCorner.actor.set_style(coloring);
-        panel._rightCorner.actor.set_style(coloring);
-    }
 
+    panel._leftCorner.actor.set_style(coloring);
+    panel._rightCorner.actor.set_style(coloring);
 }
 
 /**
@@ -405,10 +386,8 @@ function set_corner_color(panel, color) {
  *
  */
 function clear_corner_color(panel) {
-    for (let panel of Extension.panels) {
-        panel._leftCorner.actor.set_style(null);
-        panel._rightCorner.actor.set_style(null);
-    }
+    panel._leftCorner.actor.set_style(null);
+    panel._rightCorner.actor.set_style(null);
 }
 
 /**
@@ -540,11 +519,11 @@ function get_unmaximized_opacity() {
  */
 function strip_panel_styling(panel) {
 
-    for (let panel of Extension.panels) {
-        if (!panel.actor.has_style_class_name('panel-effect-transparency')) {
-            panel.actor.add_style_class_name('panel-effect-transparency');
-        }
+
+    if (!panel.actor.has_style_class_name('panel-effect-transparency')) {
+        panel.actor.add_style_class_name('panel-effect-transparency');
     }
+
 }
 
 /**
@@ -552,11 +531,10 @@ function strip_panel_styling(panel) {
  *
  */
 function reapply_panel_styling(panel) {
-    for (let panel of Extension.panels) {
-        if (panel.actor.has_style_class_name('panel-effect-transparency')) {
-            panel.actor.remove_style_class_name('panel-effect-transparency');
-        }
+    if (panel.actor.has_style_class_name('panel-effect-transparency')) {
+        panel.actor.remove_style_class_name('panel-effect-transparency');
     }
+
 }
 
 /**
@@ -564,52 +542,44 @@ function reapply_panel_styling(panel) {
  *
  */
 function strip_panel_background_image(panel) {
-
-    for (let panel of Extension.panels) {
-        if (!panel.actor.has_style_class_name('panel-background-image-transparency')) {
-            panel.actor.add_style_class_name('panel-background-image-transparency');
-        }
+    if (!panel.actor.has_style_class_name('panel-background-image-transparency')) {
+        panel.actor.add_style_class_name('panel-background-image-transparency');
     }
 }
+
 
 /**
  * Removes the style class 'panel-background-image-transparency' and enables the stock CSS preventing this extension's transitions.
  *
  */
 function reapply_panel_background_image(panel) {
-
-    for (let panel of Extension.panels) {
-        if (panel.actor.has_style_class_name('panel-background-image-transparency')) {
-            panel.actor.remove_style_class_name('panel-background-image-transparency');
-        }
+    if (panel.actor.has_style_class_name('panel-background-image-transparency')) {
+        panel.actor.remove_style_class_name('panel-background-image-transparency');
     }
 }
+
 
 /**
  * Applies the style class 'panel-background-color-transparency' and removes any CSS embellishments.
  *
  */
 function strip_panel_background(panel) {
-
-    for (let panel of Extension.panels) {
-        if (!panel.actor.has_style_class_name('panel-background-color-transparency')) {
-            panel.actor.add_style_class_name('panel-background-color-transparency');
-        }
+    if (!panel.actor.has_style_class_name('panel-background-color-transparency')) {
+        panel.actor.add_style_class_name('panel-background-color-transparency');
     }
 }
+
 
 /**
  * Reapplies the style class 'panel-background-color-transparency' and enables any CSS embellishments.
  *
  */
 function reapply_panel_background(panel) {
-
-    for (let panel of Extension.panels) {
-        if (panel.actor.has_style_class_name('panel-background-color-transparency')) {
-            panel.actor.remove_style_class_name('panel-background-color-transparency');
-        }
+    if (panel.actor.has_style_class_name('panel-background-color-transparency')) {
+        panel.actor.remove_style_class_name('panel-background-color-transparency');
     }
 }
+
 
 /**
  * Writes CSS data to a file and loads the stylesheet into the Shell.

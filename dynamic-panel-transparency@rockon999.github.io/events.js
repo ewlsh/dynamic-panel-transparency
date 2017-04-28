@@ -318,7 +318,7 @@ function _windowUpdated(params) {
     /* Save processing time by checking the current focused window (most likely to be maximized) */
     /* Check that the focused window is in the right workspace. (I really hope it always is...) */
     /* Don't do the 'quick check' if we have trigger apps/windows as they might not be focused. */
-    if (!Settings.check_triggers() && focused_window && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && monitor_has_panel /*focused_window.is_on_primary_monitor()*/ && !focused_window.minimized && focused_window.get_workspace().index() === workspace.index()) {
+    if (!Settings.check_triggers() && focused_window && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && monitor_has_panel && !focused_window.minimized && focused_window.get_workspace().index() === workspace.index()) {
         add_transparency = false;
         this.maximized_window = focused_window;
     } else {
