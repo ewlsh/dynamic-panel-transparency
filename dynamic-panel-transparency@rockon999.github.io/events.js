@@ -48,7 +48,7 @@ function init() {
 
     this._wm_tracker = Shell.WindowTracker.get_default();
 
-    this._overviewHiddenSig = Main.overview.connect(Settings.gs_enable_animations() ? 'hidden' : 'hiding', Lang.bind(this, Util.strip_args(_windowUpdated)));
+    this._overviewHiddenSig = Main.overview.connect(!Settings.gs_enable_animations() ? 'hiding' : 'hidden', Lang.bind(this, Util.strip_args(_windowUpdated)));
     this._overviewShownSig = Main.overview.connect('shown', Lang.bind(this, _overviewShown));
 
     let windows = global.get_window_actors();
