@@ -48,8 +48,7 @@ function init() {
 
     this._wm_tracker = Shell.WindowTracker.get_default();
 
-    this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, Util.strip_args(_windowUpdated)));
-
+    this._overviewHiddenSig = Main.overview.connect(Settings.gs_enable_animations() ? 'hidden' : 'hiding', Lang.bind(this, Util.strip_args(_windowUpdated)));
     this._overviewShownSig = Main.overview.connect('shown', Lang.bind(this, _overviewShown));
 
     let windows = global.get_window_actors();
@@ -73,6 +72,8 @@ function init() {
     this._windowLeftSig = global.screen.connect('window-left-monitor', Lang.bind(this, _windowLeft));
 
     this._windowCreatedSig = display.connect_after('window-created', Lang.bind(this, _windowCreated));
+
+    this._appFocusedSig = this._wm_tracker.connect('notify::focus-app', Lang.bind(this, _windowRestacked));
 
     /* Apparently Ubuntu is wierd and does this different than a common Gnome installation. */
     // TODO: Look into this.
@@ -116,6 +117,8 @@ function cleanup() {
     global.screen.disconnect(this._windowRestackedSig);
     global.screen.disconnect(this._windowLeftSig);
     global.screen.disconnect(this._windowEnteredSig);
+
+    this._wm_tracker.disconnect(this._appFocusedSig);
 
     if (!Util.is_undef(this._theme_settings) && !Util.is_undef(this._userThemeChangedSig)) {
         this._theme_settings.disconnect(this._userThemeChangedSig);
@@ -305,7 +308,6 @@ function _windowUpdated(params) {
 
     let add_transparency = true;
 
-
     /* Handle desktop icons (they're a window too) */
     if (focused_window && focused_window.get_window_type() === Meta.WindowType.DESKTOP) {
         add_transparency = true;
@@ -314,7 +316,7 @@ function _windowUpdated(params) {
         /* Save processing time by checking the current focused window (most likely to be maximized) */
         /* Check that the focused window is in the right workspace. (I really hope it always is...) */
         /* Don't do the 'quick check' if we have trigger apps/windows as they might not be focused. */
-        if (!Settings.check_triggers() && focused_window && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && !focused_window.minimized && focused_window.get_workspace().index() === workspace.index()) {
+        if (!Settings.check_triggers() && focused_window && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && focused_window.is_on_primary_monitor() && !focused_window.minimized && focused_window.get_workspace().index() === workspace.index() && focused_window.showing_on_its_workspace()) {
             add_transparency = false;
             this.maximized_window = focused_window;
         } else {
@@ -324,32 +326,31 @@ function _windowUpdated(params) {
             for (let i = windows.length - 1; i >= 0; i--) {
                 let current_window = windows[i];
 
+                if (current_window === excluded_window || !current_window.showing_on_its_workspace() || !current_window.is_on_primary_monitor() || current_window.minimized) {
+                    continue;
+                }
+
                 if (Settings.check_triggers()) {
                     /* Check if the current WM_CLASS is a trigger. */
                     if (Settings.get_trigger_windows().indexOf(current_window.get_wm_class()) !== -1) {
                         /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
-                        if (current_window !== excluded_window && current_window.is_on_primary_monitor() && !current_window.minimized) {
-                            add_transparency = false;
-                            this.maximized_window = current_window;
-                            break;
-                        }
+                        add_transparency = false;
+                        this.maximized_window = current_window;
+                        break;
                     }
 
                     let app = this._wm_tracker.get_window_app(current_window);
 
                     /* Check if the found app exists and if it is a trigger app. */
                     if (app && Settings.get_trigger_apps().indexOf(app.get_id()) !== -1) {
-                        /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
-                        if (current_window !== excluded_window && current_window.is_on_primary_monitor() && !current_window.minimized) {
-                            add_transparency = false;
-                            this.maximized_window = current_window;
-                            break;
-                        }
+                        add_transparency = false;
+                        this.maximized_window = current_window;
+                        break;
                     }
                 }
 
                 /* Make sure the window is on the correct monitor, isn't minimized, isn't supposed to be excluded, and is actually maximized. */
-                if (current_window !== excluded_window && current_window !== trigger_window && Util.is_valid(current_window) && Util.is_maximized(current_window) && current_window.is_on_primary_monitor() && !current_window.minimized) {
+                if (current_window !== trigger_window && Util.is_valid(current_window) && Util.is_maximized(current_window)) {
                     /* Make sure the top-most window is selected */
                     if (this.maximized_window === null) {
                         this.maximized_window = current_window;
