@@ -49,8 +49,9 @@ function cleanup() {
     }
 
     for (let style of this.styles) {
-
-        panel.actor.remove_style_class_name(style);
+        for (let panel of Extension.panels) {
+            panel.actor.remove_style_class_name(panel, style);
+        }
     }
 
     this.stylesheets = null;

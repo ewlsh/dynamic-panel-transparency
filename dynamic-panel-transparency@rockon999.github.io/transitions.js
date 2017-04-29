@@ -203,13 +203,13 @@ function fade_in(params) {
  * Callback for when a minimum_fade_in transition is completed.
  *
  */
-function minimum_fade_in_complete() {
+function minimum_fade_in_complete(panel) {
     if (Main.overview._shown) {
-        blank_fade_out();
+        blank_fade_out(panel);
         return;
     }
 
-    update_corner_alpha();
+    update_corner_alpha(panel);
 
     this.animation_status.done();
 }
@@ -218,34 +218,34 @@ function minimum_fade_in_complete() {
  * Callback for when a fade_in transition is completed.
  *
  */
-function fade_in_complete() {
+function fade_in_complete(panel) {
     if (Main.overview._shown) {
-        blank_fade_out();
+        blank_fade_out(panel);
         return;
     }
 
-    update_corner_alpha();
+    update_corner_alpha(panel);
 
     let custom = Settings.get_panel_color({ app_info: true });
 
     if (!Settings.remove_panel_styling()) {
         if (custom.app_info !== null && Settings.check_overrides()) {
             if (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info]) {
-                Theming.strip_panel_background_image();
+                Theming.strip_panel_background_image(panel);
             } else {
                 if (!Settings.enable_custom_background_color()) {
-                    Theming.reapply_panel_background_image();
+                    Theming.reapply_panel_background_image(panel);
                 }
             }
         } else {
             if (!Settings.enable_custom_background_color()) {
-                Theming.reapply_panel_background_image();
+                Theming.reapply_panel_background_image(panel);
             } else {
-                Theming.strip_panel_background_image();
+                Theming.strip_panel_background_image(panel);
             }
         }
 
-        Theming.reapply_panel_styling();
+        Theming.reapply_panel_styling(panel);
     }
 
     this.animation_status.done();

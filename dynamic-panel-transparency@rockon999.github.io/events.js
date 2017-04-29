@@ -290,10 +290,7 @@ function _windowUpdated(params) {
     let focused_window = global.display.get_focus_window();
 
     let windows = workspace.list_windows();
-    //for (let i = windows.length - 1; i >= 0; i--) {
-    //    let current_window = windows[i];
-    //    log(current_window.get_wm_class());
-    //}
+
     windows = global.display.sort_windows_by_stacking(windows);
 
     this.maximized_window = null;
@@ -303,12 +300,15 @@ function _windowUpdated(params) {
     let monitor_has_panel = false;
     let index;
 
+    let panel;
+
     if (focused_window) {
         focused_window.get_monitor();
 
-        for (let panel of Extension.panels) {
-            if (panel._monitorIndex === index) {
+        for (let _panel of Extension.panels) {
+            if (_panel._monitorIndex === index) {
                 monitor_has_panel = true;
+                panel = _panel;
             }
         }
     }
@@ -387,18 +387,18 @@ function _windowUpdated(params) {
     if ((Transitions.get_transparency_status().is_transparent() !== add_transparency) || params.force) {
         if (add_transparency) {
             if (params.blank) {
-                Transitions.blank_fade_out(transition_params);
+                Transitions.blank_fade_out(panel, transition_params);
             } else {
-                Transitions.fade_out(transition_params);
+                Transitions.fade_out(panel, transition_params);
             }
         } else {
-            Transitions.fade_in(transition_params);
+            Transitions.fade_in(panel, transition_params);
         }
-    } else if (Transitions.get_transparency_status().is_blank()) {
+    } else if (Transitions.get_transparency_status(panel).is_blank()) {
         if (add_transparency) {
-            Transitions.minimum_fade_in(transition_params);
+            Transitions.minimum_fade_in(panel, transition_params);
         } else {
-            Transitions.fade_in(transition_params);
+            Transitions.fade_in(panel, transition_params);
         }
     } else if (Settings.check_overrides() || Settings.check_triggers()) {
         // TODO: Debug this more.
@@ -407,17 +407,17 @@ function _windowUpdated(params) {
         transition_params.interruptible = true;
 
         if (!add_transparency) {
-            Transitions.fade_in(transition_params);
+            Transitions.fade_in(panel, transition_params);
         }
     }
 
     if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
         if (!add_transparency && Settings.get_enable_maximized_text_color()) {
-            Theming.remove_text_color();
-            Theming.set_text_color('maximized');
+            Theming.remove_text_color(panel);
+            Theming.set_text_color(panel, 'maximized');
         } else {
-            Theming.remove_text_color('maximized');
-            Theming.set_text_color();
+            Theming.remove_text_color(panel, 'maximized');
+            Theming.set_text_color(panel);
         }
     }
 
