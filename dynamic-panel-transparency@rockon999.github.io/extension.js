@@ -56,7 +56,7 @@ function enable() {
     try {
         let schemaObj = Convenience.getSchemaObj(USER_THEME_SCHEMA, true);
 
-        if (!Util.is_undef(schemaObj)) {
+        if (schemaObj) {
             theme_settings = new Gio.Settings({
                 settings_schema: schemaObj
             });
@@ -111,7 +111,7 @@ function idle_enable(update, theme_settings = null) {
             return false;
         }
 
-        if (!extension || (extension && !Util.is_undef(extension.extensionState) && extension.extensionState === ExtensionSystem.ExtensionState.DISABLED)) {
+        if (!extension || (extension && typeof(extension.extensionState) !== 'undefined' && extension.extensionState === ExtensionSystem.ExtensionState.DISABLED)) {
             log('[Dynamic Panel Transparency] Tried to modify the panel while disabled.');
             return false;
         }

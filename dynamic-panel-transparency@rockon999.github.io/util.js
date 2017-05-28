@@ -49,18 +49,6 @@ function get_shell_version() {
 /* Utility Functions */
 
 /**
- * Evaluates parameter 'a' and returns true if 'a' is undefined or null or false when not.
- *
- * @param {Object} a - Test value.
- *
- * @returns {Boolean} Whether 'a' is undefined or null.
- *
- */
-function is_undef(a) {
-    return (typeof (a) === 'undefined' || a === null);
-}
-
-/**
  * Evaluates parameter 'value' and returns either 'value' or 'min'/'max' if 'value' is outside of the range.
  *
  * @param {Number} value - Test value.

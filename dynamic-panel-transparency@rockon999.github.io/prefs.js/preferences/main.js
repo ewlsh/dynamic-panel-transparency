@@ -169,7 +169,7 @@ function buildPrefsWidget() {
     try {
         let schemaObj = Convenience.getSchemaObj(GNOME_BACKGROUND_SCHEMA, true);
 
-        if (!Util.is_undef(schemaObj)) {
+        if (schemaObj) {
             bg_settings = new Gio.Settings({
                 settings_schema: schemaObj
             });
@@ -1267,7 +1267,7 @@ function buildPrefsWidget() {
                             }
                             settings.set_strv('window-overrides', overrides);
 
-                            if (!Util.is_undef(tweak.trigger) && tweak.trigger) {
+                            if (typeof(tweak.trigger) !== 'undefined' && tweak.trigger !== null) {
                                 let triggers = settings.get_strv('trigger-windows');
                                 for (let wm_class of tweak.wm_class) {
                                     if (triggers.indexOf(wm_class) === -1) {

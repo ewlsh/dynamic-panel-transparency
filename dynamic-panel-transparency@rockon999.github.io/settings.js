@@ -7,7 +7,6 @@ const Params = imports.misc.params;
 
 const Convenience = Me.imports.convenience;
 const Events = Me.imports.events;
-const Util = Me.imports.util;
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
@@ -39,7 +38,7 @@ function init() {
     try {
         let schemaObj = Convenience.getSchemaObj(GNOME_BACKGROUND_SCHEMA, true);
 
-        if (!Util.is_undef(schemaObj)) {
+        if (schemaObj) {
             this._background_settings = new Gio.Settings({
                 settings_schema: schemaObj
             });
@@ -49,7 +48,7 @@ function init() {
     try {
         let schemaObj = Convenience.getSchemaObj(GNOME_INTERFACE_SCHEMA, true);
 
-        if (!Util.is_undef(schemaObj)) {
+        if (schemaObj) {
             this._interface_settings = new Gio.Settings({
                 settings_schema: schemaObj
             });
@@ -118,7 +117,7 @@ function init() {
 function cleanup() {
     for (let i = 0; i < this._keys.length; ++i) {
         let setting = this._keys[i];
-        if (Util.is_undef(setting.getter)) {
+        if (!setting.getter) {
             this['get_' + setting.name] = null;
         } else {
             this[setting.getter] = null;
@@ -143,11 +142,11 @@ function add(params) {
         getter: null,
         handler: null
     };
-    if (!Util.is_undef(params.getter))
+    if (typeof(params.getter) !== 'undefined')
         key.getter = params.getter;
-    if (!Util.is_undef(params.handler))
+    if (typeof(params.handler)!== 'undefined')
         key.handler = params.handler;
-    if (!Util.is_undef(params.parser))
+    if (typeof(params.parser)!== 'undefined')
         key.parser = params.parser;
     this._keys.push(key);
 }
@@ -161,11 +160,11 @@ function add_app_setting(params) {
         getter: null,
         handler: null,
     };
-    if (!Util.is_undef(params.getter))
+    if (typeof(params.getter) !== 'undefined')
         key.getter = params.getter;
-    if (!Util.is_undef(params.handler))
+    if (typeof(params.handler)!== 'undefined')
         key.handler = params.handler;
-    if (!Util.is_undef(params.parser))
+    if (typeof(params.parser)!== 'undefined')
         key.parser = params.parser;
 
     this._app_keys[params.settings_key] = key;
@@ -197,7 +196,7 @@ function bind() {
             this.settings_manager.update(setting);
         })));
 
-        if (!Util.is_undef(setting.handler)) {
+        if (setting.handler) {
             this.settingsBoundIds.push(this._settings.connect('changed::' + setting.key, function() {
                 // TODO: Find a better way to handle settings being changed right as the extension starts up.
                 try {
@@ -246,15 +245,15 @@ function bind() {
 
                 let maximized_window = Events.get_current_maximized_window();
 
-                if (!Util.is_undef(maximized_window) && this.check_overrides() && params.app_settings) {
-                    if (!Util.is_undef(this.window_settings_manager[setting.name])) {
+                if (maximized_window && this.check_overrides() && params.app_settings) {
+                    if (this.window_settings_manager[setting.name]) {
                         let value = this.window_settings_manager[setting.name][maximized_window.get_wm_class()];
-                        if (!Util.is_undef(value)) {
+                        if (value) {
                             let window_setting = this._app_keys[setting.key];
-                            let window_parser = ((!Util.is_undef(window_setting) && window_setting.parser !== null) ? window_setting.parser : function(input) {
+                            let window_parser = (window_setting && window_setting.parser !== null) ? window_setting.parser : function(input) {
                                 return input;
-                            });
-                            if (!Util.is_undef(value)) {
+                            };
+                            if (value) {
                                 let result = window_parser(value, parser(this.settings_manager[setting.name]), maximized_window.get_wm_class(), true);
                                 if (params.app_info) {
                                     return { value: result, app_info: maximized_window.get_wm_class() };
@@ -263,17 +262,17 @@ function bind() {
                             }
                         }
                     }
-                    if (!Util.is_undef(Events._wm_tracker) && !Util.is_undef(this.app_settings_manager[setting.name])) {
+                    if (Events._wm_tracker && this.app_settings_manager[setting.name]) {
                         let shell_app = Events._wm_tracker.get_window_app(maximized_window);
-                        if (!Util.is_undef(shell_app) && !Util.is_undef(shell_app.get_id())) {
+                        if (shell_app && shell_app.get_id()) {
                             let app_id = shell_app.get_id();
                             let app_setting = this._app_keys[setting.key];
-                            let app_parser = ((!Util.is_undef(app_setting) && app_setting.parser !== null) ? app_setting.parser : function(input) {
+                            let app_parser = ((app_setting && app_setting.parser !== null) ? app_setting.parser : function(input) {
                                 return input;
                             });
                             let value = this.app_settings_manager[setting.name][app_id];
 
-                            if (!Util.is_undef(value)) {
+                            if (value) {
                                 let result = app_parser(value, parser(this.settings_manager[setting.name]), app_id);
                                 if (params.app_info) {
                                     return { value: result, app_info: app_id };
@@ -290,7 +289,7 @@ function bind() {
             };
         }
 
-        if (Util.is_undef(setting.getter)) {
+        if (!setting.getter) {
             this['get_' + setting.name] = getter;
         } else {
             this[setting.getter] = getter;
@@ -317,7 +316,7 @@ const SettingsManager = new Lang.Class({
         for (let i = 0; i < params.length; ++i) {
             let setting = params[i];
             this.values.push(setting);
-            if (this.settings.list_keys().indexOf(setting.key) === -1 || Util.is_undef(setting))
+            if (this.settings.list_keys().indexOf(setting.key) === -1 || !setting)
                 continue;
             let variant = GLib.VariantType.new(setting.type);
             if (variant.is_array() || variant.is_tuple()) {
@@ -368,11 +367,11 @@ const AppSettingsManager = new Lang.Class({
             for (let setting_key of Object.keys(params)) {
                 let setting = params[setting_key];
 
-                if (Util.is_undef(setting) || this.settings[app_id].list_keys().indexOf(setting.key) === -1) {
+                if (!setting || this.settings[app_id].list_keys().indexOf(setting.key) === -1) {
                     continue;
                 }
 
-                if (Util.is_undef(this.settingsBoundIds[app_id])) {
+                if (!this.settingsBoundIds[app_id]) {
                     this.settingsBoundIds[app_id] = [];
                 }
 
@@ -391,10 +390,10 @@ const AppSettingsManager = new Lang.Class({
         }
     },
     update: function(setting, app_id) {
-        if (Util.is_undef(setting) || this.settings[app_id].list_keys().indexOf(setting.key) === -1)
+        if (!setting || this.settings[app_id].list_keys().indexOf(setting.key) === -1)
             return;
         let variant = GLib.VariantType.new(setting.type);
-        if (Util.is_undef(this[setting.name]))
+        if (!this[setting.name])
             this[setting.name] = {};
         if (variant.is_array() || variant.is_tuple()) {
             this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).deep_unpack();
