@@ -46,6 +46,8 @@ function init() {
     this.workspaces = [];
     this.windows = [];
 
+    this.maximized_window = null;
+
     this._wm_tracker = Shell.WindowTracker.get_default();
 
     this._overviewHiddenSig = Main.overview.connect(!Settings.gs_enable_animations() ? 'hiding' : 'hidden', Lang.bind(this, Util.strip_args(_windowUpdated)));
@@ -78,10 +80,13 @@ function init() {
     /* Apparently Ubuntu is wierd and does this different than a common Gnome installation. */
     // TODO: Look into this.
 
+    this._theme_settings = null;
+    this._userThemeChangedSig = null;
+
     try {
         let schemaObj = Convenience.getSchemaObj(USER_THEME_SCHEMA, true);
 
-        if (!Util.is_undef(schemaObj)) {
+        if (schemaObj) {
             this._theme_settings = new Gio.Settings({
                 settings_schema: schemaObj
             });
@@ -90,7 +95,7 @@ function init() {
         log('[Dynamic Panel Transparency] Failed to find shell theme settings. Ignore this if you are not using a custom theme.');
     }
 
-    if (!Util.is_undef(this._theme_settings)) {
+    if (this._theme_settings) {
         this._userThemeChangedSig = this._theme_settings.connect('changed::name', Lang.bind(this, _userThemeChanged));
     }
 }
@@ -101,7 +106,7 @@ function init() {
  */
 function cleanup() {
     /* Disconnect Signals */
-    if (!Util.is_undef(this._windowUnminimizeSig)) {
+    if (this._windowUnminimizeSig) {
         global.window_manager.disconnect(this._windowUnminimizeSig);
     }
 
@@ -120,7 +125,7 @@ function cleanup() {
 
     this._wm_tracker.disconnect(this._appFocusedSig);
 
-    if (!Util.is_undef(this._theme_settings) && !Util.is_undef(this._userThemeChangedSig)) {
+    if (this._theme_settings && this._userThemeChangedSig) {
         this._theme_settings.disconnect(this._userThemeChangedSig);
     }
 
@@ -179,7 +184,7 @@ function _overviewShown() {
 function _windowDestroyed(wm, window_actor) {
     let window = window_actor.get_meta_window();
 
-    if (Util.is_undef(window.dpt_tracking)) {
+    if (typeof (window.dpt_tracking) === 'undefined') {
         return;
     }
 
@@ -251,7 +256,7 @@ function _userThemeChanged() {
  *
  */
 function _windowCreated(display, window) {
-    if (window && Util.is_undef(window.dpt_tracking)) {
+    if (window && typeof (window.dpt_tracking) === 'undefined') {
         if (Util.is_valid(window)) {
             window.dpt_tracking = true;
 
@@ -269,8 +274,12 @@ function _windowCreated(display, window) {
 
             this.windows.push({ 'window': window, 'signalIds': [v_wId, f_wId] });
 
-            _windowUpdated();
+            _windowUpdated({ trigger_window: window });
+
+            return;
         }
+
+        _windowUpdated();
     }
 }
 
@@ -484,5 +493,7 @@ function _workspaceSwitched(wm, from, to, direction) {
  * @returns {Object} The current visible maximized window.
  */
 function get_current_maximized_window() {
+    if (typeof (this.maximized_window) === 'undefined')
+        return null;
     return this.maximized_window;
 }

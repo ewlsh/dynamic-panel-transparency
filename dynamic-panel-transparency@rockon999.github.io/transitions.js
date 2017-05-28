@@ -92,8 +92,8 @@ function minimum_fade_in(params) {
 
     params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
 
-    if (this.animation_status.is_done() || !this.animation_status.equals(AnimationAction.FADE_IN, AnimationDestination.MINIMUM)) {
-        this.animation_status.set(AnimationAction.FADE_IN, AnimationDestination.MINIMUM);
+    if (this.animation_status.is_done() || !this.animation_status.equals(AnimationAction.FADING_IN, AnimationDestination.MINIMUM)) {
+        this.animation_status.set(AnimationAction.FADING_IN, AnimationDestination.MINIMUM);
     } else {
         return;
     }
@@ -154,8 +154,8 @@ function fade_in(params) {
 
     params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
 
-    if (this.animation_status.is_done() || !this.animation_status.equals(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM)) {
-        this.animation_status.set(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM);
+    if (this.animation_status.is_done() || !this.animation_status.equals(AnimationAction.FADING_IN, AnimationDestination.MAXIMUM)) {
+        this.animation_status.set(AnimationAction.FADING_IN, AnimationDestination.MAXIMUM);
     } else {
         return;
     }
@@ -263,8 +263,8 @@ function fade_in_complete() {
 function fade_out(params) {
     params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
 
-    if (this.animation_status.is_done() || !this.animation_status.equals(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM)) {
-        this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM);
+    if (this.animation_status.is_done() || !this.animation_status.equals(AnimationAction.FADING_OUT, AnimationDestination.MINIMUM)) {
+        this.animation_status.set(AnimationAction.FADING_OUT, AnimationDestination.MINIMUM);
     } else {
         return;
     }
@@ -332,8 +332,8 @@ function fade_out(params) {
 function blank_fade_out(params) {
     params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
 
-    if (this.animation_status.is_done() || !this.animation_status.equals(AnimationAction.FADE_OUT, AnimationDestination.BLANK)) {
-        this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.BLANK);
+    if (this.animation_status.is_done() || !this.animation_status.equals(AnimationAction.FADING_OUT, AnimationDestination.BLANK)) {
+        this.animation_status.set(AnimationAction.FADING_OUT, AnimationDestination.BLANK);
     } else {
         return;
     }

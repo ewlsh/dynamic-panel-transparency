@@ -208,7 +208,7 @@ function remove_icon_shadow() {
 function register_text_color(color, prefix) {
     let color_css = 'color: rgb(' + color.red + ', ' + color.green + ', ' + color.blue + ');';
 
-    if (!Util.is_undef(prefix)) {
+    if (prefix) {
         prefix = '-' + prefix + '-';
     } else {
         prefix = '-';
@@ -231,7 +231,7 @@ function register_text_color(color, prefix) {
  * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
  */
 function set_text_color(prefix) {
-    if (!Util.is_undef(prefix)) {
+    if (prefix) {
         prefix = '-' + prefix + '-';
     } else {
         prefix = '-';
@@ -248,7 +248,7 @@ function set_text_color(prefix) {
  * @param {string} prefix - What stylesheet prefix to retrieve. '-' is the default.
  */
 function remove_text_color(prefix) {
-    if (!Util.is_undef(prefix)) {
+    if (prefix) {
         prefix = '-' + prefix + '-';
     } else {
         prefix = '-';
@@ -283,11 +283,11 @@ function set_panel_color(color) {
     let panel_color = { red: 0, green: 0, blue: 0, alpha: 0 };
 
     /* Make sure settings has been "setup". */
-    if (!Util.is_undef(Settings.get_panel_color)) {
+    if (typeof (Settings.get_panel_color) !== 'undefined' && Settings.get_panel_color !== null) {
         let background = get_background_color();
 
         // TODO: Why would this be undefined?
-        if (!Util.is_undef(background)) {
+        if (background) {
             panel_color = background;
         }
     } else {
@@ -323,7 +323,7 @@ function set_panel_color(color) {
 function set_corner_color(color) {
     let panel_color = { red: 0, green: 0, blue: 0, alpha: 0 };
 
-    if (!Util.is_undef(Settings.get_panel_color)) {
+    if (typeof (Settings.get_panel_color) !== 'undefined' && Settings.get_panel_color !== null) {
         panel_color = get_background_color();
     }
 
@@ -368,11 +368,11 @@ function clear_corner_color() {
 function get_background_image_color(theme) {
     let file = theme.get_background_image();
 
-    if (Util.is_undef(file)) {
+    if (!file) {
         log('[Dynamic Panel Transparency] No background image found in user theme.');
         let image = theme.get_border_image();
 
-        if (Util.is_undef(image)) {
+        if (!image) {
             log('[Dynamic Panel Transparency] No border image found in user theme.');
             return null;
         } else {
@@ -384,7 +384,7 @@ function get_background_image_color(theme) {
     try {
         let background = GdkPixbuf.Pixbuf.new_from_file(file.get_path());
 
-        if (Util.is_undef(background)) {
+        if (!background) {
             log('[Dynamic Panel Transparency] Provided background is null.');
             return null;
         }
@@ -434,36 +434,27 @@ function get_background_color() {
  * @returns {Number} Alpha value from 0-255.
  */
 function get_maximized_opacity() {
-    let custom = Settings.get_maximized_opacity({ app_info: true });
-
-    if (custom.app_info !== null && Settings.check_overrides()) {
-        if (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info]) {
-            return custom.value;
-        }
-
-        if (!Settings.enable_custom_opacity()) {
-            if (this.theme_opacity >= THEME_OPACITY_THRESHOLD) {
-                return this.theme_opacity;
-            } else {
-                /* Get the default value */
-                return THEME_OPACITY_THRESHOLD;
-            }
-        }
-
-        let original = Settings.get_maximized_opacity({ app_settings: false });
-        return original;
-    }
+    let maximized_opacity = Settings.get_maximized_opacity({ app_info: true });
 
     /* 1) Make sure we want a custom opacity. */
     /* 2) If custom.app_info !== null that means the setting is overriden. */
+    if (maximized_opacity.app_info !== null && Settings.check_overrides()) {
+        if (Settings.window_settings_manager['enable_background_tweaks'][maximized_opacity.app_info] || Settings.app_settings_manager['enable_background_tweaks'][maximized_opacity.app_info]) {
+            return maximized_opacity.value;
+        }
+    }
+
     if (!Settings.enable_custom_opacity()) {
         if (this.theme_opacity >= THEME_OPACITY_THRESHOLD) {
             return this.theme_opacity;
+        } else if (this.theme_opacity === 0) {
+            /* Get the default value if the theme already added transparency */
+            return Settings.get_maximized_opacity({ default: true });
         } else {
             return THEME_OPACITY_THRESHOLD;
         }
     } else {
-        return custom.value;
+        return maximized_opacity.value;
     }
 }
 
@@ -589,8 +580,8 @@ function average_color(source, width, height) {
 
     let dataPtr = source.get_pixels();
 
-    width = Util.is_undef(width) ? source.get_width() : width;
-    height = Util.is_undef(width) ? source.get_height() : width;;
+    width = (typeof (width) !== 'undefined' && width !== null) ? source.get_width() : width;
+    height = (typeof (height) !== 'undefined' && height !== null) ? source.get_height() : height;
 
     let length = width * height;
 
