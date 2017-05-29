@@ -129,11 +129,14 @@ function cleanup() {
         this._theme_settings.disconnect(this._userThemeChangedSig);
     }
 
-    for (let window_container of this.windows) {
-        for (let signalId of window_container.signalIds) {
-            window_container.window.disconnect(signalId);
+    for (let window of this.windows) {
+        if (typeof (window._dpt_signals) !== 'undefined') {
+            for (let signalId of window._dpt_signals) {
+                window.disconnect(signalId);
+            }
         }
-        delete window_container.window.dpt_tracking;
+        delete window._dpt_signals;
+        delete window._dpt_tracking;
     }
 
     /* Cleanup Signals */
@@ -184,12 +187,21 @@ function _overviewShown() {
 function _windowDestroyed(wm, window_actor) {
     let window = window_actor.get_meta_window();
 
-    if (typeof (window.dpt_tracking) === 'undefined') {
+    if (typeof (window._dpt_tracking) === 'undefined') {
         return;
     }
 
     /* Remove our tracking variable. */
-    delete window.dpt_tracking;
+    delete window._dpt_tracking;
+
+    /* Disconnect all signals... */
+    if (typeof (window._dpt_signals) !== 'undefined') {
+        for (let signalId of window._dpt_signals) {
+            window.disconnect(signalId);
+        }
+    }
+
+    delete window._dpt_signals;
 
     let index = this.windows.indexOf(window);
     if (index !== -1) {
@@ -256,9 +268,9 @@ function _userThemeChanged() {
  *
  */
 function _windowCreated(display, window) {
-    if (window && typeof (window.dpt_tracking) === 'undefined') {
+    if (window && typeof (window._dpt_tracking) === 'undefined') {
         if (Util.is_valid(window)) {
-            window.dpt_tracking = true;
+            window._dpt_tracking = true;
 
             const v_wId = window.connect('notify::maximized-vertically', Lang.bind(this, function(obj, property) {
                 if (!obj['maximized_vertically']) {
@@ -272,7 +284,11 @@ function _windowCreated(display, window) {
                 this._windowUpdated();
             }));
 
-            this.windows.push({ 'window': window, 'signalIds': [v_wId, f_wId] });
+            const p_wId = window.connect('position-changed', Lang.bind(this, Intellifade.check));
+
+            window._dpt_signals = [v_wId, f_wId, p_wId];
+
+            this.windows.push(window);
 
             _windowUpdated({ trigger_window: window });
 
