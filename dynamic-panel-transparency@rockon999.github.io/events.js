@@ -63,7 +63,7 @@ function init() {
     }
 
     // COMPATIBILITY: No unminimize signal on 3.14
-    this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, Util.strip_args(_windowUpdated)));
+    this._windowUnminimizeSig = Compatibility.g_signal_connect_after(global.window_manager, 'unminimize', Lang.bind(this, Util.strip_args(_windowUpdated)));
 
     this._workspaceSwitchSig = global.window_manager.connect_after('switch-workspace', Lang.bind(this, _workspaceSwitched));
     this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, _windowMinimized));
