@@ -1,4 +1,4 @@
-/* exported st_border_image_get_file, st_theme_load_stylesheet, st_theme_unload_stylesheet, g_signal_connect, gtk_color_button_set_show_editor, gtk_scrolled_window_set_overlay_scrolling, parse_css */
+/* exported st_border_image_get_file, st_theme_load_stylesheet, st_theme_unload_stylesheet, g_signal_connect, g_signal_connect_after, gtk_color_button_set_show_editor, gtk_scrolled_window_set_overlay_scrolling, parse_css */
 
 /* Provides a version compatibility layer for Gtk, GObject, St, etc. functions.*/
 /* Uses C function names. */
@@ -39,6 +39,19 @@ const g_signal_connect = function(instance, signal, callback) {
     if (typeof (Compatibility.g_signal_connect[signal]) !== 'undefined') {
         if (SHELL_VERSION.major === Compatibility.g_signal_connect[signal].major && SHELL_VERSION.minor > Compatibility.g_signal_connect[signal].minor) {
             return instance.connect(signal, callback);
+        } else {
+            return null;
+        }
+    } else {
+        return instance.connect(signal, callback);
+    }
+};
+
+/* Filters for signals that don't exist. */
+const g_signal_connect_after = function(instance, signal, callback) {
+    if (typeof (Compatibility.g_signal_connect[signal]) !== 'undefined') {
+        if (SHELL_VERSION.major === Compatibility.g_signal_connect[signal].major && SHELL_VERSION.minor > Compatibility.g_signal_connect[signal].minor) {
+            return instance.connect_after(signal, callback);
         } else {
             return null;
         }

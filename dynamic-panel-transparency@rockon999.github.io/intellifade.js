@@ -1,12 +1,41 @@
-let check_timeout = 0;
-let do_check = false;
+/* exported check */
+
+const GLib = imports.gi.GLib;
+const Mainloop = imports.mainloop;
+const Lang = imports.lang;
+
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Transitions = Me.imports.transitions;
+
+let timeoutId = 0;
+let continueCheck = false;
 
 function check() {
+
+
+    if (timeoutId <= 0) {
+        runCheck();
+
+        timeoutId = Mainloop.timeout_add(500, Lang.bind(this, function() {
+            runCheck();
+            if (continueCheck) {
+                continueCheck = false;
+                return GLib.SOURCE_CONTINUE;
+            } else {
+                timeoutId = 0;
+                return GLib.SOURCE_REMOVE;
+            }
+        }));
+    } else {
+        continueCheck = true;
+    }
 
 }
 
 function runCheck() {
-    /* TODO: Something? Anything?
+    let windows = global.get_window_actors();
+
+    for (let window of windows) {
         let frame = window.get_frame_rect();
 
         let scale_factor = imports.gi.St.ThemeContext.get_for_stage(global.stage).scale_factor;
@@ -19,9 +48,13 @@ function runCheck() {
         let horizontal_override = window_touching_panel && frame.x <= width_buffer && frame.width >= imports.ui.main.panel.actor.get_height() - width_buffer;
 
         if (horizontal_override || vertical_override) {
-            return true;
+            Transitions.fade_in();
         } else {
             return false;
         }
+    }
+
+    /* TODO: Something? Anything?
+
                 */
 }
