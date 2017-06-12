@@ -1,4 +1,4 @@
-/* exported init, cleanup, get_animation_status, get_transparency_status, minimum_fade_in, update_transition_type */
+/* exported init, cleanup, lock, unlock, get_animation_status, get_transparency_status, minimum_fade_in, update_transition_type */
 /* exported fade_in, fade_out */
 
 const Lang = imports.lang;
@@ -9,8 +9,10 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Params = imports.misc.params;
 
 const Settings = Me.imports.settings;
-const Theming = Me.imports.theming;
 const Util = Me.imports.util;
+
+const Compatibility = Me.imports.compatibility;
+let Theming = Compatibility.get_theming_manager();
 
 /* Convenience constant for the shell panel. */
 const Panel = Main.panel;
@@ -403,6 +405,7 @@ function update_corner_alpha(alpha = null) {
     Theming.set_corner_color({
         alpha: alpha
     });
+    //update_corner_alpha(Theming.get_background_alpha(Panel.actor));
 }
 
 const TransparencyStatus = new Lang.Class({

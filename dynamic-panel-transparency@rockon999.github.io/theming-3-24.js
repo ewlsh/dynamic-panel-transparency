@@ -1,7 +1,5 @@
 /* exported init, cleanup, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
 
-const GdkPixbuf = imports.gi.GdkPixbuf;
-const Clutter = imports.gi.Clutter;
 const St = imports.gi.St;
 
 const Main = imports.ui.main;
@@ -12,6 +10,8 @@ const Params = imports.misc.params;
 const Compatibility = Me.imports.compatibility;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
+
+const GdkPixbuf = imports.gi.GdkPixbuf;
 
 /* Convenience constant for the shell panel. */
 const Panel = Main.panel;
@@ -34,6 +34,8 @@ const SCALE_FACTOR = 255;
 function init() {
     this.stylesheets = [];
     this.styles = [];
+
+    _updatePanelCSS();
 }
 
 /**
@@ -95,7 +97,6 @@ function get_theme_background_color() {
 function set_theme_opacity(alpha) {
     this.theme_opacity = alpha;
 }
-
 /**
  * Registers a shadow stylesheet for text in the panel.
  *
@@ -280,35 +281,6 @@ function register_style(style) {
  * @param {Number} color.alpha - Alpha value ranging from 0-255.
  */
 function set_panel_color(color) {
-    let panel_color = { red: 0, green: 0, blue: 0, alpha: 0 };
-
-    /* Make sure settings has been "setup". */
-    if (typeof (Settings.get_panel_color) !== 'undefined' && Settings.get_panel_color !== null) {
-        let background = get_background_color();
-
-        // TODO: Why would this be undefined?
-        if (background) {
-            panel_color = background;
-        }
-    } else {
-        log('[Dynamic Panel Transparency] Panel coloring set without proper settings.');
-    }
-
-    let current_alpha = get_background_alpha(Panel.actor);
-
-    color = Params.parse(color, {
-        red: panel_color.red,
-        green: panel_color.green,
-        blue: panel_color.blue,
-        alpha: current_alpha
-    });
-
-    Panel.actor.set_background_color(new Clutter.Color({
-        red: color.red,
-        green: color.green,
-        blue: color.blue,
-        alpha: color.alpha
-    }));
 }
 
 /**
@@ -477,9 +449,8 @@ function get_unmaximized_opacity() {
  *
  */
 function strip_panel_styling() {
-    if (!Panel.actor.has_style_class_name('panel-effect-transparency')) {
-        Panel.actor.add_style_class_name('panel-effect-transparency');
-    }
+    Panel.actor.add_style_class_name('panel-effect-transparency');
+
 }
 
 /**
@@ -487,9 +458,7 @@ function strip_panel_styling() {
  *
  */
 function reapply_panel_styling() {
-    if (Panel.actor.has_style_class_name('panel-effect-transparency')) {
-        Panel.actor.remove_style_class_name('panel-effect-transparency');
-    }
+    Panel.actor.remove_style_class_name('panel-effect-transparency');
 }
 
 /**
@@ -497,9 +466,7 @@ function reapply_panel_styling() {
  *
  */
 function strip_panel_background_image() {
-    if (!Panel.actor.has_style_class_name('panel-background-image-transparency')) {
-        Panel.actor.add_style_class_name('panel-background-image-transparency');
-    }
+    Panel.actor.add_style_class_name('panel-background-image-transparency');
 }
 
 /**
@@ -507,9 +474,7 @@ function strip_panel_background_image() {
  *
  */
 function reapply_panel_background_image() {
-    if (Panel.actor.has_style_class_name('panel-background-image-transparency')) {
-        Panel.actor.remove_style_class_name('panel-background-image-transparency');
-    }
+    Panel.actor.remove_style_class_name('panel-background-image-transparency');
 }
 
 /**
@@ -517,9 +482,8 @@ function reapply_panel_background_image() {
  *
  */
 function strip_panel_background() {
-    if (!Panel.actor.has_style_class_name('panel-background-color-transparency')) {
-        Panel.actor.add_style_class_name('panel-background-color-transparency');
-    }
+    register_background_color(get_theme_background_color(), Settings.get_current_user_theme());
+    register_background_color(Settings.get_panel_color());
 }
 
 /**
@@ -527,9 +491,10 @@ function strip_panel_background() {
  *
  */
 function reapply_panel_background() {
-    if (Panel.actor.has_style_class_name('panel-background-color-transparency')) {
-        Panel.actor.remove_style_class_name('panel-background-color-transparency');
-    }
+    remove_unmaximized_background_color(Settings.get_current_user_theme());
+    remove_maximized_background_color(Settings.get_current_user_theme());
+    remove_unmaximized_background_color();
+    remove_maximized_background_color();
 }
 
 /**
@@ -556,8 +521,10 @@ function apply_stylesheet_css(css, name) {
         log('[Dynamic Panel Transparency] Error Loading Temporary Stylesheet: ' + name);
         return null;
     }
+
     return file_name;
 }
+
 
 /**
  * Taken from Plank. Used to calculate the average color of a theme's images.
@@ -681,19 +648,91 @@ function average_color(source, width, height) {
 /* Methods to extend Tweener's properties. */
 
 function get_background_alpha(actor) {
-    return actor.get_background_color().alpha;
+    return 0;
 }
 
 function set_background_alpha(actor, alpha) {
-    let background_color = actor.get_background_color();
+}
 
-    /* Some transition algorithms go overboard. */
-    alpha = Util.clamp(alpha, 0, 255);
+/* 3.24+ Specific Functions (Not backwards compatible) */
 
-    actor.set_background_color(new Clutter.Color({
-        red: background_color.red,
-        green: background_color.green,
-        blue: background_color.blue,
-        alpha: alpha
-    }));
+function _updatePanelCSS() {
+    /* Handle transition types */
+    //let transition_type = Transitions.TransitionType.from_index(Settings.get_transition_type());
+    //let type_css = transition_type.code;
+    // TODO: CHECK ABOVE
+    let duration = Settings.get_transition_speed();
+    let duration_css = +duration;
+    // TODO: CHECK ABOVE
+    //let icon_color_css = 'rgba(' + icon_color.red + ', ' + icon_color.green + ', ' + icon_color.blue + ', ' + icon_color.alpha.toFixed(2) + ')';
+    //let icon_position_css = '' + icon_position[0] + 'px ' + icon_position[1] + 'px ' + icon_position[2] + 'px';
+
+    // let type = apply_stylesheet_css('.dpt-panel-transition-type { transition-type: ' + type_css + '; }', 'panel-transition-type');
+    let time = apply_stylesheet_css('.dpt-panel-transition-duration { transition-duration: ' + duration_css + 'ms; }', 'panel-transition-duration');
+
+    Panel.actor.add_style_class_name('dpt-panel-transition-duration');
+
+    register_style('dpt-panel-transition-type');
+    register_style('dpt-panel-transition-duration');
+
+    return [null, time];
+}
+
+function register_background_color(bg_color, prefix) {
+    if (prefix) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    let unmaximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + (get_unmaximized_opacity() / SCALE_FACTOR).toFixed(2) + ')';
+    let maximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + (get_maximized_opacity() / SCALE_FACTOR).toFixed(2) + ')';
+
+    register_style('dpt-panel' + prefix + 'unmaximized');
+    register_style('dpt-panel' + prefix + 'maximized');
+
+    let unmaximized = apply_stylesheet_css('.dpt-panel' + prefix + 'unmaximized { background-color: ' + unmaximized_bg_color_css + '; }', 'panel' + prefix + 'unmaximized');
+    let maximized = apply_stylesheet_css('.dpt-panel' + prefix + 'maximized { background-color: ' + maximized_bg_color_css + '; }', 'panel' + prefix + 'maximized');
+
+    return [maximized, unmaximized];
+}
+
+function set_unmaximized_background_color(prefix) {
+    if (prefix) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'unmaximized');
+}
+
+function set_maximized_background_color(prefix) {
+    if (prefix) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'maximized');
+}
+
+function remove_unmaximized_background_color(prefix) {
+    if (prefix) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'unmaximized');
+}
+
+function remove_maximized_background_color(prefix) {
+    if (prefix) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'maximized');
 }
