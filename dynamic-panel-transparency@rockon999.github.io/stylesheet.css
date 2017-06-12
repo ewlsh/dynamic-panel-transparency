@@ -2,6 +2,7 @@
 
 .panel-background-color-transparency {
   background-color: rgba(0, 0, 0, 0);
+  transition-duration: 500ms;
 }
 
 /* Used to remove odd effects when full transparency is needed. */
@@ -21,3 +22,4 @@
   border-image: none;
   background-image: none;
 }
+

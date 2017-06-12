@@ -1,4 +1,4 @@
-/* exported st_border_image_get_file, st_theme_load_stylesheet, st_theme_unload_stylesheet, g_signal_connect, g_signal_connect_after, gtk_color_button_set_show_editor, gtk_scrolled_window_set_overlay_scrolling, parse_css */
+/* exported get_transitions, st_border_image_get_file, st_theme_load_stylesheet, st_theme_unload_stylesheet, g_signal_connect, g_signal_connect_after, gtk_color_button_set_show_editor, gtk_scrolled_window_set_overlay_scrolling, parse_css */
 
 /* Provides a version compatibility layer for Gtk, GObject, St, etc. functions.*/
 /* Uses C function names. */
@@ -8,6 +8,33 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Util = Me.imports.util;
 
 const SHELL_VERSION = Util.get_shell_version();
+
+const Compatibility = {
+    st_theme_load_stylesheet: { major: 3, minor: 14 },
+    st_theme_unload_stylesheet: { major: 3, minor: 14 },
+    st_border_image_get_file: { major: 3, minor: 14 },
+    gtk_color_button_set_show_editor: { major: 3, minor: 18 },
+    gtk_scrolled_window_set_overlay_scrolling: { major: 3, minor: 14 },
+    css: { '-gtk-icon-shadow': { major: 3, minor: 18, fallback: 'icon-shadow' } },
+    transitions: { major: 3, minor: 22 }
+};
+Util.deep_freeze(Compatibility, true);
+
+const get_theming_manager = function() {
+    if (SHELL_VERSION.major === Compatibility.transitions.major && SHELL_VERSION.minor > Compatibility.transitions.minor) {
+        log("using modern theming");
+        return Me.imports['theming-3-24'];
+    }
+    return Me.imports.theming;
+};
+
+const get_transition_manager = function() {
+    if (SHELL_VERSION.major === Compatibility.transitions.major && SHELL_VERSION.minor > Compatibility.transitions.minor) {
+        log("using transition theming");
+        return Me.imports['transitions-3-24'];
+    }
+    return Me.imports.transitions;
+};
 
 /* st-border-image in 3.14 uses strings, not Gio.File */
 const st_border_image_get_file = function(border_image) {
@@ -34,32 +61,6 @@ const st_theme_unload_stylesheet = function(theme, file_name) {
     return theme.unload_stylesheet(file_name);
 };
 
-/* Filters for signals that don't exist. */
-const g_signal_connect = function(instance, signal, callback) {
-    if (typeof (Compatibility.g_signal_connect[signal]) !== 'undefined') {
-        if (SHELL_VERSION.major === Compatibility.g_signal_connect[signal].major && SHELL_VERSION.minor > Compatibility.g_signal_connect[signal].minor) {
-            return instance.connect(signal, callback);
-        } else {
-            return null;
-        }
-    } else {
-        return instance.connect(signal, callback);
-    }
-};
-
-/* Filters for signals that don't exist. */
-const g_signal_connect_after = function(instance, signal, callback) {
-    if (typeof (Compatibility.g_signal_connect[signal]) !== 'undefined') {
-        if (SHELL_VERSION.major === Compatibility.g_signal_connect[signal].major && SHELL_VERSION.minor > Compatibility.g_signal_connect[signal].minor) {
-            return instance.connect_after(signal, callback);
-        } else {
-            return null;
-        }
-    } else {
-        return instance.connect(signal, callback);
-    }
-};
-
 /* show-editor apparently only exists in 3.20+. */
 const gtk_color_button_set_show_editor = function(widget, value) {
     if (SHELL_VERSION.major === Compatibility.gtk_color_button_set_show_editor.major && SHELL_VERSION.minor > Compatibility.gtk_color_button_set_show_editor.minor) {
@@ -83,14 +84,3 @@ const parse_css = function(css) {
     }
     return css;
 };
-
-const Compatibility = {
-    st_theme_load_stylesheet: { major: 3, minor: 14 },
-    st_theme_unload_stylesheet: { major: 3, minor: 14 },
-    st_border_image_get_file: { major: 3, minor: 14 },
-    gtk_color_button_set_show_editor: { major: 3, minor: 18 },
-    gtk_scrolled_window_set_overlay_scrolling: { major: 3, minor: 14 },
-    g_signal_connect: { 'unminimize': { major: 3, minor: 14 } },
-    css: { '-gtk-icon-shadow': { major: 3, minor: 18, fallback: 'icon-shadow' } }
-};
-Util.deep_freeze(Compatibility, true);

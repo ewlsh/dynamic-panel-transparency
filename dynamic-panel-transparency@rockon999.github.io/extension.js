@@ -14,8 +14,12 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Events = Me.imports.events;
 const Settings = Me.imports.settings;
-const Theming = Me.imports.theming;
-const Transitions = Me.imports.transitions;
+const Compatibility = Me.imports.compatibility;
+
+let Transitions = Compatibility.get_transition_manager();
+let Theming = Compatibility.get_theming_manager();
+
+const Intellifade = Me.imports.intellifade;
 const Util = Me.imports.util;
 
 const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
@@ -94,9 +98,7 @@ function enable() {
             Events.init();
 
             /* Simulate window changes. */
-            Events._windowUpdated({
-                force: true
-            });
+            Intellifade.forceSyncCheck();
         }
     }
 }
@@ -111,7 +113,7 @@ function idle_enable(update, theme_settings = null) {
             return false;
         }
 
-        if (!extension || (extension && typeof(extension.extensionState) !== 'undefined' && extension.extensionState === ExtensionSystem.ExtensionState.DISABLED)) {
+        if (!extension || (extension && typeof (extension.extensionState) !== 'undefined' && extension.extensionState === ExtensionSystem.ExtensionState.DISABLED)) {
             log('[Dynamic Panel Transparency] Tried to modify the panel while disabled.');
             return false;
         }
@@ -154,9 +156,7 @@ function idle_enable(update, theme_settings = null) {
         Events.init();
 
         /* Simulate window changes. */
-        Events._windowUpdated({
-            force: true
-        });
+        Intellifade.forceSyncCheck();
 
         return false;
     }));
@@ -303,9 +303,7 @@ function initialize_settings() {
         type: 'i',
         getter: 'get_unmaximized_opacity',
         handler: Lang.bind(this, function() {
-            Events._windowUpdated({
-                force: true
-            });
+            Intellifade.forceSyncCheck();
         })
     });
     Settings.add({
@@ -314,9 +312,7 @@ function initialize_settings() {
         type: 'i',
         getter: 'get_maximized_opacity',
         handler: Lang.bind(this, function() {
-            Events._windowUpdated({
-                force: true
-            });
+            Intellifade.forceSyncCheck();
         })
     });
     Settings.add({
@@ -419,9 +415,7 @@ function initialize_settings() {
         name: 'enable_maximized_text_color',
         type: 'b',
         handler: Lang.bind(this, function() {
-            Events._windowUpdated({
-                force: true
-            });
+            Intellifade.forceSyncCheck();
         })
     });
     Settings.add({
@@ -441,9 +435,7 @@ function initialize_settings() {
         type: 'b',
         handler: Lang.bind(this, function() {
             if (Settings.get_enable_text_color()) {
-                Events._windowUpdated({
-                    force: true
-                });
+                Intellifade.forceSyncCheck();
             } else {
                 Theming.remove_text_color();
                 Theming.remove_text_color('maximized');
