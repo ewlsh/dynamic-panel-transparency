@@ -208,7 +208,11 @@ function _userThemeChanged() {
     Theming.reapply_panel_background();
     Theming.reapply_panel_background_image();
 
-    Mainloop.idle_add(Lang.bind(this, function() {
+    const id = this.theme_detection_id = Mainloop.idle_add(Lang.bind(this, function() {
+        if (id !== this.theme_detection_id) {
+            return false;
+        }
+
         log('[Dynamic Panel Transparency] Updating user theme data.');
 
         let theme = Main.panel.actor.get_theme_node();

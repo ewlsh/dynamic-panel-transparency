@@ -1,4 +1,4 @@
-/* exported init, cleanup, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
+/* exported init, cleanup, set_maximized_background_color, set_unmaximized_background_color, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
 
 const St = imports.gi.St;
 
@@ -45,15 +45,16 @@ function init() {
 function cleanup() {
     let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
 
+    for (let style of this.styles) {
+        Panel.actor.remove_style_class_name(style);
+    }
+
     for (let sheet of this.stylesheets) {
         // COMPATIBILITY: st-theme used strings, not file objects in 3.14
         Compatibility.st_theme_unload_stylesheet(theme, sheet);
         Util.remove_file(sheet);
     }
 
-    for (let style of this.styles) {
-        Panel.actor.remove_style_class_name(style);
-    }
 
     this.stylesheets = null;
     this.styles = null;
@@ -113,7 +114,7 @@ function register_text_shadow(text_color, text_position) {
 
     register_style('dpt-panel-text-shadow');
 
-    return apply_stylesheet_css('.dpt-panel-text-shadow .panel-button { text-shadow: ' + text_position_css + ' ' + text_color_css + '; }', 'panel-text-shadow');
+    return apply_stylesheet_css('.dpt-panel-text-shadow .panel-button { text-shadow: ' + text_position_css + ' ' + text_color_css + '; }', 'foreground/panel-text-shadow');
 }
 
 /**
@@ -144,13 +145,12 @@ function register_icon_shadow(icon_color, icon_position) {
     let icon_color_css = 'rgba(' + icon_color.red + ', ' + icon_color.green + ', ' + icon_color.blue + ', ' + icon_color.alpha.toFixed(2) + ')';
     let icon_position_css = '' + icon_position[0] + 'px ' + icon_position[1] + 'px ' + icon_position[2] + 'px';
 
-    let icon = apply_stylesheet_css('.dpt-panel-icon-shadow .system-status-icon { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'panel-icon-shadow');
-    let arrow = apply_stylesheet_css('.dpt-panel-arrow-shadow .popup-menu-arrow { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'panel-arrow-shadow');
+    let stylesheet = apply_stylesheet_css('.dpt-panel-icon-shadow .system-status-icon { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; } .dpt-panel-arrow-shadow .popup-menu-arrow { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'foreground/panel-icon-shadow');
 
     register_style('dpt-panel-icon-shadow');
     register_style('dpt-panel-arrow-shadow');
 
-    return [icon, arrow];
+    return stylesheet;
 }
 
 /**
@@ -215,15 +215,13 @@ function register_text_color(color, prefix) {
         prefix = '-';
     }
 
-    let text = apply_stylesheet_css('.dpt-panel' + prefix + 'text-color .panel-button { ' + color_css + ' }', 'panel' + prefix + 'text-color');
-    let icon = apply_stylesheet_css('.dpt-panel' + prefix + 'icon-color .system-status-icon { ' + color_css + ' }', 'panel' + prefix + 'icon-color');
-    let arrow = apply_stylesheet_css('.dpt-panel' + prefix + 'arrow-color .popup-menu-arrow { ' + color_css + ' }', 'panel' + prefix + 'arrow-color');
+    let stylesheet = apply_stylesheet_css('.dpt-panel' + prefix + 'text-color .panel-button { ' + color_css + ' } .dpt-panel' + prefix + 'icon-color .system-status-icon { ' + color_css + ' } .dpt-panel' + prefix + 'arrow-color .popup-menu-arrow { ' + color_css + ' }', 'foreground/panel' + prefix + 'text-color');
 
     register_style('dpt-panel' + prefix + 'text-color');
     register_style('dpt-panel' + prefix + 'icon-color');
     register_style('dpt-panel' + prefix + 'arrow-color');
 
-    return [text, icon, arrow];
+    return stylesheet;
 }
 
 /**
@@ -477,13 +475,35 @@ function reapply_panel_background_image() {
     Panel.actor.remove_style_class_name('panel-background-image-transparency');
 }
 
+
+
 /**
  * Applies the style class 'panel-background-color-transparency' and removes any CSS embellishments.
  *
  */
 function strip_panel_background() {
+    // TODO: Clean this up.
+    const COLOR_PARSER = function(input) {
+        let color = { red: input[0], green: input[1], blue: input[2] };
+        if (input.length === 4) {
+            color.alpha = input[3];
+        }
+        return color;
+    };
+
     register_background_color(get_theme_background_color(), Settings.get_current_user_theme());
     register_background_color(Settings.get_panel_color());
+
+    let tweaked_apps = Object.keys(Settings.app_settings_manager['enable_background_tweaks']);
+    let tweaked_windows = Object.keys(Settings.window_settings_manager['enable_background_tweaks']);
+
+    for (let key of tweaked_apps) {
+        register_background_color(COLOR_PARSER(Settings.app_settings_manager['panel_color'][key]), key, 'tweaks');
+    }
+
+    for (let key of tweaked_windows) {
+        register_background_color(COLOR_PARSER(Settings.window_settings_manager['panel_color'][key]), key, 'tweaks');
+    }
 }
 
 /**
@@ -643,46 +663,29 @@ function average_color(source, width, height) {
     return { red: rTotal, green: gTotal, blue: bTotal, alpha: aTotal2 };
 }
 
-// TODO: Document?
-
 /* Methods to extend Tweener's properties. */
 
 function get_background_alpha(actor) {
     return 0;
 }
 
-function set_background_alpha(actor, alpha) {
-}
+function set_background_alpha(actor, alpha) {}
 
 /* 3.24+ Specific Functions (Not backwards compatible) */
 
-function _updatePanelCSS() {
-    /* Handle transition types */
-    //let transition_type = Transitions.TransitionType.from_index(Settings.get_transition_type());
-    //let type_css = transition_type.code;
-    // TODO: CHECK ABOVE
-    let duration = Settings.get_transition_speed();
-    let duration_css = +duration;
-    // TODO: CHECK ABOVE
-    //let icon_color_css = 'rgba(' + icon_color.red + ', ' + icon_color.green + ', ' + icon_color.blue + ', ' + icon_color.alpha.toFixed(2) + ')';
-    //let icon_position_css = '' + icon_position[0] + 'px ' + icon_position[1] + 'px ' + icon_position[2] + 'px';
+function register_background_color(bg_color, prefix, tweak_name) {
+    let suffix = prefix ? '-' + prefix : '';
 
-    // let type = apply_stylesheet_css('.dpt-panel-transition-type { transition-type: ' + type_css + '; }', 'panel-transition-type');
-    let time = apply_stylesheet_css('.dpt-panel-transition-duration { transition-duration: ' + duration_css + 'ms; }', 'panel-transition-duration');
-
-    Panel.actor.add_style_class_name('dpt-panel-transition-duration');
-
-    register_style('dpt-panel-transition-type');
-    register_style('dpt-panel-transition-duration');
-
-    return [null, time];
-}
-
-function register_background_color(bg_color, prefix) {
     if (prefix) {
         prefix = '-' + prefix + '-';
     } else {
         prefix = '-';
+    }
+
+    if (tweak_name) {
+        tweak_name = tweak_name + '/';
+    } else {
+        tweak_name = '';
     }
 
     let unmaximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + (get_unmaximized_opacity() / SCALE_FACTOR).toFixed(2) + ')';
@@ -691,10 +694,11 @@ function register_background_color(bg_color, prefix) {
     register_style('dpt-panel' + prefix + 'unmaximized');
     register_style('dpt-panel' + prefix + 'maximized');
 
-    let unmaximized = apply_stylesheet_css('.dpt-panel' + prefix + 'unmaximized { background-color: ' + unmaximized_bg_color_css + '; }', 'panel' + prefix + 'unmaximized');
-    let maximized = apply_stylesheet_css('.dpt-panel' + prefix + 'maximized { background-color: ' + maximized_bg_color_css + '; }', 'panel' + prefix + 'maximized');
+    let file_prefix = 'background/' + tweak_name + 'panel';
 
-    return [maximized, unmaximized];
+    let panel = apply_stylesheet_css('.dpt-panel' + prefix + 'unmaximized { background-color: ' + unmaximized_bg_color_css + '; } .dpt-panel' + prefix + 'maximized { background-color: ' + maximized_bg_color_css + '; }', file_prefix + suffix);
+
+    return panel;
 }
 
 function set_unmaximized_background_color(prefix) {
@@ -735,4 +739,17 @@ function remove_maximized_background_color(prefix) {
     }
 
     Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'maximized');
+}
+
+function _updatePanelCSS() {
+    let duration_css = Settings.get_transition_speed();
+
+    let stylesheet = apply_stylesheet_css('.dpt-panel-transition-duration { transition-duration: ' + duration_css + 'ms; }', 'transitions/panel-transition-duration');
+
+    Panel.actor.add_style_class_name('dpt-panel-transition-duration');
+
+    register_style('dpt-panel-transition-type');
+    register_style('dpt-panel-transition-duration');
+
+    return stylesheet;
 }

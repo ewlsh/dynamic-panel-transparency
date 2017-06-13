@@ -176,9 +176,6 @@ function disable() {
     /* Cleanup Transitions */
     Transitions.cleanup();
 
-    /* Remove our custom styling *again* just to be sure no events and/or enabling restyled it while we were cleaning up. */
-    unmodify_panel();
-
     /* Cleanup Theming */
     Theming.cleanup();
 
