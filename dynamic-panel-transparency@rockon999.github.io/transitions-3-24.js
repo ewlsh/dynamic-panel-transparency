@@ -4,22 +4,15 @@
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
 
-const Main = imports.ui.main;
+const St = imports.gi.St;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 
-const St = imports.gi.St;
-
 let Theming24 = Me.imports['theming-3-24'];
-
 let Equations = imports.tweener.equations;
-
-/* Convenience constant for the shell panel. */
-const Panel = Main.panel;
-
 
 
 /**
@@ -95,15 +88,26 @@ function minimum_fade_in(params) {
  * @param {Number} params.time - Transition speed in milliseconds.
  */
 function fade_in(params) {
-    //Panel.actor.remove_style_class_name('dpt-panel-unmaximized');
-    //Panel.actor.add_style_class_name('dpt-panel-maximized');
+    let custom = Settings.get_panel_color({ app_info: true });
 
-
-    if (Settings.enable_custom_background_color()) {
-        Theming24.remove_unmaximized_background_color();
+    if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
+        let prefix = custom.app_info.split('.').join('-');
+        Theming24.remove_background_color({
+            exclude: 'tweak-' + prefix,
+            exclude_maximized_variant_only: true
+        });
+        Theming24.set_maximized_background_color('tweak-' + prefix);
+    } else if (Settings.enable_custom_background_color()) {
+        Theming24.remove_background_color({
+            exclude_base: true,
+            exclude_maximized_variant_only: true
+        });
         Theming24.set_maximized_background_color();
     } else {
-        Theming24.remove_unmaximized_background_color(Settings.get_current_user_theme());
+        Theming24.remove_background_color({
+            exclude: Settings.get_current_user_theme(),
+            exclude_maximized_variant_only: true
+        });
         Theming24.set_maximized_background_color(Settings.get_current_user_theme());
     }
 
@@ -116,8 +120,6 @@ function fade_in(params) {
             Theming24.set_text_color();
         }
     }
-
-    let custom = Settings.get_panel_color({ app_info: true });
 
     if (!Settings.remove_panel_styling()) {
         if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
@@ -179,11 +181,26 @@ function fade_in(params) {
  * @param {Number} params.time - Transition speed in milliseconds.
  */
 function fade_out(params) {
-    if (Settings.enable_custom_background_color()) {
-        Theming24.remove_maximized_background_color();
+    let custom = Settings.get_panel_color({ app_info: true });
+
+    if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
+        let prefix = custom.app_info.split('.').join('-');
+        Theming24.remove_background_color({
+            exclude: 'tweak-' + prefix,
+            exclude_maximized_variant_only: true
+        });
+        Theming24.set_unmaximized_background_color('tweak-' + prefix);
+    } else if (Settings.enable_custom_background_color()) {
+        Theming24.remove_background_color({
+            exclude_base: true,
+            exclude_maximized_variant_only: true
+        });
         Theming24.set_unmaximized_background_color();
     } else {
-        Theming24.remove_maximized_background_color(Settings.get_current_user_theme());
+        Theming24.remove_background_color({
+            exclude: Settings.get_current_user_theme(),
+            exclude_maximized_variant_only: true
+        });
         Theming24.set_unmaximized_background_color(Settings.get_current_user_theme());
     }
 
