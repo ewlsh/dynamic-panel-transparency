@@ -1,4 +1,4 @@
-/* exported get_transitions, st_border_image_get_file, st_theme_load_stylesheet, st_theme_unload_stylesheet, g_signal_connect, g_signal_connect_after, gtk_color_button_set_show_editor, gtk_scrolled_window_set_overlay_scrolling, parse_css */
+/* exported get_transition_manager, get_theming_manager, st_border_image_get_file, st_theme_load_stylesheet, st_theme_unload_stylesheet, g_signal_connect, g_signal_connect_after, gtk_color_button_set_show_editor, gtk_scrolled_window_set_overlay_scrolling, parse_css */
 
 /* Provides a version compatibility layer for Gtk, GObject, St, etc. functions.*/
 /* Uses C function names. */
@@ -16,21 +16,19 @@ const Compatibility = {
     gtk_color_button_set_show_editor: { major: 3, minor: 18 },
     gtk_scrolled_window_set_overlay_scrolling: { major: 3, minor: 14 },
     css: { '-gtk-icon-shadow': { major: 3, minor: 18, fallback: 'icon-shadow' } },
-    transitions: { major: 3, minor: 22 }
+    backend24: { major: 3, minor: 22 }
 };
 Util.deep_freeze(Compatibility, true);
 
 const get_theming_manager = function() {
-    if (SHELL_VERSION.major === Compatibility.transitions.major && SHELL_VERSION.minor > Compatibility.transitions.minor) {
-        log("using modern theming");
+    if (SHELL_VERSION.major === Compatibility.backend24.major && SHELL_VERSION.minor > Compatibility.backend24.minor) {
         return Me.imports['theming-3-24'];
     }
     return Me.imports.theming;
 };
 
 const get_transition_manager = function() {
-    if (SHELL_VERSION.major === Compatibility.transitions.major && SHELL_VERSION.minor > Compatibility.transitions.minor) {
-        log("using transition theming");
+    if (SHELL_VERSION.major === Compatibility.backend24.major && SHELL_VERSION.minor > Compatibility.backend24.minor) {
         return Me.imports['transitions-3-24'];
     }
     return Me.imports.transitions;

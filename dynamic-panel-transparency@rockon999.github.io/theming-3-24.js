@@ -1,4 +1,4 @@
-/* exported init, cleanup, set_maximized_background_color, set_unmaximized_background_color, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
+/* exported init, cleanup, set_maximized_background_color, set_unmaximized_background_color, remove_background_color, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
 
 const St = imports.gi.St;
 
@@ -35,6 +35,8 @@ function init() {
     this.stylesheets = [];
     this.styles = [];
 
+    this.background_styles = [];
+
     _updatePanelCSS();
 }
 
@@ -46,6 +48,10 @@ function cleanup() {
     let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
 
     for (let style of this.styles) {
+        Panel.actor.remove_style_class_name(style);
+    }
+
+    for (let style of this.background_styles) {
         Panel.actor.remove_style_class_name(style);
     }
 
@@ -498,11 +504,13 @@ function strip_panel_background() {
     let tweaked_windows = Object.keys(Settings.window_settings_manager['enable_background_tweaks']);
 
     for (let key of tweaked_apps) {
-        register_background_color(COLOR_PARSER(Settings.app_settings_manager['panel_color'][key]), key, 'tweaks');
+        let prefix = key.split('.').join('-');
+        register_background_color(COLOR_PARSER(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks');
     }
 
     for (let key of tweaked_windows) {
-        register_background_color(COLOR_PARSER(Settings.window_settings_manager['panel_color'][key]), key, 'tweaks');
+        let prefix = key.split('.').join('-');
+        register_background_color(COLOR_PARSER(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks');
     }
 }
 
@@ -669,9 +677,15 @@ function get_background_alpha(actor) {
     return 0;
 }
 
-function set_background_alpha(actor, alpha) {}
+function set_background_alpha(actor, alpha) { }
 
 /* 3.24+ Specific Functions (Not backwards compatible) */
+
+function register_background_style(style) {
+    if (this.background_styles.indexOf(style) === -1) {
+        this.background_styles.push(style);
+    }
+}
 
 function register_background_color(bg_color, prefix, tweak_name) {
     let suffix = prefix ? '-' + prefix : '';
@@ -684,6 +698,7 @@ function register_background_color(bg_color, prefix, tweak_name) {
 
     if (tweak_name) {
         tweak_name = tweak_name + '/';
+        prefix = '-tweak' + prefix;
     } else {
         tweak_name = '';
     }
@@ -691,8 +706,12 @@ function register_background_color(bg_color, prefix, tweak_name) {
     let unmaximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + (get_unmaximized_opacity() / SCALE_FACTOR).toFixed(2) + ')';
     let maximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + (get_maximized_opacity() / SCALE_FACTOR).toFixed(2) + ')';
 
-    register_style('dpt-panel' + prefix + 'unmaximized');
-    register_style('dpt-panel' + prefix + 'maximized');
+    //register_style('dpt-panel' + prefix + 'unmaximized');
+    //register_style('dpt-panel' + prefix + 'maximized');
+
+    register_background_style('dpt-panel' + prefix + 'unmaximized');
+    register_background_style('dpt-panel' + prefix + 'maximized');
+
 
     let file_prefix = 'background/' + tweak_name + 'panel';
 
@@ -741,6 +760,41 @@ function remove_maximized_background_color(prefix) {
     Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'maximized');
 }
 
+function remove_background_color(params) {
+    params = Params.parse(params, {
+        exclude: null,
+        exclude_maximized_variant_only: false,
+        exclude_unmaximized_variant_only: false,
+        exclude_base: false
+    });
+
+    let prefix = null;
+
+    if (params.exclude) {
+        prefix = '-' + params.exclude + '-';
+    } else if (params.exclude_base) {
+        prefix = '-';
+    }
+
+    let excluded_style = (prefix === null ? null : 'dpt-panel' + prefix);
+
+    if (params.exclude_maximized_variant_only) {
+        excluded_style += 'maximized';
+    } else if (params.exclude_unmaximized_variant_only) {
+        excluded_style += 'unmaximized';
+    }
+
+    for (let style of this.background_styles) {
+        if (style !== excluded_style ||
+
+            /* Well this is a complicated conditional statement... */
+            (!params.exclude_maximized_variant_only && !params.exclude_unmaximized_variant_only && style.startsWith(excluded_style) && (style.endsWith('maximized') || style.endsWith('unmaximized')))) {
+
+            Panel.actor.remove_style_class_name(style);
+        }
+    }
+}
+
 function _updatePanelCSS() {
     let duration_css = Settings.get_transition_speed();
 
@@ -748,7 +802,6 @@ function _updatePanelCSS() {
 
     Panel.actor.add_style_class_name('dpt-panel-transition-duration');
 
-    register_style('dpt-panel-transition-type');
     register_style('dpt-panel-transition-duration');
 
     return stylesheet;

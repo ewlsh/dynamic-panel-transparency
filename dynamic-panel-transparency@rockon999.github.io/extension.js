@@ -11,20 +11,17 @@ const Main = imports.ui.main;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
+const Compatibility = Me.imports.compatibility;
 const Convenience = Me.imports.convenience;
 const Events = Me.imports.events;
-const Settings = Me.imports.settings;
-const Compatibility = Me.imports.compatibility;
-
-let Transitions = Compatibility.get_transition_manager();
-let Theming = Compatibility.get_theming_manager();
-
 const Intellifade = Me.imports.intellifade;
+const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 
-const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
+let Theming = Compatibility.get_theming_manager();
+let Transitions = Compatibility.get_transition_manager();
 
-// TODO: Something isn't obeying custom coloring...
+const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 
 /* eslint-disable */
 
@@ -39,7 +36,7 @@ const COLOR_PARSER = function(input) {
 
 /* eslint-enable */
 
-/* Only way to prevent multiple runs apparently. Hacky. */
+/* Only way to prevent multiple runs apparently. Hacky-ness. */
 let modified = false;
 
 /* Initialize */
@@ -52,10 +49,11 @@ function enable() {
     /* Initialize Utilities */
     Transitions.init();
     Theming.init();
+    Intellifade.init();
 
     let theme_settings = null;
 
-    /* Try to load settings for the User Theme plugin. */
+    /* Try to load settings for the user theme plugin. */
     // TODO: Why doesn't this work on some Ubuntu installations?
     try {
         let schemaObj = Convenience.getSchemaObj(USER_THEME_SCHEMA, true);
@@ -179,6 +177,9 @@ function disable() {
     /* Cleanup Theming */
     Theming.cleanup();
 
+    /* Cleanup Intellifade */
+    Intellifade.cleanup();
+
     /* Shouldn't be an issue, but let's make sure it isn't. */
     modified = false;
 
@@ -260,6 +261,7 @@ function unmodify_panel() {
     if (Theming.has_text_shadow()) {
         Theming.remove_text_shadow();
     }
+
     if (Theming.has_icon_shadow()) {
         Theming.remove_icon_shadow();
     }
