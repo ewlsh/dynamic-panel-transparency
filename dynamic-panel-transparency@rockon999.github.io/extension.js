@@ -23,21 +23,11 @@ let Transitions = Compatibility.get_transition_manager();
 
 const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 
-/* eslint-disable */
-
-/* Simple function that converts stored color tuples and/or arrays into js objects. */
-const COLOR_PARSER = function(input) {
-    let color = { red: input[0], green: input[1], blue: input[2] };
-    if (input.length === 4) {
-        color.alpha = input[3];
-    }
-    return color;
-};
-
-/* eslint-enable */
-
 /* Only way to prevent multiple runs apparently. Hacky-ness. */
 let modified = false;
+
+/* User theme extension settings... */
+let theme_settings = null;
 
 /* Initialize */
 function init() { }
@@ -50,8 +40,6 @@ function enable() {
     Transitions.init();
     Theming.init();
     Intellifade.init();
-
-    let theme_settings = null;
 
     /* Try to load settings for the user theme plugin. */
     // TODO: Why doesn't this work on some Ubuntu installations?
@@ -72,22 +60,22 @@ function enable() {
     } else {
         /* Is our data current? */
         let theme_name = theme_settings.get_string('name');
+        theme_name = theme_name === '' ? 'Adwaita' : theme_name;
+
         let current = Settings.get_current_user_theme();
 
-        if (current !== theme_name) {
+        if (current !== theme_name || Settings.force_theme_update()) {
             /* Wait for the theme extension to initialize and enable. */
             idle_enable(true, theme_settings);
         } else {
             /* Start the plugin. We have our data. */
-            let color = Settings.get_panel_theme_color();
-            let opacity = Settings.get_theme_opacity();
-
-            let background = { red: color.red, blue: color.blue, green: color.green, alpha: opacity };
-
             log('[Dynamic Panel Transparency] Using theme data for: ' + Settings._settings.get_string('current-user-theme'));
 
-            Theming.set_theme_background_color(Util.clutter_to_native_color(background));
-            Theming.set_theme_opacity(background.alpha);
+            let theme_color = Settings.get_panel_theme_color();
+            let opacity = Settings.get_theme_opacity();
+
+            Theming.set_theme_background_color(theme_color);
+            Theming.set_theme_opacity(opacity);
 
             /* Modify the panel. */
             modify_panel();
@@ -126,15 +114,18 @@ function idle_enable(update, theme_settings = null) {
             let theme = Main.panel.actor.get_theme_node();
 
             let image_background = Theming.get_background_image_color(theme);
+            log('img bg: ' + JSON.stringify(image_background));
             let theme_background = theme.get_background_color();
 
             background = (image_background !== null ? image_background : theme_background);
 
-            Settings._settings.set_string('current-user-theme', theme_settings.get_string('name'));
+            let theme_name = theme_settings.get_string('name');
+            theme_name = theme_name === '' ? 'Adwaita' : theme_name;
+            Settings._settings.set_string('current-user-theme', theme_name);
             Settings._settings.set_value('panel-theme-color', new GLib.Variant('(iii)', [background.red, background.green, background.blue]));
             Settings._settings.set_value('theme-opacity', new GLib.Variant('i', background.alpha));
-
-            log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
+            Settings._settings.set_value('force-theme-update', new GLib.Variant('b', false));
+            log('[Dynamic Panel Transparency] Detected shell theme style: rgba(' + background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
         } else {
             let color = Settings.get_panel_theme_color();
             let opacity = Settings.get_theme_opacity();
@@ -318,7 +309,7 @@ function initialize_settings() {
         settings_key: 'panel-color',
         name: 'panel_color',
         type: 'ai',
-        parser: COLOR_PARSER,
+        parser: Util.tuple_to_native_color,
         handler: Lang.bind(this, function() {
             Theming.set_panel_color();
         })
@@ -327,12 +318,18 @@ function initialize_settings() {
         settings_key: 'panel-theme-color',
         name: 'panel_theme_color',
         type: '(iii)',
-        parser: COLOR_PARSER
+        parser: Util.tuple_to_native_color
     });
     Settings.add({
         settings_key: 'theme-opacity',
         name: 'theme_opacity',
         type: 'i',
+    });
+    Settings.add({
+        settings_key: 'force-theme-update',
+        name: 'force_theme_update',
+        type: 'b',
+        getter: 'force_theme_update'
     });
     Settings.add({
         settings_key: 'current-user-theme',
@@ -389,25 +386,25 @@ function initialize_settings() {
         settings_key: 'icon-shadow-color',
         name: 'icon_shadow_color',
         type: '(iiid)',
-        parser: COLOR_PARSER
+        parser: Util.tuple_to_native_color
     });
     Settings.add({
         settings_key: 'text-shadow-color',
         name: 'text_shadow_color',
         type: '(iiid)',
-        parser: COLOR_PARSER
+        parser: Util.tuple_to_native_color
     });
     Settings.add({
         settings_key: 'text-color',
         name: 'text_color',
         type: '(iii)',
-        parser: COLOR_PARSER
+        parser: Util.tuple_to_native_color
     });
     Settings.add({
         settings_key: 'maximized-text-color',
         name: 'maximized_text_color',
         type: '(iii)',
-        parser: COLOR_PARSER
+        parser: Util.tuple_to_native_color
     });
     Settings.add({
         settings_key: 'enable-maximized-text-color',
@@ -478,7 +475,7 @@ function initialize_settings() {
         settings_key: 'panel-color',
         name: 'panel_color',
         type: '(iii)',
-        parser: COLOR_PARSER
+        parser: Util.tuple_to_native_color
     });
 
     /* After we've given Settings the necessary information... let's bind it. */

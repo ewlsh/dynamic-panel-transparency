@@ -1,4 +1,4 @@
-/* exported init, cleanup, set_maximized_background_color, set_unmaximized_background_color, remove_background_color, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
+/* exported init, cleanup, remove_maximized_background_color, remove_unmaximized_background_color, set_maximized_background_color, set_unmaximized_background_color, remove_background_color, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
 
 const St = imports.gi.St;
 
@@ -151,7 +151,7 @@ function register_icon_shadow(icon_color, icon_position) {
     let icon_color_css = 'rgba(' + icon_color.red + ', ' + icon_color.green + ', ' + icon_color.blue + ', ' + icon_color.alpha.toFixed(2) + ')';
     let icon_position_css = '' + icon_position[0] + 'px ' + icon_position[1] + 'px ' + icon_position[2] + 'px';
 
-    let stylesheet = apply_stylesheet_css('.dpt-panel-icon-shadow .system-status-icon { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; } .dpt-panel-arrow-shadow .popup-menu-arrow { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'foreground/panel-icon-shadow');
+    let stylesheet = apply_stylesheet_css('.dpt-panel-icon-shadow .system-status-icon { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }\n.dpt-panel-arrow-shadow .popup-menu-arrow { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'foreground/panel-icon-shadow');
 
     register_style('dpt-panel-icon-shadow');
     register_style('dpt-panel-arrow-shadow');
@@ -221,7 +221,7 @@ function register_text_color(color, prefix) {
         prefix = '-';
     }
 
-    let stylesheet = apply_stylesheet_css('.dpt-panel' + prefix + 'text-color .panel-button { ' + color_css + ' } .dpt-panel' + prefix + 'icon-color .system-status-icon { ' + color_css + ' } .dpt-panel' + prefix + 'arrow-color .popup-menu-arrow { ' + color_css + ' }', 'foreground/panel' + prefix + 'text-color');
+    let stylesheet = apply_stylesheet_css('.dpt-panel' + prefix + 'text-color .panel-button { ' + color_css + ' }\n.dpt-panel' + prefix + 'icon-color .system-status-icon { ' + color_css + ' }\n.dpt-panel' + prefix + 'arrow-color .popup-menu-arrow { ' + color_css + ' }', 'foreground/panel' + prefix + 'text-color');
 
     register_style('dpt-panel' + prefix + 'text-color');
     register_style('dpt-panel' + prefix + 'icon-color');
@@ -361,10 +361,9 @@ function get_background_image_color(theme) {
         let background = GdkPixbuf.Pixbuf.new_from_file(file.get_path());
 
         if (!background) {
-            log('[Dynamic Panel Transparency] Provided background is null.');
+            log('[Dynamic Panel Transparency] Provided background is invalid.');
             return null;
         }
-
         return average_color(background);
     } catch (error) {
         log('[Dynamic Panel Transparency] Could not load the background and/or border image for your theme.');
@@ -488,15 +487,6 @@ function reapply_panel_background_image() {
  *
  */
 function strip_panel_background() {
-    // TODO: Clean this up.
-    const COLOR_PARSER = function(input) {
-        let color = { red: input[0], green: input[1], blue: input[2] };
-        if (input.length === 4) {
-            color.alpha = input[3];
-        }
-        return color;
-    };
-
     register_background_color(get_theme_background_color(), Settings.get_current_user_theme());
     register_background_color(Settings.get_panel_color());
 
@@ -505,12 +495,12 @@ function strip_panel_background() {
 
     for (let key of tweaked_apps) {
         let prefix = key.split('.').join('-');
-        register_background_color(COLOR_PARSER(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks');
+        register_background_color(Util.tuple_to_native_color(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks');
     }
 
     for (let key of tweaked_windows) {
         let prefix = key.split('.').join('-');
-        register_background_color(COLOR_PARSER(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks');
+        register_background_color(Util.tuple_to_native_color(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks');
     }
 }
 
@@ -519,10 +509,7 @@ function strip_panel_background() {
  *
  */
 function reapply_panel_background() {
-    remove_unmaximized_background_color(Settings.get_current_user_theme());
-    remove_maximized_background_color(Settings.get_current_user_theme());
-    remove_unmaximized_background_color();
-    remove_maximized_background_color();
+    remove_background_color();
 }
 
 /**
@@ -575,8 +562,8 @@ function average_color(source, width, height) {
 
     let dataPtr = source.get_pixels();
 
-    width = (typeof (width) !== 'undefined' && width !== null) ? source.get_width() : width;
-    height = (typeof (height) !== 'undefined' && height !== null) ? source.get_height() : height;
+    width = (typeof (width) === 'undefined' || width === null) ? source.get_width() : width;
+    height = (typeof (height) === 'undefined' || height === null) ? source.get_height() : height;
 
     let length = width * height;
 
@@ -688,9 +675,11 @@ function register_background_style(style) {
 }
 
 function register_background_color(bg_color, prefix, tweak_name) {
-    let suffix = prefix ? '-' + prefix : '';
+    let suffix = (prefix ? '-' + prefix : '');
 
-    if (prefix) {
+    if (prefix === '') {
+        prefix = '-default-';
+    } else if (prefix) {
         prefix = '-' + prefix + '-';
     } else {
         prefix = '-';
@@ -715,7 +704,7 @@ function register_background_color(bg_color, prefix, tweak_name) {
 
     let file_prefix = 'background/' + tweak_name + 'panel';
 
-    let panel = apply_stylesheet_css('.dpt-panel' + prefix + 'unmaximized { background-color: ' + unmaximized_bg_color_css + '; } .dpt-panel' + prefix + 'maximized { background-color: ' + maximized_bg_color_css + '; }', file_prefix + suffix);
+    let panel = apply_stylesheet_css('.dpt-panel' + prefix + 'unmaximized { background-color: ' + unmaximized_bg_color_css + '; }\n.dpt-panel' + prefix + 'maximized { background-color: ' + maximized_bg_color_css + '; }', file_prefix + suffix);
 
     return panel;
 }

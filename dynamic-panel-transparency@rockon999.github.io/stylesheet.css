@@ -12,8 +12,8 @@
   border: 0;
   /* Gnome Shell specific CSS */
   background-gradient-direction: none;
-  background-gradient-start: transparent;
-  background-gradient-end: transparent;
+  background-gradient-start: none;
+  background-gradient-end: none;
 }
 
 /* Used to remove backgrounds when full transparency is needed. */

@@ -6,7 +6,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Params = imports.misc.params;
 
 const Convenience = Me.imports.convenience;
-const Events = Me.imports.events;
+const Intellifade = Me.imports.intellifade;
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
@@ -243,7 +243,7 @@ function bind() {
                     return this._settings.get_default_value(setting.key).unpack();
                 }
 
-                let maximized_window = Events.get_current_maximized_window();
+                let maximized_window = Intellifade.get_current_maximized_window();
 
                 if (maximized_window && this.check_overrides() && params.app_settings) {
                     if (this.window_settings_manager[setting.name]) {
@@ -262,8 +262,8 @@ function bind() {
                             }
                         }
                     }
-                    if (Events._wm_tracker && this.app_settings_manager[setting.name]) {
-                        let shell_app = Events._wm_tracker.get_window_app(maximized_window);
+                    if (Intellifade._wm_tracker && this.app_settings_manager[setting.name]) {
+                        let shell_app = Intellifade._wm_tracker.get_window_app(maximized_window);
                         if (shell_app && shell_app.get_id()) {
                             let app_id = shell_app.get_id();
                             let app_setting = this._app_keys[setting.key];

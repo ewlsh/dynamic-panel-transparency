@@ -580,8 +580,8 @@ function average_color(source, width, height) {
 
     let dataPtr = source.get_pixels();
 
-    width = (typeof (width) !== 'undefined' && width !== null) ? source.get_width() : width;
-    height = (typeof (height) !== 'undefined' && height !== null) ? source.get_height() : height;
+    width = (typeof (width) === 'undefined' || width === null) ? source.get_width() : width;
+    height = (typeof (height) === 'undefined' || height === null) ? source.get_height() : height;
 
     let length = width * height;
 

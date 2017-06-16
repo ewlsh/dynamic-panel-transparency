@@ -26,15 +26,11 @@ const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
  * Signal Connections
  * js/ui/overview.js/hidden: occurs after the overview is hidden
  * js/ui/overview.js/shown: occurs after the overview is open
- * MetaScreen/window-entered-monitor: occurs when a window enters a monitor
- * MetaScreen/window-left-monitor: occurs when a window leaves a monitor
  * MetaScreen/restacked: occurs when the window Z-ordering changes
- * MetaDisplay/window-created: occurs when a new window is created
+ * org/gnome/shell/extensions/user-theme/changed::name: occurs when the user's theme changes
+ * window_group/actor-added: occurs when a window actor is added
+ * window_group/actor-removed: occurs when a window actor is removed
  * wm/switch-workspace: occurs after a workspace is switched
- * wm/unminimize: occurs as the window is unminimized
- * wm/minimize: occurs as the window is minimized
- * wm/destroy: occurs as the window is destroyed
- * user-theme/changed::name: occurs when the user's theme changes
  *
  */
 
@@ -47,21 +43,22 @@ function init() {
 
     this._wm_tracker = Shell.WindowTracker.get_default();
 
-    this._overviewHiddenSig = Main.overview.connect(!Settings.gs_enable_animations() ? 'hiding' : 'hidden', Lang.bind(this, Util.strip_args(Intellifade.syncCheck)));
+    this._overviewHidingSig = Main.overview.connect('hiding', Lang.bind(this, Util.strip_args(Intellifade.syncCheck)));
     this._overviewShownSig = Main.overview.connect('shown', Lang.bind(this, _overviewShown));
 
     let windows = global.get_window_actors();
 
     for (let window_actor of windows) {
         /* Simulate window creation event, null container */
-        _windowCreated(null, window_actor);
+        _windowActorAdded(null, window_actor);
     }
 
     this._workspaceSwitchSig = global.window_manager.connect_after('switch-workspace', Lang.bind(this, _workspaceSwitched));
+
     this._windowRestackedSig = global.screen.connect_after('restacked', Lang.bind(this, _windowRestacked));
 
-    this._windowCreatedSig = global.window_group.connect('actor-added', Lang.bind(this, _windowCreated));
-    this._windowDestroyedSig = global.window_group.connect('actor-removed', Lang.bind(this, _windowDestroyed));
+    this._windowActorAddedSig = global.window_group.connect('actor-added', Lang.bind(this, _windowActorAdded));
+    this._windowActorRemovedSig = global.window_group.connect('actor-removed', Lang.bind(this, _windowActorRemoved));
 
     this._appFocusedSig = this._wm_tracker.connect_after('notify::focus-app', Lang.bind(this, _windowRestacked));
 
@@ -99,13 +96,12 @@ function cleanup() {
     }
 
     Main.overview.disconnect(this._overviewShownSig);
-    Main.overview.disconnect(this._overviewHiddenSig);
+    Main.overview.disconnect(this._overviewHidingSig);
 
-    global.window_manager.disconnect(this._windowMinimizeSig);
     global.window_manager.disconnect(this._workspaceSwitchSig);
 
-    global.window_group.disconnect(this._windowCreatedSig);
-    global.window_group.disconnect(this._windowDestroyedSig);
+    global.window_group.disconnect(this._windowActorAddedSig);
+    global.window_group.disconnect(this._windowActorRemovedSig);
 
     global.screen.disconnect(this._windowRestackedSig);
 
@@ -130,11 +126,11 @@ function cleanup() {
     /* Cleanup Signals */
     this._windowRestackedSig = null;
     this._overviewShownSig = null;
-    this._overviewHiddenSig = null;
-    this._windowDestroyedSig = null;
+    this._overviewHidingSig = null;
+    this._windowActorRemovedSig = null;
     this._workspaceSwitchSig = null;
     this._userThemeChangedSig = null;
-    this._windowCreatedSig = null;
+    this._windowActorAddedSig = null;
 
     this._theme_settings = null;
 
@@ -166,10 +162,10 @@ function _overviewShown() {
 }
 
 /**
- * Called whenever a window is destroyed.
+ * Called whenever a window actor is removed.
  *
  */
-function _windowDestroyed(container, window_actor) {
+function _windowActorRemoved(container, window_actor) {
     if (typeof (window_actor._dpt_tracking) === 'undefined') {
         return;
     }
@@ -197,6 +193,7 @@ function _windowDestroyed(container, window_actor) {
  * Called whenever the User Theme extension updates the current theme.
  *
  */
+
 function _userThemeChanged() {
     log('[Dynamic Panel Transparency] User theme changed.');
 
@@ -229,7 +226,10 @@ function _userThemeChanged() {
         Theming.set_theme_background_color(Util.clutter_to_native_color(background));
         Theming.set_theme_opacity(background.alpha);
 
-        Settings._settings.set_string('current-user-theme', this._theme_settings.get_string('name'));
+        let theme_name = this._theme_settings.get_string('name');
+        theme_name = theme_name === '' ? 'Adwaita' : theme_name;
+        Settings._settings.set_string('current-user-theme', theme_name);
+        Settings._settings.set_boolean('force-theme-update', true);
         Settings._settings.set_value('panel-theme-color', new GLib.Variant('(iii)', [background.red, background.green, background.blue]));
         Settings._settings.set_value('theme-opacity', new GLib.Variant('i', background.alpha));
 
@@ -238,7 +238,7 @@ function _userThemeChanged() {
 
         Theming.strip_panel_background();
 
-        Intellifade.syncCheck();
+        Intellifade.forceSyncCheck();
 
         return false;
     }));
@@ -248,7 +248,7 @@ function _userThemeChanged() {
  * Called whenever a window is created in the shell.
  *
  */
-function _windowCreated(window_group, window_actor) {
+function _windowActorAdded(window_group, window_actor) {
 
 
     if (window_actor && typeof (window_actor._dpt_tracking) === 'undefined') {
@@ -288,14 +288,4 @@ function _workspaceSwitched(wm, from, to, direction) {
     if (!Settings.gs_show_desktop() && !Settings.check_overrides() && !Settings.check_triggers()) {
         Intellifade.syncCheck();
     }
-}
-
-/**
- * Returns the current visible maximized window as understood by the events' logic.
- * The maximized window is not necessarily the highest window in the z-order.
- *
- * @returns {Object} The current visible maximized window.
- */
-function get_current_maximized_window() {
-    return maximized_window;
 }
