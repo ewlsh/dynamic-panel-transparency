@@ -1,4 +1,4 @@
-/* exported init, cleanup, asyncCheck, syncCheck, forceSyncCheck */
+/* exported init, cleanup, asyncCheck, syncCheck, forceSyncCheck, get_current_maximized_window */
 
 const GLib = imports.gi.GLib;
 const Mainloop = imports.mainloop;
@@ -46,7 +46,8 @@ function syncCheck() {
     /* Prevent any asynchronous checks from occuring in the loop. */
     continueCheck = false;
     /* Stop the asynchronous loop... */
-    Mainloop.source_remove(timeoutId);
+    if (timeoutId > 0)
+        Mainloop.source_remove(timeoutId);
     /* Remove the old loop ID */
     timeoutId = 0;
     /* Run a check. */
@@ -200,4 +201,14 @@ function _check() {
             Theming.set_text_color();
         }
     }
+}
+
+/**
+ * Returns the current visible maximized window as understood by the events' logic.
+ * The maximized window is not necessarily the highest window in the z-order.
+ *
+ * @returns {Object} The current visible maximized window.
+ */
+function get_current_maximized_window() {
+    return maximized_window;
 }

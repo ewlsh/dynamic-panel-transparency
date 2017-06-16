@@ -1,4 +1,4 @@
-/* exported get_maximized_width_buffer, get_maximized_height_buffer, get_shell_version, is_undef, clamp, is_maximized, is_valid, match_colors, remove_file, get_file, write_to_file, gdk_to_css_color, clutter_to_native_color, deep_freeze, strip_args */
+/* exported get_maximized_width_buffer, get_maximized_height_buffer, get_shell_version, is_undef, clamp, is_maximized, is_valid, match_colors, remove_file, get_file, write_to_file, gdk_to_css_color, clutter_to_native_color, tuple_to_native_color, deep_freeze, strip_args */
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
@@ -210,6 +210,23 @@ function clutter_to_native_color(color, alpha = false) {
         output.alpha = color.alpha;
     }
     return output;
+}
+
+/**
+ * Converts a tuple from a GVariant (typically) into a JS/CSS color object.
+ *
+ * @param {Object} color - Tuple to convert.
+ * @param {Boolean} [alpha = false] - Whether to transfer the alpha value.
+ *
+ * @returns {Object} Converted RGB(A) color.
+ *
+ */
+function tuple_to_native_color(tuple) {
+    let color = { red: tuple[0], green: tuple[1], blue: tuple[2] };
+    if (tuple.length === 4) {
+        color.alpha = tuple[3];
+    }
+    return color;
 }
 
 /**

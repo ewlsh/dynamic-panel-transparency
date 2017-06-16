@@ -35,6 +35,11 @@
       <summary>Current User Theme</summary>
       <description>The name of the current theme that this extension has analyzed.</description>
     </key>
+    <key name="force-theme-update" type="b">
+      <default>false</default>
+      <summary>Force Theme Update</summary>
+      <description>If true the extension will always update theme data on the next startup.</description>
+    </key>
     <key name="panel-theme-color" type="(iii)">
       <default>(0,0,0)</default>
       <summary>Panel Theme Color</summary>

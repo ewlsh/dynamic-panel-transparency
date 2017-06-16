@@ -9,11 +9,12 @@ const St = imports.gi.St;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Settings = Me.imports.settings;
+const Theming24 = Me.imports['theming-3-24'];
 const Util = Me.imports.util;
 
-let Theming24 = Me.imports['theming-3-24'];
-let Equations = imports.tweener.equations;
+const Equations = imports.tweener.equations;
 
+const CORNER_UPDATE_FREQUENCY = 30;
 
 /**
  * Intialize.
@@ -45,8 +46,7 @@ function cleanup() {
  *
  */
 function update_transition_type() {
-    //this.transition_type = TransitionType.from_index(Settings.get_transition_type());
-
+    // TODO: Does Gnome support CSS transition type customization?
     Theming24._updatePanelCSS();
 }
 
@@ -122,18 +122,7 @@ function fade_in(params) {
     }
 
     if (!Settings.remove_panel_styling()) {
-        if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
-            Theming24.strip_panel_background_image();
-        } else if (!Settings.enable_custom_background_color()) {
-            Theming24.reapply_panel_background_image();
-        } else {
-            Theming24.strip_panel_background_image();
-        }
-
         Theming24.reapply_panel_styling();
-    } else {
-        Theming24.strip_panel_background_image();
-        Theming24.strip_panel_styling();
     }
 
     this.status.set_transparent(false);
@@ -147,15 +136,15 @@ function fade_in(params) {
 
         let count = 0;
 
-        const id = this.corner_id = Mainloop.timeout_add(Math.floor(speed / 30), Lang.bind(this, function() {
+        const id = this.corner_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function() {
             if (id === this.corner_id && !this.status.is_transparent()) {
                 count++;
 
-                let alpha = Equations.linear(Math.floor(count * 30), unmaximized, maximized - unmaximized, speed);
+                let alpha = Equations.linear(Math.floor(count * CORNER_UPDATE_FREQUENCY), unmaximized, maximized - unmaximized, speed);
 
                 update_corner_alpha(alpha);
 
-                if (count > 30) {
+                if (count > CORNER_UPDATE_FREQUENCY) {
                     update_corner_alpha(maximized);
                     return false;
                 }
@@ -181,25 +170,16 @@ function fade_in(params) {
  * @param {Number} params.time - Transition speed in milliseconds.
  */
 function fade_out(params) {
-    let custom = Settings.get_panel_color({ app_info: true });
-
-    if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
-        let prefix = custom.app_info.split('.').join('-');
-        Theming24.remove_background_color({
-            exclude: 'tweak-' + prefix,
-            exclude_maximized_variant_only: true
-        });
-        Theming24.set_unmaximized_background_color('tweak-' + prefix);
-    } else if (Settings.enable_custom_background_color()) {
+    if (Settings.enable_custom_background_color()) {
         Theming24.remove_background_color({
             exclude_base: true,
-            exclude_maximized_variant_only: true
+            exclude_unmaximized_variant_only: true
         });
         Theming24.set_unmaximized_background_color();
     } else {
         Theming24.remove_background_color({
             exclude: Settings.get_current_user_theme(),
-            exclude_maximized_variant_only: true
+            exclude_unmaximized_variant_only: true
         });
         Theming24.set_unmaximized_background_color(Settings.get_current_user_theme());
     }
@@ -228,15 +208,15 @@ function fade_out(params) {
 
         let count = 0;
 
-        const id = this.corner_id = Mainloop.timeout_add(Math.floor(speed / 30), Lang.bind(this, function() {
+        const id = this.corner_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function() {
             if (id === this.corner_id && this.status.is_transparent()) {
                 count++;
 
-                let alpha = Equations.linear(Math.floor(count * 30), maximized, unmaximized - maximized, speed);
+                let alpha = Equations.linear(Math.floor(count * CORNER_UPDATE_FREQUENCY), maximized, unmaximized - maximized, speed);
 
                 update_corner_alpha(alpha);
 
-                if (count > 30) {
+                if (count > CORNER_UPDATE_FREQUENCY) {
                     update_corner_alpha(unmaximized);
                     return false;
                 }
