@@ -132,7 +132,6 @@ function minimum_fade_in(params) {
             let i = 0;
 
             tweening_params.onUpdate = Lang.bind(this, function(a) {
-                // TODO: Setting for frequency?
                 if (i++ % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i > ending_threshold) {
                     update_corner_alpha(Theming.get_background_alpha(Panel.actor));
                 }
@@ -193,7 +192,6 @@ function fade_in(params) {
             let i = 0;
 
             tweening_params.onUpdate = Lang.bind(this, function(a) {
-                // TODO: Setting for frequency?
                 if (i++ % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i > ending_threshold) {
                     update_corner_alpha(Theming.get_background_alpha(Panel.actor));
                 }
@@ -313,7 +311,6 @@ function fade_out(params) {
             let i = 0;
 
             tweening_params.onUpdate = Lang.bind(this, function(a) {
-                // TODO: Setting for frequency?
                 if (i++ % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i > ending_threshold) {
                     update_corner_alpha(Theming.get_background_alpha(Panel.actor));
                 }
@@ -377,7 +374,6 @@ function blank_fade_out(params) {
             let i = 0;
 
             tweening_params.onUpdate = Lang.bind(this, function(a) {
-                // TODO: Setting for frequency?
                 if (i++ % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i > ending_threshold) {
                     update_corner_alpha(Theming.get_background_alpha(Panel.actor));
                 }

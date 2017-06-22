@@ -24,9 +24,8 @@ function init() {
     /* Objects to track where the transparency is and where it's going. */
     this.status = new TransparencyStatus();
     this.animation_status = new AnimationStatus();
-    this.transition_type = TransitionType.from_index(Settings.get_transition_type());
 
-    this.corner_id = 0;
+    this.corner_timeout_id = 0;
 }
 
 /**
@@ -35,19 +34,9 @@ function init() {
  */
 function cleanup() {
     this.animation_status = null;
-    this.transition_type = null;
     this.status = null;
     this.tweener = null;
-    this.corner_id = null;
-}
-
-/**
- * Updates the default transition type from settings.
- *
- */
-function update_transition_type() {
-    // TODO: Does Gnome support CSS transition type customization?
-    Theming24._updatePanelCSS();
+    this.corner_timeout_id = null;
 }
 
 /**
@@ -71,11 +60,10 @@ function get_animation_status() {
 /**
  * Fades the panel into the unmaximized (minimum) alpha. Used for closing the overview.
  *
- * @param {Object} params [params=null] - Parameters for the transition.
- * @param {Number} params.time - Transition speed in milliseconds.
  */
-function minimum_fade_in(params) {
-    // TODO: Nothing required here... right?
+function minimum_fade_in() {
+    /* The CSS backend doesn't need different starting/ending values */
+    fade_out();
 
     this.status.set_transparent(true);
     this.status.set_blank(false);
@@ -84,10 +72,8 @@ function minimum_fade_in(params) {
 /**
  * Fades the panel into the nmaximized (maximum) alpha.
  *
- * @param {Object} params [params=null] - Parameters for the transition.
- * @param {Number} params.time - Transition speed in milliseconds.
  */
-function fade_in(params) {
+function fade_in() {
     let custom = Settings.get_panel_color({ app_info: true });
 
     if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
@@ -111,16 +97,6 @@ function fade_in(params) {
         Theming24.set_maximized_background_color(Settings.get_current_user_theme());
     }
 
-    if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
-        if (Settings.get_enable_overview_text_color()) {
-            Theming24.remove_text_color();
-            Theming24.set_text_color('maximized');
-        } else {
-            Theming24.remove_text_color('maximized');
-            Theming24.set_text_color();
-        }
-    }
-
     if (!Settings.remove_panel_styling()) {
         Theming24.reapply_panel_styling();
     }
@@ -136,8 +112,8 @@ function fade_in(params) {
 
         let count = 0;
 
-        const id = this.corner_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function() {
-            if (id === this.corner_id && !this.status.is_transparent()) {
+        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function() {
+            if (id === this.corner_timeout_id && !this.status.is_transparent()) {
                 count++;
 
                 let alpha = Equations.linear(Math.floor(count * CORNER_UPDATE_FREQUENCY), unmaximized, maximized - unmaximized, speed);
@@ -155,21 +131,13 @@ function fade_in(params) {
             return true;
         }));
     }
-
-
-
-    log('transparency in');
-
 }
 
 /**
  * Fades the panel into the unmaximized (minimum) alpha.
- * TODO: Could this be used for minimum_fade_in?
  *
- * @param {Object} params [params=null] - Parameters for the transition.
- * @param {Number} params.time - Transition speed in milliseconds.
  */
-function fade_out(params) {
+function fade_out() {
     if (Settings.enable_custom_background_color()) {
         Theming24.remove_background_color({
             exclude_base: true,
@@ -182,16 +150,6 @@ function fade_out(params) {
             exclude_unmaximized_variant_only: true
         });
         Theming24.set_unmaximized_background_color(Settings.get_current_user_theme());
-    }
-
-    if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
-        if (Settings.get_enable_overview_text_color()) {
-            Theming24.remove_text_color();
-            Theming24.set_text_color('maximized');
-        } else {
-            Theming24.remove_text_color('maximized');
-            Theming24.set_text_color();
-        }
     }
 
     Theming24.strip_panel_background_image();
@@ -208,8 +166,8 @@ function fade_out(params) {
 
         let count = 0;
 
-        const id = this.corner_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function() {
-            if (id === this.corner_id && this.status.is_transparent()) {
+        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function() {
+            if (id === this.corner_timeout_id && this.status.is_transparent()) {
                 count++;
 
                 let alpha = Equations.linear(Math.floor(count * CORNER_UPDATE_FREQUENCY), maximized, unmaximized - maximized, speed);
@@ -226,24 +184,47 @@ function fade_out(params) {
             return true;
         }));
     }
-
-
-
-    log('transparency out');
-
-
 }
 
 /**
  * Fades the panel's alpha to 0. Used for opening the overview & displaying the screenShield.
  *
- * @param {Object} params [params=null] - Parameters for the transition.
- * @param {Number} params.time - Transition speed in milliseconds.
  */
-function blank_fade_out(params) {
-    fade_out(params);
+function blank_fade_out() {
+    Theming24.remove_background_color();
 
+    Theming24.strip_panel_background_image();
+    Theming24.strip_panel_styling();
+
+    this.status.set_transparent(true);
     this.status.set_blank(true);
+
+    if (!Settings.get_hide_corners()) {
+        let speed = St.get_slow_down_factor() * Settings.get_transition_speed();
+
+        let maximized = Settings.get_maximized_opacity();
+        let unmaximized = Settings.get_unmaximized_opacity();
+
+        let count = 0;
+
+        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function() {
+            if (id === this.corner_timeout_id && this.status.is_transparent()) {
+                count++;
+
+                let alpha = Equations.linear(Math.floor(count * CORNER_UPDATE_FREQUENCY), maximized, unmaximized - maximized, speed);
+
+                update_corner_alpha(alpha);
+
+                if (count > CORNER_UPDATE_FREQUENCY) {
+                    update_corner_alpha(unmaximized);
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            return true;
+        }));
+    }
 }
 
 /**
@@ -312,37 +293,6 @@ const AnimationStatus = new Lang.Class({
         return (this.action === null && this.destination === null);
     }
 });
-
-const TransitionType = {
-    LINEAR: { code: 'linear', name: 'Linear', index: 1 },
-    SINE: { code: 'Sine', name: 'Sine', index: 2 },
-    QUAD: { code: 'Quad', name: 'Quadratic', index: 3 },
-    CUBIC: { code: 'Cubic', name: 'Cubic', index: 4 },
-    QUARTIC: { code: 'Quart', name: 'Quartic', index: 5 },
-    QUINTIC: { code: 'Quint', name: 'Quintic', index: 6 },
-    EXPONENTIAL: { code: 'Expo', name: 'Exponential', index: 7 },
-    CIRCULAR: { code: 'Circ', name: 'Circle', index: 8 },
-    BACK: { code: 'Back', name: 'Back', index: 15 },
-    ELASTIC: { code: 'Elastic', name: 'Elastic', index: 9 },
-    BOUNCE: { code: 'Bounce', name: 'Bounce', index: 10 },
-    from_index: function(search_index) {
-        for (let key in this) {
-            let value = this[key];
-            if (typeof (value) === 'object' && search_index === value.index) {
-                return value;
-            }
-        }
-        return null;
-    },
-    to_code_string: function(type, action) {
-        /* 'linear' is a special case. It doesn't have in/out modes. */
-        if (type.code === this.LINEAR.code) {
-            return this.LINEAR.code;
-        }
-        return (action === AnimationAction.FADING_IN ? 'easeIn' : 'easeOut') + type.code;
-    }
-};
-Util.deep_freeze(TransitionType);
 
 const AnimationAction = {
     FADING_OUT: 0,
