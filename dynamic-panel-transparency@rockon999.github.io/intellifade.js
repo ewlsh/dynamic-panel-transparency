@@ -149,13 +149,13 @@ function _check() {
 
             let scale_factor = imports.gi.St.ThemeContext.get_for_stage(global.stage).scale_factor;
 
-            let ERROR = 2;
+            let buffer = 2;
 
             let panel_height = Main.panel.actor.get_height();
-            let window_touching_panel = frame.y <= (panel_height + ERROR * scale_factor);
-            let window_overlapping_panel = (panel_height - frame.y) > ERROR * scale_factor;
-            let vertical_override = window_touching_panel && frame.height >= panel_height - ERROR * scale_factor;
-            let horizontal_override = window_touching_panel && frame.x <= ERROR * scale_factor && frame.width >= panel_height - ERROR * scale_factor;
+            let window_touching_panel = frame.y <= (panel_height + buffer * scale_factor);
+            let window_overlapping_panel = (panel_height - frame.y) > buffer * scale_factor;
+            let vertical_override = window_touching_panel && frame.height >= panel_height - buffer * scale_factor;
+            let horizontal_override = window_touching_panel && frame.x <= buffer * scale_factor && frame.width >= panel_height - buffer * scale_factor;
 
             if (window_touching_panel && window_overlapping_panel) {
                 force_transparency = true;

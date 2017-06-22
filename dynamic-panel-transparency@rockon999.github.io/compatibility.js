@@ -20,6 +20,8 @@ const Compatibility = {
 };
 Util.deep_freeze(Compatibility, true);
 
+/* Transitions using CSS did not work prior to 3.24 due to a bug. Restrict the new backend to 3.24+ */
+
 const get_theming_manager = function() {
     if (SHELL_VERSION.major === Compatibility.backend24.major && SHELL_VERSION.minor > Compatibility.backend24.minor) {
         return Me.imports['theming-3-24'];

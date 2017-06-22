@@ -13,6 +13,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Compatibility = Me.imports.compatibility;
 const Convenience = Me.imports.convenience;
+const Extension = Me.imports.extension;
 const Intellifade = Me.imports.intellifade;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
@@ -198,16 +199,19 @@ function _userThemeChanged() {
     log('[Dynamic Panel Transparency] User theme changed.');
 
     /* Remove Our Styling */
-    Theming.reapply_panel_styling();
-    Theming.reapply_panel_background();
-    Theming.reapply_panel_background_image();
+    Extension.unmodify_panel();
+    Theming.cleanup();
 
-    const id = this.theme_detection_id = Mainloop.idle_add(Lang.bind(this, function() {
+    /* Hopefully every computer is fast enough to apply a theme in three seconds. */
+    const id = this.theme_detection_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
         if (id !== this.theme_detection_id) {
             return false;
         }
 
         log('[Dynamic Panel Transparency] Updating user theme data.');
+
+        Theming.init();
+        Extension.modify_panel();
 
         let theme = Main.panel.actor.get_theme_node();
 
@@ -249,13 +253,9 @@ function _userThemeChanged() {
  *
  */
 function _windowActorAdded(window_group, window_actor) {
-
-
     if (window_actor && typeof (window_actor._dpt_tracking) === 'undefined') {
-        log('new window found');
         window_actor._dpt_tracking = true;
         const ac_wId = window_actor.connect('allocation-changed', Lang.bind(this, function() {
-            log('allocation changed');
             Intellifade.asyncCheck();
         }));
         window_actor._dpt_signals = [ac_wId];
