@@ -35,7 +35,6 @@ function init() {
 function cleanup() {
     this.animation_status = null;
     this.status = null;
-    this.tweener = null;
     this.corner_timeout_id = null;
 }
 

@@ -62,6 +62,7 @@ function cleanup() {
     }
 
 
+    this.background_styles = null;
     this.stylesheets = null;
     this.styles = null;
 }
@@ -276,6 +277,7 @@ function register_style(style) {
 }
 
 /**
+ * DEPRECATED: Backend24 no longer uses clutter background color properties.
  * Set's the panel's actor to a specific background color.
  *
  * @param {Object} color [color={}] - Object containing an RGBA color value.
@@ -284,8 +286,7 @@ function register_style(style) {
  * @param {Number} color.blue - Blue value ranging from 0-255.
  * @param {Number} color.alpha - Alpha value ranging from 0-255.
  */
-function set_panel_color(color) {
-}
+function set_panel_color(color) { }
 
 /**
  * Set's the panel corners' actors to a specific background color.
@@ -375,6 +376,8 @@ function get_background_image_color(theme) {
 
 /**
  * Returns the user's desired panel color from Settings. Handles theme detection again.
+ * DEPENDENCY: Settings
+ * TODO: Remove legacy backend code.
  *
  * @returns {Object} Object containing an RGBA color value.
  */
@@ -453,7 +456,6 @@ function get_unmaximized_opacity() {
  */
 function strip_panel_styling() {
     Panel.actor.add_style_class_name('panel-effect-transparency');
-
 }
 
 /**
@@ -480,11 +482,9 @@ function reapply_panel_background_image() {
     Panel.actor.remove_style_class_name('panel-background-image-transparency');
 }
 
-
-
 /**
  * Applies the style class 'panel-background-color-transparency' and removes any CSS embellishments.
- *
+ * TODO: Transition this code into a new backend24 function.
  */
 function strip_panel_background() {
     register_background_color(get_theme_background_color(), Settings.get_current_user_theme());
@@ -658,7 +658,7 @@ function average_color(source, width, height) {
     return { red: rTotal, green: gTotal, blue: bTotal, alpha: aTotal2 };
 }
 
-/* Methods to extend Tweener's properties. */
+/* Methods to extend Tweener's properties. DEPRECATED: Backend24 does not utilize Tweener for most animations. */
 
 function get_background_alpha(actor) {
     return 0;
@@ -666,7 +666,7 @@ function get_background_alpha(actor) {
 
 function set_background_alpha(actor, alpha) { }
 
-/* 3.24+ Specific Functions (Not backwards compatible) */
+/* Backend24 (3.24+) Specific Functions (Not backwards compatible) */
 
 function register_background_style(style) {
     if (this.background_styles.indexOf(style) === -1) {
@@ -695,12 +695,8 @@ function register_background_color(bg_color, prefix, tweak_name) {
     let unmaximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + (get_unmaximized_opacity() / SCALE_FACTOR).toFixed(2) + ')';
     let maximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + (get_maximized_opacity() / SCALE_FACTOR).toFixed(2) + ')';
 
-    //register_style('dpt-panel' + prefix + 'unmaximized');
-    //register_style('dpt-panel' + prefix + 'maximized');
-
     register_background_style('dpt-panel' + prefix + 'unmaximized');
     register_background_style('dpt-panel' + prefix + 'maximized');
-
 
     let file_prefix = 'background/' + tweak_name + 'panel';
 

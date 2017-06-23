@@ -211,7 +211,6 @@ function _userThemeChanged() {
         log('[Dynamic Panel Transparency] Updating user theme data.');
 
         Theming.init();
-        Extension.modify_panel();
 
         let theme = Main.panel.actor.get_theme_node();
 
@@ -240,7 +239,7 @@ function _userThemeChanged() {
         log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
         log('[Dynamic Panel Transparency] Using theme data for: ' + Settings.get_current_user_theme());
 
-        Theming.strip_panel_background();
+        Extension.modify_panel();
 
         Intellifade.forceSyncCheck();
 
