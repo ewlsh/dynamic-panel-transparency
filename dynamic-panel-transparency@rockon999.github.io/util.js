@@ -83,6 +83,7 @@ function get_file(file_path) {
         let file = Gio.file_new_for_path(file_path);
         return file;
     } catch (error) {
+        log(error);
         return null;
     }
 }

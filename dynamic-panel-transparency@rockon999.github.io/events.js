@@ -50,7 +50,7 @@ function init() {
     let windows = global.get_window_actors();
 
     for (let window_actor of windows) {
-        /* Simulate window creation event, null container */
+        /* Simulate window creation event, null container because _windowActorAdded doesn't utilize containers */
         _windowActorAdded(null, window_actor);
     }
 
@@ -201,6 +201,7 @@ function _userThemeChanged() {
     /* Remove Our Styling */
     Extension.unmodify_panel();
     Theming.cleanup();
+    Theming.init();
 
     /* Hopefully every computer is fast enough to apply a theme in three seconds. */
     const id = this.theme_detection_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
@@ -209,8 +210,6 @@ function _userThemeChanged() {
         }
 
         log('[Dynamic Panel Transparency] Updating user theme data.');
-
-        Theming.init();
 
         let theme = Main.panel.actor.get_theme_node();
 

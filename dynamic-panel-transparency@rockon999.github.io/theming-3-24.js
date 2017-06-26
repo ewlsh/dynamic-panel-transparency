@@ -761,21 +761,17 @@ function remove_background_color(params) {
         prefix = '-';
     }
 
-    let excluded_style = (prefix === null ? null : 'dpt-panel' + prefix);
-
-    if (params.exclude_maximized_variant_only) {
-        excluded_style += 'maximized';
-    } else if (params.exclude_unmaximized_variant_only) {
-        excluded_style += 'unmaximized';
-    }
+    let excluded_maximized_style = (prefix === null ? null : 'dpt-panel' + prefix) + 'maximized';
+    let excluded_unmaximized_style = (prefix === null ? null : 'dpt-panel' + prefix) + 'unmaximized';
 
     for (let style of this.background_styles) {
-        if (style !== excluded_style ||
+        let a = params.exclude_maximized_variant_only && style !== excluded_maximized_style;
+        let b = params.exclude_unmaximized_variant_only && style !== excluded_unmaximized_style;
+        let c = !params.exclude_maximized_variant_only && !params.exclude_unmaximized_variant_only && style !== excluded_maximized_style && style !== excluded_unmaximized_style;
 
-            /* Well this is a complicated conditional statement... */
-            (!params.exclude_maximized_variant_only && !params.exclude_unmaximized_variant_only && style.startsWith(excluded_style) && (style.endsWith('maximized') || style.endsWith('unmaximized')))) {
-
+        if (c || a || b) {
             Panel.actor.remove_style_class_name(style);
+            log('removed: ' + style);
         }
     }
 }

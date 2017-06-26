@@ -5,6 +5,7 @@ const Mainloop = imports.mainloop;
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
+const St = imports.gi.St;
 
 const ExtensionSystem = imports.ui.extensionSystem;
 const Main = imports.ui.main;
@@ -114,13 +115,14 @@ function idle_enable(update, theme_settings = null) {
             let theme = Main.panel.actor.get_theme_node();
 
             let image_background = Theming.get_background_image_color(theme);
-            log('img bg: ' + JSON.stringify(image_background));
             let theme_background = theme.get_background_color();
 
             background = (image_background !== null ? image_background : theme_background);
 
             let theme_name = theme_settings.get_string('name');
             theme_name = theme_name === '' ? 'Adwaita' : theme_name;
+
+            /* The Settings convenience object wasn't built to handle setting, so we use the internal object... */
             Settings._settings.set_string('current-user-theme', theme_name);
             Settings._settings.set_value('panel-theme-color', new GLib.Variant('(iii)', [background.red, background.green, background.blue]));
             Settings._settings.set_value('theme-opacity', new GLib.Variant('i', background.alpha));
@@ -204,7 +206,7 @@ function modify_panel() {
     Theming.strip_panel_background();
 
     let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
-    let [icon_shadow, arrow_shadow] = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
+    let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
 
     /* Add Text Shadowing */
     if (Settings.add_text_shadow()) {
@@ -217,7 +219,7 @@ function modify_panel() {
 
     /* Add Icon Shadowing */
     if (Settings.add_icon_shadow()) {
-        if (icon_shadow !== null && arrow_shadow !== null) {
+        if (icon_shadow !== null) {
             Theming.add_icon_shadow();
         } else {
             log('[Dynamic Panel Transparency] Failed to enabled icon shadowing.');
@@ -264,13 +266,14 @@ function unmodify_panel() {
     Theming.remove_text_color('maximized');
 }
 
+// TODO: Merge handler code or hide it behind the backend seperation.
 function initialize_settings() {
     /* Setup settings... */
     Settings.init();
 
     /* Register settings... */
     Settings.add({
-        settings_key: 'hide-corners',
+        key: 'hide-corners',
         name: 'hide_corners',
         type: 'b',
         handler: Lang.bind(this, function() {
@@ -278,76 +281,218 @@ function initialize_settings() {
         })
     });
     Settings.add({
-        settings_key: 'transition-speed',
+        key: 'transition-speed',
         name: 'transition_speed',
-        type: 'i'
+        type: 'i',
+        handler: Lang.bind(this, function() {
+            if (Compatibility.meets('backend24')) {
+                Main.panel.actor.remove_style_class_name('dpt-panel-transition-duration');
+
+                let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+
+                for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
+                    let stylesheet = Theming.stylesheets[i];
+                    if (stylesheet.contains('transitions') && stylesheet.endsWith('panel-transition-duration.dpt.css')) {
+                        Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                        Util.remove_file(stylesheet);
+                        Theming.stylesheets.splice(i, 1);
+                    }
+                }
+
+                const id = this.panel_transition_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                    if (id !== this.panel_transition_update_id) {
+                        return false;
+                    }
+
+                    /* Get Rid of the Panel's CSS Background */
+                    // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
+                    Theming._updatePanelCSS();
+
+                    Intellifade.forceSyncCheck();
+
+                    return false;
+                }));
+            }
+        })
     });
     Settings.add({
-        settings_key: 'force-animation',
+        key: 'force-animation',
         name: 'force_animation',
         type: 'b'
     });
     Settings.add({
-        settings_key: 'unmaximized-opacity',
+        key: 'unmaximized-opacity',
         name: 'unmaximized_opacity',
         type: 'i',
         getter: 'get_unmaximized_opacity',
         handler: Lang.bind(this, function() {
-            Intellifade.forceSyncCheck();
+            const super_id = this.opacity_update_id = Mainloop.timeout_add(1000, Lang.bind(this, function() {
+                if (super_id !== this.opacity_update_id) {
+                    return false;
+                }
+
+                Theming.reapply_panel_background();
+
+                let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+
+                for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
+                    let stylesheet = Theming.stylesheets[i];
+                    if (stylesheet.contains('background') && stylesheet.contains('panel-')) {
+                        Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                        Util.remove_file(stylesheet);
+                        Theming.stylesheets.splice(i, 1);
+                    }
+                }
+
+                Theming.strip_panel_background();
+
+                const id = this.panel_color_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                    if (id !== this.panel_color_update_id) {
+                        return false;
+                    }
+
+                    /* Get Rid of the Panel's CSS Background */
+                    // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
+
+                    Theming.set_maximized_background_color((Math.random() * 100).toFixed(0));
+                    Theming.remove_background_color();
+                    Theming.set_unmaximized_background_color((Math.random() * 100).toFixed(0));
+                    Theming.remove_background_color();
+
+                    Intellifade.forceSyncCheck();
+
+                    return false;
+                }));
+
+                return false;
+            }));
         })
     });
     Settings.add({
-        settings_key: 'maximized-opacity',
+        key: 'maximized-opacity',
         name: 'maximized_opacity',
         type: 'i',
         getter: 'get_maximized_opacity',
         handler: Lang.bind(this, function() {
-            Intellifade.forceSyncCheck();
+            const super_id = this.opacity_update_id = Mainloop.timeout_add(1000, Lang.bind(this, function() {
+                if (super_id !== this.opacity_update_id) {
+                    return false;
+                }
+
+                Theming.reapply_panel_background();
+
+                let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+
+                for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
+                    let stylesheet = Theming.stylesheets[i];
+                    if (stylesheet.contains('background') && stylesheet.contains('panel-')) {
+                        Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                        Util.remove_file(stylesheet);
+                        Theming.stylesheets.splice(i, 1);
+                    }
+                }
+
+                Theming.strip_panel_background();
+
+                const id = this.panel_color_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                    if (id !== this.panel_color_update_id) {
+                        return false;
+                    }
+
+                    /* Get Rid of the Panel's CSS Background */
+                    // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
+
+                    Theming.set_maximized_background_color((Math.random() * 100).toFixed(0));
+                    Theming.remove_background_color();
+                    Theming.set_unmaximized_background_color((Math.random() * 100).toFixed(0));
+                    Theming.remove_background_color();
+
+                    Intellifade.forceSyncCheck();
+
+                    return false;
+                }));
+
+                return false;
+            }));
         })
     });
     Settings.add({
-        settings_key: 'panel-color',
+        key: 'panel-color',
         name: 'panel_color',
         type: 'ai',
         parser: Util.tuple_to_native_color,
         handler: Lang.bind(this, function() {
-            Theming.set_panel_color();
+            if (Compatibility.meets('backend24')) {
+                Theming.remove_background_color();
+
+                let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+
+                for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
+                    let stylesheet = Theming.stylesheets[i];
+                    if (stylesheet.contains('background') && stylesheet.contains('panel.dpt.css')) {
+                        Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                        Util.remove_file(stylesheet);
+                        Theming.stylesheets.splice(i, 1);
+                    }
+                }
+                Theming.register_background_color(Settings.get_panel_color());
+                const id = this.panel_color_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                    if (id !== this.panel_color_update_id) {
+                        return false;
+                    }
+
+                    /* Get Rid of the Panel's CSS Background */
+                    // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
+
+                    Theming.set_maximized_background_color((Math.random() * 100).toFixed(0));
+                    Theming.remove_background_color();
+                    Theming.set_unmaximized_background_color((Math.random() * 100).toFixed(0));
+                    Theming.remove_background_color();
+
+                    Intellifade.forceSyncCheck();
+
+                    return false;
+                }));
+            } else {
+                // TODO: Well... legacy backend was easier in some ways... make backend24 easier to utilize.
+                Theming.set_panel_color();
+            }
         })
     });
     Settings.add({
-        settings_key: 'panel-theme-color',
+        key: 'panel-theme-color',
         name: 'panel_theme_color',
         type: '(iii)',
         parser: Util.tuple_to_native_color
     });
     Settings.add({
-        settings_key: 'theme-opacity',
+        key: 'theme-opacity',
         name: 'theme_opacity',
         type: 'i',
     });
     Settings.add({
-        settings_key: 'force-theme-update',
+        key: 'force-theme-update',
         name: 'force_theme_update',
         type: 'b',
         getter: 'force_theme_update'
     });
     Settings.add({
-        settings_key: 'current-user-theme',
+        key: 'current-user-theme',
         name: 'current_user_theme',
         type: 's',
     });
     Settings.add({
-        settings_key: 'trigger-apps',
+        key: 'trigger-apps',
         name: 'trigger_apps',
         type: 'as'
     });
     Settings.add({
-        settings_key: 'trigger-windows',
+        key: 'trigger-windows',
         name: 'trigger_windows',
         type: 'as'
     });
     Settings.add({
-        settings_key: 'text-shadow',
+        key: 'text-shadow',
         name: 'text_shadow',
         type: 'b',
         getter: 'add_text_shadow',
@@ -360,7 +505,7 @@ function initialize_settings() {
         })
     });
     Settings.add({
-        settings_key: 'icon-shadow',
+        key: 'icon-shadow',
         name: 'icon_shadow',
         type: 'b',
         getter: 'add_icon_shadow',
@@ -373,41 +518,179 @@ function initialize_settings() {
         })
     });
     Settings.add({
-        settings_key: 'text-shadow-position',
+        key: 'text-shadow-position',
         name: 'text_shadow_position',
-        type: '(iii)'
+        type: '(iii)',
+        handler: Lang.bind(this, function() {
+            Theming.remove_text_shadow();
+
+            let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+
+            for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
+                let stylesheet = Theming.stylesheets[i];
+                if (stylesheet.contains('shadow') && stylesheet.contains('text')) {
+                    Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                    Util.remove_file(stylesheet);
+                    Theming.stylesheets.splice(i, 1);
+                }
+            }
+            let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
+            const id = this.text_shadow_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                if (id !== this.text_shadow_update_id) {
+                    return false;
+                }
+
+
+
+                /* Add Text Shadowing */
+                if (Settings.add_text_shadow()) {
+                    if (text_shadow !== null) {
+                        Theming.add_text_shadow();
+                    } else {
+                        log('[Dynamic Panel Transparency] Failed to enabled text shadowing.');
+                    }
+                }
+
+                Intellifade.forceSyncCheck();
+
+                return false;
+            }));
+        })
     });
     Settings.add({
-        settings_key: 'icon-shadow-position',
+        key: 'icon-shadow-position',
         name: 'icon_shadow_position',
-        type: '(iii)'
+        type: '(iii)',
+        handler: Lang.bind(this, function() {
+            Theming.remove_icon_shadow();
+
+            let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+
+            for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
+                let stylesheet = Theming.stylesheets[i];
+                if (stylesheet.contains('shadow') && stylesheet.contains('icon')) {
+                    Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                    Util.remove_file(stylesheet);
+                    Theming.stylesheets.splice(i, 1);
+                }
+            }
+            let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
+            const id = this.icon_shadow_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                if (id !== this.icon_shadow_update_id) {
+                    return false;
+                }
+
+
+
+                /* Add Icon Shadowing */
+                if (Settings.add_icon_shadow()) {
+                    if (icon_shadow !== null) {
+                        Theming.add_icon_shadow();
+                    } else {
+                        log('[Dynamic Panel Transparency] Failed to enabled icon shadowing.');
+                    }
+                }
+
+                Intellifade.forceSyncCheck();
+
+                return false;
+            }));
+        })
     });
     Settings.add({
-        settings_key: 'icon-shadow-color',
+        key: 'icon-shadow-color',
         name: 'icon_shadow_color',
         type: '(iiid)',
-        parser: Util.tuple_to_native_color
+        parser: Util.tuple_to_native_color,
+        handler: Lang.bind(this, function() {
+            Theming.remove_icon_shadow();
+
+            let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+
+            for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
+                let stylesheet = Theming.stylesheets[i];
+                if (stylesheet.contains('shadow') && stylesheet.contains('icon')) {
+                    Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                    Util.remove_file(stylesheet);
+                    Theming.stylesheets.splice(i, 1);
+                }
+            }
+            let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
+            const id = this.icon_shadow_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                if (id !== this.icon_shadow_update_id) {
+                    return false;
+                }
+
+
+
+                /* Add Icon Shadowing */
+                if (Settings.add_icon_shadow()) {
+                    if (icon_shadow !== null) {
+                        Theming.add_icon_shadow();
+                    } else {
+                        log('[Dynamic Panel Transparency] Failed to enabled icon shadowing.');
+                    }
+                }
+
+                Intellifade.forceSyncCheck();
+
+                return false;
+            }));
+        })
     });
     Settings.add({
-        settings_key: 'text-shadow-color',
+        key: 'text-shadow-color',
         name: 'text_shadow_color',
         type: '(iiid)',
-        parser: Util.tuple_to_native_color
+        parser: Util.tuple_to_native_color,
+        handler: Lang.bind(this, function() {
+            Theming.remove_text_shadow();
+
+            let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+
+            for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
+                let stylesheet = Theming.stylesheets[i];
+                if (stylesheet.contains('shadow') && stylesheet.contains('text')) {
+                    Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                    Util.remove_file(stylesheet);
+                    Theming.stylesheets.splice(i, 1);
+                }
+            }
+            let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
+            const id = this.text_shadow_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                if (id !== this.text_shadow_update_id) {
+                    return false;
+                }
+
+                /* Add Text Shadowing */
+                if (Settings.add_text_shadow()) {
+                    if (text_shadow !== null) {
+                        Theming.add_text_shadow();
+                    } else {
+                        log('[Dynamic Panel Transparency] Failed to enabled text shadowing.');
+                    }
+                }
+
+                Intellifade.forceSyncCheck();
+
+                return false;
+            }));
+        })
     });
     Settings.add({
-        settings_key: 'text-color',
+        key: 'text-color',
         name: 'text_color',
         type: '(iii)',
         parser: Util.tuple_to_native_color
     });
     Settings.add({
-        settings_key: 'maximized-text-color',
+        key: 'maximized-text-color',
         name: 'maximized_text_color',
         type: '(iii)',
         parser: Util.tuple_to_native_color
     });
     Settings.add({
-        settings_key: 'enable-maximized-text-color',
+        key: 'enable-maximized-text-color',
         name: 'enable_maximized_text_color',
         type: 'b',
         handler: Lang.bind(this, function() {
@@ -415,18 +698,18 @@ function initialize_settings() {
         })
     });
     Settings.add({
-        settings_key: 'remove-panel-styling',
+        key: 'remove-panel-styling',
         name: 'remove_panel_styling',
         getter: 'remove_panel_styling',
         type: 'b'
     });
     Settings.add({
-        settings_key: 'enable-overview-text-color',
+        key: 'enable-overview-text-color',
         name: 'enable_overview_text_color',
         type: 'b'
     });
     Settings.add({
-        settings_key: 'enable-text-color',
+        key: 'enable-text-color',
         name: 'enable_text_color',
         type: 'b',
         handler: Lang.bind(this, function() {
@@ -439,21 +722,21 @@ function initialize_settings() {
         })
     });
     Settings.add({
-        settings_key: 'transition-type',
+        key: 'transition-type',
         name: 'transition_type',
         type: 'i',
         handler: Lang.bind(this, function() {
-            Transitions.update_transition_type();
+            //  Transitions.update_transition_type();
         })
     });
     Settings.add({
-        settings_key: 'enable-opacity',
+        key: 'enable-opacity',
         name: 'enable_custom_opacity',
         getter: 'enable_custom_opacity',
         type: 'b'
     });
     Settings.add({
-        settings_key: 'enable-background-color',
+        key: 'enable-background-color',
         name: 'enable_custom_background_color',
         getter: 'enable_custom_background_color',
         type: 'b'
@@ -462,17 +745,17 @@ function initialize_settings() {
     /* App-Specific Settings */
 
     Settings.add_app_setting({
-        settings_key: 'enable-background-tweaks',
+        key: 'enable-background-tweaks',
         name: 'enable_background_tweaks',
         type: 'b'
     });
     Settings.add_app_override({
-        settings_key: 'maximized-opacity',
+        key: 'maximized-opacity',
         name: 'maximized_opacity',
         type: 'i'
     });
     Settings.add_app_override({
-        settings_key: 'panel-color',
+        key: 'panel-color',
         name: 'panel_color',
         type: '(iii)',
         parser: Util.tuple_to_native_color
