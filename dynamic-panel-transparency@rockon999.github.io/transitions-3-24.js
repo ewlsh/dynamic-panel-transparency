@@ -10,11 +10,12 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Settings = Me.imports.settings;
 const Theming24 = Me.imports['theming-3-24'];
-const Util = Me.imports.util;
 
 const Equations = imports.tweener.equations;
 
 const CORNER_UPDATE_FREQUENCY = 30;
+
+// TODO: Make sure that each function is start-value agnostic (doesn't assume maximized value)...
 
 /**
  * Intialize.
@@ -23,7 +24,6 @@ const CORNER_UPDATE_FREQUENCY = 30;
 function init() {
     /* Objects to track where the transparency is and where it's going. */
     this.status = new TransparencyStatus();
-    this.animation_status = new AnimationStatus();
 
     this.corner_timeout_id = 0;
 }
@@ -33,8 +33,8 @@ function init() {
  *
  */
 function cleanup() {
-    this.animation_status = null;
     this.status = null;
+
     this.corner_timeout_id = null;
 }
 
@@ -49,11 +49,12 @@ function get_transparency_status() {
 
 /**
  * Get any animation that the panel is currently doing.
+ * DEPRECATED.
  *
  * @returns {Object} Current animation status. @see AnimationStatus
  */
 function get_animation_status() {
-    return this.animation_status;
+    return { destination: null, action: null };
 }
 
 /**
@@ -78,20 +79,17 @@ function fade_in() {
     if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
         let prefix = custom.app_info.split('.').join('-');
         Theming24.remove_background_color({
-            exclude: 'tweak-' + prefix,
-            exclude_maximized_variant_only: true
+            exclude: 'tweak-' + prefix
         });
         Theming24.set_maximized_background_color('tweak-' + prefix);
     } else if (Settings.enable_custom_background_color()) {
         Theming24.remove_background_color({
-            exclude_base: true,
-            exclude_maximized_variant_only: true
+            exclude_base: true
         });
         Theming24.set_maximized_background_color();
     } else {
         Theming24.remove_background_color({
             exclude: Settings.get_current_user_theme(),
-            exclude_maximized_variant_only: true
         });
         Theming24.set_maximized_background_color(Settings.get_current_user_theme());
     }
@@ -154,9 +152,11 @@ function fade_out() {
     Theming24.strip_panel_background_image();
     Theming24.strip_panel_styling();
 
+    /* Keep the status up to date */
     this.status.set_transparent(true);
     this.status.set_blank(false);
 
+    // TODO: Figure out how to write the panel corners in pure CSS.
     if (!Settings.get_hide_corners()) {
         let speed = St.get_slow_down_factor() * Settings.get_transition_speed();
 
@@ -190,6 +190,7 @@ function fade_out() {
  *
  */
 function blank_fade_out() {
+    /* Completely remove every possible background style... */
     Theming24.remove_background_color();
 
     Theming24.strip_panel_background_image();
@@ -198,11 +199,11 @@ function blank_fade_out() {
     this.status.set_transparent(true);
     this.status.set_blank(true);
 
+    // TODO: These corners...
     if (!Settings.get_hide_corners()) {
         let speed = St.get_slow_down_factor() * Settings.get_transition_speed();
 
         let maximized = Settings.get_maximized_opacity();
-        let unmaximized = Settings.get_unmaximized_opacity();
 
         let count = 0;
 
@@ -210,12 +211,12 @@ function blank_fade_out() {
             if (id === this.corner_timeout_id && this.status.is_transparent()) {
                 count++;
 
-                let alpha = Equations.linear(Math.floor(count * CORNER_UPDATE_FREQUENCY), maximized, unmaximized - maximized, speed);
+                let alpha = Equations.linear(Math.floor(count * CORNER_UPDATE_FREQUENCY), maximized, -maximized, speed);
 
                 update_corner_alpha(alpha);
 
                 if (count > CORNER_UPDATE_FREQUENCY) {
-                    update_corner_alpha(unmaximized);
+                    update_corner_alpha(0);
                     return false;
                 }
             } else {
@@ -264,44 +265,3 @@ const TransparencyStatus = new Lang.Class({
         this.blank = blank;
     }
 });
-
-const AnimationStatus = new Lang.Class({
-    Name: 'DynamicPanelTransparency_AnimationStatus',
-    _init: function() {
-        this.destination = null;
-        this.action = null;
-    },
-    get_action: function() {
-        return this.action;
-    },
-    get_destination: function() {
-        return this.destination;
-    },
-    set: function(action, destination) {
-        this.action = action;
-        this.destination = destination;
-    },
-    set_done: function() {
-        this.action = null;
-        this.destination = null;
-    },
-    equals: function(action, destination) {
-        return (this.action === action && this.destination === destination);
-    },
-    is_done: function() {
-        return (this.action === null && this.destination === null);
-    }
-});
-
-const AnimationAction = {
-    FADING_OUT: 0,
-    FADING_IN: 1
-};
-Util.deep_freeze(AnimationAction);
-
-const AnimationDestination = {
-    BLANK: 0,
-    MINIMUM: 1,
-    MAXIMUM: 2
-};
-Util.deep_freeze(AnimationDestination);

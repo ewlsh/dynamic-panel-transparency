@@ -135,7 +135,7 @@ function cleanup() {
 /* Settings Management */
 function add(params) {
     let key = {
-        key: params.settings_key,
+        key: params.key,
         name: params.name,
         type: params.type,
         parser: null,
@@ -153,7 +153,7 @@ function add(params) {
 
 function add_app_setting(params) {
     let key = {
-        key: params.settings_key,
+        key: params.key,
         name: params.name,
         type: params.type,
         parser: null,
@@ -167,12 +167,12 @@ function add_app_setting(params) {
     if (typeof(params.parser)!== 'undefined')
         key.parser = params.parser;
 
-    this._app_keys[params.settings_key] = key;
+    this._app_keys[params.key] = key;
 }
 
 function add_app_override(params) {
     add_app_setting(params);
-    this._overriden_keys.push(params.settings_key);
+    this._overriden_keys.push(params.key);
 }
 
 function check_overrides() {
