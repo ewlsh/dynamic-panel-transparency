@@ -142,12 +142,14 @@ function add(params) {
         getter: null,
         handler: null
     };
+
     if (typeof(params.getter) !== 'undefined')
         key.getter = params.getter;
     if (typeof(params.handler)!== 'undefined')
         key.handler = params.handler;
-    if (typeof(params.parser)!== 'undefined')
+    if (typeof(params.parser) !== 'undefined')
         key.parser = params.parser;
+
     this._keys.push(key);
 }
 
@@ -160,6 +162,7 @@ function add_app_setting(params) {
         getter: null,
         handler: null,
     };
+
     if (typeof(params.getter) !== 'undefined')
         key.getter = params.getter;
     if (typeof(params.handler)!== 'undefined')

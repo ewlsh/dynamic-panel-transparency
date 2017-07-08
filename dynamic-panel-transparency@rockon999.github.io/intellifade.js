@@ -162,7 +162,10 @@ function _check() {
                 maximized_window = null;
             } else if (horizontal_override || vertical_override) {
                 add_transparency = false;
-                maximized_window = current_window;
+
+                if (maximized_window === null) {
+                    maximized_window = current_window;
+                }
             }
         }
     }
