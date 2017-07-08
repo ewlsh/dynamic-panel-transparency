@@ -284,8 +284,9 @@ function initialize_settings() {
         key: 'transition-speed',
         name: 'transition_speed',
         type: 'i',
-        handler: Lang.bind(this, function() {
-            if (Compatibility.meets('backend24')) {
+        handler: Lang.bind(this, Compatibility.meets('backend24') ?
+            /* Update the backend24 transition CSS. */
+            function() {
                 Main.panel.actor.remove_style_class_name('dpt-panel-transition-duration');
 
                 let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
@@ -312,8 +313,9 @@ function initialize_settings() {
 
                     return false;
                 }));
-            }
-        })
+            /* Legacy backend didn't need any update work. */
+            // TODO: Remove empty function.
+            } : function() { })
     });
     Settings.add({
         key: 'force-animation',
@@ -421,8 +423,9 @@ function initialize_settings() {
         name: 'panel_color',
         type: 'ai',
         parser: Util.tuple_to_native_color,
-        handler: Lang.bind(this, function() {
-            if (Compatibility.meets('backend24')) {
+        handler: Lang.bind(this, Compatibility.meets('backend24') ?
+            /* Handler for 3.24+ */
+            function() {
                 Theming.remove_background_color();
 
                 let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
@@ -453,11 +456,12 @@ function initialize_settings() {
 
                     return false;
                 }));
-            } else {
+                /* Legacy Handler */
+            } : function() {
                 // TODO: Well... legacy backend was easier in some ways... make backend24 easier to utilize.
                 Theming.set_panel_color();
-            }
-        })
+
+            })
     });
     Settings.add({
         key: 'panel-theme-color',
