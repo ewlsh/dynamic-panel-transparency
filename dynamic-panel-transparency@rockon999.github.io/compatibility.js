@@ -32,22 +32,6 @@ const meets = function(a, b) {
 /* Compatibility related convenience functions. */
 
 
-/* Transitions using CSS did not work prior to 3.24 due to a bug. Restrict the new backend to 3.24+ */
-const get_theming_manager = function() {
-    if (meets('backend24')) {
-        return Me.imports['theming-3-24'];
-    }
-    return Me.imports.theming;
-};
-
-/* See above... */
-const get_transition_manager = function() {
-    if (meets('backend24')) {
-        return Me.imports['transitions-3-24'];
-    }
-    return Me.imports.transitions;
-};
-
 /* Parses CSS... not a C function */
 const parse_css = function(css) {
     for (let key of Object.keys(Compatibility.css)) {
