@@ -13,8 +13,6 @@ const Theming = Me.imports.theming;
 
 const Equations = imports.tweener.equations;
 
-const Main = imports.ui.main;
-
 const CORNER_UPDATE_FREQUENCY = 30;
 
 // TODO: Make sure that each function is start-value agnostic (doesn't assume maximized value)...
