@@ -680,6 +680,12 @@ function initialize_settings() {
         getter: 'enable_custom_background_color',
         type: 'b'
     });
+    Settings.add({
+        key: 'transitions-with-overview',
+        name: 'transition_with_overview',
+        getter: 'transition_with_overview',
+        type: 'b'
+    });
 
     /* App-Specific Settings */
 

@@ -266,6 +266,30 @@ narzb
                 <property name="top_attach">1</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkCheckButton" id="transition_with_overview_check">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
+                <property name="draw_indicator">True</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes" comments="Overrides Gnome animation settings and &quot;forces&quot; the animation.">Transition with the overview</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">3</property>
+                <property name="width">2</property>
+              </packing>
+            </child>
           </object>
         </child>
         <child type="tab">
