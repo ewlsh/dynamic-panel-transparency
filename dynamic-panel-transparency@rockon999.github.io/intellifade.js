@@ -1,4 +1,4 @@
-/* exported init, cleanup, asyncCheck, syncCheck, forceSyncCheck, get_current_maximized_window */
+/* exported init, cleanup, asyncCheck, syncCheck, forceAsyncCheck, forceSyncCheck, get_current_maximized_window */
 
 const GLib = imports.gi.GLib;
 const Mainloop = imports.mainloop;
