@@ -591,7 +591,7 @@ narzb
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text">0</property>
                                         <property name="adjustment">adjustment1</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
@@ -607,7 +607,7 @@ narzb
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text">0</property>
                                         <property name="adjustment">text_shadow_hz_adjustment</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
@@ -623,7 +623,7 @@ narzb
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text">0</property>
                                         <property name="adjustment">text_shadow_vrt_adjustment</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
@@ -790,7 +790,7 @@ narzb
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text">0</property>
                                         <property name="adjustment">adjustment1</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
@@ -806,7 +806,7 @@ narzb
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text">0</property>
                                         <property name="adjustment">text_shadow_hz_adjustment</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
@@ -822,7 +822,7 @@ narzb
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text">0</property>
                                         <property name="adjustment">text_shadow_vrt_adjustment</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
