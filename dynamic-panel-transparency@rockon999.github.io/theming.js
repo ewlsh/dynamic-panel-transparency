@@ -7,7 +7,6 @@ const Main = imports.ui.main;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Params = imports.misc.params;
 
-const Compatibility = Me.imports.compatibility;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 

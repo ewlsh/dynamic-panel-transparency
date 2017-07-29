@@ -10,7 +10,6 @@ const Gtk = imports.gi.Gtk;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const Compatibility = Me.imports.compatibility;
 const Convenience = Me.imports.convenience;
 const Util = Me.imports.util;
 
@@ -30,7 +29,6 @@ const SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR = 'enable-maximized-text-color';
 const SETTINGS_ENABLE_OPACITY = 'enable-opacity';
 const SETTINGS_ENABLE_OVERVIEW_TEXT_COLOR = 'enable-overview-text-color';
 const SETTINGS_ENABLE_TEXT_COLOR = 'enable-text-color';
-const SETTINGS_FORCE_ANIMATION = 'force-animation';
 const SETTINGS_HIDE_CORNERS = 'hide-corners';
 const SETTINGS_ICON_SHADOW = 'icon-shadow';
 const SETTINGS_ICON_SHADOW_COLOR = 'icon-shadow-color';
@@ -44,7 +42,6 @@ const SETTINGS_TEXT_SHADOW = 'text-shadow';
 const SETTINGS_TEXT_SHADOW_COLOR = 'text-shadow-color';
 const SETTINGS_TEXT_SHADOW_POSITION = 'text-shadow-position';
 const SETTINGS_TRANSITION_SPEED = 'transition-speed';
-const SETTINGS_TRANSITION_TYPE = 'transition-type';
 const SETTINGS_UNMAXIMIZED_OPACITY = 'unmaximized-opacity';
 
 const Page = { TRANSITIONS: 0, FOREGROUND: 1, BACKGROUND: 2, APP_TWEAKS: 3, ABOUT: 4 };
