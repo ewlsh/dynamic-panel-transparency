@@ -119,8 +119,6 @@ function fade_in() {
 
                 update_corner_alpha(alpha);
 
-                Main.panel.statusArea['activities']._label.text = 'alpha: ' + alpha;
-
                 if (count > CORNER_UPDATE_FREQUENCY) {
                     update_corner_alpha(maximized);
                     return false;
@@ -177,8 +175,6 @@ function fade_out() {
 
                 update_corner_alpha(alpha);
 
-                Main.panel.statusArea['activities']._label.text = 'alpha: ' + alpha;
-
                 if (count > CORNER_UPDATE_FREQUENCY) {
                     update_corner_alpha(unmaximized);
                     return false;
@@ -220,8 +216,6 @@ function blank_fade_out() {
                 let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), maximized, -maximized, speed);
 
                 update_corner_alpha(alpha);
-
-                Main.panel.statusArea['activities']._label.text = 'alpha: ' + alpha;
 
                 if (count > CORNER_UPDATE_FREQUENCY) {
                     update_corner_alpha(0);

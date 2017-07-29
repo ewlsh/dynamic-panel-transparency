@@ -286,7 +286,7 @@ function set_corner_color(color) {
 
     log('color: ' + JSON.stringify(color));
 
-    let opacity = Util.clamp(color.alpha / SCALE_FACTOR, 0, 1);
+    let opacity = Util.clamp(color.alpha / SCALE_FACTOR, 0, 1).toFixed(2);
 
     /* I strongly dislike using a deprecated method (set_style)
      * but this is a hold over from the older extension code and

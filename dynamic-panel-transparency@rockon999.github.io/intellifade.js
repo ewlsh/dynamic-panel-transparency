@@ -58,6 +58,11 @@ function syncCheck() {
     _check();
 }
 
+function forceAsyncCheck() {
+    override_optimization = true;
+    asyncCheck();
+}
+
 function asyncCheck() {
     if (timeoutId <= 0) {
         _check();
@@ -212,10 +217,6 @@ function _check() {
         if (add_transparency) {
             Transitions.minimum_fade_in();
         } else {
-            Transitions.fade_in();
-        }
-    } else if (Settings.check_overrides() || Settings.check_triggers()) {
-        if (!add_transparency) {
             Transitions.fade_in();
         }
     }
