@@ -10,7 +10,6 @@ const Shell = imports.gi.Shell;
 const Main = imports.ui.main;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Compatibility = Me.imports.compatibility;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 
