@@ -213,7 +213,7 @@ narzb
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">3</property>
-                    <property name="label" translatable="yes" comments="Overrides Gnome animation settings and &quot;forces&quot; the animation.">Transition with the overview</property>
+                    <property name="label" translatable="yes" comments="Whether the panel transitions should happen with the overview transitions or after.">Transition with the overview</property>
                   </object>
                 </child>
               </object>
@@ -521,7 +521,7 @@ narzb
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text">0</property>
                                         <property name="adjustment">adjustment1</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
@@ -537,7 +537,7 @@ narzb
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text">0</property>
                                         <property name="adjustment">text_shadow_hz_adjustment</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
@@ -553,7 +553,7 @@ narzb
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text">0</property>
                                         <property name="adjustment">text_shadow_vrt_adjustment</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
@@ -720,7 +720,7 @@ narzb
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text">0</property>
                                         <property name="adjustment">adjustment1</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
@@ -736,7 +736,7 @@ narzb
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text">0</property>
                                         <property name="adjustment">text_shadow_hz_adjustment</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
@@ -752,7 +752,7 @@ narzb
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
-                                        <property name="text" translatable="yes">0</property>
+                                        <property name="text">0</property>
                                         <property name="adjustment">text_shadow_vrt_adjustment</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
