@@ -681,7 +681,7 @@ function initialize_settings() {
         type: 'b'
     });
     Settings.add({
-        key: 'transitions-with-overview',
+        key: 'transition-with-overview',
         name: 'transition_with_overview',
         getter: 'transition_with_overview',
         type: 'b'
