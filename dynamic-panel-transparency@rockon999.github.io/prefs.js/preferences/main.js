@@ -136,10 +136,6 @@ function buildPrefsWidget() {
             settings.set_value(SETTINGS_FORCE_ANIMATION, new GLib.Variant('b', widget.get_active()));
         }));
 
-        let transition_with_overview = builder.get_object('transition_with_overview_check');
-
-        transition_with_overview.set_active(settings.get_boolean(SETTINGS_TRANSITION_WITH_OVERVIEW));
-
         transition_with_overview.connect('toggled', Lang.bind(this, function(widget) {
             settings.set_value(SETTINGS_TRANSITION_WITH_OVERVIEW, new GLib.Variant('b', widget.get_active()));
         }));
