@@ -67,10 +67,18 @@ function init() {
 
     if (this._background_settings) {
         this._show_desktop = this._background_settings.get_strv(SETTINGS_SHOW_DESKTOP).length > 0;
+
+        this.settingsBoundIds.push(this._background_settings.connect('changed::' + SETTINGS_SHOW_DESKTOP, Lang.bind(this, function() {
+            this._show_desktop = this._background_settings.get_strv(SETTINGS_SHOW_DESKTOP).length > 0;
+        })));
     }
 
     if (this._interface_settings) {
         this._enable_animations = this._interface_settings.get_boolean(SETTINGS_ENABLE_ANIMATIONS);
+
+        this.settingsBoundIds.push(this._interface_settings.connect('changed::' + SETTINGS_ENABLE_ANIMATIONS, Lang.bind(this, function() {
+            this._enable_animations = this._interface_settings.get_boolean(SETTINGS_ENABLE_ANIMATIONS);
+        })));
     }
 
     this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_APP_OVERRIDES, Lang.bind(this, function() {
@@ -84,18 +92,6 @@ function init() {
         this.window_settings_manager.unbind();
         this.window_settings_manager = new AppSettingsManager(this._app_keys, this.get_window_overrides(), WINDOW_OVERRIDES_SCHEMA_PATH);
     })));
-
-    if (this._background_settings) {
-        this.settingsBoundIds.push(this._background_settings.connect('changed::' + SETTINGS_SHOW_DESKTOP, Lang.bind(this, function() {
-            this._show_desktop = this._background_settings.get_strv(SETTINGS_SHOW_DESKTOP).length > 0;
-        })));
-    }
-
-    if (this._interface_settings) {
-        this.settingsBoundIds.push(this._interface_settings.connect('changed::' + SETTINGS_ENABLE_ANIMATIONS, Lang.bind(this, function() {
-            this._enable_animations = this._interface_settings.get_boolean(SETTINGS_ENABLE_ANIMATIONS);
-        })));
-    }
 
     this.get_app_overrides = function() {
         return this._app_overrides;

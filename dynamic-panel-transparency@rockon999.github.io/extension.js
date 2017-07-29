@@ -19,8 +19,10 @@ const Intellifade = Me.imports.intellifade;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 
-let Theming = Compatibility.get_theming_manager();
-let Transitions = Compatibility.get_transition_manager();
+const Theming = Me.imports.theming;
+const Transitions = Me.imports.transitions;
+
+const SETTINGS_DELAY = 3000;
 
 const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 
@@ -183,16 +185,11 @@ function modify_panel() {
     /* Initial Coloring */
 
     let theme_color = Theming.get_theme_background_color();
-    let theme_opacity = Theming.get_theme_opacity();
+    //let theme_opacity = Theming.get_theme_opacity();
 
     /* Hack to avoid "flashing" */
 
-    Theming.set_panel_color({
-        red: theme_color.red,
-        green: theme_color.green,
-        blue: theme_color.blue,
-        alpha: theme_opacity
-    });
+
 
     /* Update the corners. */
 
@@ -240,7 +237,6 @@ function modify_panel() {
 }
 
 function unmodify_panel() {
-    Theming.set_panel_color({ red: 0, green: 0, blue: 0, alpha: 0 });
 
     /* Remove corner styling */
     Theming.clear_corner_color();
@@ -300,7 +296,7 @@ function initialize_settings() {
                     }
                 }
 
-                const id = this.panel_transition_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_transition_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_transition_update_id) {
                         return false;
                     }
@@ -313,8 +309,8 @@ function initialize_settings() {
 
                     return false;
                 }));
-            /* Legacy backend didn't need any update work. */
-            // TODO: Remove empty function.
+                /* Legacy backend didn't need any update work. */
+                // TODO: Remove empty function.
             } : function() { })
     });
     Settings.add({
@@ -328,7 +324,7 @@ function initialize_settings() {
         type: 'i',
         getter: 'get_unmaximized_opacity',
         handler: Lang.bind(this, function() {
-            const super_id = this.opacity_update_id = Mainloop.timeout_add(1000, Lang.bind(this, function() {
+            const super_id = this.opacity_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() {
                 if (super_id !== this.opacity_update_id) {
                     return false;
                 }
@@ -348,7 +344,7 @@ function initialize_settings() {
 
                 Theming.strip_panel_background();
 
-                const id = this.panel_color_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
                         return false;
                     }
@@ -376,7 +372,7 @@ function initialize_settings() {
         type: 'i',
         getter: 'get_maximized_opacity',
         handler: Lang.bind(this, function() {
-            const super_id = this.opacity_update_id = Mainloop.timeout_add(1000, Lang.bind(this, function() {
+            const super_id = this.opacity_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() {
                 if (super_id !== this.opacity_update_id) {
                     return false;
                 }
@@ -396,7 +392,7 @@ function initialize_settings() {
 
                 Theming.strip_panel_background();
 
-                const id = this.panel_color_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
                         return false;
                     }
@@ -423,7 +419,7 @@ function initialize_settings() {
         name: 'panel_color',
         type: 'ai',
         parser: Util.tuple_to_native_color,
-        handler: Lang.bind(this, Compatibility.meets('backend24') ?
+        handler: Lang.bind(this,
             /* Handler for 3.24+ */
             function() {
                 Theming.remove_background_color();
@@ -439,7 +435,7 @@ function initialize_settings() {
                     }
                 }
                 Theming.register_background_color(Settings.get_panel_color());
-                const id = this.panel_color_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
                         return false;
                     }
@@ -457,10 +453,6 @@ function initialize_settings() {
                     return false;
                 }));
                 /* Legacy Handler */
-            } : function() {
-                // TODO: Well... legacy backend was easier in some ways... make backend24 easier to utilize.
-                Theming.set_panel_color();
-
             })
     });
     Settings.add({
@@ -539,7 +531,7 @@ function initialize_settings() {
                 }
             }
             let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
-            const id = this.text_shadow_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+            const id = this.text_shadow_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                 if (id !== this.text_shadow_update_id) {
                     return false;
                 }
@@ -579,7 +571,7 @@ function initialize_settings() {
                 }
             }
             let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
-            const id = this.icon_shadow_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+            const id = this.icon_shadow_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                 if (id !== this.icon_shadow_update_id) {
                     return false;
                 }
@@ -620,7 +612,7 @@ function initialize_settings() {
                 }
             }
             let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
-            const id = this.icon_shadow_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+            const id = this.icon_shadow_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                 if (id !== this.icon_shadow_update_id) {
                     return false;
                 }
@@ -661,7 +653,7 @@ function initialize_settings() {
                 }
             }
             let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
-            const id = this.text_shadow_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+            const id = this.text_shadow_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                 if (id !== this.text_shadow_update_id) {
                     return false;
                 }

@@ -1,7 +1,5 @@
-/* exported init, cleanup, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
+/* exported init, cleanup, remove_maximized_background_color, remove_unmaximized_background_color, set_maximized_background_color, set_unmaximized_background_color, remove_background_color, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
 
-const GdkPixbuf = imports.gi.GdkPixbuf;
-const Clutter = imports.gi.Clutter;
 const St = imports.gi.St;
 
 const Main = imports.ui.main;
@@ -12,6 +10,8 @@ const Params = imports.misc.params;
 const Compatibility = Me.imports.compatibility;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
+
+const GdkPixbuf = imports.gi.GdkPixbuf;
 
 /* Convenience constant for the shell panel. */
 const Panel = Main.panel;
@@ -28,12 +28,24 @@ const ALPHA_THRESHOLD = 24;
 const SCALE_FACTOR = 255;
 
 /**
+ * @typedef {Object} Color - Represents a standard color object
+ * @property {number} red - Red value ranging from 0-255.
+ * @property {number} green - Green value ranging from 0-255.
+ * @property {number} blue - Blue value ranging from 0-255.
+ * @property {number} [alpha=1.0] - Alpha value ranging from 0-1.0 with support for two decimal places.
+ */
+
+/**
  * Intialize.
  *
  */
 function init() {
     this.stylesheets = [];
     this.styles = [];
+
+    this.background_styles = [];
+
+    _updatePanelCSS();
 }
 
 /**
@@ -43,16 +55,22 @@ function init() {
 function cleanup() {
     let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
 
+    for (let style of this.styles) {
+        Panel.actor.remove_style_class_name(style);
+    }
+
+    for (let style of this.background_styles) {
+        Panel.actor.remove_style_class_name(style);
+    }
+
     for (let sheet of this.stylesheets) {
         // COMPATIBILITY: st-theme used strings, not file objects in 3.14
         Compatibility.st_theme_unload_stylesheet(theme, sheet);
         Util.remove_file(sheet);
     }
 
-    for (let style of this.styles) {
-        Panel.actor.remove_style_class_name(style);
-    }
 
+    this.background_styles = null;
     this.stylesheets = null;
     this.styles = null;
 }
@@ -60,10 +78,7 @@ function cleanup() {
 /**
  * Sets the theme background color.
  *
- * @param {Object} color - Object representing an RGBA color.
- * @param {Number} color.red - Red value ranging from 0-255.
- * @param {Number} color.green - Green value ranging from 0-255.
- * @param {Number} color.blue - Blue value ranging from 0-255.
+ * @param {Color} color - Object representing an RGBA color.
  */
 function set_theme_background_color(color) {
     this.theme_background_color = color;
@@ -95,15 +110,10 @@ function get_theme_background_color() {
 function set_theme_opacity(alpha) {
     this.theme_opacity = alpha;
 }
-
 /**
  * Registers a shadow stylesheet for text in the panel.
  *
- * @param {Object} text_color - Object representing an RGBA color.
- * @param {Number} text_color.red - Red value ranging from 0-255.
- * @param {Number} text_color.green - Green value ranging from 0-255.
- * @param {Number} text_color.blue - Blue value ranging from 0-255.
- * @param {Number} text_color.alpha - Alpha value ranging from 0-1.0 with support for two decimal places.
+ * @param {Color} text_color - Object representing an RGBA color.
  * @param {Number[]} text_position - Integer array containing horizontal offset, vertical offset, radius. (in that order)
  */
 function register_text_shadow(text_color, text_position) {
@@ -112,17 +122,13 @@ function register_text_shadow(text_color, text_position) {
 
     register_style('dpt-panel-text-shadow');
 
-    return apply_stylesheet_css('.dpt-panel-text-shadow .panel-button { text-shadow: ' + text_position_css + ' ' + text_color_css + '; }', 'panel-text-shadow');
+    return apply_stylesheet_css('.dpt-panel-text-shadow .panel-button { text-shadow: ' + text_position_css + ' ' + text_color_css + '; }', 'foreground/panel-text-shadow');
 }
 
 /**
  * Adds the currently registered shadow stylesheet to the text in the panel.
  *
- * @param {Object} text_color - Object representing an RGBA color.
- * @param {Number} text_color.red - Red value ranging from 0-255.
- * @param {Number} text_color.green - Green value ranging from 0-255.
- * @param {Number} text_color.blue - Blue value ranging from 0-255.
- * @param {Number} text_color.alpha - Alpha value ranging from 0-1.0 with support for two decimal places.
+ * @param {Color} text_color - Object representing an RGBA color.
  * @param {Number[]} text_position - Integer array containing horizontal offset, vertical offset, radius. (in that order)
  */
 function add_text_shadow() {
@@ -132,24 +138,19 @@ function add_text_shadow() {
 /**
  * Register a shadow stylesheet for icons in the panel.
  *
- * @param {Object} icon_color - Object representing an RGBA color.
- * @param {Number} icon_color.red - Red value ranging from 0-255.
- * @param {Number} icon_color.green - Green value ranging from 0-255.
- * @param {Number} icon_color.blue - Blue value ranging from 0-255.
- * @param {Number} icon_color.alpha - Alpha value ranging from 0-1.0 with support for two decimal places.
+ * @param {Color} icon_color - Object representing an RGBA color.
  * @param {Number[]} icon_position - Integer array containing horizontal offset, vertical offset, radius. (in that order)
  */
 function register_icon_shadow(icon_color, icon_position) {
     let icon_color_css = 'rgba(' + icon_color.red + ', ' + icon_color.green + ', ' + icon_color.blue + ', ' + icon_color.alpha.toFixed(2) + ')';
     let icon_position_css = '' + icon_position[0] + 'px ' + icon_position[1] + 'px ' + icon_position[2] + 'px';
 
-    let icon = apply_stylesheet_css('.dpt-panel-icon-shadow .system-status-icon { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'panel-icon-shadow');
-    let arrow = apply_stylesheet_css('.dpt-panel-arrow-shadow .popup-menu-arrow { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'panel-arrow-shadow');
+    let stylesheet = apply_stylesheet_css('.dpt-panel-icon-shadow .system-status-icon { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }\n.dpt-panel-arrow-shadow .popup-menu-arrow { icon-shadow: ' + icon_position_css + ' ' + icon_color_css + '; }', 'foreground/panel-icon-shadow');
 
     register_style('dpt-panel-icon-shadow');
     register_style('dpt-panel-arrow-shadow');
 
-    return [icon, arrow];
+    return stylesheet;
 }
 
 /**
@@ -199,10 +200,7 @@ function remove_icon_shadow() {
 /**
  * Registers text & icon coloring.
  *
- * @param {Object} color - Object containing an RGB color value.
- * @param {Number} color.red - Red value ranging from 0-255.
- * @param {Number} color.green - Green value ranging from 0-255.
- * @param {Number} color.blue - Blue value ranging from 0-255.
+ * @param {Color} color - Object containing an RGB color value.
  * @param {string} prefix - What prefix to apply to the stylesheet. '-' is the default.
  */
 function register_text_color(color, prefix) {
@@ -214,15 +212,13 @@ function register_text_color(color, prefix) {
         prefix = '-';
     }
 
-    let text = apply_stylesheet_css('.dpt-panel' + prefix + 'text-color .panel-button { ' + color_css + ' }', 'panel' + prefix + 'text-color');
-    let icon = apply_stylesheet_css('.dpt-panel' + prefix + 'icon-color .system-status-icon { ' + color_css + ' }', 'panel' + prefix + 'icon-color');
-    let arrow = apply_stylesheet_css('.dpt-panel' + prefix + 'arrow-color .popup-menu-arrow { ' + color_css + ' }', 'panel' + prefix + 'arrow-color');
+    let stylesheet = apply_stylesheet_css('.dpt-panel' + prefix + 'text-color .panel-button { ' + color_css + ' }\n.dpt-panel' + prefix + 'icon-color .system-status-icon { ' + color_css + ' }\n.dpt-panel' + prefix + 'arrow-color .popup-menu-arrow { ' + color_css + ' }', 'foreground/panel' + prefix + 'text-color');
 
     register_style('dpt-panel' + prefix + 'text-color');
     register_style('dpt-panel' + prefix + 'icon-color');
     register_style('dpt-panel' + prefix + 'arrow-color');
 
-    return [text, icon, arrow];
+    return stylesheet;
 }
 
 /**
@@ -271,55 +267,11 @@ function register_style(style) {
 }
 
 /**
- * Set's the panel's actor to a specific background color.
- *
- * @param {Object} color [color={}] - Object containing an RGBA color value.
- * @param {Number} color.red - Red value ranging from 0-255.
- * @param {Number} color.green - Green value ranging from 0-255.
- * @param {Number} color.blue - Blue value ranging from 0-255.
- * @param {Number} color.alpha - Alpha value ranging from 0-255.
- */
-function set_panel_color(color) {
-    let panel_color = { red: 0, green: 0, blue: 0, alpha: 0 };
-
-    /* Make sure settings has been "setup". */
-    if (typeof (Settings.get_panel_color) !== 'undefined' && Settings.get_panel_color !== null) {
-        let background = get_background_color();
-
-        // TODO: Why would this be undefined?
-        if (background) {
-            panel_color = background;
-        }
-    } else {
-        log('[Dynamic Panel Transparency] Panel coloring set without proper settings.');
-    }
-
-    let current_alpha = get_background_alpha(Panel.actor);
-
-    color = Params.parse(color, {
-        red: panel_color.red,
-        green: panel_color.green,
-        blue: panel_color.blue,
-        alpha: current_alpha
-    });
-
-    Panel.actor.set_background_color(new Clutter.Color({
-        red: color.red,
-        green: color.green,
-        blue: color.blue,
-        alpha: color.alpha
-    }));
-}
-
-/**
  * Set's the panel corners' actors to a specific background color.
  *
- * @param {Object} color [color={}] - Object containing an RGBA color value.
- * @param {Number} color.red - Red value ranging from 0-255.
- * @param {Number} color.green - Green value ranging from 0-255.
- * @param {Number} color.blue - Blue value ranging from 0-255.
- * @param {Number} color.alpha - Alpha value ranging from 0-255.
+ * @param {Color} color [color={}] - Object containing an RGBA color value.
  */
+// TODO: Gnome needs CSS styling for the corners.
 function set_corner_color(color) {
     let panel_color = { red: 0, green: 0, blue: 0 };
 
@@ -327,7 +279,7 @@ function set_corner_color(color) {
         panel_color = get_background_color();
     }
 
-    let current_alpha = get_background_alpha(Panel._leftCorner.actor);
+    let current_alpha = Panel._leftCorner.actor.get_background_color().a;
 
     color = Params.parse(color, {
         red: panel_color.red,
@@ -370,6 +322,7 @@ function get_background_image_color(theme) {
 
     if (!file) {
         log('[Dynamic Panel Transparency] No background image found in user theme.');
+
         let image = theme.get_border_image();
 
         if (!image) {
@@ -385,10 +338,9 @@ function get_background_image_color(theme) {
         let background = GdkPixbuf.Pixbuf.new_from_file(file.get_path());
 
         if (!background) {
-            log('[Dynamic Panel Transparency] Provided background is null.');
+            log('[Dynamic Panel Transparency] Provided background is invalid.');
             return null;
         }
-
         return average_color(background);
     } catch (error) {
         log('[Dynamic Panel Transparency] Could not load the background and/or border image for your theme.');
@@ -400,6 +352,8 @@ function get_background_image_color(theme) {
 
 /**
  * Returns the user's desired panel color from Settings. Handles theme detection again.
+ * DEPENDENCY: Settings
+ * TODO: Remove legacy backend code.
  *
  * @returns {Object} Object containing an RGBA color value.
  */
@@ -477,9 +431,7 @@ function get_unmaximized_opacity() {
  *
  */
 function strip_panel_styling() {
-    if (!Panel.actor.has_style_class_name('panel-effect-transparency')) {
-        Panel.actor.add_style_class_name('panel-effect-transparency');
-    }
+    Panel.actor.add_style_class_name('panel-effect-transparency');
 }
 
 /**
@@ -487,9 +439,7 @@ function strip_panel_styling() {
  *
  */
 function reapply_panel_styling() {
-    if (Panel.actor.has_style_class_name('panel-effect-transparency')) {
-        Panel.actor.remove_style_class_name('panel-effect-transparency');
-    }
+    Panel.actor.remove_style_class_name('panel-effect-transparency');
 }
 
 /**
@@ -497,9 +447,7 @@ function reapply_panel_styling() {
  *
  */
 function strip_panel_background_image() {
-    if (!Panel.actor.has_style_class_name('panel-background-image-transparency')) {
-        Panel.actor.add_style_class_name('panel-background-image-transparency');
-    }
+    Panel.actor.add_style_class_name('panel-background-image-transparency');
 }
 
 /**
@@ -507,18 +455,28 @@ function strip_panel_background_image() {
  *
  */
 function reapply_panel_background_image() {
-    if (Panel.actor.has_style_class_name('panel-background-image-transparency')) {
-        Panel.actor.remove_style_class_name('panel-background-image-transparency');
-    }
+    Panel.actor.remove_style_class_name('panel-background-image-transparency');
 }
 
 /**
  * Applies the style class 'panel-background-color-transparency' and removes any CSS embellishments.
- *
+ * TODO: Transition this code into a new backend24 function.
  */
 function strip_panel_background() {
-    if (!Panel.actor.has_style_class_name('panel-background-color-transparency')) {
-        Panel.actor.add_style_class_name('panel-background-color-transparency');
+    register_background_color(get_theme_background_color(), Settings.get_current_user_theme());
+    register_background_color(Settings.get_panel_color());
+
+    let tweaked_apps = Object.keys(Settings.app_settings_manager['enable_background_tweaks']);
+    let tweaked_windows = Object.keys(Settings.window_settings_manager['enable_background_tweaks']);
+
+    for (let key of tweaked_apps) {
+        let prefix = key.split('.').join('-');
+        register_background_color(Util.tuple_to_native_color(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks');
+    }
+
+    for (let key of tweaked_windows) {
+        let prefix = key.split('.').join('-');
+        register_background_color(Util.tuple_to_native_color(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks');
     }
 }
 
@@ -527,9 +485,7 @@ function strip_panel_background() {
  *
  */
 function reapply_panel_background() {
-    if (Panel.actor.has_style_class_name('panel-background-color-transparency')) {
-        Panel.actor.remove_style_class_name('panel-background-color-transparency');
-    }
+    remove_background_color();
 }
 
 /**
@@ -556,8 +512,10 @@ function apply_stylesheet_css(css, name) {
         log('[Dynamic Panel Transparency] Error Loading Temporary Stylesheet: ' + name);
         return null;
     }
+
     return file_name;
 }
+
 
 /**
  * Taken from Plank. Used to calculate the average color of a theme's images.
@@ -676,24 +634,124 @@ function average_color(source, width, height) {
     return { red: rTotal, green: gTotal, blue: bTotal, alpha: aTotal2 };
 }
 
-// TODO: Document?
+/* Backend24 (3.24+) Specific Functions (Not backwards compatible) */
 
-/* Methods to extend Tweener's properties. */
-
-function get_background_alpha(actor) {
-    return actor.get_background_color().alpha;
+function register_background_style(style) {
+    if (this.background_styles.indexOf(style) === -1) {
+        this.background_styles.push(style);
+    }
 }
 
-function set_background_alpha(actor, alpha) {
-    let background_color = actor.get_background_color();
+function register_background_color(bg_color, prefix, tweak_name) {
+    let suffix = (prefix ? '-' + prefix : '');
 
-    /* Some transition algorithms go overboard. */
-    alpha = Util.clamp(alpha, 0, 255);
+    if (prefix === '') {
+        prefix = '-default-';
+    } else if (prefix) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
 
-    actor.set_background_color(new Clutter.Color({
-        red: background_color.red,
-        green: background_color.green,
-        blue: background_color.blue,
-        alpha: alpha
-    }));
+    if (tweak_name) {
+        tweak_name = tweak_name + '/';
+        prefix = '-tweak' + prefix;
+    } else {
+        tweak_name = '';
+    }
+
+    let unmaximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + (get_unmaximized_opacity() / SCALE_FACTOR).toFixed(2) + ')';
+    let maximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + (get_maximized_opacity() / SCALE_FACTOR).toFixed(2) + ')';
+
+    register_background_style('dpt-panel' + prefix + 'unmaximized');
+    register_background_style('dpt-panel' + prefix + 'maximized');
+
+    let file_prefix = 'background/' + tweak_name + 'panel';
+
+    let panel = apply_stylesheet_css('.dpt-panel' + prefix + 'unmaximized { background-color: ' + unmaximized_bg_color_css + '; }\n.dpt-panel' + prefix + 'maximized { background-color: ' + maximized_bg_color_css + '; }', file_prefix + suffix);
+
+    return panel;
+}
+
+function set_unmaximized_background_color(prefix) {
+    if (prefix) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'unmaximized');
+}
+
+function set_maximized_background_color(prefix) {
+    if (prefix) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'maximized');
+}
+
+function remove_unmaximized_background_color(prefix) {
+    if (prefix) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'unmaximized');
+}
+
+function remove_maximized_background_color(prefix) {
+    if (prefix) {
+        prefix = '-' + prefix + '-';
+    } else {
+        prefix = '-';
+    }
+
+    Panel.actor.remove_style_class_name('dpt-panel' + prefix + 'maximized');
+}
+
+function remove_background_color(params) {
+    params = Params.parse(params, {
+        exclude: null,
+        exclude_maximized_variant_only: false,
+        exclude_unmaximized_variant_only: false,
+        exclude_base: false
+    });
+
+    let prefix = null;
+
+    if (params.exclude) {
+        prefix = '-' + params.exclude + '-';
+    } else if (params.exclude_base) {
+        prefix = '-';
+    }
+
+    let excluded_maximized_style = (prefix === null ? null : 'dpt-panel' + prefix) + 'maximized';
+    let excluded_unmaximized_style = (prefix === null ? null : 'dpt-panel' + prefix) + 'unmaximized';
+
+    for (let style of this.background_styles) {
+        let a = params.exclude_maximized_variant_only && style !== excluded_maximized_style;
+        let b = params.exclude_unmaximized_variant_only && style !== excluded_unmaximized_style;
+        let c = !params.exclude_maximized_variant_only && !params.exclude_unmaximized_variant_only && style !== excluded_maximized_style && style !== excluded_unmaximized_style;
+
+        if (c || a || b) {
+            Panel.actor.remove_style_class_name(style);
+            log('removed: ' + style);
+        }
+    }
+}
+
+function _updatePanelCSS() {
+    let duration_css = Settings.get_transition_speed();
+
+    let stylesheet = apply_stylesheet_css('.dpt-panel-transition-duration { transition-duration: ' + duration_css + 'ms; }', 'transitions/panel-transition-duration');
+
+    Panel.actor.add_style_class_name('dpt-panel-transition-duration');
+
+    register_style('dpt-panel-transition-duration');
+
+    return stylesheet;
 }
