@@ -64,8 +64,7 @@ function cleanup() {
     }
 
     for (let sheet of this.stylesheets) {
-        // COMPATIBILITY: st-theme used strings, not file objects in 3.14
-        Compatibility.st_theme_unload_stylesheet(theme, sheet);
+        theme.unload_stylesheet(Util.get_file(sheet));
         Util.remove_file(sheet);
     }
 
@@ -329,8 +328,7 @@ function get_background_image_color(theme) {
             log('[Dynamic Panel Transparency] No border image found in user theme.');
             return null;
         } else {
-            // COMPATIBILITY: st-border-image used strings in 3.14, not Gio.File.
-            file = Compatibility.st_border_image_get_file(image);
+            file = image.get_file();
         }
     }
 
@@ -506,7 +504,7 @@ function apply_stylesheet_css(css, name) {
     let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
 
     // COMPATIBILITY: st-theme used strings, not file objects in 3.14
-    if (Compatibility.st_theme_load_stylesheet(theme, file_name)) {
+    if (theme.load_stylesheet(Util.get_file(file_name))) {
         this.stylesheets.push(file_name);
     } else {
         log('[Dynamic Panel Transparency] Error Loading Temporary Stylesheet: ' + name);

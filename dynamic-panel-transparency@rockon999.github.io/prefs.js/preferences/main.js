@@ -123,25 +123,13 @@ function buildPrefsWidget() {
         let transition_type_box = builder.get_object('transition_type_box');
         let force_transition = builder.get_object('force_transition_check');
 
-        if (Compatibility.meets('backend24')) {
-            let transition_type_label = builder.get_object('transition_type_label');
+        // TODO: REMOVE BELOW
+        let transition_type_label = builder.get_object('transition_type_label');
 
-            transition_type_label.destroy();
-            transition_type_box.destroy();
-            force_transition.destroy();
-        } else {
-            transition_type_box.connect('changed', Lang.bind(this, function(box) {
-                settings.set_value('transition-type', new GLib.Variant('i', +(box.get_active_id())));
-            }));
-            transition_type_box.set_active_id('' + settings.get_int(SETTINGS_TRANSITION_TYPE) + '');
+        transition_type_label.destroy();
+        transition_type_box.destroy();
+        force_transition.destroy();
 
-            force_transition.set_active(settings.get_boolean(SETTINGS_FORCE_ANIMATION));
-
-            force_transition.connect('toggled', Lang.bind(this, function(widget) {
-                settings.set_value(SETTINGS_FORCE_ANIMATION, new GLib.Variant('b', widget.get_active()));
-
-            }));
-        }
     }
 
     /* Setup foreground tab */
@@ -253,9 +241,7 @@ function buildPrefsWidget() {
         }));
 
         let text_shadow_color_btn = builder.get_object('text_shadow_color');
-
-        // COMPATIBILITY: In 3.18 and lower there is no 'show-editor' property.
-        Compatibility.gtk_color_button_set_show_editor(text_shadow_color_btn, true);
+        text_shadow_color_btn.show_editor = true;
 
         let text_shadow_color = settings.get_value(SETTINGS_TEXT_SHADOW_COLOR).deep_unpack();
 
@@ -316,9 +302,7 @@ function buildPrefsWidget() {
         }));
 
         let icon_shadow_color_btn = builder.get_object('icon_shadow_color');
-
-        // COMPATIBILITY: In 3.18 and lower there is no 'show-editor' property.
-        Compatibility.gtk_color_button_set_show_editor(icon_shadow_color_btn, true);
+        icon_shadow_color_btn.show_editor = true;
 
         let icon_shadow_color = settings.get_value(SETTINGS_ICON_SHADOW_COLOR).deep_unpack();
 

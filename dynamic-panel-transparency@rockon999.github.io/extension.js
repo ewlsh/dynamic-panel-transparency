@@ -280,7 +280,7 @@ function initialize_settings() {
         key: 'transition-speed',
         name: 'transition_speed',
         type: 'i',
-        handler: Lang.bind(this, Compatibility.meets('backend24') ?
+        handler: Lang.bind(this,
             /* Update the backend24 transition CSS. */
             function() {
                 Main.panel.actor.remove_style_class_name('dpt-panel-transition-duration');
@@ -290,7 +290,7 @@ function initialize_settings() {
                 for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                     let stylesheet = Theming.stylesheets[i];
                     if (stylesheet.contains('transitions') && stylesheet.endsWith('panel-transition-duration.dpt.css')) {
-                        Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                        theme.unload_stylesheet(Util.get_file(stylesheet));
                         Util.remove_file(stylesheet);
                         Theming.stylesheets.splice(i, 1);
                     }
@@ -311,7 +311,7 @@ function initialize_settings() {
                 }));
                 /* Legacy backend didn't need any update work. */
                 // TODO: Remove empty function.
-            } : function() { })
+            })
     });
     Settings.add({
         key: 'force-animation',
@@ -336,7 +336,7 @@ function initialize_settings() {
                 for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                     let stylesheet = Theming.stylesheets[i];
                     if (stylesheet.contains('background') && stylesheet.contains('panel-')) {
-                        Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                        theme.unload_stylesheet(Util.get_file(stylesheet));
                         Util.remove_file(stylesheet);
                         Theming.stylesheets.splice(i, 1);
                     }
@@ -384,7 +384,7 @@ function initialize_settings() {
                 for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                     let stylesheet = Theming.stylesheets[i];
                     if (stylesheet.contains('background') && stylesheet.contains('panel-')) {
-                        Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                        theme.unload_stylesheet(Util.get_file(stylesheet));
                         Util.remove_file(stylesheet);
                         Theming.stylesheets.splice(i, 1);
                     }
@@ -429,7 +429,7 @@ function initialize_settings() {
                 for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                     let stylesheet = Theming.stylesheets[i];
                     if (stylesheet.contains('background') && stylesheet.contains('panel.dpt.css')) {
-                        Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                        theme.unload_stylesheet(Util.get_file(stylesheet));
                         Util.remove_file(stylesheet);
                         Theming.stylesheets.splice(i, 1);
                     }
@@ -525,7 +525,7 @@ function initialize_settings() {
             for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                 let stylesheet = Theming.stylesheets[i];
                 if (stylesheet.contains('shadow') && stylesheet.contains('text')) {
-                    Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                    theme.unload_stylesheet(Util.get_file(stylesheet));
                     Util.remove_file(stylesheet);
                     Theming.stylesheets.splice(i, 1);
                 }
@@ -565,7 +565,7 @@ function initialize_settings() {
             for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                 let stylesheet = Theming.stylesheets[i];
                 if (stylesheet.contains('shadow') && stylesheet.contains('icon')) {
-                    Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                    theme.unload_stylesheet(Util.get_file(stylesheet));
                     Util.remove_file(stylesheet);
                     Theming.stylesheets.splice(i, 1);
                 }
@@ -606,7 +606,7 @@ function initialize_settings() {
             for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                 let stylesheet = Theming.stylesheets[i];
                 if (stylesheet.contains('shadow') && stylesheet.contains('icon')) {
-                    Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                    theme.unload_stylesheet(Util.get_file(stylesheet));
                     Util.remove_file(stylesheet);
                     Theming.stylesheets.splice(i, 1);
                 }
@@ -647,7 +647,7 @@ function initialize_settings() {
             for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                 let stylesheet = Theming.stylesheets[i];
                 if (stylesheet.contains('shadow') && stylesheet.contains('text')) {
-                    Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
+                    theme.unload_stylesheet(Util.get_file(stylesheet));
                     Util.remove_file(stylesheet);
                     Theming.stylesheets.splice(i, 1);
                 }
