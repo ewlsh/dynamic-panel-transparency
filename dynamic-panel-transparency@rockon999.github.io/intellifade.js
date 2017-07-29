@@ -22,6 +22,7 @@ let continueCheck = false;
 /* Variable for current detected maximized window... */
 let maximized_window = null;
 /* Run the next change regardless of the whether it is the same as the current status. */
+// TODO: Find a nicer way to override optimization code.
 let override_optimization = false;
 /* Current ID of the async loop (0 if no loop is running) */
 let timeoutId = 0;
@@ -31,6 +32,8 @@ const ASYNC_UPDATE_FREQUENCY = 200; // ms
 
 function init() {
     this._wm_tracker = Shell.WindowTracker.get_default();
+
+    _updateBounds();
 }
 
 function cleanup() {
@@ -50,6 +53,8 @@ function syncCheck() {
         Mainloop.source_remove(timeoutId);
     /* Remove the old loop ID */
     timeoutId = 0;
+    /* Update bounds when a check is done in sync. */
+    _updateBounds();
     /* Run a check. */
     _check();
 }
@@ -71,6 +76,28 @@ function asyncCheck() {
         }));
     } else {
         continueCheck = true;
+    }
+
+}
+
+function _updateBounds() {
+    let panel = Main.panel.actor;
+
+    this.panel_bounds = { x: panel.get_x(), y: panel.get_y(), height: panel.get_height(), width: panel.get_width() };
+    this.scale_factor = imports.gi.St.ThemeContext.get_for_stage(global.stage).scale_factor;
+
+    let anchor_y = -Main.layoutManager.panelBox.get_anchor_point()[1];
+    let pivot_y = -Main.layoutManager.panelBox.get_pivot_point()[1];
+
+    let buffer = 2;
+
+    // Adjust for bottom panel.
+    if (anchor_y > buffer * this.scale_factor) { // eslint-disable-line no-magic-numbers
+        let rect1_y = anchor_y;
+        this.panel_bounds.y = rect1_y;
+    } else if (pivot_y > buffer * this.scale_factor) { // eslint-disable-line no-magic-numbers
+        let rect1_y = pivot_y;
+        this.panel_bounds.y = rect1_y;
     }
 
 }
@@ -99,9 +126,11 @@ function _check() {
         add_transparency = true;
         maximized_window = focused_window;
     } else {
-        /* Save processing time by checking the current focused window (most likely to be maximized) */
-        /* Check that the focused window is in the right workspace. (I really hope it always is...) */
-        /* Don't do the 'quick check' if we have trigger apps/windows as they might not be focused. */
+        // TODO: Check this.
+        let buffer = 2;
+
+        // TODO: Always negative? Is pivot negative?
+
         for (let i = windows.length - 1; i >= 0; i--) {
             let current_window = windows[i];
 
@@ -134,7 +163,7 @@ function _check() {
 
             if (current_window.maximized_vertically) {
                 /* Make sure the top-most window is selected */
-                if (maximized_window === null) {
+                if (maximized_window === null && !force_transparency) {
                     maximized_window = current_window;
                 }
 
@@ -147,23 +176,21 @@ function _check() {
 
             let frame = current_window.get_frame_rect();
 
-            let scale_factor = imports.gi.St.ThemeContext.get_for_stage(global.stage).scale_factor;
+            let overlap = this.panel_bounds.x < frame.x + frame.width &&
+                this.panel_bounds.x + this.panel_bounds.width > frame.x &&
+                this.panel_bounds.y < frame.y + frame.height &&
+                this.panel_bounds.height + this.panel_bounds.y > frame.y;
 
-            let buffer = 2;
+            let touching_panel = frame.y >= (this.panel_bounds.y + this.panel_bounds.height - buffer * this.scale_factor) &&
+                frame.y <= (this.panel_bounds.y + this.panel_bounds.height + buffer * this.scale_factor);
 
-            let panel_height = Main.panel.actor.get_height();
-            let window_touching_panel = frame.y <= (panel_height + buffer * scale_factor);
-            let window_overlapping_panel = (panel_height - frame.y) > buffer * scale_factor;
-            let vertical_override = window_touching_panel && frame.height >= panel_height - buffer * scale_factor;
-            let horizontal_override = window_touching_panel && frame.x <= buffer * scale_factor && frame.width >= panel_height - buffer * scale_factor;
-
-            if (window_touching_panel && window_overlapping_panel) {
+            if (overlap) {
                 force_transparency = true;
                 maximized_window = null;
-            } else if (horizontal_override || vertical_override) {
+            } else if (touching_panel) {
                 add_transparency = false;
 
-                if (maximized_window === null) {
+                if (maximized_window === null && !force_transparency) {
                     maximized_window = current_window;
                 }
             }
