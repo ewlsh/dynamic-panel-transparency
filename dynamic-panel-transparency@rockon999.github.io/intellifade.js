@@ -10,12 +10,11 @@ const Shell = imports.gi.Shell;
 const Main = imports.ui.main;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Compatibility = Me.imports.compatibility;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 
-let Transitions = Compatibility.get_transition_manager();
-let Theming = Compatibility.get_theming_manager();
+const Transitions = Me.imports.transitions;
+const Theming = Me.imports.theming;
 
 /* Determines whether to continue the async loop checks. */
 let continueCheck = false;

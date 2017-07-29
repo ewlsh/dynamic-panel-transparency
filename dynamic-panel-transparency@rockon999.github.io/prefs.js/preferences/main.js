@@ -123,25 +123,17 @@ function buildPrefsWidget() {
         let transition_type_box = builder.get_object('transition_type_box');
         let force_transition = builder.get_object('force_transition_check');
 
-        if (Compatibility.meets('backend24')) {
-            let transition_type_label = builder.get_object('transition_type_label');
+        transition_type_box.connect('changed', Lang.bind(this, function(box) {
+            settings.set_value('transition-type', new GLib.Variant('i', +(box.get_active_id())));
+        }));
+        transition_type_box.set_active_id('' + settings.get_int(SETTINGS_TRANSITION_TYPE) + '');
 
-            transition_type_label.destroy();
-            transition_type_box.destroy();
-            force_transition.destroy();
-        } else {
-            transition_type_box.connect('changed', Lang.bind(this, function(box) {
-                settings.set_value('transition-type', new GLib.Variant('i', +(box.get_active_id())));
-            }));
-            transition_type_box.set_active_id('' + settings.get_int(SETTINGS_TRANSITION_TYPE) + '');
+        force_transition.set_active(settings.get_boolean(SETTINGS_FORCE_ANIMATION));
 
-            force_transition.set_active(settings.get_boolean(SETTINGS_FORCE_ANIMATION));
+        force_transition.connect('toggled', Lang.bind(this, function(widget) {
+            settings.set_value(SETTINGS_FORCE_ANIMATION, new GLib.Variant('b', widget.get_active()));
 
-            force_transition.connect('toggled', Lang.bind(this, function(widget) {
-                settings.set_value(SETTINGS_FORCE_ANIMATION, new GLib.Variant('b', widget.get_active()));
-
-            }));
-        }
+        }));
     }
 
     /* Setup foreground tab */

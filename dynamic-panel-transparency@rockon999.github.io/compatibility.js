@@ -13,10 +13,7 @@ const Compatibility = {
     st_theme_load_stylesheet: { major: 3, minor: 16 },
     st_theme_unload_stylesheet: { major: 3, minor: 16 },
     st_border_image_get_file: { major: 3, minor: 16 },
-    gtk_color_button_set_show_editor: { major: 3, minor: 20 },
-    gtk_scrolled_window_set_overlay_scrolling: { major: 3, minor: 16 },
-    css: { '-gtk-icon-shadow': { major: 3, minor: 20, fallback: 'icon-shadow' } },
-    backend24: { major: 3, minor: 24 }
+    gtk_color_button_set_show_editor: { major: 3, minor: 20 }
 };
 Util.deep_freeze(Compatibility, true);
 
@@ -31,35 +28,7 @@ const meets = function(a, b) {
 
 /* Compatibility related convenience functions. */
 
-
-/* Transitions using CSS did not work prior to 3.24 due to a bug. Restrict the new backend to 3.24+ */
-const get_theming_manager = function() {
-    if (meets('backend24')) {
-        return Me.imports['theming-3-24'];
-    }
-    return Me.imports.theming;
-};
-
-/* See above... */
-const get_transition_manager = function() {
-    if (meets('backend24')) {
-        return Me.imports['transitions-3-24'];
-    }
-    return Me.imports.transitions;
-};
-
-/* Parses CSS... not a C function */
-const parse_css = function(css) {
-    for (let key of Object.keys(Compatibility.css)) {
-        if (SHELL_VERSION.major === Compatibility.css[key].major && SHELL_VERSION.minor < Compatibility.css[key].minor) {
-            css = css.replace(key, Compatibility.css[key].fallback);
-        }
-    }
-    return css;
-};
-
 /* Wrappers for functions broken by API changes since 3.14. */
-
 
 /* st-border-image in 3.14 uses strings, not Gio.File */
 const st_border_image_get_file = function(border_image) {
@@ -90,12 +59,5 @@ const st_theme_unload_stylesheet = function(theme, file_name) {
 const gtk_color_button_set_show_editor = function(widget, value) {
     if (meets('gtk_color_button_set_show_editor')) {
         widget.show_editor = value;
-    }
-};
-
-/* 3.14 lacks a lot of useful features */
-const gtk_scrolled_window_set_overlay_scrolling = function(widget, value) {
-    if (meets('gtk_scrolled_window_set_overlay_scrolling')) {
-        widget.set_overlay_scrolling(value);
     }
 };

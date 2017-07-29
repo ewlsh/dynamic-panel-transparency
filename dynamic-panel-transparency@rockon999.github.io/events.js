@@ -11,15 +11,14 @@ const Main = imports.ui.main;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const Compatibility = Me.imports.compatibility;
 const Convenience = Me.imports.convenience;
 const Extension = Me.imports.extension;
 const Intellifade = Me.imports.intellifade;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 
-let Theming = Compatibility.get_theming_manager();
-let Transitions = Compatibility.get_transition_manager();
+const Theming = Me.imports.theming;
+const Transitions = Me.imports.transitions;
 
 const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 

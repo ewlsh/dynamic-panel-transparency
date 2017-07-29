@@ -11,8 +11,7 @@ const Params = imports.misc.params;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 
-const Compatibility = Me.imports.compatibility;
-let Theming = Compatibility.get_theming_manager();
+const Theming = Me.imports.theming;
 
 /* Convenience constant for the shell panel. */
 const Panel = Main.panel;

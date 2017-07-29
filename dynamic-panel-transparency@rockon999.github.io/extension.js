@@ -19,10 +19,12 @@ const Intellifade = Me.imports.intellifade;
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 
-let Theming = Compatibility.get_theming_manager();
-let Transitions = Compatibility.get_transition_manager();
+const Theming = Me.imports.theming;
+const Transitions = Me.imports.transitions;
 
 const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
+
+const SETTINGS_DELAY = 3000;
 
 /* Only way to prevent multiple runs apparently. Hacky-ness. */
 let modified = false;
@@ -283,39 +285,7 @@ function initialize_settings() {
     Settings.add({
         key: 'transition-speed',
         name: 'transition_speed',
-        type: 'i',
-        handler: Lang.bind(this, Compatibility.meets('backend24') ?
-            /* Update the backend24 transition CSS. */
-            function() {
-                Main.panel.actor.remove_style_class_name('dpt-panel-transition-duration');
-
-                let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
-
-                for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
-                    let stylesheet = Theming.stylesheets[i];
-                    if (stylesheet.contains('transitions') && stylesheet.endsWith('panel-transition-duration.dpt.css')) {
-                        Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
-                        Util.remove_file(stylesheet);
-                        Theming.stylesheets.splice(i, 1);
-                    }
-                }
-
-                const id = this.panel_transition_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
-                    if (id !== this.panel_transition_update_id) {
-                        return false;
-                    }
-
-                    /* Get Rid of the Panel's CSS Background */
-                    // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
-                    Theming._updatePanelCSS();
-
-                    Intellifade.forceSyncCheck();
-
-                    return false;
-                }));
-            /* Legacy backend didn't need any update work. */
-            // TODO: Remove empty function.
-            } : function() { })
+        type: 'i'
     });
     Settings.add({
         key: 'force-animation',
@@ -328,7 +298,7 @@ function initialize_settings() {
         type: 'i',
         getter: 'get_unmaximized_opacity',
         handler: Lang.bind(this, function() {
-            const super_id = this.opacity_update_id = Mainloop.timeout_add(1000, Lang.bind(this, function() {
+            const super_id = this.opacity_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() {
                 if (super_id !== this.opacity_update_id) {
                     return false;
                 }
@@ -348,7 +318,7 @@ function initialize_settings() {
 
                 Theming.strip_panel_background();
 
-                const id = this.panel_color_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
                         return false;
                     }
@@ -376,7 +346,7 @@ function initialize_settings() {
         type: 'i',
         getter: 'get_maximized_opacity',
         handler: Lang.bind(this, function() {
-            const super_id = this.opacity_update_id = Mainloop.timeout_add(1000, Lang.bind(this, function() {
+            const super_id = this.opacity_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() {
                 if (super_id !== this.opacity_update_id) {
                     return false;
                 }
@@ -396,7 +366,7 @@ function initialize_settings() {
 
                 Theming.strip_panel_background();
 
-                const id = this.panel_color_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
                         return false;
                     }
@@ -423,45 +393,10 @@ function initialize_settings() {
         name: 'panel_color',
         type: 'ai',
         parser: Util.tuple_to_native_color,
-        handler: Lang.bind(this, Compatibility.meets('backend24') ?
-            /* Handler for 3.24+ */
-            function() {
-                Theming.remove_background_color();
+        handler: Lang.bind(this, function() {
+            Theming.set_panel_color();
 
-                let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
-
-                for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
-                    let stylesheet = Theming.stylesheets[i];
-                    if (stylesheet.contains('background') && stylesheet.contains('panel.dpt.css')) {
-                        Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
-                        Util.remove_file(stylesheet);
-                        Theming.stylesheets.splice(i, 1);
-                    }
-                }
-                Theming.register_background_color(Settings.get_panel_color());
-                const id = this.panel_color_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
-                    if (id !== this.panel_color_update_id) {
-                        return false;
-                    }
-
-                    /* Get Rid of the Panel's CSS Background */
-                    // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
-
-                    Theming.set_maximized_background_color((Math.random() * 100).toFixed(0));
-                    Theming.remove_background_color();
-                    Theming.set_unmaximized_background_color((Math.random() * 100).toFixed(0));
-                    Theming.remove_background_color();
-
-                    Intellifade.forceSyncCheck();
-
-                    return false;
-                }));
-                /* Legacy Handler */
-            } : function() {
-                // TODO: Well... legacy backend was easier in some ways... make backend24 easier to utilize.
-                Theming.set_panel_color();
-
-            })
+        })
     });
     Settings.add({
         key: 'panel-theme-color',
@@ -539,7 +474,7 @@ function initialize_settings() {
                 }
             }
             let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
-            const id = this.text_shadow_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+            const id = this.text_shadow_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                 if (id !== this.text_shadow_update_id) {
                     return false;
                 }
@@ -579,7 +514,7 @@ function initialize_settings() {
                 }
             }
             let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
-            const id = this.icon_shadow_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+            const id = this.icon_shadow_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                 if (id !== this.icon_shadow_update_id) {
                     return false;
                 }
@@ -620,7 +555,7 @@ function initialize_settings() {
                 }
             }
             let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
-            const id = this.icon_shadow_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+            const id = this.icon_shadow_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                 if (id !== this.icon_shadow_update_id) {
                     return false;
                 }
@@ -661,7 +596,7 @@ function initialize_settings() {
                 }
             }
             let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
-            const id = this.text_shadow_update_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+            const id = this.text_shadow_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                 if (id !== this.text_shadow_update_id) {
                     return false;
                 }
