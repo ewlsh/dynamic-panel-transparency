@@ -42,6 +42,7 @@ const SETTINGS_TEXT_SHADOW = 'text-shadow';
 const SETTINGS_TEXT_SHADOW_COLOR = 'text-shadow-color';
 const SETTINGS_TEXT_SHADOW_POSITION = 'text-shadow-position';
 const SETTINGS_TRANSITION_SPEED = 'transition-speed';
+const SETTINGS_TRANSITION_WITH_OVERVIEW = 'transition-with-overview';
 const SETTINGS_UNMAXIMIZED_OPACITY = 'unmaximized-opacity';
 
 const Page = { TRANSITIONS: 0, FOREGROUND: 1, BACKGROUND: 2, APP_TWEAKS: 3, ABOUT: 4 };
@@ -115,18 +116,13 @@ function buildPrefsWidget() {
             settings.set_value(SETTINGS_TRANSITION_SPEED, new GLib.Variant('i', widget.adjustment.get_value()));
         }));
 
-        // TODO: Remove these GTK widgets eventually.
+        let transition_with_overview = builder.get_object('transition_with_overview_check');
+        transition_with_overview.set_active(settings.get_boolean(SETTINGS_TRANSITION_WITH_OVERVIEW));
 
-        let transition_type_box = builder.get_object('transition_type_box');
-        let force_transition = builder.get_object('force_transition_check');
+        transition_with_overview.connect('toggled', Lang.bind(this, function(widget) {
+            settings.set_value(SETTINGS_TRANSITION_WITH_OVERVIEW, new GLib.Variant('b', widget.get_active()));
 
-        // TODO: REMOVE BELOW
-        let transition_type_label = builder.get_object('transition_type_label');
-
-        transition_type_label.destroy();
-        transition_type_box.destroy();
-        force_transition.destroy();
-
+        }));
     }
 
     /* Setup foreground tab */

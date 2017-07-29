@@ -13,6 +13,8 @@ const Theming = Me.imports.theming;
 
 const Equations = imports.tweener.equations;
 
+const Main = imports.ui.main;
+
 const CORNER_UPDATE_FREQUENCY = 30;
 
 // TODO: Make sure that each function is start-value agnostic (doesn't assume maximized value)...
@@ -113,9 +115,11 @@ function fade_in() {
             if (id === this.corner_timeout_id && !this.status.is_transparent()) {
                 count++;
 
-                let alpha = Equations.linear(Math.floor(count * CORNER_UPDATE_FREQUENCY), unmaximized, maximized - unmaximized, speed);
+                let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), unmaximized, maximized - unmaximized, speed);
 
                 update_corner_alpha(alpha);
+
+                Main.panel.statusArea['activities']._label.text = 'alpha: ' + alpha;
 
                 if (count > CORNER_UPDATE_FREQUENCY) {
                     update_corner_alpha(maximized);
@@ -169,9 +173,11 @@ function fade_out() {
             if (id === this.corner_timeout_id && this.status.is_transparent()) {
                 count++;
 
-                let alpha = Equations.linear(Math.floor(count * CORNER_UPDATE_FREQUENCY), maximized, unmaximized - maximized, speed);
+                let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), maximized, unmaximized - maximized, speed);
 
                 update_corner_alpha(alpha);
+
+                Main.panel.statusArea['activities']._label.text = 'alpha: ' + alpha;
 
                 if (count > CORNER_UPDATE_FREQUENCY) {
                     update_corner_alpha(unmaximized);
@@ -211,9 +217,11 @@ function blank_fade_out() {
             if (id === this.corner_timeout_id && this.status.is_transparent()) {
                 count++;
 
-                let alpha = Equations.linear(Math.floor(count * CORNER_UPDATE_FREQUENCY), maximized, -maximized, speed);
+                let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), maximized, -maximized, speed);
 
                 update_corner_alpha(alpha);
+
+                Main.panel.statusArea['activities']._label.text = 'alpha: ' + alpha;
 
                 if (count > CORNER_UPDATE_FREQUENCY) {
                     update_corner_alpha(0);
