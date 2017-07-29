@@ -12,7 +12,6 @@ const Main = imports.ui.main;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const Compatibility = Me.imports.compatibility;
 const Convenience = Me.imports.convenience;
 const Events = Me.imports.events;
 const Intellifade = Me.imports.intellifade;
