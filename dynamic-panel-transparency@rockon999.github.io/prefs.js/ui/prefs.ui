@@ -196,7 +196,7 @@ narzb
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="force_transition_check">
+              <object class="GtkCheckButton" id="transition_with_overview_check">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
@@ -213,57 +213,14 @@ narzb
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">3</property>
-                    <property name="label" translatable="yes" comments="Overrides Gnome animation settings and &quot;forces&quot; the animation.">Force animation</property>
+                    <property name="label" translatable="yes" comments="Overrides Gnome animation settings and &quot;forces&quot; the animation.">Transition with the overview</property>
                   </object>
                 </child>
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">2</property>
+                <property name="top_attach">1</property>
                 <property name="width">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="transition_type_label">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="margin_left">5</property>
-                <property name="margin_right">5</property>
-                <property name="margin_top">5</property>
-                <property name="margin_bottom">5</property>
-                <property name="label" translatable="yes" comments="The function used to animate the panel traansition. See http://hosted.zeh.com.br/tweener/docs/en-us/misc/transitions.html">Transition Style</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkComboBoxText" id="transition_type_box">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="margin_left">5</property>
-                <property name="margin_right">5</property>
-                <property name="margin_top">5</property>
-                <property name="margin_bottom">5</property>
-                <items>
-                  <item id="1" translatable="yes">Linear (default)</item>
-                  <item id="2" translatable="yes">Sine</item>
-                  <item id="3" translatable="yes">Quadratic</item>
-                  <item id="4" translatable="yes">Cubic</item>
-                  <item id="5" translatable="yes">Quartic</item>
-                  <item id="6" translatable="yes">Quintic</item>
-                  <item id="7" translatable="yes">Exponential</item>
-                  <item id="8" translatable="yes">Circle</item>
-                  <item id="9" translatable="yes">Elastic</item>
-                  <item id="10" translatable="yes">Bounce</item>
-                </items>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">1</property>
               </packing>
             </child>
           </object>

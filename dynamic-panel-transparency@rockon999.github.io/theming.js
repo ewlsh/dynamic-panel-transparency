@@ -277,14 +277,14 @@ function set_corner_color(color) {
         panel_color = get_background_color();
     }
 
-    let current_alpha = Panel._leftCorner.actor.get_background_color().a;
-
     color = Params.parse(color, {
         red: panel_color.red,
         green: panel_color.green,
         blue: panel_color.blue,
-        alpha: current_alpha
+        alpha: 0
     });
+
+    log('color: ' + JSON.stringify(color));
 
     let opacity = Util.clamp(color.alpha / SCALE_FACTOR, 0, 1);
 

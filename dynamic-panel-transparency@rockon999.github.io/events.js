@@ -43,8 +43,14 @@ function init() {
 
     this._wm_tracker = Shell.WindowTracker.get_default();
 
+
     this._overviewHidingSig = Main.overview.connect('hiding', Lang.bind(this, Util.strip_args(Intellifade.syncCheck)));
-    this._overviewShownSig = Main.overview.connect('shown', Lang.bind(this, _overviewShown));
+
+    if (Settings.transition_with_overview()) {
+        this._overviewShownSig = Main.overview.connect('showing', Lang.bind(this, _overviewShown));
+    } else {
+        this._overviewShownSig = Main.overview.connect('shown', Lang.bind(this, _overviewShown));
+    }
 
     let windows = global.get_window_actors();
 
