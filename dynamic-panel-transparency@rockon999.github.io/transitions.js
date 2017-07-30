@@ -93,6 +93,8 @@ function minimum_fade_in(params) {
 
     params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
 
+    Theming.set_panel_color();
+
     if (this.animation_status.is_done() || !this.animation_status.equals(AnimationAction.FADING_IN, AnimationDestination.MINIMUM)) {
         this.animation_status.set(AnimationAction.FADING_IN, AnimationDestination.MINIMUM);
     } else {
@@ -105,8 +107,6 @@ function minimum_fade_in(params) {
     this.status.set_blank(false);
 
     let time = params.time / TIME_SCALE_FACTOR;
-
-    Theming.set_panel_color();
 
     /* Avoid Tweener if the time or opacity don't require it. */
     if (time <= 0 || Theming.get_unmaximized_opacity() <= 0) {
@@ -154,6 +154,8 @@ function fade_in(params) {
 
     params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type });
 
+    Theming.set_panel_color();
+
     if (this.animation_status.is_done() || !this.animation_status.equals(AnimationAction.FADING_IN, AnimationDestination.MAXIMUM)) {
         this.animation_status.set(AnimationAction.FADING_IN, AnimationDestination.MAXIMUM);
     } else {
@@ -166,8 +168,6 @@ function fade_in(params) {
     this.status.set_blank(false);
 
     let time = params.time / TIME_SCALE_FACTOR;
-
-    Theming.set_panel_color();
 
     if (time <= 0) {
         Theming.set_background_alpha(Panel.actor, Theming.get_maximized_opacity());
