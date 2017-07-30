@@ -224,10 +224,6 @@ function _check() {
         } else {
             Transitions.fade_in();
         }
-    } else if (Settings.check_overrides() || Settings.check_triggers()) {
-        if (!add_transparency) {
-            Transitions.fade_in();
-        }
     }
 
     /* Reset text coloring. */
