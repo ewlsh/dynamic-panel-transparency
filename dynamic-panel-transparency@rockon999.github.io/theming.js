@@ -690,7 +690,6 @@ function set_background_alpha(actor, alpha) {
     /* Some transition algorithms go overboard. */
     alpha = Util.clamp(alpha, 0, 255);
 
-<<<<<<< HEAD
     actor.set_background_color(new Clutter.Color({
         red: background_color.red,
         green: background_color.green,
@@ -698,36 +697,3 @@ function set_background_alpha(actor, alpha) {
         alpha: alpha
     }));
 }
-=======
-    if (params.exclude) {
-        prefix = '-' + params.exclude + '-';
-    } else if (params.exclude_base) {
-        prefix = '-';
-    }
-
-    let excluded_maximized_style = (prefix === null ? null : 'dpt-panel' + prefix) + 'maximized';
-    let excluded_unmaximized_style = (prefix === null ? null : 'dpt-panel' + prefix) + 'unmaximized';
-
-    for (let style of this.background_styles) {
-        let a = params.exclude_maximized_variant_only && style !== excluded_maximized_style;
-        let b = params.exclude_unmaximized_variant_only && style !== excluded_unmaximized_style;
-        let c = !params.exclude_maximized_variant_only && !params.exclude_unmaximized_variant_only && style !== excluded_maximized_style && style !== excluded_unmaximized_style;
-
-        if (c || a || b) {
-            Panel.actor.remove_style_class_name(style);
-        }
-    }
-}
-
-function _updatePanelCSS() {
-    let duration_css = Settings.get_transition_speed();
-
-    let stylesheet = apply_stylesheet_css('.dpt-panel-transition-duration { transition-duration: ' + duration_css + 'ms; }', 'transitions/panel-transition-duration');
-
-    Panel.actor.add_style_class_name('dpt-panel-transition-duration');
-
-    register_style('dpt-panel-transition-duration');
-
-    return stylesheet;
-}
->>>>>>> 5b6a106... Remove old debugging code.
