@@ -142,11 +142,9 @@ function _check() {
         let buffer = 2;
 
         // TODO: Always negative? Is pivot negative?
-        log('start');
         for (let i = windows.length - 1; i >= 0; i--) {
 
             let current_window = windows[i];
-            log('window: ' + current_window.get_wm_class());
 
             if (!current_window.showing_on_its_workspace() || !current_window.is_on_primary_monitor()) {
                 continue;
@@ -212,7 +210,6 @@ function _check() {
             }
         }
     }
-    log('end');
 
     if (force_transparency) {
         Transitions.fade_out();

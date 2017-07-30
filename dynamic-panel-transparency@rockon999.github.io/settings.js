@@ -200,9 +200,9 @@ function bind() {
                 // TODO: Find a better way to handle settings being changed right as the extension starts up.
                 try {
                     setting.handler.call(this);
-                } catch (e) {
+                } catch (error) {
                     log('[Dynamic Panel Transparency] Error handling setting (' + setting.key + ') change.');
-                    log(e);
+                    log(error);
                 }
             }));
         }
