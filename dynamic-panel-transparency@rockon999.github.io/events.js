@@ -261,7 +261,10 @@ function _windowActorAdded(window_group, window_actor) {
         const ac_wId = window_actor.connect('allocation-changed', Lang.bind(this, function() {
             Intellifade.asyncCheck();
         }));
-        window_actor._dpt_signals = [ac_wId];
+        const v_wId = window_actor.connect('notify::visible', Lang.bind(this, function() {
+            Intellifade.asyncCheck();
+        }));
+        window_actor._dpt_signals = [ac_wId, v_wId];
         this.windows.push(window_actor);
 
         Intellifade.asyncCheck();
