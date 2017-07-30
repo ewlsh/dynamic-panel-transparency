@@ -736,7 +736,6 @@ function remove_background_color(params) {
 
         if (c || a || b) {
             Panel.actor.remove_style_class_name(style);
-            log('removed: ' + style);
         }
     }
 }
