@@ -111,7 +111,6 @@ function _updateBounds() {
         let rect1_y = pivot_y;
         this.panel_bounds.y = rect1_y;
     }
-
 }
 
 /* Main extension logic. Modified to fit Gnome Shell 3.26 design patterns. */
@@ -190,22 +189,34 @@ function _check() {
 
             let frame = current_window.get_frame_rect();
 
-            let overlap = this.panel_bounds.x < frame.x + frame.width &&
-                this.panel_bounds.x + this.panel_bounds.width > frame.x &&
-                this.panel_bounds.y < frame.y + frame.height &&
-                this.panel_bounds.height + this.panel_bounds.y > frame.y;
+            if (Main.layoutManager._rightPanelBarrier) {
+                let overlap = this.panel_bounds.x < frame.x + frame.width &&
+                    this.panel_bounds.x + this.panel_bounds.width > frame.x &&
+                    this.panel_bounds.y < frame.y + frame.height &&
+                    this.panel_bounds.height + this.panel_bounds.y > frame.y;
+
+                if (overlap) {
+                    force_transparency = true;
+                    maximized_window = null;
+
+                    if (!Settings.check_triggers()) {
+                        break;
+                    }
+                }
+            }
 
             let touching_panel = frame.y >= (this.panel_bounds.y + this.panel_bounds.height - buffer * this.scale_factor) &&
                 frame.y <= (this.panel_bounds.y + this.panel_bounds.height + buffer * this.scale_factor);
 
-            if (overlap) {
-                force_transparency = true;
-                maximized_window = null;
-            } else if (touching_panel) {
+            if (!force_transparency && touching_panel) {
                 add_transparency = false;
 
                 if (maximized_window === null && !force_transparency) {
                     maximized_window = current_window;
+                }
+
+                if (!Settings.check_triggers()) {
+                    break;
                 }
             }
         }
