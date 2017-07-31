@@ -2,6 +2,7 @@
   "description": "This extension fades your top panel to nothingness when there are no maximized windows present. Never again will the panel be abruptly darkened!",
   "name": "Dynamic Panel Transparency",
   "shell-version": [
+    "3.22",
     "3.24"
   ],
   "uuid": "dynamic-panel-transparency@rockon999.github.io",
