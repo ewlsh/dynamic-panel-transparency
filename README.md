@@ -4,7 +4,7 @@
 ## Classy transparency for your panel
 This extension *fades* your top panel to nothingness when there are no maximized windows present. Never again will the panel be abruptly darkened!
 
-## Installing from source (3.22 and lower)
+## Installing from source (3.20 and lower)
 
 To use and test the latest version of this extension you may install it directly from the source.
 
@@ -17,7 +17,7 @@ Move the 'dynamic-panel-transparency@rockon999.github.io' folder to ~/.local/sha
 
 Reload your shell using <code>Alt+F2</code> <code>r</code> <code>Enter</code> and enable the extension via *gnome-tweak-tool* or *dconf*.
 
-## Installing from source (3.24+)
+## Installing from source (3.22+)
 
 To use and test the latest version of this extension you may install it directly from the source.
 
