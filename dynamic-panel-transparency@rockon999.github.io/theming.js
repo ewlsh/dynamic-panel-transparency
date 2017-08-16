@@ -24,7 +24,7 @@ const WEIGHT_THRESHOLD = 1.0;
 const ALPHA_THRESHOLD = 24;
 
 /* Scale factor for color conversion. */
-const SCALE_FACTOR = 255;
+const SCALE_FACTOR = 255.9999999;
 
 /**
  * @typedef {Object} Color - Represents a standard color object
@@ -284,8 +284,6 @@ function set_corner_color(color) {
         alpha: 0
     });
 
-    log('color: ' + JSON.stringify(color));
-
     let opacity = Util.clamp(color.alpha / SCALE_FACTOR, 0, 1).toFixed(2);
 
     /* I strongly dislike using a deprecated method (set_style)
@@ -468,12 +466,22 @@ function strip_panel_background() {
 
     for (let key of tweaked_apps) {
         let prefix = key.split('.').join('-');
-        register_background_color(Util.tuple_to_native_color(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks');
+
+        if (Settings.app_settings_manager['maximized_opacity'][key]) {
+            register_background_color(Util.tuple_to_native_color(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks', Settings.window_settings_manager['maximized_opacity'][key]);
+        } else {
+            register_background_color(Util.tuple_to_native_color(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks');
+        }
     }
 
     for (let key of tweaked_windows) {
         let prefix = key.split('.').join('-');
-        register_background_color(Util.tuple_to_native_color(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks');
+
+        if (Settings.window_settings_manager['maximized_opacity'][key]) {
+            register_background_color(Util.tuple_to_native_color(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks', Settings.window_settings_manager['maximized_opacity'][key]);
+        } else {
+            register_background_color(Util.tuple_to_native_color(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks');
+        }
     }
 }
 
@@ -639,7 +647,7 @@ function register_background_style(style) {
     }
 }
 
-function register_background_color(bg_color, prefix, tweak_name) {
+function register_background_color(bg_color, prefix, tweak_name, maximized_opacity, unmaximized_opacity) {
     let suffix = (prefix ? '-' + prefix : '');
 
     if (prefix === '') {
@@ -657,11 +665,14 @@ function register_background_color(bg_color, prefix, tweak_name) {
         tweak_name = '';
     }
 
-    let unmaximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + (get_unmaximized_opacity() / SCALE_FACTOR).toFixed(2) + ')';
-    let maximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + (get_maximized_opacity() / SCALE_FACTOR).toFixed(2) + ')';
+    maximized_opacity = Util.clamp(((maximized_opacity ? maximized_opacity : get_maximized_opacity()) / SCALE_FACTOR), 0, 1).toFixed(2);
+    unmaximized_opacity = Util.clamp(((unmaximized_opacity ? unmaximized_opacity : get_unmaximized_opacity()) / SCALE_FACTOR), 0, 1).toFixed(2);
 
-    register_background_style('dpt-panel' + prefix + 'unmaximized');
+    let maximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + maximized_opacity + ')';
+    let unmaximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + unmaximized_opacity + ')';
+
     register_background_style('dpt-panel' + prefix + 'maximized');
+    register_background_style('dpt-panel' + prefix + 'unmaximized');
 
     let file_prefix = 'background/' + tweak_name + 'panel';
 
