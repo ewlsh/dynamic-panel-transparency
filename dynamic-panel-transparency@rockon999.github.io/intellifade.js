@@ -45,7 +45,7 @@ function forceSyncCheck() {
 }
 
 function syncCheck() {
-    if (Settings.check_overrides() || Settings.check_triggers) {
+    if (Settings.check_overrides() || Settings.check_triggers()) {
         override_optimization = true;
     }
 
@@ -68,7 +68,7 @@ function forceAsyncCheck() {
 }
 
 function asyncCheck() {
-    if (Settings.check_overrides() || Settings.check_triggers) {
+    if (Settings.check_overrides() || Settings.check_triggers()) {
         override_optimization = true;
     }
 
