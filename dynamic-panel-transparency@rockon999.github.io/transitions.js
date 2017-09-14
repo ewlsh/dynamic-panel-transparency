@@ -63,10 +63,9 @@ function get_animation_status() {
  */
 function minimum_fade_in() {
     /* The CSS backend doesn't need different starting/ending values */
-    fade_out();
+    Theming.reapply_panel_background();
 
-    this.status.set_transparent(true);
-    this.status.set_blank(false);
+    fade_out();
 }
 
 /**
@@ -75,6 +74,8 @@ function minimum_fade_in() {
  */
 function fade_in() {
     let custom = Settings.get_panel_color({ app_info: true });
+
+    Theming.reapply_panel_background();
 
     if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
         let prefix = custom.app_info.split('.').join('-');
@@ -193,6 +194,7 @@ function blank_fade_out() {
     /* Completely remove every possible background style... */
     Theming.remove_background_color();
 
+    Theming.strip_panel_background();
     Theming.strip_panel_background_image();
     Theming.strip_panel_styling();
 

@@ -184,11 +184,6 @@ function modify_panel() {
     /* Initial Coloring */
 
     let theme_color = Theming.get_theme_background_color();
-    //let theme_opacity = Theming.get_theme_opacity();
-
-    /* Hack to avoid "flashing" */
-
-
 
     /* Update the corners. */
 
@@ -199,7 +194,7 @@ function modify_panel() {
     });
 
     /* Get Rid of the Panel's CSS Background */
-    Theming.strip_panel_background();
+    Theming.initialize_background_styles();
 
     let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
     let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
@@ -341,7 +336,7 @@ function initialize_settings() {
                     }
                 }
 
-                Theming.strip_panel_background();
+                Theming.initialize_background_styles();
 
                 const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
@@ -389,7 +384,7 @@ function initialize_settings() {
                     }
                 }
 
-                Theming.strip_panel_background();
+                Theming.initialize_background_styles();
 
                 const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {

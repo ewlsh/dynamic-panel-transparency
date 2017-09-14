@@ -455,34 +455,9 @@ function reapply_panel_background_image() {
 
 /**
  * Applies the style class 'panel-background-color-transparency' and removes any CSS embellishments.
- * TODO: Transition this code into a new backend24 function.
  */
 function strip_panel_background() {
-    register_background_color(get_theme_background_color(), Settings.get_current_user_theme());
-    register_background_color(Settings.get_panel_color());
-
-    let tweaked_apps = Object.keys(Settings.app_settings_manager['enable_background_tweaks']);
-    let tweaked_windows = Object.keys(Settings.window_settings_manager['enable_background_tweaks']);
-
-    for (let key of tweaked_apps) {
-        let prefix = key.split('.').join('-');
-
-        if (Settings.app_settings_manager['maximized_opacity'][key]) {
-            register_background_color(Util.tuple_to_native_color(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks', Settings.window_settings_manager['maximized_opacity'][key]);
-        } else {
-            register_background_color(Util.tuple_to_native_color(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks');
-        }
-    }
-
-    for (let key of tweaked_windows) {
-        let prefix = key.split('.').join('-');
-
-        if (Settings.window_settings_manager['maximized_opacity'][key]) {
-            register_background_color(Util.tuple_to_native_color(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks', Settings.window_settings_manager['maximized_opacity'][key]);
-        } else {
-            register_background_color(Util.tuple_to_native_color(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks');
-        }
-    }
+    Panel.actor.add_style_class_name('panel-background-color-transparency');
 }
 
 /**
@@ -490,7 +465,7 @@ function strip_panel_background() {
  *
  */
 function reapply_panel_background() {
-    remove_background_color();
+    Panel.actor.remove_style_class_name('panel-background-color-transparency');
 }
 
 /**
@@ -640,6 +615,38 @@ function average_color(source, width, height) {
 }
 
 /* Backend24 (3.24+) Specific Functions (Not backwards compatible) */
+
+function initialize_background_styles() {
+    register_background_color(get_theme_background_color(), Settings.get_current_user_theme());
+    register_background_color(Settings.get_panel_color());
+
+    let tweaked_apps = Object.keys(Settings.app_settings_manager['enable_background_tweaks']);
+    let tweaked_windows = Object.keys(Settings.window_settings_manager['enable_background_tweaks']);
+
+    for (let key of tweaked_apps) {
+        let prefix = key.split('.').join('-');
+
+        if (Settings.app_settings_manager['maximized_opacity'][key]) {
+            register_background_color(Util.tuple_to_native_color(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks', Settings.window_settings_manager['maximized_opacity'][key]);
+        } else {
+            register_background_color(Util.tuple_to_native_color(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks');
+        }
+    }
+
+    for (let key of tweaked_windows) {
+        let prefix = key.split('.').join('-');
+
+        if (Settings.window_settings_manager['maximized_opacity'][key]) {
+            register_background_color(Util.tuple_to_native_color(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks', Settings.window_settings_manager['maximized_opacity'][key]);
+        } else {
+            register_background_color(Util.tuple_to_native_color(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks');
+        }
+    }
+}
+
+function cleanup_background_styles() {
+    remove_background_color();
+}
 
 function register_background_style(style) {
     if (this.background_styles.indexOf(style) === -1) {
