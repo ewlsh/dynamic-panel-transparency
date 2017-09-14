@@ -79,10 +79,11 @@ function fade_in() {
 
     if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
         let prefix = custom.app_info.split('.').join('-');
+
+        Theming.set_maximized_background_color('tweak-' + prefix);
         Theming.remove_background_color({
             exclude: 'tweak-' + prefix
         });
-        Theming.set_maximized_background_color('tweak-' + prefix);
     } else if (Settings.enable_custom_background_color()) {
         Theming.remove_background_color({
             exclude_base: true
@@ -99,14 +100,14 @@ function fade_in() {
         Theming.reapply_panel_styling();
     }
 
-    this.status.set_transparent(false);
-    this.status.set_blank(false);
-
     if (!Settings.get_hide_corners()) {
         let speed = St.get_slow_down_factor() * Settings.get_transition_speed();
 
         let maximized = Settings.get_maximized_opacity();
-        let unmaximized = Settings.get_unmaximized_opacity();
+        let unmaximized = !this.status.is_transparent() ? maximized : Settings.get_unmaximized_opacity();
+
+        this.status.set_transparent(false);
+        this.status.set_blank(false);
 
         let count = 0;
 
@@ -129,6 +130,9 @@ function fade_in() {
             return true;
         }));
     }
+
+    this.status.set_transparent(false);
+    this.status.set_blank(false);
 }
 
 /**
@@ -137,32 +141,32 @@ function fade_in() {
  */
 function fade_out() {
     if (Settings.enable_custom_background_color()) {
+        Theming.set_unmaximized_background_color();
         Theming.remove_background_color({
             exclude_base: true,
             exclude_unmaximized_variant_only: true
         });
-        Theming.set_unmaximized_background_color();
     } else {
+        Theming.set_unmaximized_background_color(Settings.get_current_user_theme());
         Theming.remove_background_color({
             exclude: Settings.get_current_user_theme(),
             exclude_unmaximized_variant_only: true
         });
-        Theming.set_unmaximized_background_color(Settings.get_current_user_theme());
     }
 
     Theming.strip_panel_background_image();
     Theming.strip_panel_styling();
 
-    /* Keep the status up to date */
-    this.status.set_transparent(true);
-    this.status.set_blank(false);
-
     // TODO: Figure out how to write the panel corners in pure CSS.
     if (!Settings.get_hide_corners()) {
         let speed = St.get_slow_down_factor() * Settings.get_transition_speed();
 
-        let maximized = Settings.get_maximized_opacity();
         let unmaximized = Settings.get_unmaximized_opacity();
+        let maximized = this.status.is_transparent() ? unmaximized : Settings.get_maximized_opacity();
+
+        /* Keep the status up to date */
+        this.status.set_transparent(true);
+        this.status.set_blank(false);
 
         let count = 0;
 
@@ -184,6 +188,10 @@ function fade_out() {
             return true;
         }));
     }
+
+    /* Keep the status up to date */
+    this.status.set_transparent(true);
+    this.status.set_blank(false);
 }
 
 /**
