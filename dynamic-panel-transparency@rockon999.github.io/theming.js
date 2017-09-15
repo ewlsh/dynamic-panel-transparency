@@ -67,7 +67,6 @@ function cleanup() {
         Util.remove_file(sheet);
     }
 
-
     this.background_styles = null;
     this.stylesheets = null;
     this.styles = null;
@@ -495,7 +494,6 @@ function apply_stylesheet_css(css, name) {
 
     return file_name;
 }
-
 
 /**
  * Taken from Plank. Used to calculate the average color of a theme's images.

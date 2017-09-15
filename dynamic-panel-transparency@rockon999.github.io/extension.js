@@ -256,7 +256,7 @@ function unmodify_panel() {
     Theming.remove_text_color('maximized');
 }
 
-// TODO: Merge handler code or hide it behind the backend seperation.
+// TODO: Merge handler code or hide it behind the backend.
 function initialize_settings() {
     /* Setup settings... */
     Settings.init();
@@ -303,14 +303,7 @@ function initialize_settings() {
 
                     return false;
                 }));
-                /* Legacy backend didn't need any update work. */
-                // TODO: Remove empty function.
             })
-    });
-    Settings.add({
-        key: 'force-animation',
-        name: 'force_animation',
-        type: 'b'
     });
     Settings.add({
         key: 'unmaximized-opacity',
@@ -530,8 +523,6 @@ function initialize_settings() {
                     return false;
                 }
 
-
-
                 /* Add Text Shadowing */
                 if (Settings.add_text_shadow()) {
                     if (text_shadow !== null) {
@@ -569,8 +560,6 @@ function initialize_settings() {
                 if (id !== this.icon_shadow_update_id) {
                     return false;
                 }
-
-
 
                 /* Add Icon Shadowing */
                 if (Settings.add_icon_shadow()) {
@@ -610,8 +599,6 @@ function initialize_settings() {
                 if (id !== this.icon_shadow_update_id) {
                     return false;
                 }
-
-
 
                 /* Add Icon Shadowing */
                 if (Settings.add_icon_shadow()) {
@@ -709,14 +696,6 @@ function initialize_settings() {
                 Theming.remove_text_color();
                 Theming.remove_text_color('maximized');
             }
-        })
-    });
-    Settings.add({
-        key: 'transition-type',
-        name: 'transition_type',
-        type: 'i',
-        handler: Lang.bind(this, function() {
-            //  Transitions.update_transition_type();
         })
     });
     Settings.add({

@@ -137,7 +137,6 @@ function _check() {
         add_transparency = true;
         maximized_window = focused_window;
     } else {
-        // TODO: Check this.
         let buffer = 3;
 
         // TODO: Always negative? Is pivot negative?
