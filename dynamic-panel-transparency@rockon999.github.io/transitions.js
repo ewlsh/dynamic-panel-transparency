@@ -24,6 +24,7 @@ const CORNER_UPDATE_FREQUENCY = 30;
 function init() {
     /* Objects to track where the transparency is and where it's going. */
     this.status = new TransparencyStatus();
+    this.current_style = '';
 
     this.corner_timeout_id = 0;
 }
@@ -34,6 +35,7 @@ function init() {
  */
 function cleanup() {
     this.status = null;
+    this.current_style = null;
 
     this.corner_timeout_id = null;
 }
@@ -68,6 +70,10 @@ function minimum_fade_in() {
     fade_out();
 }
 
+function update_style() {
+
+}
+
 /**
  * Fades the panel into the nmaximized (maximum) alpha.
  *
@@ -77,6 +83,10 @@ function fade_in() {
 
     Theming.reapply_panel_background();
 
+    if (!Settings.remove_panel_styling()) {
+        Theming.reapply_panel_styling();
+    }
+
     if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
         let prefix = custom.app_info.split('.').join('-');
 
@@ -85,20 +95,18 @@ function fade_in() {
             exclude: 'tweak-' + prefix
         });
     } else if (Settings.enable_custom_background_color()) {
+        Theming.set_maximized_background_color();
         Theming.remove_background_color({
             exclude_base: true
         });
-        Theming.set_maximized_background_color();
     } else {
+        Theming.set_maximized_background_color(Settings.get_current_user_theme());
         Theming.remove_background_color({
             exclude: Settings.get_current_user_theme(),
         });
-        Theming.set_maximized_background_color(Settings.get_current_user_theme());
     }
 
-    if (!Settings.remove_panel_styling()) {
-        Theming.reapply_panel_styling();
-    }
+
 
     if (!Settings.get_hide_corners()) {
         let speed = St.get_slow_down_factor() * Settings.get_transition_speed();
@@ -140,6 +148,9 @@ function fade_in() {
  *
  */
 function fade_out() {
+    Theming.strip_panel_background_image();
+    Theming.strip_panel_styling();
+
     if (Settings.enable_custom_background_color()) {
         Theming.set_unmaximized_background_color();
         Theming.remove_background_color({
@@ -154,8 +165,7 @@ function fade_out() {
         });
     }
 
-    Theming.strip_panel_background_image();
-    Theming.strip_panel_styling();
+
 
     // TODO: Figure out how to write the panel corners in pure CSS.
     if (!Settings.get_hide_corners()) {
