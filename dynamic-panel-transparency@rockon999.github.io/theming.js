@@ -695,7 +695,9 @@ function set_unmaximized_background_color(prefix) {
         prefix = '-';
     }
 
-    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'unmaximized');
+    let style = 'dpt-panel' + prefix + 'unmaximized';
+
+    Panel.actor.add_style_class_name(style);
 }
 
 function set_maximized_background_color(prefix) {
@@ -705,7 +707,9 @@ function set_maximized_background_color(prefix) {
         prefix = '-';
     }
 
-    Panel.actor.add_style_class_name('dpt-panel' + prefix + 'maximized');
+    let style = 'dpt-panel' + prefix + 'maximized';
+
+    Panel.actor.add_style_class_name(style);
 }
 
 function remove_unmaximized_background_color(prefix) {
