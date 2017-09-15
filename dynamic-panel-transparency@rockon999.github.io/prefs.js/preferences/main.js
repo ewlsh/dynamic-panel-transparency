@@ -858,7 +858,7 @@ function buildPrefsWidget() {
             if (website_label !== null) {
                 found_box.remove(website_label);
 
-                let new_label = Gtk.LinkButton.new_with_label('http://evanwelsh.com/dynamic-panel-transparency', 'Website');
+                let new_label = Gtk.LinkButton.new_with_label('http://evanwelsh.com/dynamic-panel-transparency', gtk30_('Website'));
 
                 new_label.set_margin_top(WEBSITE_LABEL_TOP_MARGIN);
                 new_label.set_margin_bottom(WEBSITE_LABEL_BOTTOM_MARGIN);
