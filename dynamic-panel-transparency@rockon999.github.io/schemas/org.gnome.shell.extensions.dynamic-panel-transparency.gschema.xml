@@ -146,7 +146,7 @@
       <description>The transition function used on the panel</description>
     </key>
     <key name="transition-with-overview" type="b">
-      <default>false</default>
+      <default>true</default>
       <summary>Transition with overview</summary>
       <description>Transition the panel at the same time as the overview</description>
     </key>

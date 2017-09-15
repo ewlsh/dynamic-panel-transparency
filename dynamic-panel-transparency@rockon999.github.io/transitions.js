@@ -15,7 +15,7 @@ const Equations = imports.tweener.equations;
 
 const CORNER_UPDATE_FREQUENCY = 30;
 
-// TODO: Make sure that each function is start-value agnostic (doesn't assume maximized value)...
+// TODO: Make each function start-value agnostic (doesn't assume maximized value)...
 
 /**
  * Intialize.
@@ -100,8 +100,6 @@ function fade_in() {
         });
     }
 
-
-
     if (!Settings.get_hide_corners()) {
         let speed = St.get_slow_down_factor() * Settings.get_transition_speed();
 
@@ -158,8 +156,6 @@ function fade_out() {
             exclude_unmaximized_variant_only: true
         });
     }
-
-
 
     // TODO: Figure out how to write the panel corners in pure CSS.
     if (!Settings.get_hide_corners()) {
