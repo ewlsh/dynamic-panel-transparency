@@ -234,8 +234,6 @@ function buildPrefsWidget() {
             let position = settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
             position[HORIZONTAL_OFFSET] = widget.get_value_as_int();
             settings.set_value(SETTINGS_TEXT_SHADOW_POSITION, new GLib.Variant('(iii)', position));
-
-
         }));
 
         let text_shadow_radius = builder.get_object('text_shadow_radius');
@@ -244,9 +242,6 @@ function buildPrefsWidget() {
             let position = settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
             position[BLUR_RADIUS] = widget.get_value_as_int();
             settings.set_value(SETTINGS_TEXT_SHADOW_POSITION, new GLib.Variant('(iii)', position));
-
-
-
         }));
 
         let text_shadow_color_btn = builder.get_object('text_shadow_color');
@@ -267,8 +262,6 @@ function buildPrefsWidget() {
 
             let rgba = [color.red, color.green, color.blue, alpha];
             settings.set_value(SETTINGS_TEXT_SHADOW_COLOR, new GLib.Variant('(iiid)', rgba));
-
-
         }));
 
         let icon_shadow = builder.get_object('icon_shadow_switch');
@@ -289,8 +282,6 @@ function buildPrefsWidget() {
             let position = settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
             position[VERTICAL_OFFSET] = widget.get_value_as_int();
             settings.set_value(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
-
-
         }));
         let icon_shadow_horizontal_offset = builder.get_object('icon_shadow_horizontal_offset');
         icon_shadow_horizontal_offset.set_value(settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack()[HORIZONTAL_OFFSET]);
@@ -298,8 +289,6 @@ function buildPrefsWidget() {
             let position = settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
             position[HORIZONTAL_OFFSET] = widget.get_value_as_int();
             settings.set_value(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
-
-
         }));
         let icon_shadow_radius = builder.get_object('icon_shadow_radius');
         icon_shadow_radius.set_value(settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack()[BLUR_RADIUS]);
@@ -307,9 +296,6 @@ function buildPrefsWidget() {
             let position = settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
             position[BLUR_RADIUS] = widget.get_value_as_int();
             settings.set_value(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
-
-
-
         }));
 
         let icon_shadow_color_btn = builder.get_object('icon_shadow_color');
@@ -332,8 +318,6 @@ function buildPrefsWidget() {
             let rgba = [color.red, color.green, color.blue, alpha];
 
             settings.set_value(SETTINGS_ICON_SHADOW_COLOR, new GLib.Variant('(iiid)', rgba));
-
-
         }));
     }
 

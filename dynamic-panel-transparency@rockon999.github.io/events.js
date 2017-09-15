@@ -43,7 +43,6 @@ function init() {
 
     this._wm_tracker = Shell.WindowTracker.get_default();
 
-
     this._overviewHidingSig = Main.overview.connect('hiding', Lang.bind(this, Util.strip_args(Intellifade.syncCheck)));
 
     if (Settings.transition_with_overview()) {

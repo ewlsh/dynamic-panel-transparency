@@ -296,97 +296,13 @@ function initialize_settings() {
         key: 'unmaximized-opacity',
         name: 'unmaximized_opacity',
         type: 'i',
-        getter: 'get_unmaximized_opacity',
-        handler: Lang.bind(this, function() {
-            const super_id = this.opacity_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() {
-                if (super_id !== this.opacity_update_id) {
-                    return false;
-                }
-
-                Theming.reapply_panel_background();
-
-                let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
-
-                for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
-                    let stylesheet = Theming.stylesheets[i];
-                    if (stylesheet.contains('background') && stylesheet.contains('panel-')) {
-                        Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
-                        Util.remove_file(stylesheet);
-                        Theming.stylesheets.splice(i, 1);
-                    }
-                }
-
-                Theming.strip_panel_background();
-
-                const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
-                    if (id !== this.panel_color_update_id) {
-                        return false;
-                    }
-
-                    /* Get Rid of the Panel's CSS Background */
-                    // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
-
-                    Theming.set_maximized_background_color((Math.random() * 100).toFixed(0));
-                    Theming.remove_background_color();
-                    Theming.set_unmaximized_background_color((Math.random() * 100).toFixed(0));
-                    Theming.remove_background_color();
-
-                    Intellifade.forceSyncCheck();
-
-                    return false;
-                }));
-
-                return false;
-            }));
-        })
+        getter: 'get_unmaximized_opacity'
     });
     Settings.add({
         key: 'maximized-opacity',
         name: 'maximized_opacity',
         type: 'i',
-        getter: 'get_maximized_opacity',
-        handler: Lang.bind(this, function() {
-            const super_id = this.opacity_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() {
-                if (super_id !== this.opacity_update_id) {
-                    return false;
-                }
-
-                Theming.reapply_panel_background();
-
-                let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
-
-                for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
-                    let stylesheet = Theming.stylesheets[i];
-                    if (stylesheet.contains('background') && stylesheet.contains('panel-')) {
-                        Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
-                        Util.remove_file(stylesheet);
-                        Theming.stylesheets.splice(i, 1);
-                    }
-                }
-
-                Theming.strip_panel_background();
-
-                const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
-                    if (id !== this.panel_color_update_id) {
-                        return false;
-                    }
-
-                    /* Get Rid of the Panel's CSS Background */
-                    // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
-
-                    Theming.set_maximized_background_color((Math.random() * 100).toFixed(0));
-                    Theming.remove_background_color();
-                    Theming.set_unmaximized_background_color((Math.random() * 100).toFixed(0));
-                    Theming.remove_background_color();
-
-                    Intellifade.forceSyncCheck();
-
-                    return false;
-                }));
-
-                return false;
-            }));
-        })
+        getter: 'get_maximized_opacity'
     });
     Settings.add({
         key: 'panel-color',
@@ -479,8 +395,6 @@ function initialize_settings() {
                     return false;
                 }
 
-
-
                 /* Add Text Shadowing */
                 if (Settings.add_text_shadow()) {
                     if (text_shadow !== null) {
@@ -518,8 +432,6 @@ function initialize_settings() {
                 if (id !== this.icon_shadow_update_id) {
                     return false;
                 }
-
-
 
                 /* Add Icon Shadowing */
                 if (Settings.add_icon_shadow()) {
@@ -559,8 +471,6 @@ function initialize_settings() {
                 if (id !== this.icon_shadow_update_id) {
                     return false;
                 }
-
-
 
                 /* Add Icon Shadowing */
                 if (Settings.add_icon_shadow()) {
