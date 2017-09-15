@@ -24,7 +24,6 @@ const CORNER_UPDATE_FREQUENCY = 30;
 function init() {
     /* Objects to track where the transparency is and where it's going. */
     this.status = new TransparencyStatus();
-    this.current_style = '';
 
     this.corner_timeout_id = 0;
 }
@@ -35,7 +34,6 @@ function init() {
  */
 function cleanup() {
     this.status = null;
-    this.current_style = null;
 
     this.corner_timeout_id = null;
 }
@@ -68,10 +66,6 @@ function minimum_fade_in() {
     Theming.reapply_panel_background();
 
     fade_out();
-}
-
-function update_style() {
-
 }
 
 /**
