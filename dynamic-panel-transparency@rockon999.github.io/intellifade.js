@@ -104,10 +104,10 @@ function _updateBounds() {
     let buffer = 2;
 
     // Adjust for bottom panel.
-    if (anchor_y > buffer * this.scale_factor) { // eslint-disable-line no-magic-numbers
+    if (anchor_y > buffer * this.scale_factor) {
         let rect1_y = anchor_y;
         this.panel_bounds.y = rect1_y;
-    } else if (pivot_y > buffer * this.scale_factor) { // eslint-disable-line no-magic-numbers
+    } else if (pivot_y > buffer * this.scale_factor) {
         let rect1_y = pivot_y;
         this.panel_bounds.y = rect1_y;
     }
@@ -138,7 +138,7 @@ function _check() {
         maximized_window = focused_window;
     } else {
         // TODO: Check this.
-        let buffer = 2;
+        let buffer = 3;
 
         // TODO: Always negative? Is pivot negative?
         for (let i = windows.length - 1; i >= 0; i--) {
