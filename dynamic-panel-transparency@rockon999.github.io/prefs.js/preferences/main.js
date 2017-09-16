@@ -423,7 +423,7 @@ function buildPrefsWidget() {
             } else {
                 return 0;
             }
-        }), null);
+        }));
 
         let app_overrides = settings.get_strv('app-overrides');
         let window_overrides = settings.get_strv('window-overrides');
