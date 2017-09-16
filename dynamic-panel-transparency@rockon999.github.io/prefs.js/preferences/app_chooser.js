@@ -30,9 +30,9 @@ const AppChooser = new Lang.Class({
         this.searchbar.hexpand = true;
         let list_box = new Gtk.ListBox();
         list_box.activate_on_single_click = false;
-        list_box.set_sort_func(Lang.bind(this, this.sort_apps), null);
-        list_box.set_header_func(Lang.bind(this, this.list_header_func), null);
-        list_box.set_filter_func(Lang.bind(this, this.list_filter_func), null);
+        list_box.set_sort_func(Lang.bind(this, this.sort_apps));
+        list_box.set_header_func(Lang.bind(this, this.list_header_func));
+        list_box.set_filter_func(Lang.bind(this, this.list_filter_func));
         this.entry.connect('search-changed', Lang.bind(this, this.on_search_entry_changed));
         list_box.connect('row-activated', Lang.bind(this, function(b, r) {
             return this.response(Gtk.ResponseType.OK) ? r.get_mapped() : null;
