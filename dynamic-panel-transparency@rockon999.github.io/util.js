@@ -103,7 +103,7 @@ function write_to_file(file_path, text) {
         let parent = file.get_parent();
 
         if (GLib.mkdir_with_parents(parent.get_path(), PERMISSIONS_MODE) === 0) {
-            let success = file.replace_contents(text, null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null, null);
+            let success = file.replace_contents(text, null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null);
             return success[0];
         }
     } catch (error) {
