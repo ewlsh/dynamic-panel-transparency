@@ -43,7 +43,10 @@ function init() {
 
     this._wm_tracker = Shell.WindowTracker.get_default();
 
-    this._overviewHidingSig = Main.overview.connect('hiding', Lang.bind(this, Util.strip_args(Intellifade.syncCheck)));
+    this._overviewHidingSig = Main.overview.connect('hiding', Lang.bind(this, function() {
+        for (let intellifade of this.intellifaders)
+            intellifade.syncCheck();
+    }));
 
     if (Settings.transition_with_overview()) {
         this._overviewShownSig = Main.overview.connect('showing', Lang.bind(this, _overviewShown));
@@ -156,12 +159,14 @@ function _overviewShown() {
     }
 
     if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
-        if (Settings.get_enable_overview_text_color()) {
-            Theming.remove_text_color();
-            Theming.set_text_color('maximized');
-        } else {
-            Theming.remove_text_color('maximized');
-            Theming.set_text_color();
+        for (let panel of Extension.panels) {
+            if (Settings.get_enable_overview_text_color()) {
+                Theming.remove_text_color(panel);
+                Theming.set_text_color(panel, 'maximized');
+            } else {
+                Theming.remove_text_color(panel, 'maximized');
+                Theming.set_text_color(panel);
+            }
         }
     }
 }
@@ -191,7 +196,7 @@ function _windowActorRemoved(container, window_actor) {
         this.windows.splice(index, 1);
     }
 
-    Intellifade.asyncCheck();
+    Extension.intellifaders[this.window_actor.get_monitor()].asyncCheck();
 }
 
 /**
@@ -204,8 +209,9 @@ function _userThemeChanged() {
 
     /* Remove Our Styling */
     Extension.unmodify_panel();
-    Theming.cleanup();
+    Theming.cleanup(Extension.panels);
     Theming.init();
+    Theming.init_(Extension.panels);
 
     /* Hopefully every computer is fast enough to apply a theme in three seconds. */
     const id = this.theme_detection_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
@@ -244,7 +250,9 @@ function _userThemeChanged() {
 
         Extension.modify_panel();
 
-        Intellifade.forceSyncCheck();
+        for (let intellifade of Extension.intellifaders)
+            if (intellifade != null)
+                intellifade.forceSyncCheck();
 
         return false;
     }));
@@ -258,15 +266,21 @@ function _windowActorAdded(window_group, window_actor) {
     if (window_actor && typeof (window_actor._dpt_tracking) === 'undefined') {
         window_actor._dpt_tracking = true;
         const ac_wId = window_actor.connect('allocation-changed', Lang.bind(this, function() {
-            Intellifade.asyncCheck();
+            for (let intellifade of Extension.intellifaders)
+                if (intellifade != null)
+                    intellifade.asyncCheck();
         }));
         const v_wId = window_actor.connect('notify::visible', Lang.bind(this, function() {
-            Intellifade.asyncCheck();
+            for (let intellifade of Extension.intellifaders)
+                if (intellifade != null)
+                    intellifade.asyncCheck();
         }));
         window_actor._dpt_signals = [ac_wId, v_wId];
         this.windows.push(window_actor);
 
-        Intellifade.asyncCheck();
+        for (let intellifade of Extension.intellifaders)
+            if (intellifade != null)
+                intellifade.asyncCheck();
     }
 }
 
@@ -279,7 +293,9 @@ function _windowRestacked() {
     if (!Main.overview.visible) {
         /* Detect if desktop icons are enabled. */
         if (Settings.gs_show_desktop() || Settings.check_overrides() || Settings.check_triggers()) {
-            Intellifade.asyncCheck();
+            for (let intellifade of Extension.intellifaders)
+                if (intellifade != null)
+                    intellifade.asyncCheck();
         }
     }
 }
@@ -291,6 +307,8 @@ function _windowRestacked() {
 function _workspaceSwitched(wm, from, to, direction) {
     /* Detect if desktop icons are enabled. */
     if (!Settings.gs_show_desktop() && !Settings.check_overrides() && !Settings.check_triggers()) {
-        Intellifade.syncCheck();
+        for (let intellifade of Extension.intellifaders)
+            if (intellifade != null)
+                intellifade.syncCheck();
     }
 }

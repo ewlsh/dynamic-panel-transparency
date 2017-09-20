@@ -5,6 +5,7 @@ const Lang = imports.lang;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Params = imports.misc.params;
 
+const Extension = Me.imports.extension;
 const Convenience = Me.imports.convenience;
 const Intellifade = Me.imports.intellifade;
 
@@ -139,11 +140,11 @@ function add(params) {
         handler: null
     };
 
-    if (typeof(params.getter) !== 'undefined')
+    if (typeof (params.getter) !== 'undefined')
         key.getter = params.getter;
-    if (typeof(params.handler)!== 'undefined')
+    if (typeof (params.handler) !== 'undefined')
         key.handler = params.handler;
-    if (typeof(params.parser) !== 'undefined')
+    if (typeof (params.parser) !== 'undefined')
         key.parser = params.parser;
 
     this._keys.push(key);
@@ -159,11 +160,11 @@ function add_app_setting(params) {
         handler: null,
     };
 
-    if (typeof(params.getter) !== 'undefined')
+    if (typeof (params.getter) !== 'undefined')
         key.getter = params.getter;
-    if (typeof(params.handler)!== 'undefined')
+    if (typeof (params.handler) !== 'undefined')
         key.handler = params.handler;
-    if (typeof(params.parser)!== 'undefined')
+    if (typeof (params.parser) !== 'undefined')
         key.parser = params.parser;
 
     this._app_keys[params.key] = key;
@@ -232,7 +233,7 @@ function bind() {
 
         if (this._overriden_keys.indexOf(setting.key) !== -1) {
             getter = function(params) {
-                params = Params.parse(params, { app_settings: true, app_info: false, default: false });
+                params = Params.parse(params, { app_settings: true, app_info: false, default: false, monitor: global.screen.get_primary_monitor() });
 
                 if (params.app_info && params.default) {
                     return { value: parser(this._settings.get_default_value(setting.key).unpack()), app_info: null };
@@ -242,7 +243,7 @@ function bind() {
                     return this._settings.get_default_value(setting.key).unpack();
                 }
 
-                let maximized_window = Intellifade.get_current_maximized_window();
+                let maximized_window = Extension.intellifaders[params.monitor].get_current_maximized_window();
 
                 if (maximized_window && this.check_overrides() && params.app_settings) {
                     if (this.window_settings_manager[setting.name]) {
@@ -261,8 +262,10 @@ function bind() {
                             }
                         }
                     }
-                    if (Intellifade._wm_tracker && this.app_settings_manager[setting.name]) {
-                        let shell_app = Intellifade._wm_tracker.get_window_app(maximized_window);
+                    const wm_tracker = imports.gi.Shell.WindowTracker.get_default();
+
+                    if (wm_tracker && this.app_settings_manager[setting.name]) {
+                        let shell_app = wm_tracker.get_window_app(maximized_window);
                         if (shell_app && shell_app.get_id()) {
                             let app_id = shell_app.get_id();
                             let app_setting = this._app_keys[setting.key];

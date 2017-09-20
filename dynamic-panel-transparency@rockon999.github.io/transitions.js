@@ -45,16 +45,6 @@ function get_transparency_status(panel) {
 }
 
 /**
- * Get any animation that the panel is currently doing.
- * DEPRECATED.
- *
- * @returns {Object} Current animation status. @see AnimationStatus
- */
-function get_animation_status(panel) {
-    return { destination: null, action: null };
-}
-
-/**
  * Fades the panel into the unmaximized (minimum) alpha. Used for closing the overview.
  *
  */
@@ -81,20 +71,20 @@ function fade_in(panel) {
     if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
         let prefix = custom.app_info.split('.').join('-');
 
-        Theming.set_maximized_background_color('tweak-' + prefix, panel);
-        Theming.remove_background_color({
+        Theming.set_maximized_background_color(panel, 'tweak-' + prefix);
+        Theming.remove_background_color(panel, {
             exclude: 'tweak-' + prefix
-        }, panel);
+        });
     } else if (Settings.enable_custom_background_color()) {
         Theming.set_maximized_background_color(panel);
-        Theming.remove_background_color({
+        Theming.remove_background_color(panel, {
             exclude_base: true
-        }, panel);
+        });
     } else {
-        Theming.set_maximized_background_color(Settings.get_current_user_theme(), panel);
-        Theming.remove_background_color({
+        Theming.set_maximized_background_color(panel, Settings.get_current_user_theme());
+        Theming.remove_background_color(panel, {
             exclude: Settings.get_current_user_theme(),
-        }, panel);
+        });
     }
 
     if (!Settings.get_hide_corners()) {
@@ -106,23 +96,23 @@ function fade_in(panel) {
         let speed = St.get_slow_down_factor() * Settings.get_transition_speed();
 
         let maximized = Settings.get_maximized_opacity();
-        let unmaximized = !this.status.is_transparent() ? maximized : Settings.get_unmaximized_opacity();
+        let unmaximized = !get_transparency_status(panel).is_transparent() ? maximized : Settings.get_unmaximized_opacity();
 
-        this.status.set_transparent(false);
-        this.status.set_blank(false);
+        get_transparency_status(panel).set_transparent(false);
+        get_transparency_status(panel).set_blank(false);
 
         let count = 0;
 
         const id = panel._dpt_corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function(panel) {
-            if (id === panel._dpt_corner_timeout_id && !this.status.is_transparent()) {
+            if (id === panel._dpt_corner_timeout_id && !get_transparency_status(panel).is_transparent()) {
                 count++;
 
                 let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), unmaximized, maximized - unmaximized, speed);
 
-                update_corner_alpha(alpha);
+                update_corner_alpha(panel, alpha);
 
                 if (count > CORNER_UPDATE_FREQUENCY) {
-                    update_corner_alpha(maximized);
+                    update_corner_alpha(panel, maximized);
                     return false;
                 }
             } else {
@@ -133,8 +123,8 @@ function fade_in(panel) {
         }));
     }
 
-    this.status.set_transparent(false);
-    this.status.set_blank(false);
+    get_transparency_status(panel).set_transparent(false);
+    get_transparency_status(panel).set_blank(false);
 }
 
 /**
@@ -147,16 +137,16 @@ function fade_out(panel) {
 
     if (Settings.enable_custom_background_color()) {
         Theming.set_unmaximized_background_color(panel);
-        Theming.remove_background_color({
+        Theming.remove_background_color(panel, {
             exclude_base: true,
             exclude_unmaximized_variant_only: true
-        }, panel);
+        });
     } else {
-        Theming.set_unmaximized_background_color(Settings.get_current_user_theme(), panel);
-        Theming.remove_background_color({
+        Theming.set_unmaximized_background_color(panel, Settings.get_current_user_theme());
+        Theming.remove_background_color(panel, {
             exclude: Settings.get_current_user_theme(),
             exclude_unmaximized_variant_only: true
-        }, panel);
+        });
     }
 
 
@@ -170,16 +160,16 @@ function fade_out(panel) {
         let speed = St.get_slow_down_factor() * Settings.get_transition_speed();
 
         let unmaximized = Settings.get_unmaximized_opacity();
-        let maximized = this.status.is_transparent() ? unmaximized : Settings.get_maximized_opacity();
+        let maximized = get_transparency_status(panel).is_transparent() ? unmaximized : Settings.get_maximized_opacity();
 
         /* Keep the status up to date */
-        this.status.set_transparent(true);
-        this.status.set_blank(false);
+        get_transparency_status(panel).set_transparent(true);
+        get_transparency_status(panel).set_blank(false);
 
         let count = 0;
 
         const id = panel._dpt_corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function(panel) {
-            if (id === panel._dpt_corner_timeout_id && this.status.is_transparent()) {
+            if (id === panel._dpt_corner_timeout_id && get_transparency_status(panel).is_transparent()) {
                 count++;
 
                 let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), maximized, unmaximized - maximized, speed);
@@ -198,8 +188,8 @@ function fade_out(panel) {
     }
 
     /* Keep the status up to date */
-    this.status.set_transparent(true);
-    this.status.set_blank(false);
+    get_transparency_status(panel).set_transparent(true);
+    get_transparency_status(panel).set_blank(false);
 }
 
 /**
@@ -214,8 +204,8 @@ function blank_fade_out(panel) {
     Theming.strip_panel_background_image(panel);
     Theming.strip_panel_styling(panel);
 
-    this.status.set_transparent(true);
-    this.status.set_blank(true);
+    get_transparency_status(panel).set_transparent(true);
+    get_transparency_status(panel).set_blank(true);
 
     // TODO: These corners...
     if (!Settings.get_hide_corners()) {
@@ -230,7 +220,7 @@ function blank_fade_out(panel) {
         let count = 0;
 
         const id = panel._dpt_corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function(panel) {
-            if (id === panel._dpt_corner_timeout_id && this.status.is_transparent()) {
+            if (id === panel._dpt_corner_timeout_id && get_transparency_status(panel).is_transparent()) {
                 count++;
 
                 let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), maximized, -maximized, speed);
@@ -254,18 +244,18 @@ function blank_fade_out(panel) {
  *
  * @param {Number} alpha - Alpha value ranging from 0-255.
  */
-function update_corner_alpha(alpha = null) {
+function update_corner_alpha(panel, alpha = null) {
     if (alpha === null) {
         if (Settings.get_hide_corners()) {
             alpha = 0;
         } else {
-            alpha = this.status.is_transparent() ? Theming.get_unmaximized_opacity() : Theming.get_maximized_opacity();
+            alpha = get_transparency_status(panel).is_transparent() ? Theming.get_unmaximized_opacity() : Theming.get_maximized_opacity();
         }
     }
 
-    Theming.set_corner_color({
+    Theming.set_corner_color(panel, {
         alpha: alpha
-    }, panel);
+    });
 }
 
 const TransparencyStatus = new Lang.Class({

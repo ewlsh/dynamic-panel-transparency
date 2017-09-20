@@ -20,7 +20,7 @@ const Theming = Me.imports.theming;
 const ASYNC_UPDATE_FREQUENCY = 200; // ms
 
 const Intellifade = new Lang.Class({
-    name: 'dpt_Intellifade',
+    Name: 'dpt_Intellifade',
 
     /* Determines whether to continue the async loop checks. */
     continueCheck: false,
@@ -34,12 +34,12 @@ const Intellifade = new Lang.Class({
     panel: null,
     monitor: null,
 
-    init: function(panel, monitor) {
+    _init: function(panel, monitor) {
         this._wm_tracker = Shell.WindowTracker.get_default();
         this.panel = panel;
         this.monitor = monitor;
 
-        _updateBounds();
+        this._updateBounds();
     },
 
     cleanup: function() {
@@ -47,60 +47,60 @@ const Intellifade = new Lang.Class({
     },
 
     forceSyncCheck: function() {
-        override_optimization = true;
-        syncCheck();
+        this.override_optimization = true;
+        this.syncCheck();
     },
 
     syncCheck: function() {
         if (Settings.check_overrides() || Settings.check_triggers()) {
-            override_optimization = true;
+            this.override_optimization = true;
         }
 
         /* Prevent any asynchronous checks from occuring in the loop. */
-        continueCheck = false;
+        this.continueCheck = false;
         /* Stop the asynchronous loop... */
-        if (timeoutId > 0)
-            Mainloop.source_remove(timeoutId);
+        if (this.timeoutId > 0)
+            Mainloop.source_remove(this.timeoutId);
         /* Remove the old loop ID */
-        timeoutId = 0;
+        this.timeoutId = 0;
         /* Update bounds when a check is done in sync. */
-        _updateBounds();
+        this._updateBounds();
         /* Run a check. */
-        _check();
+        this._check();
     },
 
     forceAsyncCheck: function() {
-        override_optimization = true;
-        asyncCheck();
+        this.override_optimization = true;
+        this.asyncCheck();
     },
     asyncCheck: function() {
         if (Settings.check_overrides() || Settings.check_triggers()) {
-            override_optimization = true;
+            this.override_optimization = true;
         }
 
-        if (timeoutId <= 0) {
-            _check();
+        if (this.timeoutId <= 0) {
+            this._check();
 
-            timeoutId = Mainloop.timeout_add(ASYNC_UPDATE_FREQUENCY, Lang.bind(this, function() {
-                _check();
+            this.timeoutId = Mainloop.timeout_add(ASYNC_UPDATE_FREQUENCY, Lang.bind(this, function() {
+                this._check();
 
-                if (continueCheck) {
-                    continueCheck = false;
+                if (this.continueCheck) {
+                    this.continueCheck = false;
                     return GLib.SOURCE_CONTINUE;
                 } else {
-                    timeoutId = 0;
+                    this.timeoutId = 0;
                     return GLib.SOURCE_REMOVE;
                 }
             }));
         } else {
-            continueCheck = true;
+            this.continueCheck = true;
         }
 
     },
     _updateBounds: function() {
-        let panel = this.panel.actor;
+        let zpanel = this.panel.actor;
 
-        this.panel_bounds = { x: panel.get_x(), y: panel.get_y(), height: panel.get_height(), width: panel.get_width() };
+        this.panel_bounds = { x: zpanel.get_x(), y: zpanel.get_y(), height: zpanel.get_height(), width: zpanel.get_width() };
         this.scale_factor = imports.gi.St.ThemeContext.get_for_stage(global.stage).scale_factor;
 
         let anchor_y = -Main.layoutManager.panelBox.get_anchor_point()[1];
@@ -132,7 +132,7 @@ const Intellifade = new Lang.Class({
 
         let focused_window = global.display.get_focus_window();
 
-        maximized_window = null;
+        this.maximized_window = null;
 
         let add_transparency = true;
         let force_transparency = false;
@@ -140,7 +140,7 @@ const Intellifade = new Lang.Class({
         /* Handle desktop icons (they're a window too) */
         if (focused_window && focused_window.get_window_type() === Meta.WindowType.DESKTOP) {
             add_transparency = true;
-            maximized_window = focused_window;
+            this.maximized_window = focused_window;
         } else {
             let buffer = 3;
 
@@ -149,7 +149,7 @@ const Intellifade = new Lang.Class({
 
                 let current_window = windows[i];
 
-                if (!current_window.showing_on_its_workspace() || !current_window.is_on_primary_monitor()) {
+                if (!current_window.showing_on_its_workspace() || current_window.get_monitor() !== this.monitor) {
                     continue;
                 }
 
@@ -157,7 +157,7 @@ const Intellifade = new Lang.Class({
                     /* Check if the current WM_CLASS is a trigger. */
                     if (Settings.get_trigger_windows().indexOf(current_window.get_wm_class()) !== -1) {
                         add_transparency = false;
-                        maximized_window = current_window;
+                        this.maximized_window = current_window;
 
                         break;
                     }
@@ -167,7 +167,7 @@ const Intellifade = new Lang.Class({
                     /* Check if the found app exists and if it is a trigger app. */
                     if (app && Settings.get_trigger_apps().indexOf(app.get_id()) !== -1) {
                         add_transparency = false;
-                        maximized_window = current_window;
+                        this.maximized_window = current_window;
 
                         break;
                     }
@@ -180,8 +180,8 @@ const Intellifade = new Lang.Class({
 
                 if (current_window.maximized_vertically) {
                     /* Make sure the top-most window is selected */
-                    if (maximized_window === null && !force_transparency) {
-                        maximized_window = current_window;
+                    if (this.maximized_window === null && !force_transparency) {
+                        this.maximized_window = current_window;
                     }
 
                     add_transparency = false;
@@ -201,7 +201,7 @@ const Intellifade = new Lang.Class({
 
                     if (overlap) {
                         force_transparency = true;
-                        maximized_window = null;
+                        this.maximized_window = null;
 
                         if (!Settings.check_triggers()) {
                             break;
@@ -215,8 +215,8 @@ const Intellifade = new Lang.Class({
                 if (!force_transparency && touching_panel) {
                     add_transparency = false;
 
-                    if (maximized_window === null && !force_transparency) {
-                        maximized_window = current_window;
+                    if (this.maximized_window === null && !force_transparency) {
+                        this.maximized_window = current_window;
                     }
 
                     if (!Settings.check_triggers()) {
@@ -227,33 +227,33 @@ const Intellifade = new Lang.Class({
         }
 
         if (force_transparency) {
-            Transitions.fade_out(panel);
+            Transitions.fade_out(this.panel);
             force_transparency = false;
             /* Only change if the transparency isn't already correct or if override_optimization has been called */
-        } else if (override_optimization || (Transitions.get_transparency_status(panel).is_transparent() !== add_transparency)) {
-            override_optimization = false;
+        } else if (this.override_optimization || (Transitions.get_transparency_status(this.panel).is_transparent() !== add_transparency)) {
+            this.override_optimization = false;
 
             if (add_transparency) {
-                Transitions.fade_out(panel);
+                Transitions.fade_out(this.panel);
             } else {
-                Transitions.fade_in(panel);
+                Transitions.fade_in(this.panel);
             }
-        } else if (Transitions.get_transparency_status(panel).is_blank()) {
+        } else if (Transitions.get_transparency_status(this.panel).is_blank()) {
             if (add_transparency) {
-                Transitions.minimum_fade_in(panel);
+                Transitions.minimum_fade_in(this.panel);
             } else {
-                Transitions.fade_in(panel);
+                Transitions.fade_in(this.panel);
             }
         }
 
         /* Reset text coloring. */
         if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
             if (!add_transparency && Settings.get_enable_maximized_text_color()) {
-                Theming.remove_text_color();
-                Theming.set_text_color('maximized');
+                Theming.remove_text_color(this.panel);
+                Theming.set_text_color(this.panel, 'maximized');
             } else {
-                Theming.remove_text_color('maximized');
-                Theming.set_text_color();
+                Theming.remove_text_color(this.panel, 'maximized');
+                Theming.set_text_color(this.panel);
             }
         }
     },
@@ -265,7 +265,7 @@ const Intellifade = new Lang.Class({
      * @returns {Object} The current visible maximized window.
      */
     get_current_maximized_window: function() {
-        return maximized_window;
+        return this.maximized_window;
     }
 
 });

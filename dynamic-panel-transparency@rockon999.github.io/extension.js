@@ -43,7 +43,9 @@ function enable() {
     /* Initialize Utilities */
     Transitions.init();
     Theming.init();
-    Intellifade.init();
+
+
+    this.intellifaders = [];
 
     /* Try to load settings for the user theme plugin. */
     // TODO: Why doesn't this work on some Ubuntu installations?
@@ -62,6 +64,9 @@ function enable() {
     this.panels = [];
 
     this.panels.push(Main.panel);
+
+    let intellifade = new Intellifade.Intellifade(Main.panel, global.screen.get_primary_monitor());
+    this.intellifaders[global.screen.get_primary_monitor()] = intellifade;
 
     if (!theme_settings) {
         idle_enable(false);
@@ -94,7 +99,8 @@ function enable() {
             Events.init();
 
             /* Simulate window changes. */
-            Intellifade.forceSyncCheck();
+            for (let intellifade of this.intellifaders)
+                intellifade.forceSyncCheck();
         }
     }
 }
@@ -158,7 +164,8 @@ function idle_enable(update, theme_settings = null) {
         Events.init();
 
         /* Simulate window changes. */
-        Intellifade.forceSyncCheck();
+        for (let intellifade of this.intellifaders)
+            intellifade.forceSyncCheck();
 
         return false;
     }));
@@ -179,10 +186,13 @@ function disable() {
     Transitions.cleanup();
 
     /* Cleanup Theming */
-    Theming.cleanup();
+    Theming.cleanup(this.panels);
 
     /* Cleanup Intellifade */
-    Intellifade.cleanup();
+    for (let intellifade of this.intellifaders)
+        intellifade.cleanup();
+
+    this.intellifaders = null;
 
     /* Shouldn't be an issue, but let's make sure it isn't. */
     modified = false;
@@ -193,26 +203,21 @@ function disable() {
 function find_other_panels() {
     // TODO: Extension name.
     if (ExtensionUtils.extensions['multi-monitors-add-on@spin83']) {
-        if (!Util.is_undef(Main.mmPanel)) {
-            for (let panel of Main.mmPanel) {
-                this.panels.push(panel);
+        if (typeof (Main.mmPanel) !== 'undefined' && Main.mmPanel !== null) {
+            for (let fpanel of Main.mmPanel) {
+                let intellifade = new Intellifade.Intellifade(fpanel, fpanel.monitorIndex);
+                this.intellifaders[fpanel.monitorIndex] = intellifade;
+                this.panels.push(fpanel);
             }
         }
     }
+
+    Theming.init_(this.panels);
 }
 
 function modify_panel() {
     /* Initial Coloring */
-
     let theme_color = Theming.get_theme_background_color();
-
-    /* Update the corners. */
-
-    Theming.set_corner_color({
-        red: theme_color.red,
-        green: theme_color.green,
-        blue: theme_color.blue
-    });
 
     /* Get Rid of the Panel's CSS Background */
     Theming.initialize_background_styles();
@@ -220,33 +225,49 @@ function modify_panel() {
     let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
     let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
 
-    /* Add Text Shadowing */
-    if (Settings.add_text_shadow()) {
-        if (text_shadow !== null) {
-            Theming.add_text_shadow();
-        } else {
-            log('[Dynamic Panel Transparency] Failed to enabled text shadowing.');
-        }
-    }
-
-    /* Add Icon Shadowing */
-    if (Settings.add_icon_shadow()) {
-        if (icon_shadow !== null) {
-            Theming.add_icon_shadow();
-        } else {
-            log('[Dynamic Panel Transparency] Failed to enabled icon shadowing.');
-        }
-    }
-
     /* Register text color styling. */
     let [text, icon, arrow] = Theming.register_text_color(Settings.get_text_color()); // eslint-disable-line no-unused-vars
     let [maximized_text, maximized_icon, maximized_arrow] = Theming.register_text_color(Settings.get_maximized_text_color(), 'maximized'); // eslint-disable-line no-unused-vars
 
-    if (Settings.get_enable_text_color()) {
-        if (text !== null) {
-            Theming.set_text_color();
-        } else {
-            log('[Dynamic Panel Transparency] Failed to enabled text coloring.');
+    for (let panel of this.panels) {
+        /* Update the corners. */
+
+        for (let panel of this.panels)
+            Theming.set_corner_color(panel, {
+                red: theme_color.red,
+                green: theme_color.green,
+                blue: theme_color.blue
+            });
+
+
+        /* Add Text Shadowing */
+        if (Settings.add_text_shadow()) {
+            if (text_shadow !== null) {
+
+                Theming.add_text_shadow(panel);
+            } else {
+                log('[Dynamic Panel Transparency] Failed to enabled text shadowing.');
+            }
+        }
+
+        /* Add Icon Shadowing */
+        if (Settings.add_icon_shadow()) {
+            if (icon_shadow !== null) {
+
+                Theming.add_icon_shadow(panel);
+            } else {
+                log('[Dynamic Panel Transparency] Failed to enabled icon shadowing.');
+            }
+        }
+
+
+        if (Settings.get_enable_text_color()) {
+            if (text !== null) {
+
+                Theming.set_text_color(panel);
+            } else {
+                log('[Dynamic Panel Transparency] Failed to enabled text coloring.');
+            }
         }
     }
 }
@@ -254,27 +275,32 @@ function modify_panel() {
 function unmodify_panel() {
 
     /* Remove corner styling */
-    Theming.clear_corner_color();
+    for (let panel of this.panels) {
+        Theming.clear_corner_color(panel);
 
-    /* Remove Our Styling */
-    Theming.reapply_panel_styling();
-    Theming.reapply_panel_background();
-    Theming.reapply_panel_background_image();
+        /* Remove Our Styling */
 
-    /* Remove shadowing */
-    if (Theming.has_text_shadow()) {
-        Theming.remove_text_shadow();
+        Theming.reapply_panel_styling(panel);
+        Theming.reapply_panel_background(panel);
+        Theming.reapply_panel_background_image(panel);
+
+
+        /* Remove shadowing */
+
+        if (Theming.has_text_shadow(panel)) {
+            Theming.remove_text_shadow(panel);
+        }
+
+        if (Theming.has_icon_shadow(panel)) {
+            Theming.remove_icon_shadow(panel);
+        }
+
+        /* Remove text coloring */
+        Theming.remove_text_color(panel);
+
+        /* Remove maximized text coloring */
+        Theming.remove_text_color(panel, 'maximized');
     }
-
-    if (Theming.has_icon_shadow()) {
-        Theming.remove_icon_shadow();
-    }
-
-    /* Remove text coloring */
-    Theming.remove_text_color();
-
-    /* Remove maximized text coloring */
-    Theming.remove_text_color('maximized');
 }
 
 // TODO: Merge handler code or hide it behind the backend.
@@ -318,9 +344,9 @@ function initialize_settings() {
 
                     /* Get Rid of the Panel's CSS Background */
                     // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
-                    Theming._updatePanelCSS();
+                    Theming._updatePanelCSS(this.panels);
 
-                    Intellifade.forceSyncCheck();
+                    // Intellifade.forceSyncCheck();
 
                     return false;
                 }));
@@ -365,7 +391,7 @@ function initialize_settings() {
                     Theming.set_unmaximized_background_color((Math.random() * 100).toFixed(0));
                     Theming.remove_background_color();
 
-                    Intellifade.forceSyncCheck();
+                    // Intellifade.forceSyncCheck();
 
                     return false;
                 }));
@@ -413,7 +439,7 @@ function initialize_settings() {
                     Theming.set_unmaximized_background_color((Math.random() * 100).toFixed(0));
                     Theming.remove_background_color();
 
-                    Intellifade.forceSyncCheck();
+                    // Intellifade.forceSyncCheck();
 
                     return false;
                 }));
@@ -456,7 +482,7 @@ function initialize_settings() {
                     Theming.set_unmaximized_background_color((Math.random() * 100).toFixed(0));
                     Theming.remove_background_color();
 
-                    Intellifade.forceSyncCheck();
+                    // Intellifade.forceSyncCheck();
 
                     return false;
                 }));
@@ -553,7 +579,7 @@ function initialize_settings() {
                     }
                 }
 
-                Intellifade.forceSyncCheck();
+                // Intellifade.forceSyncCheck();
 
                 return false;
             }));
@@ -591,7 +617,7 @@ function initialize_settings() {
                     }
                 }
 
-                Intellifade.forceSyncCheck();
+                // Intellifade.forceSyncCheck();
 
                 return false;
             }));
@@ -630,7 +656,7 @@ function initialize_settings() {
                     }
                 }
 
-                Intellifade.forceSyncCheck();
+                // Intellifade.forceSyncCheck();
 
                 return false;
             }));
@@ -669,7 +695,7 @@ function initialize_settings() {
                     }
                 }
 
-                Intellifade.forceSyncCheck();
+                // Intellifade.forceSyncCheck();
 
                 return false;
             }));
@@ -692,7 +718,7 @@ function initialize_settings() {
         name: 'enable_maximized_text_color',
         type: 'b',
         handler: Lang.bind(this, function() {
-            Intellifade.forceSyncCheck();
+            // Intellifade.forceSyncCheck();
         })
     });
     Settings.add({
@@ -712,7 +738,7 @@ function initialize_settings() {
         type: 'b',
         handler: Lang.bind(this, function() {
             if (Settings.get_enable_text_color()) {
-                Intellifade.forceSyncCheck();
+                // Intellifade.forceSyncCheck();
             } else {
                 Theming.remove_text_color();
                 Theming.remove_text_color('maximized');
