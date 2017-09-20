@@ -35,6 +35,11 @@
       <summary>Current User Theme</summary>
       <description>The name of the current theme that this extension has analyzed.</description>
     </key>
+    <key name="force-theme-update" type="b">
+      <default>false</default>
+      <summary>Force Theme Update</summary>
+      <description>If true the extension will always update theme data on the next startup.</description>
+    </key>
     <key name="panel-theme-color" type="(iii)">
       <default>(0,0,0)</default>
       <summary>Panel Theme Color</summary>
@@ -102,7 +107,7 @@
     </key>
     <key name="enable-maximized-text-color" type="b">
       <default>false</default>
-       <summary>Enable custom maximized text color</summary>
+      <summary>Enable custom maximized text color</summary>
       <description>Whether to enable custom secondary text coloring when a window is maximized or not.</description>
     </key>
     <key name="enable-overview-text-color" type="b">
@@ -139,6 +144,11 @@
       <default>1</default>
       <summary>Transition type</summary>
       <description>The transition function used on the panel</description>
+    </key>
+    <key name="transition-with-overview" type="b">
+      <default>true</default>
+      <summary>Transition with overview</summary>
+      <description>Transition the panel at the same time as the overview</description>
     </key>
   </schema>
 </schemalist>

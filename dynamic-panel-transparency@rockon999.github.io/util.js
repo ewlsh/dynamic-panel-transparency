@@ -1,11 +1,10 @@
-/* exported get_maximized_width_buffer, get_maximized_height_buffer, get_shell_version, is_undef, clamp, is_maximized, is_valid, match_colors, remove_file, get_file, write_to_file, gdk_to_css_color, clutter_to_native_color, deep_freeze, strip_args */
+/* exported get_shell_version, is_undef, clamp, is_valid, match_colors, remove_file, get_file, write_to_file, gdk_to_css_color, clutter_to_native_color, tuple_to_native_color, deep_freeze, strip_args */
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
-/* Global Utility Variables */
-const MAXIMIZED_HEIGHT_BUFFER = 1;
-const MAXIMIZED_WIDTH_BUFFER = 5;
+/* This import can't be a constant as it requires lazy initialization. */
+let Meta = null;
 
 /* Gnome Versioning */
 const MAJOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[0], 10);
@@ -14,28 +13,7 @@ const MINOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[1]
 /* Permission setting for created files. */
 const PERMISSIONS_MODE = parseInt('0744', 8);
 
-
 /* Utility Variable Access */
-
-/**
- * Returns the width buffer for horizontally maximized windows.
- *
- * @returns {Number} The width buffer.
- *
- */
-function get_maximized_width_buffer() {
-    return MAXIMIZED_WIDTH_BUFFER;
-}
-
-/**
- * Returns the height buffer for horizontally maximized windows.
- *
- * @returns {Number} The height buffer.
- *
- */
-function get_maximized_height_buffer() {
-    return MAXIMIZED_HEIGHT_BUFFER;
-}
 
 /**
  * Returns the current shell version.
@@ -47,20 +25,7 @@ function get_shell_version() {
     return { major: MAJOR_VERSION, minor: MINOR_VERSION };
 }
 
-
 /* Utility Functions */
-
-/**
- * Evaluates parameter 'a' and returns true if 'a' is undefined or null or false when not.
- *
- * @param {Object} a - Test value.
- *
- * @returns {Boolean} Whether 'a' is undefined or null.
- *
- */
-function is_undef(a) {
-    return (typeof (a) === 'undefined' || a === null);
-}
 
 /**
  * Evaluates parameter 'value' and returns either 'value' or 'min'/'max' if 'value' is outside of the range.
@@ -77,44 +42,18 @@ function clamp(value, min, max) {
 }
 
 /**
- * Determines if 'window' is maximized.
- *
- * @param {Object} window - Window to check.
- *
- * @returns {Boolean} Whether 'window' is maximized.
- *
- */
-function is_maximized(window) {
-    if (window.maximized_vertically) {
-        return true;
-    }
-
-    let frame = window.get_frame_rect();
-
-    let scale_factor = imports.gi.St.ThemeContext.get_for_stage(global.stage).scale_factor;
-
-    let height_buffer = MAXIMIZED_HEIGHT_BUFFER * scale_factor;
-
-    if (frame.y <= (imports.ui.main.panel.actor.get_height() + height_buffer)) {
-        return window.maximized_horizontally;
-    }
-
-    return false;
-}
-
-/**
  * Determines if 'window' is a valid window to watch.
- * TODO: Better way to call this import?
+ * Will not work outside the extension code.
  *
  * @param {Object} window - Window to check.
  *
  * @returns {Boolean} Whether 'window' is a valid window to watch.
  *
  */
-
-//
 function is_valid(window) {
-    const Meta = imports.gi.Meta;
+    if (!Meta) {
+        Meta = imports.gi.Meta;
+    }
 
     let windowTypes = [
         Meta.WindowType.NORMAL,
@@ -144,6 +83,7 @@ function get_file(file_path) {
         let file = Gio.file_new_for_path(file_path);
         return file;
     } catch (error) {
+        log(error);
         return null;
     }
 }
@@ -163,7 +103,7 @@ function write_to_file(file_path, text) {
         let parent = file.get_parent();
 
         if (GLib.mkdir_with_parents(parent.get_path(), PERMISSIONS_MODE) === 0) {
-            let success = file.replace_contents(text, null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null, null);
+            let success = file.replace_contents(text, null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null);
             return success[0];
         }
     } catch (error) {
@@ -229,6 +169,23 @@ function clutter_to_native_color(color, alpha = false) {
 }
 
 /**
+ * Converts a tuple from a GVariant (typically) into a JS/CSS color object.
+ *
+ * @param {Object} color - Tuple to convert.
+ * @param {Boolean} [alpha = false] - Whether to transfer the alpha value.
+ *
+ * @returns {Object} Converted RGB(A) color.
+ *
+ */
+function tuple_to_native_color(tuple) {
+    let color = { red: tuple[0], green: tuple[1], blue: tuple[2] };
+    if (tuple.length === 4) {
+        color.alpha = tuple[3];
+    }
+    return color;
+}
+
+/**
  * Compares two colors for equivalency.
  *
  * @param {Object} a - First color.
@@ -266,6 +223,7 @@ function deep_freeze(type, recursive = false) {
             }
         });
     };
+
     Object.freeze(type);
     freeze_children(type);
 }

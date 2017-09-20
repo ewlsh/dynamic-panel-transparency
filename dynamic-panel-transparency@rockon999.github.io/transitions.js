@@ -1,23 +1,21 @@
-/* exported init, cleanup, get_animation_status, get_transparency_status, minimum_fade_in, update_transition_type */
-/* exported fade_in, fade_out */
+/* exported init, cleanup, lock, unlock, get_animation_status, get_transparency_status, minimum_fade_in, update_transition_type */
+/* exported fade_in, fade_out, blank_fade_out */
 
 const Lang = imports.lang;
+const Mainloop = imports.mainloop;
 
-const Main = imports.ui.main;
-const Panel = Main.panel;
-
-const Params = imports.misc.params;
+const St = imports.gi.St;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+
 const Settings = Me.imports.settings;
 const Theming = Me.imports.theming;
-const Util = Me.imports.util;
 
-const TIME_SCALE_FACTOR = 1000;
+const Equations = imports.tweener.equations;
 
-const BEGINNING_THRESHOLD_PERCENTAGE = 0.20;
-const ENDING_THRESHOLD_PERCENTAGE = 0.80;
-const FRAME_RATE_DIVIDER = 8;
+const CORNER_UPDATE_FREQUENCY = 30;
+
+// TODO: Make each function start-value agnostic (doesn't assume maximized value)...
 
 // TODO: Add panel to params...
 
@@ -26,20 +24,6 @@ const FRAME_RATE_DIVIDER = 8;
  *
  */
 function init() {
-    /* Objects to track where the transparency is and where it's going. */
-    this.status = new TransparencyStatus();
-    this.animation_status = new AnimationStatus();
-    this.transition_type = TransitionType.from_index(Settings.get_transition_type());
-
-    /* Override the gnome animation preferences if need be. The default tweener obeys animation settings, the core one doesn't. */
-    if (Settings.get_force_animation()) {
-        this.tweener = imports.tweener.tweener;
-    } else {
-        this.tweener = imports.ui.tweener;
-    }
-
-    /* Register our property with the tweener of choice. */
-    this.tweener.registerSpecialProperty('background_alpha', Theming.get_background_alpha, Theming.set_background_alpha);
 }
 
 /**
@@ -47,341 +31,223 @@ function init() {
  *
  */
 function cleanup() {
-    this.animation_status = null;
-    this.transition_type = null;
-    this.status = null;
-    this.tweener = null;
 }
-
-/**
- * Updates the default transition type from settings.
- *
- */
-function update_transition_type() {
-    this.transition_type = TransitionType.from_index(Settings.get_transition_type());
-}
-
 
 /**
  * Get the current status of the panel's transparency.
  *
  * @returns {Object} Current transparency. @see TransparencyStatus
  */
-function get_transparency_status() {
-    return this.status;
+function get_transparency_status(panel) {
+    if (typeof (panel._dpt_transparency_status) !== 'undefined' && panel._dpt_transparency_status !== null)
+        return panel._dpt_transparency_status;
+    return panel['_dpt_transparency_status'] = new TransparencyStatus();
 }
 
 /**
  * Get any animation that the panel is currently doing.
+ * DEPRECATED.
  *
  * @returns {Object} Current animation status. @see AnimationStatus
  */
-function get_animation_status() {
-    return this.animation_status;
+function get_animation_status(panel) {
+    return { destination: null, action: null };
 }
 
 /**
  * Fades the panel into the unmaximized (minimum) alpha. Used for closing the overview.
  *
- * @param {Object} params [params=null] - Parameters for the transition.
- * @param {Number} params.time - Transition speed in milliseconds.
  */
-function minimum_fade_in(params) {
-    if (Main.overview.visible || Main.overview._shown)
-        return;
+function minimum_fade_in(panel) {
+    /* The CSS backend doesn't need different starting/ending values */
+    Theming.reapply_panel_background(panel);
 
-    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interruptible: false });
-
-    if (params.interruptible || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_IN, AnimationDestination.MINIMUM)) {
-        this.animation_status.set(AnimationAction.FADE_IN, AnimationDestination.MINIMUM);
-    } else {
-        return;
-    }
-
-    let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
-
-    this.status.set_transparent(true);
-    this.status.set_blank(false);
-
-    let time = params.time / TIME_SCALE_FACTOR;
-
-    Theming.set_panel_color();
-
-    /* Avoid Tweener if the time or opacity don't require it. */
-    if (time <= 0 || Theming.get_unmaximized_opacity() <= 0) {
-        Theming.set_background_alpha(Panel.actor, Theming.get_unmaximized_opacity());
-        this.minimum_fade_in_complete();
-        this.animation_status.done();
-
-        update_corner_alpha();
-    } else {
-        let tweening_params = {
-            time: time,
-            transition: transition,
-            background_alpha: Theming.get_unmaximized_opacity(),
-            onComplete: Lang.bind(this, minimum_fade_in_complete)
-        };
-
-        if (!Settings.get_hide_corners()) {
-            let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
-            let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
-            let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
-            let i = 0;
-
-            tweening_params.onUpdate = Lang.bind(this, function(a) {
-                // TODO: Setting for frequency?
-                if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
-                    update_corner_alpha(Theming.get_background_alpha(Panel.actor));
-                }
-            });
-        }
-
-        this.tweener.addTween(Panel.actor, tweening_params);
-    }
+    fade_out();
 }
 
 /**
  * Fades the panel into the nmaximized (maximum) alpha.
  *
- * @param {Object} params [params=null] - Parameters for the transition.
- * @param {Number} params.time - Transition speed in milliseconds.
  */
-function fade_in(params) {
-    if (Main.overview.visible || Main.overview._shown)
-        return;
-
-    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interruptible: false });
-
-    if (params.interruptible || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM)) {
-        this.animation_status.set(AnimationAction.FADE_IN, AnimationDestination.MAXIMUM);
-    } else {
-        return;
-    }
-
-    let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
-
-    this.status.set_transparent(false);
-    this.status.set_blank(false);
-
-    let time = params.time / TIME_SCALE_FACTOR;
-
-    Theming.set_panel_color();
-
-    if (time <= 0) {
-        Theming.set_background_alpha(Panel.actor, Theming.get_maximized_opacity());
-        this.fade_in_complete();
-        this.animation_status.done();
-
-        update_corner_alpha();
-    } else {
-        let tweening_params = {
-            time: time,
-            transition: transition,
-            background_alpha: Theming.get_maximized_opacity(),
-            onComplete: Lang.bind(this, fade_in_complete)
-        };
-
-        if (!Settings.get_hide_corners()) {
-            let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
-            let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
-            let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
-            let i = 0;
-
-            tweening_params.onUpdate = Lang.bind(this, function(a) {
-                // TODO: Setting for frequency?
-                if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
-                    update_corner_alpha(Theming.get_background_alpha(Panel.actor));
-                }
-            });
-        }
-
-        this.tweener.addTween(Panel.actor, tweening_params);
-    }
-}
-
-/**
- * Callback for when a minimum_fade_in transition is completed.
- *
- */
-function minimum_fade_in_complete(panel) {
-    if (Main.overview._shown) {
-        blank_fade_out(panel);
-        return;
-    }
-
-    update_corner_alpha(panel);
-
-    this.animation_status.done();
-}
-
-/**
- * Callback for when a fade_in transition is completed.
- *
- */
-function fade_in_complete(panel) {
-    if (Main.overview._shown) {
-        blank_fade_out(panel);
-        return;
-    }
-
-    update_corner_alpha(panel);
-
+function fade_in(panel) {
     let custom = Settings.get_panel_color({ app_info: true });
 
-    if (!Settings.remove_panel_styling()) {
-        if (custom.app_info !== null && Settings.check_overrides()) {
-            if (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info]) {
-                Theming.strip_panel_background_image(panel);
-            } else {
-                if (!Settings.enable_custom_background_color()) {
-                    Theming.reapply_panel_background_image(panel);
-                }
-            }
-        } else {
-            if (!Settings.enable_custom_background_color()) {
-                Theming.reapply_panel_background_image(panel);
-            } else {
-                Theming.strip_panel_background_image(panel);
-            }
-        }
+    Theming.reapply_panel_background(panel);
 
+    if (!Settings.remove_panel_styling()) {
         Theming.reapply_panel_styling(panel);
     }
 
-    this.animation_status.done();
+    if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
+        let prefix = custom.app_info.split('.').join('-');
+
+        Theming.set_maximized_background_color('tweak-' + prefix, panel);
+        Theming.remove_background_color({
+            exclude: 'tweak-' + prefix
+        }, panel);
+    } else if (Settings.enable_custom_background_color()) {
+        Theming.set_maximized_background_color(panel);
+        Theming.remove_background_color({
+            exclude_base: true
+        }, panel);
+    } else {
+        Theming.set_maximized_background_color(Settings.get_current_user_theme(), panel);
+        Theming.remove_background_color({
+            exclude: Settings.get_current_user_theme(),
+        }, panel);
+    }
+
+    if (!Settings.get_hide_corners()) {
+        if (typeof (panel._dpt_corner_timeout_id) === 'undefined' || panel._dpt_corner_timeout_id === null) {
+            panel._dpt_corner_timeout_id = 0;
+        }
+
+
+        let speed = St.get_slow_down_factor() * Settings.get_transition_speed();
+
+        let maximized = Settings.get_maximized_opacity();
+        let unmaximized = !this.status.is_transparent() ? maximized : Settings.get_unmaximized_opacity();
+
+        this.status.set_transparent(false);
+        this.status.set_blank(false);
+
+        let count = 0;
+
+        const id = panel._dpt_corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function(panel) {
+            if (id === panel._dpt_corner_timeout_id && !this.status.is_transparent()) {
+                count++;
+
+                let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), unmaximized, maximized - unmaximized, speed);
+
+                update_corner_alpha(alpha);
+
+                if (count > CORNER_UPDATE_FREQUENCY) {
+                    update_corner_alpha(maximized);
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
+            return true;
+        }));
+    }
+
+    this.status.set_transparent(false);
+    this.status.set_blank(false);
 }
 
 /**
  * Fades the panel into the unmaximized (minimum) alpha.
- * TODO: Could this be used for minimum_fade_in?
  *
- * @param {Object} params [params=null] - Parameters for the transition.
- * @param {Number} params.time - Transition speed in milliseconds.
  */
-function fade_out(params) {
-    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interruptible: false });
+function fade_out(panel) {
+    Theming.strip_panel_background_image(panel);
+    Theming.strip_panel_styling(panel);
 
-    if (params.interruptible || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM)) {
-        this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.MINIMUM);
+    if (Settings.enable_custom_background_color()) {
+        Theming.set_unmaximized_background_color(panel);
+        Theming.remove_background_color({
+            exclude_base: true,
+            exclude_unmaximized_variant_only: true
+        }, panel);
     } else {
-        return;
+        Theming.set_unmaximized_background_color(Settings.get_current_user_theme(), panel);
+        Theming.remove_background_color({
+            exclude: Settings.get_current_user_theme(),
+            exclude_unmaximized_variant_only: true
+        }, panel);
     }
 
-    let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_OUT);
 
-    this.status.set_transparent(true);
-    this.status.set_blank(false);
 
-    let time = params.time / TIME_SCALE_FACTOR;
-
-    Theming.strip_panel_background_image();
-    Theming.strip_panel_styling();
-
-    if (time <= 0 && !Main.overview._shown) {
-        Theming.set_background_alpha(Panel.actor, Theming.get_unmaximized_opacity());
-        Theming.set_panel_color();
-        this.animation_status.done();
-
-        update_corner_alpha();
-    } else if (Main.overview._shown) {
-        blank_fade_out({
-            time: 0
-        });
-    } else {
-        let tweening_params = {
-            time: time,
-            transition: transition,
-            background_alpha: Theming.get_unmaximized_opacity(),
-            onComplete: Lang.bind(this, function() {
-                Theming.set_panel_color();
-                this.animation_status.done();
-
-                update_corner_alpha();
-            })
-        };
-
-        if (!Settings.get_hide_corners()) {
-            let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
-            let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
-            let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
-            let i = 0;
-
-            tweening_params.onUpdate = Lang.bind(this, function(a) {
-                // TODO: Setting for frequency?
-                if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
-                    update_corner_alpha(Theming.get_background_alpha(Panel.actor));
-                }
-            });
+    // TODO: Figure out how to write the panel corners in pure CSS.
+    if (!Settings.get_hide_corners()) {
+        if (typeof (panel._dpt_corner_timeout_id) === 'undefined' || panel._dpt_corner_timeout_id === null) {
+            panel._dpt_corner_timeout_id = 0;
         }
 
-        this.tweener.addTween(Panel.actor, tweening_params);
+        let speed = St.get_slow_down_factor() * Settings.get_transition_speed();
+
+        let unmaximized = Settings.get_unmaximized_opacity();
+        let maximized = this.status.is_transparent() ? unmaximized : Settings.get_maximized_opacity();
+
+        /* Keep the status up to date */
+        this.status.set_transparent(true);
+        this.status.set_blank(false);
+
+        let count = 0;
+
+        const id = panel._dpt_corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function(panel) {
+            if (id === panel._dpt_corner_timeout_id && this.status.is_transparent()) {
+                count++;
+
+                let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), maximized, unmaximized - maximized, speed);
+
+                update_corner_alpha(alpha);
+
+                if (count > CORNER_UPDATE_FREQUENCY) {
+                    update_corner_alpha(unmaximized);
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            return true;
+        }));
     }
 
+    /* Keep the status up to date */
+    this.status.set_transparent(true);
+    this.status.set_blank(false);
 }
-
 
 /**
  * Fades the panel's alpha to 0. Used for opening the overview & displaying the screenShield.
  *
- * @param {Object} params [params=null] - Parameters for the transition.
- * @param {Number} params.time - Transition speed in milliseconds.
  */
-function blank_fade_out(params) {
-    params = Params.parse(params, { time: Settings.get_transition_speed(), transition: this.transition_type, interruptible: false });
+function blank_fade_out(panel) {
+    /* Completely remove every possible background style... */
+    Theming.remove_background_color(panel);
 
-    if (params.interruptible || this.animation_status.ready() || !this.animation_status.same(AnimationAction.FADE_OUT, AnimationDestination.BLANK)) {
-        this.animation_status.set(AnimationAction.FADE_OUT, AnimationDestination.BLANK);
-    } else {
-        return;
-    }
-
-    let transition = TransitionType.to_code_string(params.transition, AnimationAction.FADING_IN);
+    Theming.strip_panel_background(panel);
+    Theming.strip_panel_background_image(panel);
+    Theming.strip_panel_styling(panel);
 
     this.status.set_transparent(true);
     this.status.set_blank(true);
 
-    let time = params.time / TIME_SCALE_FACTOR;
-
-    Theming.strip_panel_background_image();
-    Theming.strip_panel_styling();
-
-    if (time <= 0) {
-        Theming.set_background_alpha(Panel.actor, 0);
-        Theming.set_panel_color();
-        this.animation_status.done();
-
-        update_corner_alpha(0);
-    } else {
-        let tweening_params = {
-            time: time,
-            transition: transition,
-            background_alpha: 0,
-            onComplete: Lang.bind(this, function() {
-                Theming.set_panel_color();
-                this.animation_status.done();
-
-                update_corner_alpha(0);
-            })
-        };
-
-        if (!Settings.get_hide_corners()) {
-            let time_frame_ratio = (params.time / imports.tweener.tweener._ticker.FRAME_RATE);
-            let beginning_threshold = time_frame_ratio * BEGINNING_THRESHOLD_PERCENTAGE;
-            let ending_threshold = time_frame_ratio * ENDING_THRESHOLD_PERCENTAGE;
-            let i = 0;
-
-            tweening_params.onUpdate = Lang.bind(this, function(a) {
-                // TODO: Setting for frequency?
-                if (i % FRAME_RATE_DIVIDER === 0 || i < beginning_threshold || i++ > ending_threshold) {
-                    update_corner_alpha(Theming.get_background_alpha(Panel.actor));
-                }
-            });
+    // TODO: These corners...
+    if (!Settings.get_hide_corners()) {
+        if (typeof (panel._dpt_corner_timeout_id) === 'undefined' || panel._dpt_corner_timeout_id === null) {
+            panel._dpt_corner_timeout_id = 0;
         }
 
-        this.tweener.addTween(Panel.actor, tweening_params);
+        let speed = St.get_slow_down_factor() * Settings.get_transition_speed();
+
+        let maximized = Settings.get_maximized_opacity();
+
+        let count = 0;
+
+        const id = panel._dpt_corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function(panel) {
+            if (id === panel._dpt_corner_timeout_id && this.status.is_transparent()) {
+                count++;
+
+                let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), maximized, -maximized, speed);
+
+                update_corner_alpha(alpha);
+
+                if (count > CORNER_UPDATE_FREQUENCY) {
+                    update_corner_alpha(0);
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            return true;
+        }));
     }
 }
-
 
 /**
  * Updates the alpha value of the corners' coloring. Slightly awkward overlap is unavoidable.
@@ -399,19 +265,19 @@ function update_corner_alpha(alpha = null) {
 
     Theming.set_corner_color({
         alpha: alpha
-    });
+    }, panel);
 }
 
 const TransparencyStatus = new Lang.Class({
     Name: 'DynamicPanelTransparency_TransparencyStatus',
-    _init: function() {
+    _init: function(panel) {
         this.transparent = false;
         this.blank = false;
     },
-    is_transparent: function() {
+    is_transparent: function(panel) {
         return this.transparent;
     },
-    is_blank: function() {
+    is_blank: function(panel) {
         return this.blank;
     },
     set_transparent: function(transparent) {
@@ -421,75 +287,3 @@ const TransparencyStatus = new Lang.Class({
         this.blank = blank;
     }
 });
-
-const AnimationStatus = new Lang.Class({
-    Name: 'DynamicPanelTransparency_AnimationStatus',
-    _init: function() {
-        this.destination = null;
-        this.action = null;
-    },
-    get_action: function() {
-        return this.action;
-    },
-    get_destination: function() {
-        return this.destination;
-    },
-    set: function(action, destination) {
-        this.action = action;
-        this.destination = destination;
-    },
-    done: function() {
-        this.action = null;
-        this.destination = null;
-    },
-    same: function(action, destination) {
-        return (this.action === action && this.destination === destination);
-    },
-    ready: function() {
-        return (this.action === null && this.destination === null);
-    }
-});
-
-const TransitionType = {
-    LINEAR: { code: 'linear', name: 'Linear', index: 1 },
-    SINE: { code: 'Sine', name: 'Sine', index: 2 },
-    QUAD: { code: 'Quad', name: 'Quadratic', index: 3 },
-    CUBIC: { code: 'Cubic', name: 'Cubic', index: 4 },
-    QUARTIC: { code: 'Quart', name: 'Quartic', index: 5 },
-    QUINTIC: { code: 'Quint', name: 'Quintic', index: 6 },
-    EXPONENTIAL: { code: 'Expo', name: 'Exponential', index: 7 },
-    CIRCULAR: { code: 'Circ', name: 'Circle', index: 8 },
-    BACK: { code: 'Back', name: 'Back', index: 15 },
-    ELASTIC: { code: 'Elastic', name: 'Elastic', index: 9 },
-    BOUNCE: { code: 'Bounce', name: 'Bounce', index: 10 },
-    from_index: function(search_index) {
-        for (let key in this) {
-            let value = this[key];
-            if (typeof (value) === 'object' && search_index === value.index) {
-                return value;
-            }
-        }
-        return null;
-    },
-    to_code_string: function(type, action) {
-        /* 'linear' is a special case. It doesn't have in/out modes. */
-        if (type.code === this.LINEAR.code) {
-            return this.LINEAR.code;
-        }
-        return (action === AnimationAction.FADING_IN ? 'easeIn' : 'easeOut') + type.code;
-    }
-};
-Util.deep_freeze(TransitionType);
-
-const AnimationAction = {
-    FADING_OUT: 0,
-    FADING_IN: 1
-};
-Util.deep_freeze(AnimationAction);
-
-const AnimationDestination = {
-    BLANK: 0,
-    MINIMUM: 1,
-    MAXIMUM: 2
-};
-Util.deep_freeze(AnimationDestination);

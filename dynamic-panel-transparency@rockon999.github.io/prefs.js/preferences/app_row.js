@@ -124,7 +124,6 @@ const CustomRow = new Lang.Class({
     }
 });
 
-
 const AddAppRow = new Lang.Class({
     Name: 'DynamicPanelTransparency_AddAppRow',
     Extends: Gtk.ListBoxRow,

@@ -3,115 +3,90 @@
 const Mainloop = imports.mainloop;
 const Lang = imports.lang;
 
-const Params = imports.misc.params;
-
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Compatibility = Me.imports.compatibility;
-const Convenience = Me.imports.convenience;
-const Transitions = Me.imports.transitions;
-const Settings = Me.imports.settings;
-const Theming = Me.imports.theming;
-const Util = Me.imports.util;
-
-const Extension = Me.imports.extension;
-
-const Shell = imports.gi.Shell;
-const Meta = imports.gi.Meta;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
+const Shell = imports.gi.Shell;
 
 const Main = imports.ui.main;
-const Panel = Main.panel;
+
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+
+const Convenience = Me.imports.convenience;
+const Extension = Me.imports.extension;
+const Intellifade = Me.imports.intellifade;
+const Settings = Me.imports.settings;
+const Util = Me.imports.util;
+
+const Theming = Me.imports.theming;
+const Transitions = Me.imports.transitions;
 
 const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 
 /**
  * Signal Connections
- * hidden: occurs after the overview is hidden
- * showing: occurs as the overview is opening
- * unminimize: occurs as the window is unminimized
- * [REMOVED] active-changed: occurs when the screen shield is toggled
- * notify::n-workspaces: occurs when the number of workspaces changes
- * restacked: occurs when the window Z-ordering changes
- * window-created: occurs when a new window is created
- * switch-workspace: occurs after a workspace is switched
- * minimize: occurs as the window is minimized
- * map: monitors both new windows and unminimizing windows
- * destroy: occurs as the window is destroyed
- * user-theme/changed::name: occurs when the user's theme changes
+ * js/ui/overview.js/hidden: occurs after the overview is hidden
+ * js/ui/overview.js/shown: occurs after the overview is open
+ * MetaScreen/restacked: occurs when the window Z-ordering changes
+ * org/gnome/shell/extensions/user-theme/changed::name: occurs when the user's theme changes
+ * window_group/actor-added: occurs when a window actor is added
+ * window_group/actor-removed: occurs when a window actor is removed
+ * wm/switch-workspace: occurs after a workspace is switched
  *
  */
-
 
 /**
  * Intialize.
  *
  */
 function init() {
-    this.workspaces = [];
     this.windows = [];
 
     this._wm_tracker = Shell.WindowTracker.get_default();
 
-    this._overviewHiddenSig = Main.overview.connect('hidden', Lang.bind(this, Util.strip_args(_windowUpdated)));
+    this._overviewHidingSig = Main.overview.connect('hiding', Lang.bind(this, Util.strip_args(Intellifade.syncCheck)));
 
-    this._overviewShowingSig = Main.overview.connect('showing', Lang.bind(this, function() {
-        if (!Transitions.get_transparency_status().is_blank()) {
-            Transitions.blank_fade_out();
-        }
-
-        if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
-            if (Settings.get_enable_overview_text_color()) {
-                Theming.set_text_color('maximized');
-            } else {
-                Theming.set_text_color();
-            }
-        }
-    }));
-
-    let windows = global.get_window_actors();
-    let display = global.screen.get_display();
-
-
-    for (let window_actor of windows) {
-        /* Simulate window creation event */
-        let window = window_actor.get_meta_window();
-        _windowCreated(display, window);
+    if (Settings.transition_with_overview()) {
+        this._overviewShownSig = Main.overview.connect('showing', Lang.bind(this, _overviewShown));
+    } else {
+        this._overviewShownSig = Main.overview.connect('shown', Lang.bind(this, _overviewShown));
     }
 
+    let windows = global.get_window_actors();
 
-    // COMPATIBILITY: No unminimize signal on 3.14
-    this._windowUnminimizeSig = Compatibility.g_signal_connect(global.window_manager, 'unminimize', Lang.bind(this, Util.strip_args(_windowUpdated)));
+    for (let window_actor of windows) {
+        /* Simulate window creation event, null container because _windowActorAdded doesn't utilize containers */
+        _windowActorAdded(null, window_actor);
+    }
 
-    this._workspaceSwitchSig = global.window_manager.connect('switch-workspace', Lang.bind(this, _workspaceSwitched));
-    this._windowMinimizeSig = global.window_manager.connect('minimize', Lang.bind(this, _windowMinimized));
-    this._windowDestroySig = global.window_manager.connect('destroy', Lang.bind(this, _windowDestroyed));
-    this._windowMapSig = global.window_manager.connect('map', Lang.bind(this, Util.strip_args(_windowUpdated)));
+    this._workspaceSwitchSig = global.window_manager.connect_after('switch-workspace', Lang.bind(this, _workspaceSwitched));
 
-    this._windowRestackedSig = global.screen.connect('restacked', Lang.bind(this, _windowRestacked));
-    this._windowLeftSig = global.screen.connect('window-left-monitor', Lang.bind(this, _windowLeft));
-    this._windowEnteredSig = global.screen.connect('window-entered-monitor', Lang.bind(this, Util.strip_args(_windowUpdated)));
+    this._windowRestackedSig = global.screen.connect_after('restacked', Lang.bind(this, _windowRestacked));
 
-    this._windowCreatedSig = display.connect_after('window-created', Lang.bind(this, _windowCreated));
+    this._windowActorAddedSig = global.window_group.connect('actor-added', Lang.bind(this, _windowActorAdded));
+    this._windowActorRemovedSig = global.window_group.connect('actor-removed', Lang.bind(this, _windowActorRemoved));
 
+    this._appFocusedSig = this._wm_tracker.connect_after('notify::focus-app', Lang.bind(this, _windowRestacked));
 
     /* Apparently Ubuntu is wierd and does this different than a common Gnome installation. */
     // TODO: Look into this.
 
+    this._theme_settings = null;
+    this._userThemeChangedSig = null;
+
     try {
         let schemaObj = Convenience.getSchemaObj(USER_THEME_SCHEMA, true);
 
-        if (!Util.is_undef(schemaObj)) {
+        if (schemaObj) {
             this._theme_settings = new Gio.Settings({
                 settings_schema: schemaObj
             });
         }
     } catch (error) {
-        log('[Dynamic Panel Transparency] Failed to find Gnome Shell settings. This should not occur.');
+        log('[Dynamic Panel Transparency] Failed to find shell theme settings. Ignore this if you are not using a custom theme.');
     }
 
-    if (!Util.is_undef(this._theme_settings)) {
-        this._userThemeChangedSig = this._theme_settings.connect('changed::name', Lang.bind(this, _userThemeChanged));
+    if (this._theme_settings) {
+        this._userThemeChangedSig = this._theme_settings.connect_after('changed::name', Lang.bind(this, _userThemeChanged));
     }
 }
 
@@ -121,90 +96,126 @@ function init() {
  */
 function cleanup() {
     /* Disconnect Signals */
-    if (!Util.is_undef(this._windowUnminimizeSig)) {
+    if (this._windowUnminimizeSig) {
         global.window_manager.disconnect(this._windowUnminimizeSig);
     }
 
-    Main.overview.disconnect(this._overviewShowingSig);
-    Main.overview.disconnect(this._overviewHiddenSig);
+    Main.overview.disconnect(this._overviewShownSig);
+    Main.overview.disconnect(this._overviewHidingSig);
 
-    global.window_manager.disconnect(this._windowMapSig);
-    global.window_manager.disconnect(this._windowDestroySig);
-    global.window_manager.disconnect(this._windowMinimizeSig);
     global.window_manager.disconnect(this._workspaceSwitchSig);
 
-    global.screen.get_display().disconnect(this._windowCreatedSig);
+    global.window_group.disconnect(this._windowActorAddedSig);
+    global.window_group.disconnect(this._windowActorRemovedSig);
 
     global.screen.disconnect(this._windowRestackedSig);
-    global.screen.disconnect(this._windowLeftSig);
-    global.screen.disconnect(this._windowEnteredSig);
 
-    if (!Util.is_undef(this._theme_settings) && !Util.is_undef(this._userThemeChangedSig)) {
+    this._wm_tracker.disconnect(this._appFocusedSig);
+
+    if (this._theme_settings && this._userThemeChangedSig) {
         this._theme_settings.disconnect(this._userThemeChangedSig);
     }
 
-    for (let window_container of this.windows) {
-        for (let signalId of window_container.signalIds) {
-            window_container.window.disconnect(signalId);
-        }
-        delete window_container.window.dpt_tracking;
+    for (let window_actor of this.windows) {
 
+        if (typeof (window_actor._dpt_signals) !== 'undefined') {
+            for (let signalId of window_actor._dpt_signals) {
+                window_actor.disconnect(signalId);
+            }
+        }
+
+        delete window_actor._dpt_signals;
+        delete window_actor._dpt_tracking;
     }
 
     /* Cleanup Signals */
     this._windowRestackedSig = null;
-    this._overviewShowingSig = null;
-    this._overviewHiddenSig = null;
-    this._windowMapSig = null;
-    this._windowDestroySig = null;
-    this._windowMinimizeSig = null;
-    this._windowUnminimizeSig = null;
+    this._overviewShownSig = null;
+    this._overviewHidingSig = null;
+    this._windowActorRemovedSig = null;
     this._workspaceSwitchSig = null;
     this._userThemeChangedSig = null;
-    this._windowCreatedSig = null;
+    this._windowActorAddedSig = null;
 
     this._theme_settings = null;
 
     this._wm_tracker = null;
 
-    this.workspaces = null;
     this.windows = null;
 }
 
-
 /* Event Handlers */
 
-function _windowDestroyed(wm, window_actor) {
-    if (!Util.is_undef(window_actor.get_meta_window().dpt_tracking)) {
-        delete window_actor.get_meta_window().dpt_tracking;
+/**
+ * Called whenever the overview is shown.
+ *
+ */
+function _overviewShown() {
+    if (!Transitions.get_transparency_status().is_blank()) {
+        Transitions.blank_fade_out();
     }
 
-    let index = this.windows.indexOf(window_actor.get_meta_window());
+    if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
+        if (Settings.get_enable_overview_text_color()) {
+            Theming.remove_text_color();
+            Theming.set_text_color('maximized');
+        } else {
+            Theming.remove_text_color('maximized');
+            Theming.set_text_color();
+        }
+    }
+}
+
+/**
+ * Called whenever a window actor is removed.
+ *
+ */
+function _windowActorRemoved(container, window_actor) {
+    if (typeof (window_actor._dpt_tracking) === 'undefined') {
+        return;
+    }
+
+    /* Remove our tracking variable. */
+    delete window_actor._dpt_tracking;
+
+    if (typeof (window_actor._dpt_signals) !== 'undefined') {
+        for (let signalId of window_actor._dpt_signals) {
+            window_actor.disconnect(signalId);
+        }
+    }
+
+    delete window_actor._dpt_signals;
+
+    let index = this.windows.indexOf(window_actor);
     if (index !== -1) {
         this.windows.splice(index, 1);
     }
 
-    this._windowUpdated({
-        excluded_window: window_actor.get_meta_window()
-    });
+    Intellifade.asyncCheck();
 }
 
 /**
  * Called whenever the User Theme extension updates the current theme.
  *
  */
+
 function _userThemeChanged() {
     log('[Dynamic Panel Transparency] User theme changed.');
 
     /* Remove Our Styling */
-    Theming.reapply_panel_styling();
-    Theming.reapply_panel_background();
-    Theming.reapply_panel_background_image();
+    Extension.unmodify_panel();
+    Theming.cleanup();
+    Theming.init();
 
-    Mainloop.idle_add(Lang.bind(this, function() {
+    /* Hopefully every computer is fast enough to apply a theme in three seconds. */
+    const id = this.theme_detection_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+        if (id !== this.theme_detection_id) {
+            return false;
+        }
+
         log('[Dynamic Panel Transparency] Updating user theme data.');
 
-        let theme = Panel.actor.get_theme_node();
+        let theme = Main.panel.actor.get_theme_node();
 
         /* Store user theme values. */
         let background = null;
@@ -221,233 +232,56 @@ function _userThemeChanged() {
         Theming.set_theme_background_color(Util.clutter_to_native_color(background));
         Theming.set_theme_opacity(background.alpha);
 
-        Settings._settings.set_string('current-user-theme', this._theme_settings.get_string('name'));
+        let theme_name = this._theme_settings.get_string('name');
+        theme_name = theme_name === '' ? 'Adwaita' : theme_name;
+        Settings._settings.set_string('current-user-theme', theme_name);
+        Settings._settings.set_boolean('force-theme-update', true);
         Settings._settings.set_value('panel-theme-color', new GLib.Variant('(iii)', [background.red, background.green, background.blue]));
         Settings._settings.set_value('theme-opacity', new GLib.Variant('i', background.alpha));
 
         log('[Dynamic Panel Transparency] Detected user theme style: rgba(' + background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
         log('[Dynamic Panel Transparency] Using theme data for: ' + Settings.get_current_user_theme());
 
-        Theming.strip_panel_background();
+        Extension.modify_panel();
 
-        /* Simulate window changes. */
-        _windowUpdated({
-            force: true
-        });
+        Intellifade.forceSyncCheck();
 
         return false;
     }));
 }
 
-function _windowCreated(display, window) {
-    if (window && Util.is_undef(window.dpt_tracking)) {
-        if (Util.is_valid(window)) {
-            window.dpt_tracking = true;
-
-            const v_wId = window.connect('notify::maximized-vertically', Lang.bind(this, function(obj, property) {
-                if (!obj['maximized_vertically']) {
-                    this._windowUpdated({ trigger_window: obj });
-                    return;
-                }
-                this._windowUpdated();
-            }));
-
-            const f_wId = window.connect('notify::fullscreen', Lang.bind(this, function(obj, property) {
-                this._windowUpdated();
-            }));
-
-            this.windows.push({ 'window': window, 'signalIds': [v_wId, f_wId] });
-        }
-    }
-}
-
-
 /**
- * Handles any window updates. Contains the core logic of this extension.
- *
- * @param {Object} params - List of parameters for the update.
- * @param {Object} params.excluded_window - Optional. A Meta.Window that should be ignored when updating. Usually this is force events that don't remove a window before this is called.
- * @param {Boolean} params.force - Optional. Updates even if the current state is believed to be identical.
- * @param {Boolean} params.blank - Optional. Whether or not the panel alpha should be set to 0 instead of the unmaximized opacity.
- * @param {Number} params.time - Optional. The amount of time any invoked transition should take.
- */
-function _windowUpdated(params) {
-    if (Main.overview._shown)
-        return;
-
-    params = Params.parse(params, {
-        workspace: global.screen.get_active_workspace(),
-        excluded_window: null,
-        trigger_window: null,
-        blank: false,
-        force: false
-    }, true);
-
-    let excluded_window = params.excluded_window;
-    let trigger_window = params.trigger_window;
-    let workspace = params.workspace;
-
-    let focused_window = global.display.get_focus_window();
-
-    let windows = workspace.list_windows();
-
-    windows = global.display.sort_windows_by_stacking(windows);
-
-    this.maximized_window = null;
-
-    let add_transparency = true;
-
-    let monitor_has_panel = false;
-    let index;
-
-    let panel;
-
-    if (focused_window) {
-        focused_window.get_monitor();
-
-        for (let _panel of Extension.panels) {
-            if (_panel._monitorIndex === index) {
-                monitor_has_panel = true;
-                panel = _panel;
-            }
-        }
-    }
-
-    //Util.monitor_has_panel(focused_window.get_monitor());
-
-    /* Save processing time by checking the current focused window (most likely to be maximized) */
-    /* Check that the focused window is in the right workspace. (I really hope it always is...) */
-    /* Don't do the 'quick check' if we have trigger apps/windows as they might not be focused. */
-    if (!Settings.check_triggers() && focused_window && focused_window !== excluded_window && focused_window !== trigger_window && Util.is_valid(focused_window) && Util.is_maximized(focused_window) && monitor_has_panel && !focused_window.minimized && focused_window.get_workspace().index() === workspace.index()) {
-        add_transparency = false;
-        this.maximized_window = focused_window;
-    } else {
-        for (let i = windows.length - 1; i >= 0; i--) {
-            let current_window = windows[i];
-
-            monitor_has_panel = false;
-            index = current_window.get_monitor();
-
-            for (let panel of Extension.panels) {
-                if (panel._monitorIndex === index) {
-                    monitor_has_panel = true;
-                }
-            }
-
-            if (Settings.check_triggers()) {
-                /* Check if the current WM_CLASS is a trigger. */
-                if (Settings.get_trigger_windows().indexOf(current_window.get_wm_class()) !== -1) {
-                    /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
-                    if (current_window !== excluded_window && monitor_has_panel && !current_window.minimized) {
-                        add_transparency = false;
-                        this.maximized_window = current_window;
-                        break;
-                    }
-                }
-
-                let app = this._wm_tracker.get_window_app(current_window);
-
-                /* Check if the found app exists and if it is a trigger app. */
-                if (app && Settings.get_trigger_apps().indexOf(app.get_id()) !== -1) {
-                    /* Make sure the window is on the correct monitor, isn't minimized, and isn't supposed to be excluded. */
-                    if (current_window !== excluded_window && monitor_has_panel && !current_window.minimized) {
-                        add_transparency = false;
-                        this.maximized_window = current_window;
-                        break;
-                    }
-                }
-            }
-
-            /* Make sure the window is on the correct monitor, isn't minimized, isn't supposed to be excluded, and is actually maximized. */
-            if (current_window !== excluded_window && current_window !== trigger_window && Util.is_valid(current_window) && Util.is_maximized(current_window) && monitor_has_panel && !current_window.minimized) {
-                /* Make sure the top-most window is selected */
-                if (this.maximized_window === null) {
-                    this.maximized_window = current_window;
-                }
-                add_transparency = false;
-                if (!Settings.check_triggers()) {
-                    break;
-                }
-            }
-        }
-    }
-
-    if (focused_window && focused_window.get_window_type() === Meta.WindowType.DESKTOP) {
-        add_transparency = true;
-        this.maximized_window = focused_window;
-    }
-
-    let transition_params = {};
-
-    if ('time' in params) {
-        transition_params.time = params.time;
-    }
-
-    /* Only change if the transparency isn't already correct */
-    if ((Transitions.get_transparency_status().is_transparent() !== add_transparency) || params.force) {
-        if (add_transparency) {
-            if (params.blank) {
-                Transitions.blank_fade_out(panel, transition_params);
-            } else {
-                Transitions.fade_out(panel, transition_params);
-            }
-        } else {
-            Transitions.fade_in(panel, transition_params);
-        }
-    } else if (Transitions.get_transparency_status(panel).is_blank()) {
-        if (add_transparency) {
-            Transitions.minimum_fade_in(panel, transition_params);
-        } else {
-            Transitions.fade_in(panel, transition_params);
-        }
-    } else if (Settings.check_overrides() || Settings.check_triggers()) {
-        // TODO: Debug this more.
-
-        /* Mark as interruptible in case another more important transition is needed. */
-        transition_params.interruptible = true;
-
-        if (!add_transparency) {
-            Transitions.fade_in(panel, transition_params);
-        }
-    }
-
-    if (Settings.get_enable_text_color() && (Settings.get_enable_maximized_text_color() || Settings.get_enable_overview_text_color())) {
-        if (!add_transparency && Settings.get_enable_maximized_text_color()) {
-            Theming.remove_text_color(panel);
-            Theming.set_text_color(panel, 'maximized');
-        } else {
-            Theming.remove_text_color(panel, 'maximized');
-            Theming.set_text_color(panel);
-        }
-    }
-
-}
-
-/**
- * SPECIAL CASE: Exclude the minimized window from the event.
+ * Called whenever a window is created in the shell.
  *
  */
-function _windowMinimized(wm, window_actor) {
-    this._windowUpdated({ excluded_window: window_actor.get_meta_window() });
+function _windowActorAdded(window_group, window_actor) {
+    if (window_actor && typeof (window_actor._dpt_tracking) === 'undefined') {
+        window_actor._dpt_tracking = true;
+        const ac_wId = window_actor.connect('allocation-changed', Lang.bind(this, function() {
+            Intellifade.asyncCheck();
+        }));
+        const v_wId = window_actor.connect('notify::visible', Lang.bind(this, function() {
+            Intellifade.asyncCheck();
+        }));
+        window_actor._dpt_signals = [ac_wId, v_wId];
+        this.windows.push(window_actor);
+
+        Intellifade.asyncCheck();
+    }
 }
 
 /**
- * SPECIAL_CASE: Only update if we're using per-app settings.
+ * SPECIAL_CASE: Only update if we're using per-app settings or is desktop icons are enabled.
  *
  */
 function _windowRestacked() {
-    if (Settings.check_overrides() || Settings.check_triggers()) {
-        _windowUpdated();
+    /* Don't allow restacks while the overview is transitioning. */
+    if (!Main.overview.visible) {
+        /* Detect if desktop icons are enabled. */
+        if (Settings.gs_show_desktop() || Settings.check_overrides() || Settings.check_triggers()) {
+            Intellifade.asyncCheck();
+        }
     }
-}
-
-/**
- * SPECIAL_CASE: Only update if we're using per-app settings.
- *
- */
-function _windowLeft(screen, index, window) {
-    // TODO: Determine any special cases.
-    _windowUpdated({ excluded_window: window });
 }
 
 /**
@@ -455,23 +289,8 @@ function _windowLeft(screen, index, window) {
  *
  */
 function _workspaceSwitched(wm, from, to, direction) {
-    let workspace_to = global.screen.get_workspace_by_index(to);
-    if (workspace_to !== null) {
-        this._windowUpdated({
-            workspace: workspace_to
-        });
-    } else {
-        /* maybe this will do something? */
-        this._windowUpdated();
+    /* Detect if desktop icons are enabled. */
+    if (!Settings.gs_show_desktop() && !Settings.check_overrides() && !Settings.check_triggers()) {
+        Intellifade.syncCheck();
     }
-}
-
-/**
- * Returns the current visible maximized window as understood by the events' logic.
- * The maximized window is not necessarily the highest window in the z-order.
- *
- * @returns {Object} The current visible maximized window.
- */
-function get_current_maximized_window() {
-    return this.maximized_window;
 }

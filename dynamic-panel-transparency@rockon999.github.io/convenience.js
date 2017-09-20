@@ -27,11 +27,11 @@
 */
 
 const Gettext = imports.gettext;
+
 const Gio = imports.gi.Gio;
 
-const ExtensionUtils = imports.misc.extensionUtils;
 const Config = imports.misc.config;
-
+const ExtensionUtils = imports.misc.extensionUtils;
 
 /**
  * initTranslations:
