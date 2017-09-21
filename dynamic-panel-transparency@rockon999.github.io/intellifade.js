@@ -225,17 +225,17 @@ function _check() {
         Transitions.fade_out();
         force_transparency = false;
         /* Only change if the transparency isn't already correct or if override_optimization has been called */
+    } else if (Transitions.get_transparency_status().is_blank()) {
+        if (add_transparency) {
+            Transitions.minimum_fade_in();
+        } else {
+            Transitions.fade_in();
+        }
     } else if (override_optimization || (Transitions.get_transparency_status().is_transparent() !== add_transparency)) {
         override_optimization = false;
 
         if (add_transparency) {
             Transitions.fade_out();
-        } else {
-            Transitions.fade_in();
-        }
-    } else if (Transitions.get_transparency_status().is_blank()) {
-        if (add_transparency) {
-            Transitions.minimum_fade_in();
         } else {
             Transitions.fade_in();
         }
