@@ -78,6 +78,16 @@ narzb
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="adjustment6">
+    <property name="upper">10</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment7">
+    <property name="upper">10</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkEntryBuffer" id="entry_buffer"/>
   <object class="GtkAdjustment" id="maximum_opacity_adjustment">
     <property name="upper">255</property>
@@ -123,6 +133,11 @@ narzb
   </object>
   <object class="GtkAdjustment" id="speed_adjustment">
     <property name="upper">5000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="text_radius_adjustment">
+    <property name="upper">10</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -592,7 +607,7 @@ narzb
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
                                         <property name="text">0</property>
-                                        <property name="adjustment">adjustment1</property>
+                                        <property name="adjustment">text_radius_adjustment</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
                                       </object>
@@ -807,7 +822,7 @@ narzb
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
                                         <property name="text">0</property>
-                                        <property name="adjustment">text_shadow_hz_adjustment</property>
+                                        <property name="adjustment">adjustment6</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
                                       </object>
@@ -823,7 +838,7 @@ narzb
                                         <property name="halign">end</property>
                                         <property name="valign">start</property>
                                         <property name="text">0</property>
-                                        <property name="adjustment">text_shadow_vrt_adjustment</property>
+                                        <property name="adjustment">adjustment7</property>
                                         <property name="snap_to_ticks">True</property>
                                         <property name="numeric">True</property>
                                       </object>
