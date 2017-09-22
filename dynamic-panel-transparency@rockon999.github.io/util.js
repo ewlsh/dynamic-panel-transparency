@@ -57,7 +57,6 @@ function is_valid(window) {
 
     let windowTypes = [
         Meta.WindowType.NORMAL,
-        Meta.WindowType.DOCK,
         Meta.WindowType.DIALOG,
         Meta.WindowType.MODAL_DIALOG,
         Meta.WindowType.TOOLBAR,
