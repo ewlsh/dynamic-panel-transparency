@@ -9,4 +9,4 @@ if (imports.searchPath.indexOf(_dpt_prefs_path) === -1) {
 }
 
 /* Define prefs so that imports can find it. */
-const prefs = imports.preferences.main;
+var prefs = imports.preferences.main;
