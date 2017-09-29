@@ -43,6 +43,7 @@ const SETTINGS_TEXT_SHADOW_COLOR = 'text-shadow-color';
 const SETTINGS_TEXT_SHADOW_POSITION = 'text-shadow-position';
 const SETTINGS_TRANSITION_SPEED = 'transition-speed';
 const SETTINGS_TRANSITION_WITH_OVERVIEW = 'transition-with-overview';
+const SETTINGS_TRANSITION_WINDOWS_TOUCH = 'transition-windows-touch';
 const SETTINGS_UNMAXIMIZED_OPACITY = 'unmaximized-opacity';
 
 const Page = { TRANSITIONS: 0, FOREGROUND: 1, BACKGROUND: 2, APP_TWEAKS: 3, ABOUT: 4 };
@@ -114,6 +115,14 @@ function buildPrefsWidget() {
         }));
         speed_scale.connect('value-changed', Lang.bind(this, function(widget) {
             settings.set_value(SETTINGS_TRANSITION_SPEED, new GLib.Variant('i', widget.adjustment.get_value()));
+        }));
+
+        let transition_windows_touch = builder.get_object('transition_windows_touch_check');
+        transition_windows_touch.set_active(settings.get_boolean(SETTINGS_TRANSITION_WINDOWS_TOUCH));
+
+        transition_windows_touch.connect('toggled', Lang.bind(this, function(widget) {
+            settings.set_value(SETTINGS_TRANSITION_WINDOWS_TOUCH, new GLib.Variant('b', widget.get_active()));
+
         }));
 
         let transition_with_overview = builder.get_object('transition_with_overview_check');

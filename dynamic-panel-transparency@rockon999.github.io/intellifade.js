@@ -137,7 +137,7 @@ function _check() {
         add_transparency = true;
         maximized_window = focused_window;
     } else {
-        let buffer = 3;
+        let buffer = 2;
 
         // TODO: Always negative? Is pivot negative?
         for (let i = windows.length - 1; i >= 0; i--) {
@@ -203,19 +203,20 @@ function _check() {
                     }
                 }
             }
+            if (Settings.transition_when_windows_touch_panel()) {
+                let touching_panel = frame.y >= (this.panel_bounds.y + this.panel_bounds.height - buffer * this.scale_factor) &&
+                    frame.y <= (this.panel_bounds.y + this.panel_bounds.height + buffer * this.scale_factor);
 
-            let touching_panel = frame.y >= (this.panel_bounds.y + this.panel_bounds.height - buffer * this.scale_factor) &&
-                frame.y <= (this.panel_bounds.y + this.panel_bounds.height + buffer * this.scale_factor);
+                if (!force_transparency && touching_panel) {
+                    add_transparency = false;
 
-            if (!force_transparency && touching_panel) {
-                add_transparency = false;
+                    if (maximized_window === null && !force_transparency) {
+                        maximized_window = current_window;
+                    }
 
-                if (maximized_window === null && !force_transparency) {
-                    maximized_window = current_window;
-                }
-
-                if (!Settings.check_triggers()) {
-                    break;
+                    if (!Settings.check_triggers()) {
+                        break;
+                    }
                 }
             }
         }
