@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-29 17:12-0500\n"
+"POT-Creation-Date: 2017-09-29 16:01-0400\n"
 "PO-Revision-Date: 2016-12-21 12:48+0300\n"
 "Last-Translator: Mosaab Alzoubi <moceap@hotmail.com>\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
@@ -19,15 +19,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: prefs.js/preferences/main.js:113
+#: prefs.js/preferences/main.js:114
 msgid "default"
 msgstr "الافتراضي"
 
-#: prefs.js/preferences/main.js:526 prefs.js/ui/prefs.ui:1355
+#: prefs.js/preferences/main.js:519 prefs.js/ui/prefs.ui:1398
 msgid "App Tweaks"
 msgstr "تطويعات التطبيق"
 
-#: prefs.js/preferences/main.js:761
+#: prefs.js/preferences/main.js:754
 msgid "Add a Custom WM_CLASS"
 msgstr "أضف WM_CLASS مخصصة"
 
@@ -39,191 +39,196 @@ msgstr "شفافية أنيقة لشريطك."
 msgid "Website"
 msgstr "الموقع"
 
-#: prefs.js/ui/prefs.ui:97
+#: prefs.js/ui/prefs.ui:107
 msgid "Shell Restart Required."
 msgstr "إعادة تشغيل غنوم ضرورية."
 
 #. Meant to ask the user if they would like to restart right now or later in a yes/no format.
-#: prefs.js/ui/prefs.ui:98
+#: prefs.js/ui/prefs.ui:108
 msgid ""
 "A shell restart is required to view some of your changes. Do you want to "
 "restart now?"
 msgstr "يجب إعادة تشغيل غنوم لتأخذ التغييرات مجراها. هل ترغب بذلك الآن؟"
 
 #. How long the transition will take.
-#: prefs.js/ui/prefs.ui:173
+#: prefs.js/ui/prefs.ui:188
 msgid "Transition Speed"
 msgstr "سرعة التلاشي"
 
-#: prefs.js/ui/prefs.ui:203
+#: prefs.js/ui/prefs.ui:218 prefs.js/ui/prefs.ui:246
 msgid "Overrides 'gtk-enable-animations'."
 msgstr "أبطل 'gtk-enable-animations'."
 
 #. Overrides Gnome animation settings and "forces" the animation.
-#: prefs.js/ui/prefs.ui:216
+#: prefs.js/ui/prefs.ui:231
 msgid "Force animation"
 msgstr "إجبار التحريك"
 
+#. Whether the panel should transition when a window touches it or only when a window is actually maximized.
+#: prefs.js/ui/prefs.ui:259
+msgid "Transition when windows touch the panel"
+msgstr ""
+
 #. The function used to animate the panel traansition. See http://hosted.zeh.com.br/tweener/docs/en-us/misc/transitions.html
-#: prefs.js/ui/prefs.ui:235
+#: prefs.js/ui/prefs.ui:278
 msgid "Transition Style"
 msgstr "نمط التلاشي"
 
-#: prefs.js/ui/prefs.ui:252
+#: prefs.js/ui/prefs.ui:295
 msgid "Linear (default)"
 msgstr "خطي (الافتراضي)"
 
-#: prefs.js/ui/prefs.ui:253
+#: prefs.js/ui/prefs.ui:296
 msgid "Sine"
 msgstr "جيبي"
 
-#: prefs.js/ui/prefs.ui:254
+#: prefs.js/ui/prefs.ui:297
 msgid "Quadratic"
 msgstr "تربيعي"
 
-#: prefs.js/ui/prefs.ui:255
+#: prefs.js/ui/prefs.ui:298
 msgid "Cubic"
 msgstr "تكعيبي"
 
-#: prefs.js/ui/prefs.ui:256
+#: prefs.js/ui/prefs.ui:299
 msgid "Quartic"
 msgstr "رباعي"
 
-#: prefs.js/ui/prefs.ui:257
+#: prefs.js/ui/prefs.ui:300
 msgid "Quintic"
 msgstr "خماسي"
 
-#: prefs.js/ui/prefs.ui:258
+#: prefs.js/ui/prefs.ui:301
 msgid "Exponential"
 msgstr "أسي"
 
-#: prefs.js/ui/prefs.ui:259
+#: prefs.js/ui/prefs.ui:302
 msgid "Circle"
 msgstr "دائري"
 
-#: prefs.js/ui/prefs.ui:260
+#: prefs.js/ui/prefs.ui:303
 msgid "Elastic"
 msgstr "متمدد"
 
-#: prefs.js/ui/prefs.ui:261
+#: prefs.js/ui/prefs.ui:304
 msgid "Bounce"
 msgstr "ارتدادي"
 
 #. Overrides Gnome animation settings and "forces" the animation.
-#: prefs.js/ui/prefs.ui:286
+#: prefs.js/ui/prefs.ui:329
 msgid "Transition with the overview"
 msgstr ""
 
-#: prefs.js/ui/prefs.ui:303
+#: prefs.js/ui/prefs.ui:346
 msgid "Transitions"
 msgstr "التلاشيات"
 
 #. Allows the user to set their own text color.
-#: prefs.js/ui/prefs.ui:360
+#: prefs.js/ui/prefs.ui:403
 msgid "Enable custom text coloring"
 msgstr "تفعيل اللون المخصص للنصوص"
 
 #. The main color to be used.
-#: prefs.js/ui/prefs.ui:387 prefs.js/ui/prefs.ui:402
+#: prefs.js/ui/prefs.ui:430 prefs.js/ui/prefs.ui:445
 msgid "Primary Color"
 msgstr "اللون الأساسي"
 
 #. Another color for special functions.
-#: prefs.js/ui/prefs.ui:416 prefs.js/ui/prefs.ui:430
+#: prefs.js/ui/prefs.ui:459 prefs.js/ui/prefs.ui:473
 msgid "Secondary Color"
 msgstr "اللون الثانوي"
 
-#: prefs.js/ui/prefs.ui:450
+#: prefs.js/ui/prefs.ui:493
 msgid "Use when a window is maximized"
 msgstr "الاستعمال عند تكبير النافذة"
 
-#: prefs.js/ui/prefs.ui:473
+#: prefs.js/ui/prefs.ui:516
 msgid "Use when the overview is visible"
 msgstr "الاستعمال في نمط الاستعراض"
 
-#: prefs.js/ui/prefs.ui:541
+#: prefs.js/ui/prefs.ui:584
 msgid "Enable text shadowing"
 msgstr "تفعيل ظل النص"
 
-#: prefs.js/ui/prefs.ui:581 prefs.js/ui/prefs.ui:642 prefs.js/ui/prefs.ui:780
-#: prefs.js/ui/prefs.ui:841
+#: prefs.js/ui/prefs.ui:624 prefs.js/ui/prefs.ui:685 prefs.js/ui/prefs.ui:823
+#: prefs.js/ui/prefs.ui:884
 msgid "Shadow Color"
 msgstr "لون الظل"
 
-#: prefs.js/ui/prefs.ui:655 prefs.js/ui/prefs.ui:854
+#: prefs.js/ui/prefs.ui:698 prefs.js/ui/prefs.ui:897
 msgid "Radius"
 msgstr "نصف قطري"
 
-#: prefs.js/ui/prefs.ui:668 prefs.js/ui/prefs.ui:867
+#: prefs.js/ui/prefs.ui:711 prefs.js/ui/prefs.ui:910
 msgid "Horizontal Offset"
 msgstr "التوازن الأفقي"
 
-#: prefs.js/ui/prefs.ui:681 prefs.js/ui/prefs.ui:880
+#: prefs.js/ui/prefs.ui:724 prefs.js/ui/prefs.ui:923
 msgid "Vertical Offset"
 msgstr "التوازن العمودي"
 
-#: prefs.js/ui/prefs.ui:740
+#: prefs.js/ui/prefs.ui:783
 msgid "Enable icon shadowing"
 msgstr "تفعيل ظل الرمز"
 
-#: prefs.js/ui/prefs.ui:926
+#: prefs.js/ui/prefs.ui:969
 msgid "Foreground"
 msgstr "المقدمة"
 
 #. Opacity of the panel when no window is maximized.
-#: prefs.js/ui/prefs.ui:988
+#: prefs.js/ui/prefs.ui:1031
 msgid "Unmaximized Opacity"
 msgstr "إلغاء الشفافية في حالة عدم التكبير"
 
 #. Opacity of the panel when a window is maximized.
-#: prefs.js/ui/prefs.ui:1035 prefs.js/ui/app-prefs.ui:117
+#: prefs.js/ui/prefs.ui:1078 prefs.js/ui/app-prefs.ui:117
 msgid "Maximized Opacity"
 msgstr "إلغاء الشفافية في حالة التكبير"
 
 #. Allows the user to set their own opacity.
-#: prefs.js/ui/prefs.ui:1057
+#: prefs.js/ui/prefs.ui:1100
 msgid "Enable custom opacity"
 msgstr "تفعيل إلغاء شفافية مخصص"
 
 #. The panel's background color.
-#: prefs.js/ui/prefs.ui:1124 prefs.js/ui/prefs.ui:1139
+#: prefs.js/ui/prefs.ui:1167 prefs.js/ui/prefs.ui:1182
 #: prefs.js/ui/app-prefs.ui:91
 msgid "Panel Color"
 msgstr "لون الشريط"
 
 #. Allows the user to set their own background color for the panel.
-#: prefs.js/ui/prefs.ui:1160
+#: prefs.js/ui/prefs.ui:1203
 msgid "Enable custom panel color"
 msgstr "تفعيل لون خاص للشريط"
 
 #. Removes any extra styling certain themes may have. Fixes theme issues.
-#: prefs.js/ui/prefs.ui:1224
+#: prefs.js/ui/prefs.ui:1267
 msgid "Remove excess panel styling"
 msgstr "أزل زوائد نمط الشريط"
 
-#: prefs.js/ui/prefs.ui:1237
+#: prefs.js/ui/prefs.ui:1280
 msgid "(Fixes theme incompatibilities.)"
 msgstr "(أصلح التكاملات مع السمة.)"
 
 #. Hides the panel corners.
-#: prefs.js/ui/prefs.ui:1265
+#: prefs.js/ui/prefs.ui:1308
 msgid "Hide corners"
 msgstr "أخف الزوايا"
 
-#: prefs.js/ui/prefs.ui:1293
+#: prefs.js/ui/prefs.ui:1336
 msgid "Background"
 msgstr "الخلفية"
 
-#: prefs.js/ui/prefs.ui:1395
+#: prefs.js/ui/prefs.ui:1438
 msgid "About"
 msgstr "حول"
 
 #. Adds a 'custom' app tweak. Only visible on the App Tweaks page.
-#: prefs.js/ui/prefs.ui:1423
+#: prefs.js/ui/prefs.ui:1466
 msgid "Advanced..."
 msgstr "متقدم..."
 
-#: prefs.js/ui/prefs.ui:1459
+#: prefs.js/ui/prefs.ui:1502
 msgid ""
 "A WM_CLASS is a code that identifies a window. Use this setting if the "
 "window you want custom settings for is not part of an application. You can "
@@ -234,7 +239,7 @@ msgstr ""
 "مخصصة ليست جزءًا من التطبيق. بإمكانك العثور عليها من خلال تنفيذ الأمر xprop "
 "WM_CLASS وأدخل هنا النتيجة الثانية للأمر بدون علامات التنصيص."
 
-#: prefs.js/ui/prefs.ui:1508
+#: prefs.js/ui/prefs.ui:1551
 msgid "WM_CLASS cannot be blank."
 msgstr "لا يمكن أن يكون WM_CLASS فارغًا."
 

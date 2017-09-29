@@ -150,5 +150,10 @@
       <summary>Transition with overview</summary>
       <description>Transition the panel at the same time as the overview</description>
     </key>
+    <key name="transition-windows-touch" type="b">
+      <default>true</default>
+      <summary>Transition when windows touch the panel</summary>
+      <description>Transition when windows touch the panel</description>
+    </key>
   </schema>
 </schemalist>
