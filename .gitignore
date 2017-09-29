@@ -8,3 +8,6 @@ styles/
 .goutputstream*
 *#
 .buildconfig
+*.ts
+*.tk
+.gitignore
