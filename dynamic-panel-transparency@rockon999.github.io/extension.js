@@ -596,6 +596,12 @@ function initialize_settings() {
         getter: 'transition_with_overview',
         type: 'b'
     });
+    Settings.add({
+        key: 'transition-window-touch',
+        name: 'transition_window_touch',
+        getter: 'transition_when_windows_touch_panel',
+        type: 'b'
+    });
 
     /* App-Specific Settings */
 

@@ -25,13 +25,9 @@ const SETTINGS_APP_OVERRIDES = 'app-overrides';
 const GNOME_BACKGROUND_SCHEMA = 'org.gnome.desktop.wm.keybindings';
 const SETTINGS_SHOW_DESKTOP = 'show-desktop';
 
-const GNOME_INTERFACE_SCHEMA = 'org.gnome.desktop.interface';
-const SETTINGS_ENABLE_ANIMATIONS = 'enable-animations';
-
 function init() {
     this._settings = Convenience.getSettings();
     this._background_settings = null;
-    this._interface_settings = null;
 
     /* Setup background settings. */
 
@@ -40,16 +36,6 @@ function init() {
 
         if (schemaObj) {
             this._background_settings = new Gio.Settings({
-                settings_schema: schemaObj
-            });
-        }
-    } catch (error) { } // eslint-disable-line
-
-    try {
-        let schemaObj = Convenience.getSchemaObj(GNOME_INTERFACE_SCHEMA, true);
-
-        if (schemaObj) {
-            this._interface_settings = new Gio.Settings({
                 settings_schema: schemaObj
             });
         }
@@ -67,10 +53,6 @@ function init() {
 
     if (this._background_settings) {
         this._show_desktop = this._background_settings.get_strv(SETTINGS_SHOW_DESKTOP).length > 0;
-    }
-
-    if (this._interface_settings) {
-        this._enable_animations = this._interface_settings.get_boolean(SETTINGS_ENABLE_ANIMATIONS);
     }
 
     this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_APP_OVERRIDES, Lang.bind(this, function() {
@@ -91,12 +73,6 @@ function init() {
         })));
     }
 
-    if (this._interface_settings) {
-        this.settingsBoundIds.push(this._interface_settings.connect('changed::' + SETTINGS_ENABLE_ANIMATIONS, Lang.bind(this, function() {
-            this._enable_animations = this._interface_settings.get_boolean(SETTINGS_ENABLE_ANIMATIONS);
-        })));
-    }
-
     this.get_app_overrides = function() {
         return this._app_overrides;
     };
@@ -107,10 +83,6 @@ function init() {
 
     this.gs_show_desktop = function() {
         return this._show_desktop;
-    };
-
-    this.gs_enable_animations = function() {
-        return this._enable_animations;
     };
 }
 
