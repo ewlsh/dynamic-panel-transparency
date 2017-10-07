@@ -6,6 +6,7 @@ const Lang = imports.lang;
 
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
+const St = imports.gi.St;
 
 const Main = imports.ui.main;
 
@@ -95,8 +96,15 @@ function asyncCheck() {
 function _updateBounds() {
     let panel = Main.panel.actor;
 
-    this.panel_bounds = { x: panel.get_x(), y: panel.get_y(), height: panel.get_height(), width: panel.get_width() };
-    this.scale_factor = imports.gi.St.ThemeContext.get_for_stage(global.stage).scale_factor;
+    this.panel_bounds = {
+        x: panel.get_x(),
+        y: panel.get_y(),
+        height: panel.get_height(),
+        width: panel.get_width(),
+        is_top: true
+    };
+
+    this.scale_factor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
 
     let anchor_y = -Main.layoutManager.panelBox.get_anchor_point()[1];
     let pivot_y = -Main.layoutManager.panelBox.get_pivot_point()[1];
@@ -104,12 +112,12 @@ function _updateBounds() {
     let buffer = 2;
 
     // Adjust for bottom panel.
-    if (anchor_y > buffer * this.scale_factor) {
-        let rect1_y = anchor_y;
-        this.panel_bounds.y = rect1_y;
-    } else if (pivot_y > buffer * this.scale_factor) {
-        let rect1_y = pivot_y;
-        this.panel_bounds.y = rect1_y;
+    if (anchor_y > 0) {
+        this.panel_bounds.y = anchor_y;
+        this.panel_bounds.is_top = false;
+    } else if (pivot_y > 0) {
+        this.panel_bounds.y = pivot_y;
+        this.panel_bounds.is_top = false;
     }
 }
 
@@ -204,8 +212,15 @@ function _check() {
                 }
             }
             if (Settings.transition_when_windows_touch_panel()) {
-                let touching_panel = frame.y >= (this.panel_bounds.y + this.panel_bounds.height - buffer * this.scale_factor) &&
-                    frame.y <= (this.panel_bounds.y + this.panel_bounds.height + buffer * this.scale_factor);
+                let touching_panel = false;
+
+                if (this.panel_bounds.is_top) {
+                    touching_panel = frame.y >= (this.panel_bounds.y + this.panel_bounds.height - buffer * this.scale_factor) &&
+                        frame.y <= (this.panel_bounds.y + this.panel_bounds.height + buffer * this.scale_factor);
+                } else {
+                    touching_panel = (frame.y + frame.height) >= (this.panel_bounds.y - buffer * this.scale_factor) &&
+                        (frame.y + frame.height) <= (this.panel_bounds.y + buffer * this.scale_factor);
+                }
 
                 if (!force_transparency && touching_panel) {
                     add_transparency = false;
