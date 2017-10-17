@@ -16,7 +16,7 @@ const gtk30_ = imports.gettext.domain('gtk30').gettext;
 /* Translated and modified from gnome-tweak-tool's StartupTweak.py */
 // TODO: Transition UI to XML.
 
-const AppChooser = new Lang.Class({
+var AppChooser = new Lang.Class({
     Name: 'DynamicPanelTransparency_AppChooser',
     Extends: Gtk.Dialog,
     _init: function(main_window, excluded_apps) {
