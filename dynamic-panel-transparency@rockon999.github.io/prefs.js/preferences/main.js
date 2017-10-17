@@ -734,6 +734,8 @@ function buildPrefsWidget() {
                     title: _("Add a Custom WM_CLASS")
                 });
 
+                dialog.transient_for = main_widget.get_toplevel();
+
                 dialog.add_button(gtk30_("_Cancel"), Gtk.ResponseType.CANCEL);
                 dialog.add_button(gtk30_("_OK"), Gtk.ResponseType.OK);
 
