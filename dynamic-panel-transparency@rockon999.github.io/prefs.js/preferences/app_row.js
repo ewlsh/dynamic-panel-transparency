@@ -11,7 +11,7 @@ const gtk30_ = imports.gettext.domain('gtk30').gettext;
 /* Translated and modified from gnome-tweak-tool's StartupTweak.py */
 // TODO: Transition UI to XML.
 
-const AppRow = new Lang.Class({
+var AppRow = new Lang.Class({
     Name: 'DynamicPanelTransparency_AppRow',
     Extends: Gtk.ListBoxRow,
     _init: function(app_info, on_configure, on_remove) {
@@ -70,7 +70,7 @@ const AppRow = new Lang.Class({
     }
 });
 
-const CustomRow = new Lang.Class({
+var CustomRow = new Lang.Class({
     Name: 'DynamicPanelTransparency_CustomRow',
     Extends: Gtk.ListBoxRow,
     _init: function(name, wm_class, on_configure, on_remove, wm_class_extra = []) {
@@ -124,7 +124,7 @@ const CustomRow = new Lang.Class({
     }
 });
 
-const AddAppRow = new Lang.Class({
+var AddAppRow = new Lang.Class({
     Name: 'DynamicPanelTransparency_AddAppRow',
     Extends: Gtk.ListBoxRow,
     _init: function(options) {
