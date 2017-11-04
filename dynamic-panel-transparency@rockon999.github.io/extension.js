@@ -597,8 +597,8 @@ function initialize_settings() {
         type: 'b'
     });
     Settings.add({
-        key: 'transition-window-touch',
-        name: 'transition_window_touch',
+        key: 'transition-windows-touch',
+        name: 'transition_windows_touch',
         getter: 'transition_when_windows_touch_panel',
         type: 'b'
     });
