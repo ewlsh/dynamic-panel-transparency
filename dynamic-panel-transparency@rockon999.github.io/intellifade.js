@@ -104,8 +104,6 @@ function _updateBounds() {
     let anchor_y = -Main.layoutManager.panelBox.get_anchor_point()[1];
     let pivot_y = -Main.layoutManager.panelBox.get_pivot_point()[1];
 
-    let buffer = 2;
-
     // Adjust for bottom panel.
     if (anchor_y > 0) {
         this.panel_bounds.y = anchor_y;
@@ -141,7 +139,6 @@ function _check() {
         add_transparency = true;
         maximized_window = focused_window;
     } else {
-        let buffer = 2;
 
         // TODO: Always negative? Is pivot negative?
         for (let i = windows.length - 1; i >= 0; i--) {
@@ -211,11 +208,11 @@ function _check() {
                 let touching_panel = false;
 
                 if (this.panel_bounds.is_top) {
-                    touching_panel = frame.y >= (this.panel_bounds.y + this.panel_bounds.height - buffer * this.scale_factor) &&
-                        frame.y <= (this.panel_bounds.y + this.panel_bounds.height + buffer * this.scale_factor);
+                    touching_panel = frame.y >= (this.panel_bounds.y + this.panel_bounds.height) &&
+                        frame.y <= (this.panel_bounds.y + this.panel_bounds.height);
                 } else {
-                    touching_panel = (frame.y + frame.height) >= (this.panel_bounds.y - buffer * this.scale_factor) &&
-                        (frame.y + frame.height) <= (this.panel_bounds.y + buffer * this.scale_factor);
+                    touching_panel = (frame.y + frame.height) >= (this.panel_bounds.y) &&
+                        (frame.y + frame.height) <= (this.panel_bounds.y);
                 }
 
                 if (!force_transparency && touching_panel) {
