@@ -237,7 +237,6 @@ function unmodify_panel() {
 
     /* Remove Our Styling */
     Theming.reapply_panel_styling();
-    Theming.reapply_panel_background();
     Theming.reapply_panel_background_image();
 
     /* Remove shadowing */
@@ -316,8 +315,6 @@ function initialize_settings() {
                     return false;
                 }
 
-                Theming.reapply_panel_background();
-
                 let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
 
                 for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
@@ -363,8 +360,6 @@ function initialize_settings() {
                 if (super_id !== this.opacity_update_id) {
                     return false;
                 }
-
-                Theming.reapply_panel_background();
 
                 let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
 

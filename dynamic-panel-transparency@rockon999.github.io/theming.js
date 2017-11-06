@@ -453,21 +453,6 @@ function reapply_panel_background_image() {
 }
 
 /**
- * Applies the style class 'panel-background-color-transparency' and removes any CSS embellishments.
- */
-function strip_panel_background() {
-    Panel.actor.add_style_class_name('panel-background-color-transparency');
-}
-
-/**
- * Reapplies the style class 'panel-background-color-transparency' and enables any CSS embellishments.
- *
- */
-function reapply_panel_background() {
-    Panel.actor.remove_style_class_name('panel-background-color-transparency');
-}
-
-/**
  * Writes CSS data to a file and loads the stylesheet into the Shell.
  *
  * @param {string} css - CSS data.
