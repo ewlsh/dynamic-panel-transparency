@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-09-29 15:41-0400\n"
-"PO-Revision-Date: 2017-11-18 19:50+0100\n"
+"PO-Revision-Date: 2017-11-18 20:00+0100\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -128,7 +128,7 @@ msgstr "Први план"
 #. Opacity of the panel when no window is maximized.
 #: prefs.js/ui/prefs.ui:961
 msgid "Unmaximized Opacity"
-msgstr "Нерозирност немаксимизованог"
+msgstr "Непрозирност немаксимизованог"
 
 #. Opacity of the panel when a window is maximized.
 #: prefs.js/ui/prefs.ui:1008 prefs.js/ui/app-prefs.ui:117
