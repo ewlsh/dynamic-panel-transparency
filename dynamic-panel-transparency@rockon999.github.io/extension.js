@@ -43,8 +43,6 @@ function enable() {
     Theming.init();
     Intellifade.init();
 
-    /* Try to load settings for the user theme plugin. */
-    // TODO: Why doesn't this work on some Ubuntu installations?
     try {
         let schemaObj = Convenience.getSchemaObj(USER_THEME_SCHEMA, true);
 
@@ -282,7 +280,7 @@ function initialize_settings() {
 
                 for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                     let stylesheet = Theming.stylesheets[i];
-                    if (stylesheet.contains('transitions') && stylesheet.endsWith('panel-transition-duration.dpt.css')) {
+                    if (stylesheet.indexOf('transitions') !== -1 && stylesheet.endsWith('panel-transition-duration.dpt.css')) {
                         theme.unload_stylesheet(Util.get_file(stylesheet));
                         Util.remove_file(stylesheet);
                         Theming.stylesheets.splice(i, 1);
@@ -296,7 +294,7 @@ function initialize_settings() {
 
                     /* Get Rid of the Panel's CSS Background */
                     // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
-                    Theming._updatePanelCSS();
+                    Theming.update_transition_css();
 
                     Intellifade.forceSyncCheck();
 
@@ -319,7 +317,7 @@ function initialize_settings() {
 
                 for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                     let stylesheet = Theming.stylesheets[i];
-                    if (stylesheet.contains('background') && stylesheet.contains('panel-')) {
+                    if (stylesheet.indexOf('background') !== -1 && stylesheet.indexOf('panel-') !== -1) {
                         theme.unload_stylesheet(Util.get_file(stylesheet));
                         Util.remove_file(stylesheet);
                         Theming.stylesheets.splice(i, 1);
@@ -365,7 +363,7 @@ function initialize_settings() {
 
                 for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                     let stylesheet = Theming.stylesheets[i];
-                    if (stylesheet.contains('background') && stylesheet.contains('panel-')) {
+                    if (stylesheet.indexOf('background') !== -1 && stylesheet.indexOf('panel-') !== -1) {
                         theme.unload_stylesheet(Util.get_file(stylesheet));
                         Util.remove_file(stylesheet);
                         Theming.stylesheets.splice(i, 1);
@@ -410,7 +408,7 @@ function initialize_settings() {
 
                 for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                     let stylesheet = Theming.stylesheets[i];
-                    if (stylesheet.contains('background') && stylesheet.contains('panel.dpt.css')) {
+                    if (stylesheet.indexOf('background') !== -1 && stylesheet.indexOf('panel.dpt.css') !== -1) {
                         theme.unload_stylesheet(Util.get_file(stylesheet));
                         Util.remove_file(stylesheet);
                         Theming.stylesheets.splice(i, 1);
@@ -506,7 +504,7 @@ function initialize_settings() {
 
             for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                 let stylesheet = Theming.stylesheets[i];
-                if (stylesheet.contains('shadow') && stylesheet.contains('text')) {
+                if (stylesheet.indexOf('shadow') !== -1 && stylesheet.indexOf('text') !== -1) {
                     theme.unload_stylesheet(Util.get_file(stylesheet));
                     Util.remove_file(stylesheet);
                     Theming.stylesheets.splice(i, 1);
@@ -544,7 +542,7 @@ function initialize_settings() {
 
             for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                 let stylesheet = Theming.stylesheets[i];
-                if (stylesheet.contains('shadow') && stylesheet.contains('icon')) {
+                if (stylesheet.indexOf('shadow') !== -1 && stylesheet.indexOf('icon') !== -1) {
                     theme.unload_stylesheet(Util.get_file(stylesheet));
                     Util.remove_file(stylesheet);
                     Theming.stylesheets.splice(i, 1);
@@ -583,7 +581,7 @@ function initialize_settings() {
 
             for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                 let stylesheet = Theming.stylesheets[i];
-                if (stylesheet.contains('shadow') && stylesheet.contains('icon')) {
+                if (stylesheet.indexOf('shadow') !== -1 && stylesheet.indexOf('icon') !== -1) {
                     theme.unload_stylesheet(Util.get_file(stylesheet));
                     Util.remove_file(stylesheet);
                     Theming.stylesheets.splice(i, 1);
@@ -622,7 +620,7 @@ function initialize_settings() {
 
             for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                 let stylesheet = Theming.stylesheets[i];
-                if (stylesheet.contains('shadow') && stylesheet.contains('text')) {
+                if (stylesheet.indexOf('shadow') !== -1 && stylesheet.indexOf('text') !== -1) {
                     theme.unload_stylesheet(Util.get_file(stylesheet));
                     Util.remove_file(stylesheet);
                     Theming.stylesheets.splice(i, 1);

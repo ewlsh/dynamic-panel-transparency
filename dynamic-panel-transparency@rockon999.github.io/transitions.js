@@ -15,8 +15,6 @@ const Equations = imports.tweener.equations;
 
 const CORNER_UPDATE_FREQUENCY = 30;
 
-// TODO: Make each function start-value agnostic (doesn't assume maximized value)...
-
 /**
  * Intialize.
  *

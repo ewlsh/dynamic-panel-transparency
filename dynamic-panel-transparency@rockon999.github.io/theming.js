@@ -11,6 +11,7 @@ const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 
 const GdkPixbuf = imports.gi.GdkPixbuf;
+const GLib = imports.gi.GLib;
 
 /* Convenience constant for the shell panel. */
 const Panel = Main.panel;
@@ -44,7 +45,7 @@ function init() {
 
     this.background_styles = [];
 
-    _updatePanelCSS();
+    update_transition_css();
 }
 
 /**
@@ -347,7 +348,6 @@ function get_background_image_color(theme) {
 /**
  * Returns the user's desired panel color from Settings. Handles theme detection again.
  * DEPENDENCY: Settings
- * TODO: Remove legacy backend code.
  *
  * @returns {Object} Object containing an RGBA color value.
  */
@@ -461,12 +461,15 @@ function reapply_panel_background_image() {
  * @returns {string} Filename of the stylesheet.
  */
 function apply_stylesheet_css(css, name) {
-    let file_name = Me.dir.get_path() + '/styles/' + name + '.dpt.css';
+    let file_name = GLib.build_filenamev([GLib.get_user_data_dir(), 'gnome-shell', 'extensions', Me.uuid, 'styles', name + '.dpt.css']);
+
     /* Write to the file. */
     if (!Util.write_to_file(file_name, css)) {
-        log('Dynamic Panel Transparency does not have write access to its own directory. Dynamic Panel Transparency cannot be installed as a system extension.');
+        log('[Dynamic Panel Transparency] Could not access: ' + file_name + '');
+        log('[Dynamic Panel Transparency] The extension will not function until access is granted.');
         return null;
     }
+
     let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
 
     // COMPATIBILITY: st-theme used strings, not file objects in 3.14
@@ -745,7 +748,7 @@ function remove_background_color(params) {
     }
 }
 
-function _updatePanelCSS() {
+function update_transition_css() {
     let duration_css = Settings.get_transition_speed();
 
     let stylesheet = apply_stylesheet_css('.dpt-panel-transition-duration { transition-duration: ' + duration_css + 'ms; }', 'transitions/panel-transition-duration');
