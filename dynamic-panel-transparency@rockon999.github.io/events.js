@@ -67,9 +67,6 @@ function init() {
 
     this._appFocusedSig = this._wm_tracker.connect_after('notify::focus-app', Lang.bind(this, _windowRestacked));
 
-    /* Apparently Ubuntu is wierd and does this different than a common Gnome installation. */
-    // TODO: Look into this.
-
     this._theme_settings = null;
     this._userThemeChangedSig = null;
 

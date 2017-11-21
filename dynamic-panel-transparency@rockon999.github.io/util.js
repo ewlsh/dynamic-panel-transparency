@@ -79,12 +79,12 @@ function is_valid(window) {
  */
 function get_file(file_path) {
     try {
-        let file = Gio.file_new_for_path(file_path);
-        return file;
+        return Gio.file_new_for_path(file_path);
     } catch (error) {
-        log(error);
-        return null;
+        log('[Dynamic Panel Transparency] Error getting file: ' + error);
     }
+
+    return null;
 }
 
 /**

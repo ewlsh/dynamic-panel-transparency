@@ -44,8 +44,6 @@ function enable() {
     Theming.init();
     Intellifade.init();
 
-    /* Try to load settings for the user theme plugin. */
-    // TODO: Why doesn't this work on some Ubuntu installations?
     try {
         let schemaObj = Convenience.getSchemaObj(USER_THEME_SCHEMA, true);
 
@@ -383,7 +381,7 @@ function initialize_settings() {
 
             for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                 let stylesheet = Theming.stylesheets[i];
-                if (stylesheet.contains('shadow') && stylesheet.contains('text')) {
+                if (stylesheet.indexOf('shadow') !== -1 && stylesheet.indexOf('text') !== -1) {
                     Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
                     Util.remove_file(stylesheet);
                     Theming.stylesheets.splice(i, 1);
@@ -421,7 +419,7 @@ function initialize_settings() {
 
             for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                 let stylesheet = Theming.stylesheets[i];
-                if (stylesheet.contains('shadow') && stylesheet.contains('icon')) {
+                if (stylesheet.indexOf('shadow') !== -1 && stylesheet.indexOf('icon') !== -1) {
                     Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
                     Util.remove_file(stylesheet);
                     Theming.stylesheets.splice(i, 1);
@@ -460,7 +458,7 @@ function initialize_settings() {
 
             for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                 let stylesheet = Theming.stylesheets[i];
-                if (stylesheet.contains('shadow') && stylesheet.contains('icon')) {
+                if (stylesheet.indexOf('shadow') !== -1 && stylesheet.indexOf('icon') !== -1) {
                     Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
                     Util.remove_file(stylesheet);
                     Theming.stylesheets.splice(i, 1);
@@ -499,7 +497,7 @@ function initialize_settings() {
 
             for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                 let stylesheet = Theming.stylesheets[i];
-                if (stylesheet.contains('shadow') && stylesheet.contains('text')) {
+                if (stylesheet.indexOf('shadow') !== -1 && stylesheet.indexOf('text') !== -1) {
                     Compatibility.st_theme_unload_stylesheet(theme, stylesheet);
                     Util.remove_file(stylesheet);
                     Theming.stylesheets.splice(i, 1);
