@@ -60,7 +60,7 @@ function init() {
 
     this._workspaceSwitchSig = global.window_manager.connect_after('switch-workspace', Lang.bind(this, _workspaceSwitched));
 
-    this._windowRestackedSig = global.screen.connect_after('restacked', Lang.bind(this, _windowRestacked));
+    this._windowRestackedSig = global.display.connect_after('restacked', Lang.bind(this, _windowRestacked));
 
     this._windowActorAddedSig = global.window_group.connect('actor-added', Lang.bind(this, _windowActorAdded));
     this._windowActorRemovedSig = global.window_group.connect('actor-removed', Lang.bind(this, _windowActorRemoved));
@@ -105,7 +105,7 @@ function cleanup() {
     global.window_group.disconnect(this._windowActorAddedSig);
     global.window_group.disconnect(this._windowActorRemovedSig);
 
-    global.screen.disconnect(this._windowRestackedSig);
+    global.display.disconnect(this._windowRestackedSig);
 
     this._wm_tracker.disconnect(this._appFocusedSig);
 
