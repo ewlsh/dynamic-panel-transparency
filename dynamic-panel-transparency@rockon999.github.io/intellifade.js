@@ -127,7 +127,7 @@ function _check() {
         return;
     }
 
-    let workspace = global.screen.get_active_workspace();
+    let workspace = global.workspace_manager.get_active_workspace();
     let windows = workspace.list_windows();
     windows = global.display.sort_windows_by_stacking(windows);
 
