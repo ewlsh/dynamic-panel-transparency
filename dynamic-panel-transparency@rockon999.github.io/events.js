@@ -55,7 +55,7 @@ function init() {
 
     for (let window_actor of windows) {
         /* Simulate window creation event, null container because _windowActorAdded doesn't utilize containers */
-        _windowActorAdded(null, window_actor);
+        _windowActorAdded(null, window_actor, false);
     }
 
     this._workspaceSwitchSig = global.window_manager.connect_after('switch-workspace', Lang.bind(this, _workspaceSwitched));
@@ -263,8 +263,8 @@ function _userThemeChanged() {
  * Called whenever a window is created in the shell.
  *
  */
-function _windowActorAdded(window_group, window_actor) {
-    if (window_actor && typeof(window_actor._dpt_tracking) === 'undefined') {
+function _windowActorAdded(window_group, window_actor, force = true) {
+    if (window_actor && (force || typeof(window_actor._dpt_tracking) === 'undefined')) {
         window_actor._dpt_tracking = true;
         const ac_wId = window_actor.connect('allocation-changed', Lang.bind(this, function() {
             Intellifade.asyncCheck();
