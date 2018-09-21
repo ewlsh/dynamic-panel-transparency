@@ -60,7 +60,13 @@ function init() {
 
     this._workspaceSwitchSig = global.window_manager.connect_after('switch-workspace', Lang.bind(this, _workspaceSwitched));
 
-    this._windowRestackedSig = global.screen.connect_after('restacked', Lang.bind(this, _windowRestacked));
+    if (typeof global.display !== 'undefined') {
+        this._windowRestackedSig = global.display.connect_after('restacked', Lang.bind(this, _windowRestacked));
+    } else if (typeof global.screen !== 'undefined') {
+        this._windowRestackedSig = global.screen.connect_after('restacked', Lang.bind(this, _windowRestacked));
+    } else {
+        log('[Dynamic Panel Transparency] Error could not register \'restacked\' event.');
+    }
 
     this._windowActorAddedSig = global.window_group.connect('actor-added', Lang.bind(this, _windowActorAdded));
     this._windowActorRemovedSig = global.window_group.connect('actor-removed', Lang.bind(this, _windowActorRemoved));
@@ -105,7 +111,13 @@ function cleanup() {
     global.window_group.disconnect(this._windowActorAddedSig);
     global.window_group.disconnect(this._windowActorRemovedSig);
 
-    global.screen.disconnect(this._windowRestackedSig);
+    if (typeof global.display !== 'undefined') {
+        global.display.disconnect(this._windowRestackedSig);
+    } else if (typeof global.screen !== 'undefined') {
+        global.screen.disconnect(this._windowRestackedSig);
+    } else {
+        log('[Dynamic Panel Transparency] Error could not disconnect \'restacked\' event.');
+    }
 
     this._wm_tracker.disconnect(this._appFocusedSig);
 
@@ -115,7 +127,7 @@ function cleanup() {
 
     for (let window_actor of this.windows) {
 
-        if (typeof (window_actor._dpt_signals) !== 'undefined') {
+        if (typeof(window_actor._dpt_signals) !== 'undefined') {
             for (let signalId of window_actor._dpt_signals) {
                 window_actor.disconnect(signalId);
             }
@@ -168,14 +180,14 @@ function _overviewShown() {
  *
  */
 function _windowActorRemoved(container, window_actor) {
-    if (typeof (window_actor._dpt_tracking) === 'undefined') {
+    if (typeof(window_actor._dpt_tracking) === 'undefined') {
         return;
     }
 
     /* Remove our tracking variable. */
     delete window_actor._dpt_tracking;
 
-    if (typeof (window_actor._dpt_signals) !== 'undefined') {
+    if (typeof(window_actor._dpt_signals) !== 'undefined') {
         for (let signalId of window_actor._dpt_signals) {
             window_actor.disconnect(signalId);
         }
@@ -252,7 +264,7 @@ function _userThemeChanged() {
  *
  */
 function _windowActorAdded(window_group, window_actor) {
-    if (window_actor && typeof (window_actor._dpt_tracking) === 'undefined') {
+    if (window_actor && typeof(window_actor._dpt_tracking) === 'undefined') {
         window_actor._dpt_tracking = true;
         const ac_wId = window_actor.connect('allocation-changed', Lang.bind(this, function() {
             Intellifade.asyncCheck();

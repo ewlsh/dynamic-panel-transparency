@@ -127,7 +127,16 @@ function _check() {
         return;
     }
 
-    let workspace = global.screen.get_active_workspace();
+    let workspace = null;
+
+    if (typeof global.workspace_manager !== 'undefined') {
+        workspace = global.workspace_manager.get_active_workspace();
+    } else if (typeof global.screen !== 'undefined') {
+        workspace = global.screen.get_active_workspace();
+    } else {
+        log('[Dynamic Panel Transparency] Error could not get active workspace.');
+    }
+
     let windows = workspace.list_windows();
     windows = global.display.sort_windows_by_stacking(windows);
 
@@ -143,7 +152,6 @@ function _check() {
         add_transparency = true;
         maximized_window = focused_window;
     } else {
-
         // TODO: Always negative? Is pivot negative?
         for (let i = windows.length - 1; i >= 0; i--) {
 
@@ -208,6 +216,7 @@ function _check() {
                     }
                 }
             }
+
             if (Settings.transition_when_windows_touch_panel()) {
                 let touching_panel = false;
 
