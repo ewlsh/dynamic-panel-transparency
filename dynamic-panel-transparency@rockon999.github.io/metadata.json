@@ -4,7 +4,9 @@
   "shell-version": [
     "3.22.3",
     "3.24",
-    "3.26"
+    "3.26",
+    "3.28",
+    "3.30"
   ],
   "uuid": "dynamic-panel-transparency@rockon999.github.io",
   "settings-schema": "org.gnome.shell.extensions.dynamic-panel-transparency",
