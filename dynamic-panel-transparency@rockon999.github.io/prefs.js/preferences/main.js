@@ -13,8 +13,8 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Util = Me.imports.util;
 
-const AppChooser = imports.preferences.app_chooser;
-const AppRow = imports.preferences.app_row;
+const AppChooser = imports.preferences.appChooser;
+const AppRow = imports.preferences.appRow;
 const Tweaks = imports.preferences.tweaks;
 
 const Gettext = imports.gettext.domain('dynamic-panel-transparency');
