@@ -6,11 +6,12 @@
     "3.24",
     "3.26",
     "3.28",
-    "3.30"
+    "3.30",
+    "3.32"
   ],
   "uuid": "dynamic-panel-transparency@rockon999.github.io",
   "settings-schema": "org.gnome.shell.extensions.dynamic-panel-transparency",
-  "version": 28,
+  "version": 29,
   "gettext-domain": "dynamic-panel-transparency",
   "url": "http://evanwelsh.com/dynamic-panel-transparency/"
 }
