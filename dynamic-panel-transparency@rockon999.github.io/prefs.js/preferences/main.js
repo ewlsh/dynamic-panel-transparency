@@ -94,13 +94,13 @@ function buildPrefsWidget() {
     let extra_btn = builder.get_object('extra_btn');
 
     /* Only show the panel & extra button on relevant pages. */
-    main_notebook.connect('switch-page', Lang.bind(this, function(notebook, page, index) {
+    main_notebook.connect('switch-page', (function(notebook, page, index) {
         if (index === Page.APP_TWEAKS) {
             extra_btn.show();
         } else {
             extra_btn.hide();
         }
-    }));
+    }).bind(this));
 
     {
         /* Transition speed control */
@@ -110,28 +110,28 @@ function buildPrefsWidget() {
         /* Add default marking. */
         speed_scale.add_mark(settings.get_default_value(SETTINGS_TRANSITION_SPEED).unpack(), Gtk.PositionType.BOTTOM, _("default"));
         /* Add formatting */
-        speed_scale.connect('format-value', Lang.bind(this, function(scale, value) {
+        speed_scale.connect('format-value', (function(scale, value) {
             return value + 'ms';
-        }));
-        speed_scale.connect('value-changed', Lang.bind(this, function(widget) {
+        }).bind(this));
+        speed_scale.connect('value-changed', (function(widget) {
             settings.set_value(SETTINGS_TRANSITION_SPEED, new GLib.Variant('i', widget.adjustment.get_value()));
-        }));
+        }).bind(this));
 
         let transition_windows_touch = builder.get_object('transition_windows_touch_check');
         transition_windows_touch.set_active(settings.get_boolean(SETTINGS_TRANSITION_WINDOWS_TOUCH));
 
-        transition_windows_touch.connect('toggled', Lang.bind(this, function(widget) {
+        transition_windows_touch.connect('toggled', (function(widget) {
             settings.set_value(SETTINGS_TRANSITION_WINDOWS_TOUCH, new GLib.Variant('b', widget.get_active()));
 
-        }));
+        }).bind(this));
 
         let transition_with_overview = builder.get_object('transition_with_overview_check');
         transition_with_overview.set_active(settings.get_boolean(SETTINGS_TRANSITION_WITH_OVERVIEW));
 
-        transition_with_overview.connect('toggled', Lang.bind(this, function(widget) {
+        transition_with_overview.connect('toggled', (function(widget) {
             settings.set_value(SETTINGS_TRANSITION_WITH_OVERVIEW, new GLib.Variant('b', widget.get_active()));
 
-        }));
+        }).bind(this));
     }
 
     /* Setup foreground tab */
@@ -140,32 +140,32 @@ function buildPrefsWidget() {
         let text_color_revealer = builder.get_object('text_color_revealer');
 
         text_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR));
-        text_color_switch.connect('state-set', Lang.bind(this, function(widget, state) {
+        text_color_switch.connect('state-set', (function(widget, state) {
             settings.set_value(SETTINGS_ENABLE_TEXT_COLOR, new GLib.Variant('b', state));
             text_color_revealer.set_reveal_child(state);
 
-        }));
+        }).bind(this));
 
         let maximized_text_color_switch = builder.get_object('maximized_text_color_check');
         maximized_text_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR));
 
-        maximized_text_color_switch.connect('toggled', Lang.bind(this, function(widget) {
+        maximized_text_color_switch.connect('toggled', (function(widget) {
             settings.set_value(SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR, new GLib.Variant('b', widget.get_active()));
-        }));
+        }).bind(this));
 
         let overview_text_color_switch = builder.get_object('overview_text_color_check');
         overview_text_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_OVERVIEW_TEXT_COLOR));
 
-        overview_text_color_switch.connect('toggled', Lang.bind(this, function(widget) {
+        overview_text_color_switch.connect('toggled', (function(widget) {
             settings.set_value(SETTINGS_ENABLE_OVERVIEW_TEXT_COLOR, new GLib.Variant('b', widget.get_active()));
-        }));
+        }).bind(this));
 
         let remove_panel_styling_check = builder.get_object('remove_panel_styling_check');
         remove_panel_styling_check.set_active(settings.get_boolean(SETTINGS_REMOVE_PANEL_STYLING));
 
-        remove_panel_styling_check.connect('toggled', Lang.bind(this, function(widget) {
+        remove_panel_styling_check.connect('toggled', (function(widget) {
             settings.set_value(SETTINGS_REMOVE_PANEL_STYLING, new GLib.Variant('b', widget.get_active()));
-        }));
+        }).bind(this));
 
         let maximized_text_color_btn = builder.get_object('maximized_text_color_btn');
         let maximized_text_color = settings.get_value(SETTINGS_MAXIMIZED_TEXT_COLOR).deep_unpack();
@@ -177,12 +177,12 @@ function buildPrefsWidget() {
             maximized_text_color_btn.set_rgba(scaled_color);
         }
 
-        maximized_text_color_btn.connect('color-set', Lang.bind(this, function(color_btn) {
+        maximized_text_color_btn.connect('color-set', (function(color_btn) {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
             let rgb = [color.red, color.green, color.blue];
 
             settings.set_value(SETTINGS_MAXIMIZED_TEXT_COLOR, new GLib.Variant('(iii)', rgb));
-        }));
+        }).bind(this));
 
         let text_color_btn = builder.get_object('text_color_btn');
         let text_color = settings.get_value(SETTINGS_TEXT_COLOR).deep_unpack();
@@ -194,48 +194,48 @@ function buildPrefsWidget() {
             text_color_btn.set_rgba(scaled_color);
         }
 
-        text_color_btn.connect('color-set', Lang.bind(this, function(color_btn) {
+        text_color_btn.connect('color-set', (function(color_btn) {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
             let rgb = [color.red, color.green, color.blue];
 
             settings.set_value(SETTINGS_TEXT_COLOR, new GLib.Variant('(iii)', rgb));
 
-        }));
+        }).bind(this));
 
         let text_shadow_switch = builder.get_object('text_shadow_switch');
         let text_shadow_revealer = builder.get_object('text_shadow_revealer');
 
         text_shadow_switch.set_active(settings.get_boolean(SETTINGS_TEXT_SHADOW));
 
-        text_shadow_switch.connect('state-set', Lang.bind(this, function(widget, state) {
+        text_shadow_switch.connect('state-set', (function(widget, state) {
             settings.set_value(SETTINGS_TEXT_SHADOW, new GLib.Variant('b', state));
             text_shadow_revealer.set_reveal_child(state);
-        }));
+        }).bind(this));
 
         let text_shadow_vertical_offset = builder.get_object('text_shadow_vertical_offset');
         settings.set_value(SETTINGS_TEXT_SHADOW_POSITION, settings.get_value(SETTINGS_TEXT_SHADOW_POSITION));
         text_shadow_vertical_offset.set_value(settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack()[VERTICAL_OFFSET]);
-        text_shadow_vertical_offset.connect('value-changed', Lang.bind(this, function(widget) {
+        text_shadow_vertical_offset.connect('value-changed', (function(widget) {
             let position = settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
             position[VERTICAL_OFFSET] = widget.get_value_as_int();
             settings.set_value(SETTINGS_TEXT_SHADOW_POSITION, new GLib.Variant('(iii)', position));
-        }));
+        }).bind(this));
 
         let text_shadow_horizontal_offset = builder.get_object('text_shadow_horizontal_offset');
         text_shadow_horizontal_offset.set_value(settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack()[HORIZONTAL_OFFSET]);
-        text_shadow_horizontal_offset.connect('value-changed', Lang.bind(this, function(widget) {
+        text_shadow_horizontal_offset.connect('value-changed', (function(widget) {
             let position = settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
             position[HORIZONTAL_OFFSET] = widget.get_value_as_int();
             settings.set_value(SETTINGS_TEXT_SHADOW_POSITION, new GLib.Variant('(iii)', position));
-        }));
+        }).bind(this));
 
         let text_shadow_radius = builder.get_object('text_shadow_radius');
         text_shadow_radius.set_value(settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack()[BLUR_RADIUS]);
-        text_shadow_radius.connect('value-changed', Lang.bind(this, function(widget) {
+        text_shadow_radius.connect('value-changed', (function(widget) {
             let position = settings.get_value(SETTINGS_TEXT_SHADOW_POSITION).deep_unpack();
             position[BLUR_RADIUS] = widget.get_value_as_int();
             settings.set_value(SETTINGS_TEXT_SHADOW_POSITION, new GLib.Variant('(iii)', position));
-        }));
+        }).bind(this));
 
         let text_shadow_color_btn = builder.get_object('text_shadow_color');
         text_shadow_color_btn.show_editor = true;
@@ -247,47 +247,47 @@ function buildPrefsWidget() {
         if (scaled_color.parse(css_color))
             text_shadow_color_btn.set_rgba(scaled_color);
 
-        text_shadow_color_btn.connect('color-set', Lang.bind(this, function(color_btn) {
+        text_shadow_color_btn.connect('color-set', (function(color_btn) {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
             let alpha = +(color_btn.get_rgba().alpha.toFixed(2));
 
             let rgba = [color.red, color.green, color.blue, alpha];
             settings.set_value(SETTINGS_TEXT_SHADOW_COLOR, new GLib.Variant('(iiid)', rgba));
-        }));
+        }).bind(this));
 
         let icon_shadow = builder.get_object('icon_shadow_switch');
         let icon_shadow_revealer = builder.get_object('icon_shadow_revealer');
 
         icon_shadow.set_active(settings.get_boolean(SETTINGS_ICON_SHADOW));
 
-        icon_shadow.connect('state-set', Lang.bind(this, function(widget, state) {
+        icon_shadow.connect('state-set', (function(widget, state) {
             settings.set_value(SETTINGS_ICON_SHADOW, new GLib.Variant('b', state));
             icon_shadow_revealer.set_reveal_child(state);
-        }));
+        }).bind(this));
 
         let icon_shadow_vertical_offset = builder.get_object('icon_shadow_vertical_offset');
 
         settings.set_value(SETTINGS_ICON_SHADOW_POSITION, settings.get_value(SETTINGS_ICON_SHADOW_POSITION));
         icon_shadow_vertical_offset.set_value(settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack()[VERTICAL_OFFSET]);
-        icon_shadow_vertical_offset.connect('value-changed', Lang.bind(this, function(widget) {
+        icon_shadow_vertical_offset.connect('value-changed', (function(widget) {
             let position = settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
             position[VERTICAL_OFFSET] = widget.get_value_as_int();
             settings.set_value(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
-        }));
+        }).bind(this));
         let icon_shadow_horizontal_offset = builder.get_object('icon_shadow_horizontal_offset');
         icon_shadow_horizontal_offset.set_value(settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack()[HORIZONTAL_OFFSET]);
-        icon_shadow_horizontal_offset.connect('value-changed', Lang.bind(this, function(widget) {
+        icon_shadow_horizontal_offset.connect('value-changed', (function(widget) {
             let position = settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
             position[HORIZONTAL_OFFSET] = widget.get_value_as_int();
             settings.set_value(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
-        }));
+        }).bind(this));
         let icon_shadow_radius = builder.get_object('icon_shadow_radius');
         icon_shadow_radius.set_value(settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack()[BLUR_RADIUS]);
-        icon_shadow_radius.connect('value-changed', Lang.bind(this, function(widget) {
+        icon_shadow_radius.connect('value-changed', (function(widget) {
             let position = settings.get_value(SETTINGS_ICON_SHADOW_POSITION).deep_unpack();
             position[BLUR_RADIUS] = widget.get_value_as_int();
             settings.set_value(SETTINGS_ICON_SHADOW_POSITION, new GLib.Variant('(iii)', position));
-        }));
+        }).bind(this));
 
         let icon_shadow_color_btn = builder.get_object('icon_shadow_color');
         icon_shadow_color_btn.show_editor = true;
@@ -300,14 +300,14 @@ function buildPrefsWidget() {
             icon_shadow_color_btn.set_rgba(scaled_color);
         }
 
-        icon_shadow_color_btn.connect('color-set', Lang.bind(this, function(color_btn) {
+        icon_shadow_color_btn.connect('color-set', (function(color_btn) {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
             let alpha = +(color_btn.get_rgba().alpha.toFixed(2));
 
             let rgba = [color.red, color.green, color.blue, alpha];
 
             settings.set_value(SETTINGS_ICON_SHADOW_COLOR, new GLib.Variant('(iiid)', rgba));
-        }));
+        }).bind(this));
     }
 
     /* Setup Background Tab */
@@ -318,41 +318,41 @@ function buildPrefsWidget() {
         let opacity_revealer = builder.get_object('opacity_revealer');
 
         background_color_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_BACKGROUND_COLOR));
-        background_color_switch.connect('state-set', Lang.bind(this, function(widget, state) {
+        background_color_switch.connect('state-set', (function(widget, state) {
             settings.set_value(SETTINGS_ENABLE_BACKGROUND_COLOR, new GLib.Variant('b', state));
             background_color_revealer.set_reveal_child(state);
-        }));
+        }).bind(this));
 
         opacity_switch.set_active(settings.get_boolean(SETTINGS_ENABLE_OPACITY));
-        opacity_switch.connect('state-set', Lang.bind(this, function(widget, state) {
+        opacity_switch.connect('state-set', (function(widget, state) {
             settings.set_value(SETTINGS_ENABLE_OPACITY, new GLib.Variant('b', state));
             opacity_revealer.set_reveal_child(state);
 
-        }));
+        }).bind(this));
 
         /* Maximum opacity control */
         let maximum_scale = builder.get_object('maximum_scale');
         /* Init value. */
         maximum_scale.adjustment.set_value(settings.get_int(SETTINGS_MAXIMIZED_OPACITY));
         /* Add formatting */
-        maximum_scale.connect('format-value', Lang.bind(this, function(scale, value) {
+        maximum_scale.connect('format-value', (function(scale, value) {
             return (((value / SCALE_FACTOR) * 100).toFixed(0) + '%'); // eslint-disable-line no-magic-numbers
-        }));
-        maximum_scale.connect('value-changed', Lang.bind(this, function(widget) {
+        }).bind(this));
+        maximum_scale.connect('value-changed', (function(widget) {
             settings.set_value(SETTINGS_MAXIMIZED_OPACITY, new GLib.Variant('i', widget.adjustment.get_value()));
-        }));
+        }).bind(this));
 
         /* Minimum opacity control */
         let minimum_scale = builder.get_object('minimum_scale');
         /* Init value. */
         minimum_scale.adjustment.set_value(settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY));
         /* Add formatting */
-        minimum_scale.connect('format-value', Lang.bind(this, function(scale, value) {
+        minimum_scale.connect('format-value', (function(scale, value) {
             return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%'; // eslint-disable-line no-magic-numbers
-        }));
-        minimum_scale.connect('value-changed', Lang.bind(this, function(widget) {
+        }).bind(this));
+        minimum_scale.connect('value-changed', (function(widget) {
             settings.set_value(SETTINGS_UNMAXIMIZED_OPACITY, new GLib.Variant('i', widget.adjustment.get_value()));
-        }));
+        }).bind(this));
 
         /* Convert & scale color. */
         let panel_color = settings.get_value(SETTINGS_PANEL_COLOR).deep_unpack();
@@ -364,25 +364,25 @@ function buildPrefsWidget() {
         if (scaled_color.parse(css_color)) {
             color_btn.set_rgba(scaled_color);
         }
-        color_btn.connect('color-set', Lang.bind(this, function(color_btn) {
+        color_btn.connect('color-set', (function(color_btn) {
             let color = Util.gdk_to_css_color(color_btn.get_rgba());
             let rgb = [color.red, color.green, color.blue];
 
             settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
-        }));
+        }).bind(this));
 
         let hide_corners = builder.get_object('hide_corners_check');
         hide_corners.set_active(settings.get_boolean(SETTINGS_HIDE_CORNERS));
 
-        hide_corners.connect('toggled', Lang.bind(this, function(widget) {
+        hide_corners.connect('toggled', (function(widget) {
             settings.set_value(SETTINGS_HIDE_CORNERS, new GLib.Variant('b', widget.get_active()));
-        }));
+        }).bind(this));
     }
 
     /* Setup App Settings Tab */
     {
         let app_list = builder.get_object('app_list');
-        app_list.set_sort_func(Lang.bind(this, function(a, b) {
+        app_list.set_sort_func((function(a, b) {
             if (a.constructor === AppRow.AddAppRow) {
                 return 1;
             } else if (b.constructor === AppRow.AddAppRow) {
@@ -403,12 +403,12 @@ function buildPrefsWidget() {
             } else {
                 return 0;
             }
-        }));
+        }).bind(this));
 
         let app_overrides = settings.get_strv('app-overrides');
         let window_overrides = settings.get_strv('window-overrides');
 
-        let window_rmv = Lang.bind(this, function(wm_class, row) {
+        let window_rmv = (function(wm_class, row) {
             let overrides = settings.get_strv('window-overrides');
             let index = overrides.indexOf(wm_class);
             if (index !== -1) {
@@ -424,8 +424,8 @@ function buildPrefsWidget() {
             settings.set_strv('trigger-windows', triggers);
 
             app_list.remove(row);
-        });
-        let tweak_rmv = Lang.bind(this, function(wm_class, row, extra_wm_class) {
+        }).bind(this);
+        let tweak_rmv = (function(wm_class, row, extra_wm_class) {
             let overrides = settings.get_strv('window-overrides');
             let index = overrides.indexOf(wm_class);
             if (index !== -1) {
@@ -457,8 +457,8 @@ function buildPrefsWidget() {
             }
 
             app_list.remove(row);
-        });
-        let rmv = Lang.bind(this, function(app_id, row) {
+        }).bind(this);
+        let rmv = (function(app_id, row) {
             let overrides = settings.get_strv('app-overrides');
             let index = overrides.indexOf(app_id);
             if (index !== -1) {
@@ -474,9 +474,9 @@ function buildPrefsWidget() {
             settings.set_strv('trigger-apps', triggers);
 
             app_list.remove(row);
-        });
+        }).bind(this);
 
-        let cfg = Lang.bind(this, function(app_name, app_id, path, extras = []) {
+        let cfg = (function(app_name, app_id, path, extras = []) {
             let temp_app_settings = {
                 background_tweaks: null,
                 maximum_opacity: null,
@@ -513,26 +513,26 @@ function buildPrefsWidget() {
             let background_tweaks_revealer = app_prefs_builder.get_object('background_tweaks_revealer');
             background_tweaks_switch.set_active(app_settings.get_boolean(SETTINGS_ENABLE_BACKGROUND_TWEAKS));
             background_tweaks_revealer.set_reveal_child(background_tweaks_switch.get_active());
-            background_tweaks_switch.connect('state-set', Lang.bind(this, function(widget, state) {
+            background_tweaks_switch.connect('state-set', (function(widget, state) {
                 temp_app_settings.background_tweaks = state;
                 background_tweaks_revealer.set_reveal_child(state);
-            }));
+            }).bind(this));
 
             let _maximum_scale = app_prefs_builder.get_object('maximum_scale');
             /* Init value. */
             _maximum_scale.adjustment.set_value(app_settings.get_int(SETTINGS_MAXIMIZED_OPACITY));
             /* Add formatting */
-            _maximum_scale.connect('format-value', Lang.bind(this, function(scale, value) {
+            _maximum_scale.connect('format-value', (function(scale, value) {
                 return (((value / SCALE_FACTOR) * 100).toFixed(0) + '%'); // eslint-disable-line no-magic-numbers
-            }));
-            _maximum_scale.connect('value-changed', Lang.bind(this, function(widget) {
+            }).bind(this));
+            _maximum_scale.connect('value-changed', (function(widget) {
                 temp_app_settings.maximum_opacity = widget.adjustment.get_value();
-            }));
+            }).bind(this));
 
             let _always_trigger = app_prefs_builder.get_object('always_trigger');
-            _always_trigger.connect('toggled', Lang.bind(this, function(widget) {
+            _always_trigger.connect('toggled', (function(widget) {
                 temp_app_settings.always_trigger = widget.get_active();
-            }));
+            }).bind(this));
 
             {
                 let trigger_key = null;
@@ -554,12 +554,12 @@ function buildPrefsWidget() {
             if (scaled_color.parse(css_color))
                 _color_btn.set_rgba(scaled_color);
 
-            _color_btn.connect('color-set', Lang.bind(this, function(color_btn) {
+            _color_btn.connect('color-set', (function(color_btn) {
                 let color = Util.gdk_to_css_color(color_btn.get_rgba());
                 let rgb = [color.red, color.green, color.blue];
 
                 temp_app_settings.panel_color = rgb;
-            }));
+            }).bind(this));
 
             dialog.show_all();
 
@@ -627,7 +627,7 @@ function buildPrefsWidget() {
 
             content_area.remove(app_prefs_builder.get_object('main_box'));
             dialog.destroy();
-        });
+        }).bind(this);
 
         let app_cfg = function(app_name, app_id) {
             cfg.call(this, app_name, app_id, '/org/gnome/shell/extensions/dynamic-panel-transparency/appOverrides/');
@@ -677,7 +677,7 @@ function buildPrefsWidget() {
         }
 
         let add = new AppRow.AddAppRow();
-        add.btn.connect('clicked', Lang.bind(this, function() {
+        add.btn.connect('clicked', (function() {
             Gio.Application.get_default().mark_busy();
             let overrides = settings.get_strv('app-overrides');
             let a2 = new AppChooser.AppChooser(main_widget.get_toplevel(), overrides);
@@ -724,9 +724,9 @@ function buildPrefsWidget() {
                 }
             }
             a2.destroy();
-        }));
+        }).bind(this));
 
-        extra_btn.connect('clicked', Lang.bind(this, function() {
+        extra_btn.connect('clicked', (function() {
             if (main_notebook.get_current_page() === Page.APP_TWEAKS) {
 
                 let dialog = new Gtk.Dialog({
@@ -745,7 +745,7 @@ function buildPrefsWidget() {
                 let revealer = builder.get_object('error_revealer');
                 let entry = builder.get_object('wm_class_entry');
 
-                dialog.connect('response', Lang.bind(this, function(dialog, response) {
+                dialog.connect('response', (function(dialog, response) {
                     if (response === Gtk.ResponseType.OK) {
                         let text = entry.get_text();
                         if (!text) {
@@ -753,7 +753,7 @@ function buildPrefsWidget() {
                             GObject.signal_stop_emission_by_name(dialog, 'response');
                         }
                     }
-                }));
+                }).bind(this));
 
                 dialog.set_size_request(400, 100); // eslint-disable-line
                 dialog.show_all();
@@ -775,7 +775,7 @@ function buildPrefsWidget() {
                 content_area.remove(builder.get_object('wm_class_contents'));
                 dialog.destroy();
             }
-        }));
+        }).bind(this));
         app_list.add(add);
     }
 
@@ -845,7 +845,7 @@ function buildPrefsWidget() {
     let widget_parent = main_widget.get_toplevel();
 
     /* Fix revealer sizing issues. */
-    widget_parent.connect('realize', Lang.bind(this, function() {
+    widget_parent.connect('realize', (function() {
         extra_btn.hide();
         /* We have to regrab this object as it isn't in this scope. */
         let text_color_revealer = builder.get_object('text_color_revealer');
@@ -858,7 +858,7 @@ function buildPrefsWidget() {
         text_shadow_revealer.set_reveal_child(settings.get_boolean(SETTINGS_TEXT_SHADOW));
         let icon_shadow_revealer = builder.get_object('icon_shadow_revealer');
         icon_shadow_revealer.set_reveal_child(settings.get_boolean(SETTINGS_ICON_SHADOW));
-    }));
+    }).bind(this));
 
     /* Return main widget. */
     main_widget.show_all();

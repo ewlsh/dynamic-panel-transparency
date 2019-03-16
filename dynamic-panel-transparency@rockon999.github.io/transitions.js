@@ -106,7 +106,7 @@ function fade_in() {
 
         let count = 0;
 
-        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function() {
+        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), (function() {
             if (id === this.corner_timeout_id && !this.status.is_transparent()) {
                 count++;
 
@@ -123,7 +123,7 @@ function fade_in() {
             }
 
             return true;
-        }));
+        }).bind(this));
     }
 
     this.status.set_transparent(false);
@@ -165,7 +165,7 @@ function fade_out() {
 
         let count = 0;
 
-        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function() {
+        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), (function() {
             if (id === this.corner_timeout_id && this.status.is_transparent()) {
                 count++;
 
@@ -181,7 +181,7 @@ function fade_out() {
                 return false;
             }
             return true;
-        }));
+        }).bind(this));
     }
 
     /* Keep the status up to date */
@@ -211,7 +211,7 @@ function blank_fade_out() {
 
         let count = 0;
 
-        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), Lang.bind(this, function() {
+        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), (function() {
             if (id === this.corner_timeout_id && this.status.is_transparent()) {
                 count++;
 
@@ -227,7 +227,7 @@ function blank_fade_out() {
                 return false;
             }
             return true;
-        }));
+        }).bind(this));
     }
 }
 
