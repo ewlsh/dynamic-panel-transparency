@@ -21,7 +21,7 @@ var AppChooser = new Lang.Class({
   Extends: Gtk.Dialog,
   _init: function(main_window, excluded_apps) {
     this.parent({
-      title: gtk30_('Select Application'),
+      title: gtk30_("Select Application"),
       use_header_bar: true
     });
     this.entry = new Gtk.SearchEntry();
@@ -32,23 +32,20 @@ var AppChooser = new Lang.Class({
     this.searchbar.hexpand = true;
     let list_box = new Gtk.ListBox();
     list_box.activate_on_single_click = false;
-    list_box.set_sort_func(Lang.bind(this, this.sort_apps));
-    list_box.set_header_func(Lang.bind(this, this.list_header_func));
-    list_box.set_filter_func(Lang.bind(this, this.list_filter_func));
+    list_box.set_sort_func(this.sort_apps.bind(this));
+    list_box.set_header_func(this.list_header_func.bind(this));
+    list_box.set_filter_func(this.list_filter_func.bind(this));
     this.entry.connect(
       'search-changed',
-      Lang.bind(this, this.on_search_entry_changed)
+      this.on_search_entry_changed.bind(this)
     );
     list_box.connect(
       'row-activated',
-      Lang.bind(this, function(b, r) {
+      function(b, r) {
         return this.response(Gtk.ResponseType.OK) ? r.get_mapped() : null;
-      })
+      }.bind(this)
     );
-    list_box.connect(
-      'row-selected',
-      Lang.bind(this, this.on_row_selected)
-    );
+    list_box.connect('row-selected', this.on_row_selected.bind(this));
 
     let apps = Gio.app_info_get_all();
     for (let x = 0; x < apps.length; x++) {
@@ -83,8 +80,8 @@ var AppChooser = new Lang.Class({
     scrolled_window.add(list_box);
     scrolled_window.margin = 5;
 
-    this.add_button(gtk30_('_Close'), Gtk.ResponseType.CANCEL);
-    this.add_button(gtk30_('_Select'), Gtk.ResponseType.OK);
+    this.add_button(gtk30_("_Close"), Gtk.ResponseType.CANCEL);
+    this.add_button(gtk30_("_Select"), Gtk.ResponseType.OK);
     this.set_default_response(Gtk.ResponseType.OK);
     let searchbtn = new Gtk.ToggleButton();
     searchbtn.valign = Gtk.Align.CENTER;
@@ -109,10 +106,7 @@ var AppChooser = new Lang.Class({
     this.set_transient_for(main_window);
     this.set_size_request(400, 300);
     this.listbox = list_box;
-    this.connect(
-      'key-press-event',
-      Lang.bind(this, this.on_key_press)
-    );
+    this.connect('key-press-event', this.on_key_press.bind(this));
   },
 
   sort_apps: function(a, b) {

@@ -76,7 +76,7 @@ function asyncCheck() {
     if (timeoutId <= 0) {
         _check();
 
-        timeoutId = Mainloop.timeout_add(ASYNC_UPDATE_FREQUENCY, Lang.bind(this, function() {
+        timeoutId = Mainloop.timeout_add(ASYNC_UPDATE_FREQUENCY, (function() {
             _check();
 
             if (continueCheck) {
@@ -86,7 +86,7 @@ function asyncCheck() {
                 timeoutId = 0;
                 return GLib.SOURCE_REMOVE;
             }
-        }));
+        }).bind(this));
     } else {
         continueCheck = true;
     }

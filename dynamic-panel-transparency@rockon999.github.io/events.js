@@ -43,12 +43,12 @@ function init() {
 
     this._wm_tracker = Shell.WindowTracker.get_default();
 
-    this._overviewHidingSig = Main.overview.connect('hiding', Lang.bind(this, Util.strip_args(Intellifade.syncCheck)));
+    this._overviewHidingSig = Main.overview.connect('hiding', Util.strip_args(Intellifade.syncCheck).bind(this));
 
     if (Settings.transition_with_overview()) {
-        this._overviewShownSig = Main.overview.connect('showing', Lang.bind(this, _overviewShown));
+        this._overviewShownSig = Main.overview.connect('showing', _overviewShown.bind(this));
     } else {
-        this._overviewShownSig = Main.overview.connect('shown', Lang.bind(this, _overviewShown));
+        this._overviewShownSig = Main.overview.connect('shown', _overviewShown.bind(this));
     }
 
     let windows = global.get_window_actors();
@@ -58,20 +58,20 @@ function init() {
         _windowActorAdded(null, window_actor, false);
     }
 
-    this._workspaceSwitchSig = global.window_manager.connect_after('switch-workspace', Lang.bind(this, _workspaceSwitched));
+    this._workspaceSwitchSig = global.window_manager.connect_after('switch-workspace', _workspaceSwitched.bind(this));
 
     if (typeof global.display !== 'undefined') {
-        this._windowRestackedSig = global.display.connect_after('restacked', Lang.bind(this, _windowRestacked));
+        this._windowRestackedSig = global.display.connect_after('restacked', _windowRestacked.bind(this));
     } else if (typeof global.screen !== 'undefined') {
-        this._windowRestackedSig = global.screen.connect_after('restacked', Lang.bind(this, _windowRestacked));
+        this._windowRestackedSig = global.screen.connect_after('restacked', _windowRestacked.bind(this));
     } else {
         log('[Dynamic Panel Transparency] Error could not register \'restacked\' event.');
     }
 
-    this._windowActorAddedSig = global.window_group.connect('actor-added', Lang.bind(this, _windowActorAdded));
-    this._windowActorRemovedSig = global.window_group.connect('actor-removed', Lang.bind(this, _windowActorRemoved));
+    this._windowActorAddedSig = global.window_group.connect('actor-added', _windowActorAdded.bind(this));
+    this._windowActorRemovedSig = global.window_group.connect('actor-removed', _windowActorRemoved.bind(this));
 
-    this._appFocusedSig = this._wm_tracker.connect_after('notify::focus-app', Lang.bind(this, _windowRestacked));
+    this._appFocusedSig = this._wm_tracker.connect_after('notify::focus-app', _windowRestacked.bind(this));
 
     this._theme_settings = null;
     this._userThemeChangedSig = null;
@@ -89,7 +89,7 @@ function init() {
     }
 
     if (this._theme_settings) {
-        this._userThemeChangedSig = this._theme_settings.connect_after('changed::name', Lang.bind(this, _userThemeChanged));
+        this._userThemeChangedSig = this._theme_settings.connect_after('changed::name', _userThemeChanged.bind(this));
     }
 }
 
@@ -217,7 +217,7 @@ function _userThemeChanged() {
     Theming.init();
 
     /* Hopefully every computer is fast enough to apply a theme in three seconds. */
-    const id = this.theme_detection_id = Mainloop.timeout_add(3000, Lang.bind(this, function() { // eslint-disable-line no-magic-numbers
+    const id = this.theme_detection_id = Mainloop.timeout_add(3000, (function() { // eslint-disable-line no-magic-numbers
         if (id !== this.theme_detection_id) {
             return false;
         }
@@ -256,7 +256,7 @@ function _userThemeChanged() {
         Intellifade.forceSyncCheck();
 
         return false;
-    }));
+    }).bind(this));
 }
 
 /**
@@ -266,12 +266,12 @@ function _userThemeChanged() {
 function _windowActorAdded(window_group, window_actor, force = true) {
     if (window_actor && (force || typeof(window_actor._dpt_tracking) === 'undefined')) {
         window_actor._dpt_tracking = true;
-        const ac_wId = window_actor.connect('allocation-changed', Lang.bind(this, function() {
+        const ac_wId = window_actor.connect('allocation-changed', (function() {
             Intellifade.asyncCheck();
-        }));
-        const v_wId = window_actor.connect('notify::visible', Lang.bind(this, function() {
+        }).bind(this));
+        const v_wId = window_actor.connect('notify::visible', (function() {
             Intellifade.asyncCheck();
-        }));
+        }).bind(this));
         window_actor._dpt_signals = [ac_wId, v_wId];
         this.windows.push(window_actor);
 

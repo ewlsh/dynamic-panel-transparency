@@ -68,30 +68,30 @@ function init() {
     if (this._background_settings) {
         this._show_desktop = this._background_settings.get_strv(SETTINGS_SHOW_DESKTOP).length > 0;
 
-        this.settingsBoundIds.push(this._background_settings.connect('changed::' + SETTINGS_SHOW_DESKTOP, Lang.bind(this, function() {
+        this.settingsBoundIds.push(this._background_settings.connect('changed::' + SETTINGS_SHOW_DESKTOP, (function() {
             this._show_desktop = this._background_settings.get_strv(SETTINGS_SHOW_DESKTOP).length > 0;
-        })));
+        }).bind(this)));
     }
 
     if (this._interface_settings) {
         this._enable_animations = this._interface_settings.get_boolean(SETTINGS_ENABLE_ANIMATIONS);
 
-        this.settingsBoundIds.push(this._interface_settings.connect('changed::' + SETTINGS_ENABLE_ANIMATIONS, Lang.bind(this, function() {
+        this.settingsBoundIds.push(this._interface_settings.connect('changed::' + SETTINGS_ENABLE_ANIMATIONS, (function() {
             this._enable_animations = this._interface_settings.get_boolean(SETTINGS_ENABLE_ANIMATIONS);
-        })));
+        }).bind(this)));
     }
 
-    this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_APP_OVERRIDES, Lang.bind(this, function() {
+    this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_APP_OVERRIDES, (function() {
         this._app_overrides = this._settings.get_strv(SETTINGS_APP_OVERRIDES);
         this.app_settings_manager.unbind();
         this.app_settings_manager = new AppSettingsManager(this._app_keys, this.get_app_overrides(), APP_OVERRIDES_SCHEMA_PATH);
-    })));
+    }).bind(this)));
 
-    this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_WINDOW_OVERRIDES, Lang.bind(this, function() {
+    this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_WINDOW_OVERRIDES, (function() {
         this._window_overrides = this._settings.get_strv(SETTINGS_WINDOW_OVERRIDES);
         this.window_settings_manager.unbind();
         this.window_settings_manager = new AppSettingsManager(this._app_keys, this.get_window_overrides(), WINDOW_OVERRIDES_SCHEMA_PATH);
-    })));
+    }).bind(this)));
 
     this.get_app_overrides = function() {
         return this._app_overrides;
@@ -191,9 +191,9 @@ function bind() {
         let setting = this._keys[i];
 
         /* Watch for changes */
-        this.settingsBoundIds.push(this._settings.connect('changed::' + setting.key, Lang.bind(this, function() {
+        this.settingsBoundIds.push(this._settings.connect('changed::' + setting.key, (function() {
             this.settings_manager.update(setting);
-        })));
+        }).bind(this)));
 
         if (setting.handler) {
             this.settingsBoundIds.push(this._settings.connect('changed::' + setting.key, function() {
@@ -374,9 +374,9 @@ const AppSettingsManager = new Lang.Class({
                     this.settingsBoundIds[app_id] = [];
                 }
 
-                this.settingsBoundIds[app_id].push(this.settings[app_id].connect('changed::' + setting.key, Lang.bind(this, function() {
+                this.settingsBoundIds[app_id].push(this.settings[app_id].connect('changed::' + setting.key, (function() {
                     this.update(setting, app_id);
-                })));
+                }).bind(this)));
 
                 let variant = GLib.VariantType.new(setting.type);
 
