@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/rockon999/dynamic-panel-transparency#readme",
   "devDependencies": {
-    "@babel/preset-env": "^7.4.2"
-  }
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "babel-core": "^7.0.0-bridge.0"
+  },
+  "dependencies": {}
 }
