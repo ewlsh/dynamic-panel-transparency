@@ -1,0 +1,22 @@
+{
+  "name": "dynamic-panel-transparency",
+  "version": "30.0.0",
+  "description": "Dynamic transparency for the GNOME Shell panel.",
+  "main": "src/extension.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rockon999/dynamic-panel-transparency.git"
+  },
+  "author": "",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/rockon999/dynamic-panel-transparency/issues"
+  },
+  "homepage": "https://github.com/rockon999/dynamic-panel-transparency#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.4.2"
+  }
+}
