@@ -1,7 +1,6 @@
 /* exported init, cleanup, asyncCheck, syncCheck, forceAsyncCheck, forceSyncCheck, get_current_maximized_window */
 
 const GLib = imports.gi.GLib;
-const Mainloop = imports.mainloop;
 const Lang = imports.lang;
 
 const Meta = imports.gi.Meta;
@@ -53,8 +52,9 @@ function syncCheck() {
     /* Prevent any asynchronous checks from occuring in the loop. */
     continueCheck = false;
     /* Stop the asynchronous loop... */
-    if (timeoutId > 0)
-        Mainloop.source_remove(timeoutId);
+    if (timeoutId > 0) {
+        GLib.source_remove(timeoutId);
+    }
     /* Remove the old loop ID */
     timeoutId = 0;
     /* Update bounds when a check is done in sync. */
@@ -76,7 +76,7 @@ function asyncCheck() {
     if (timeoutId <= 0) {
         _check();
 
-        timeoutId = Mainloop.timeout_add(ASYNC_UPDATE_FREQUENCY, (function() {
+        timeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, ASYNC_UPDATE_FREQUENCY, (function() {
             _check();
 
             if (continueCheck) {

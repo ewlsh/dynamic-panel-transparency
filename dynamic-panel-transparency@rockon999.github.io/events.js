@@ -1,6 +1,5 @@
 /* exported init, cleanup, get_current_maximized_window */
 
-const Mainloop = imports.mainloop;
 const Lang = imports.lang;
 
 const GLib = imports.gi.GLib;
@@ -217,7 +216,7 @@ function _userThemeChanged() {
     Theming.init();
 
     /* Hopefully every computer is fast enough to apply a theme in three seconds. */
-    const id = this.theme_detection_id = Mainloop.timeout_add(3000, (function() { // eslint-disable-line no-magic-numbers
+    const id = this.theme_detection_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 3000, (function() { // eslint-disable-line no-magic-numbers
         if (id !== this.theme_detection_id) {
             return false;
         }

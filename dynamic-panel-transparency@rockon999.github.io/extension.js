@@ -1,7 +1,6 @@
 /* exported init, enable, disable */
 
 const Lang = imports.lang;
-const Mainloop = imports.mainloop;
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
@@ -91,7 +90,7 @@ function enable() {
 
 function idle_enable(update, theme_settings = null) {
     /* Delay the extension so we can retreive the theme background color (why are user themes an extension?). */
-    Mainloop.idle_add((function() {
+    GLib.idle_add(GLib.PRIORITY_DEFAULT, (function() {
         let extension = imports.misc.extensionUtils.getCurrentExtension();
 
         if (modified) {
@@ -287,7 +286,7 @@ function initialize_settings() {
                     }
                 }
 
-                const id = this.panel_transition_update_id = Mainloop.timeout_add(SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_transition_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_transition_update_id) {
                         return false;
                     }
@@ -308,7 +307,7 @@ function initialize_settings() {
         type: 'i',
         getter: 'get_unmaximized_opacity',
         handler: (function() {
-            const super_id = this.opacity_update_id = Mainloop.timeout_add(SETTINGS_DELAY, (function() {
+            const super_id = this.opacity_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() {
                 if (super_id !== this.opacity_update_id) {
                     return false;
                 }
@@ -326,7 +325,7 @@ function initialize_settings() {
 
                 Theming.initialize_background_styles();
 
-                const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_color_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
                         return false;
                     }
@@ -354,7 +353,7 @@ function initialize_settings() {
         type: 'i',
         getter: 'get_maximized_opacity',
         handler: (function() {
-            const super_id = this.opacity_update_id = Mainloop.timeout_add(SETTINGS_DELAY, (function() {
+            const super_id = this.opacity_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() {
                 if (super_id !== this.opacity_update_id) {
                     return false;
                 }
@@ -372,7 +371,7 @@ function initialize_settings() {
 
                 Theming.initialize_background_styles();
 
-                const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_color_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
                         return false;
                     }
@@ -415,7 +414,7 @@ function initialize_settings() {
                     }
                 }
                 Theming.register_background_color(Settings.get_panel_color());
-                const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_color_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
                         return false;
                     }
@@ -511,7 +510,7 @@ function initialize_settings() {
                 }
             }
             let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
-            const id = this.text_shadow_update_id = Mainloop.timeout_add(SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+            const id = this.text_shadow_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
                 if (id !== this.text_shadow_update_id) {
                     return false;
                 }
@@ -549,7 +548,7 @@ function initialize_settings() {
                 }
             }
             let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
-            const id = this.icon_shadow_update_id = Mainloop.timeout_add(SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+            const id = this.icon_shadow_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
                 if (id !== this.icon_shadow_update_id) {
                     return false;
                 }
@@ -588,7 +587,7 @@ function initialize_settings() {
                 }
             }
             let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
-            const id = this.icon_shadow_update_id = Mainloop.timeout_add(SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+            const id = this.icon_shadow_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
                 if (id !== this.icon_shadow_update_id) {
                     return false;
                 }
@@ -627,7 +626,7 @@ function initialize_settings() {
                 }
             }
             let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
-            const id = this.text_shadow_update_id = Mainloop.timeout_add(SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+            const id = this.text_shadow_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
                 if (id !== this.text_shadow_update_id) {
                     return false;
                 }

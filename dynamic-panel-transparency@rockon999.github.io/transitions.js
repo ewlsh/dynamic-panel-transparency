@@ -2,7 +2,7 @@
 /* exported fade_in, fade_out, blank_fade_out */
 
 const Lang = imports.lang;
-const Mainloop = imports.mainloop;
+const GLib = imports.gi.GLib;
 
 const St = imports.gi.St;
 
@@ -106,7 +106,7 @@ function fade_in() {
 
         let count = 0;
 
-        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), (function() {
+        const id = this.corner_timeout_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, Math.floor(speed / CORNER_UPDATE_FREQUENCY), (function() {
             if (id === this.corner_timeout_id && !this.status.is_transparent()) {
                 count++;
 
@@ -165,7 +165,7 @@ function fade_out() {
 
         let count = 0;
 
-        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), (function() {
+        const id = this.corner_timeout_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, Math.floor(speed / CORNER_UPDATE_FREQUENCY), (function() {
             if (id === this.corner_timeout_id && this.status.is_transparent()) {
                 count++;
 
@@ -211,7 +211,7 @@ function blank_fade_out() {
 
         let count = 0;
 
-        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), (function() {
+        const id = this.corner_timeout_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, Math.floor(speed / CORNER_UPDATE_FREQUENCY), (function() {
             if (id === this.corner_timeout_id && this.status.is_transparent()) {
                 count++;
 
