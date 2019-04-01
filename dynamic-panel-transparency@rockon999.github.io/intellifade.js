@@ -129,10 +129,10 @@ function _check() {
 
     let workspace = null;
 
-    if (typeof global.workspace_manager !== 'undefined') {
-        workspace = global.workspace_manager.get_active_workspace();
-    } else if (typeof global.screen !== 'undefined') {
-        workspace = global.screen.get_active_workspace();
+    const manager = global.screen || global.workspace_manager;
+
+    if (manager) {
+        workspace = manager.get_active_workspace();
     } else {
         log('[Dynamic Panel Transparency] Error could not get active workspace.');
     }

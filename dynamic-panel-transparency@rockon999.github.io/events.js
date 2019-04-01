@@ -60,10 +60,10 @@ function init() {
 
     this._workspaceSwitchSig = global.window_manager.connect_after('switch-workspace', _workspaceSwitched.bind(this));
 
-    if (typeof global.display !== 'undefined') {
-        this._windowRestackedSig = global.display.connect_after('restacked', _windowRestacked.bind(this));
-    } else if (typeof global.screen !== 'undefined') {
-        this._windowRestackedSig = global.screen.connect_after('restacked', _windowRestacked.bind(this));
+    const screen = global.screen || global.display;
+
+    if (screen) {
+        this._windowRestackedSig = screen.connect_after('restacked', _windowRestacked.bind(this));
     } else {
         log('[Dynamic Panel Transparency] Error could not register \'restacked\' event.');
     }
@@ -111,10 +111,10 @@ function cleanup() {
     global.window_group.disconnect(this._windowActorAddedSig);
     global.window_group.disconnect(this._windowActorRemovedSig);
 
-    if (typeof global.display !== 'undefined') {
-        global.display.disconnect(this._windowRestackedSig);
-    } else if (typeof global.screen !== 'undefined') {
-        global.screen.disconnect(this._windowRestackedSig);
+    const screen = global.screen || global.display;
+
+    if (screen) {
+       screen.disconnect(this._windowRestackedSig);
     } else {
         log('[Dynamic Panel Transparency] Error could not disconnect \'restacked\' event.');
     }
