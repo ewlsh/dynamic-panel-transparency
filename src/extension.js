@@ -2,23 +2,21 @@
 
 const Lang = imports.lang;
 
-const GLib = imports.gi.GLib;
-const Gio = imports.gi.Gio;
-const St = imports.gi.St;
+const { GLib, Gio, St } = imports.gi;
 
-const ExtensionSystem = imports.ui.extensionSystem;
-const Main = imports.ui.main;
+const { ExtensionSystem, Main } = imports.ui;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const Convenience = Me.imports.convenience;
-const Events = Me.imports.events;
-const Intellifade = Me.imports.intellifade;
-const Settings = Me.imports.settings;
-const Util = Me.imports.util;
-
-const Theming = Me.imports.theming;
-const Transitions = Me.imports.transitions;
+const {
+    convenience: Convenience,
+    events: Events,
+    intellifade: Intellifade,
+    settings: Settings,
+    util: Util,
+    theming: Theming,
+    transitions: Transitions
+} = Me.imports;
 
 const SETTINGS_DELAY = 3000;
 
@@ -90,7 +88,7 @@ function enable() {
 
 function idle_enable(update, theme_settings = null) {
     /* Delay the extension so we can retreive the theme background color (why are user themes an extension?). */
-    GLib.idle_add(GLib.PRIORITY_DEFAULT, (function() {
+    GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
         let extension = imports.misc.extensionUtils.getCurrentExtension();
 
         if (modified) {
@@ -148,7 +146,7 @@ function idle_enable(update, theme_settings = null) {
         Intellifade.forceSyncCheck();
 
         return false;
-    }).bind(this));
+    });
 }
 
 function disable() {
@@ -262,9 +260,9 @@ function initialize_settings() {
         key: 'hide-corners',
         name: 'hide_corners',
         type: 'b',
-        handler: (function() {
+        handler: (() => {
             Transitions.update_corner_alpha();
-        }.bind(this))
+        })
     });
     Settings.add({
         key: 'transition-speed',
@@ -286,7 +284,7 @@ function initialize_settings() {
                     }
                 }
 
-                const id = this.panel_transition_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_transition_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (() => {// eslint-disable-line no-magic-numbers
                     if (id !== this.panel_transition_update_id) {
                         return false;
                     }
@@ -298,16 +296,16 @@ function initialize_settings() {
                     Intellifade.forceSyncCheck();
 
                     return false;
-                }).bind(this));
-            }).bind(this)
+                }));
+            })
     });
     Settings.add({
         key: 'unmaximized-opacity',
         name: 'unmaximized_opacity',
         type: 'i',
         getter: 'get_unmaximized_opacity',
-        handler: (function() {
-            const super_id = this.opacity_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() {
+        handler: (() => {
+            const super_id = this.opacity_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (() => {
                 if (super_id !== this.opacity_update_id) {
                     return false;
                 }
@@ -325,7 +323,7 @@ function initialize_settings() {
 
                 Theming.initialize_background_styles();
 
-                const id = this.panel_color_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_color_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (() => {// eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
                         return false;
                     }
@@ -341,19 +339,19 @@ function initialize_settings() {
                     Intellifade.forceSyncCheck();
 
                     return false;
-                }).bind(this));
+                }));
 
                 return false;
-            }).bind(this));
-        }).bind(this)
+            }));
+        })
     });
     Settings.add({
         key: 'maximized-opacity',
         name: 'maximized_opacity',
         type: 'i',
         getter: 'get_maximized_opacity',
-        handler: (function() {
-            const super_id = this.opacity_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() {
+        handler: () =>{
+            const super_id = this.opacity_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, () => {
                 if (super_id !== this.opacity_update_id) {
                     return false;
                 }
@@ -371,7 +369,7 @@ function initialize_settings() {
 
                 Theming.initialize_background_styles();
 
-                const id = this.panel_color_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_color_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (() => {// eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
                         return false;
                     }
@@ -387,11 +385,11 @@ function initialize_settings() {
                     Intellifade.forceSyncCheck();
 
                     return false;
-                }).bind(this));
+                }));
 
                 return false;
-            }).bind(this));
-        }).bind(this)
+            });
+        }
     });
     Settings.add({
         key: 'panel-color',
@@ -414,7 +412,7 @@ function initialize_settings() {
                     }
                 }
                 Theming.register_background_color(Settings.get_panel_color());
-                const id = this.panel_color_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+                const id = this.panel_color_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (() => {// eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
                         return false;
                     }
@@ -430,9 +428,9 @@ function initialize_settings() {
                     Intellifade.forceSyncCheck();
 
                     return false;
-                }).bind(this));
+                }));
                 /* Legacy Handler */
-            }).bind(this)
+            })
     });
     Settings.add({
         key: 'panel-theme-color',
@@ -471,32 +469,32 @@ function initialize_settings() {
         name: 'text_shadow',
         type: 'b',
         getter: 'add_text_shadow',
-        handler: (function() {
+        handler: (() => {
             if (Settings.add_text_shadow()) {
                 Theming.add_text_shadow();
             } else {
                 Theming.remove_text_shadow();
             }
-        }).bind(this)
+        })
     });
     Settings.add({
         key: 'icon-shadow',
         name: 'icon_shadow',
         type: 'b',
         getter: 'add_icon_shadow',
-        handler: (function() {
+        handler: (() => {
             if (Settings.add_icon_shadow()) {
                 Theming.add_icon_shadow();
             } else {
                 Theming.remove_icon_shadow();
             }
-        }).bind(this)
+        })
     });
     Settings.add({
         key: 'text-shadow-position',
         name: 'text_shadow_position',
         type: '(iii)',
-        handler: (function() {
+        handler: (() => {
             Theming.remove_text_shadow();
 
             let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
@@ -510,7 +508,7 @@ function initialize_settings() {
                 }
             }
             let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
-            const id = this.text_shadow_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+            const id = this.text_shadow_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (() => {// eslint-disable-line no-magic-numbers
                 if (id !== this.text_shadow_update_id) {
                     return false;
                 }
@@ -527,14 +525,14 @@ function initialize_settings() {
                 Intellifade.forceSyncCheck();
 
                 return false;
-            }).bind(this));
-        }).bind(this)
+            }));
+        })
     });
     Settings.add({
         key: 'icon-shadow-position',
         name: 'icon_shadow_position',
         type: '(iii)',
-        handler: (function() {
+        handler: (() => {
             Theming.remove_icon_shadow();
 
             let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
@@ -548,7 +546,7 @@ function initialize_settings() {
                 }
             }
             let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
-            const id = this.icon_shadow_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+            const id = this.icon_shadow_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (() => { // eslint-disable-line no-magic-numbers
                 if (id !== this.icon_shadow_update_id) {
                     return false;
                 }
@@ -565,15 +563,15 @@ function initialize_settings() {
                 Intellifade.forceSyncCheck();
 
                 return false;
-            }).bind(this));
-        }).bind(this)
+            }));
+        })
     });
     Settings.add({
         key: 'icon-shadow-color',
         name: 'icon_shadow_color',
         type: '(iiid)',
         parser: Util.tuple_to_native_color,
-        handler: (function() {
+        handler: (() => {
             Theming.remove_icon_shadow();
 
             let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
@@ -587,7 +585,7 @@ function initialize_settings() {
                 }
             }
             let icon_shadow = Theming.register_icon_shadow(Settings.get_icon_shadow_color(), Settings.get_icon_shadow_position());
-            const id = this.icon_shadow_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+            const id = this.icon_shadow_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (() => { // eslint-disable-line no-magic-numbers
                 if (id !== this.icon_shadow_update_id) {
                     return false;
                 }
@@ -604,15 +602,15 @@ function initialize_settings() {
                 Intellifade.forceSyncCheck();
 
                 return false;
-            }).bind(this));
-        }).bind(this)
+            }));
+        })
     });
     Settings.add({
         key: 'text-shadow-color',
         name: 'text_shadow_color',
         type: '(iiid)',
         parser: Util.tuple_to_native_color,
-        handler: (function() {
+        handler: (() => {
             Theming.remove_text_shadow();
 
             let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
@@ -626,7 +624,7 @@ function initialize_settings() {
                 }
             }
             let text_shadow = Theming.register_text_shadow(Settings.get_text_shadow_color(), Settings.get_text_shadow_position());
-            const id = this.text_shadow_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
+            const id = this.text_shadow_update_id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, (() => { // eslint-disable-line no-magic-numbers
                 if (id !== this.text_shadow_update_id) {
                     return false;
                 }
@@ -643,8 +641,8 @@ function initialize_settings() {
                 Intellifade.forceSyncCheck();
 
                 return false;
-            }).bind(this));
-        }).bind(this)
+            }));
+        })
     });
     Settings.add({
         key: 'text-color',
@@ -662,9 +660,9 @@ function initialize_settings() {
         key: 'enable-maximized-text-color',
         name: 'enable_maximized_text_color',
         type: 'b',
-        handler: (function() {
+        handler: (() => {
             Intellifade.forceSyncCheck();
-        }).bind(this)
+        })
     });
     Settings.add({
         key: 'remove-panel-styling',
@@ -681,14 +679,14 @@ function initialize_settings() {
         key: 'enable-text-color',
         name: 'enable_text_color',
         type: 'b',
-        handler: (function() {
+        handler: (() => {
             if (Settings.get_enable_text_color()) {
                 Intellifade.forceSyncCheck();
             } else {
                 Theming.remove_text_color();
                 Theming.remove_text_color('maximized');
             }
-        }).bind(this)
+        })
     });
     Settings.add({
         key: 'enable-opacity',
