@@ -1,15 +1,11 @@
 /* exported init, cleanup, add, add_app_setting, add_app_override, check_overrides, check_triggers, bind, unbind */
 
-const Lang = imports.lang;
-
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Params = imports.misc.params;
 
-const Convenience = Me.imports.convenience;
-const Intellifade = Me.imports.intellifade;
+const { convenience: Convenience, intellifade: Intellifade } = Me.imports;
 
-const GLib = imports.gi.GLib;
-const Gio = imports.gi.Gio;
+const { GLib, Gio } = imports.gi;
 
 /* This might impair visibility of the code, but it makes my life a thousand times simpler */
 /* settings.js takes a key and watches for it to change in Gio.Settings & creates a getter for it. */
@@ -68,44 +64,44 @@ function init() {
     if (this._background_settings) {
         this._show_desktop = this._background_settings.get_strv(SETTINGS_SHOW_DESKTOP).length > 0;
 
-        this.settingsBoundIds.push(this._background_settings.connect('changed::' + SETTINGS_SHOW_DESKTOP, (function() {
+        this.settingsBoundIds.push(this._background_settings.connect('changed::' + SETTINGS_SHOW_DESKTOP, (() => {
             this._show_desktop = this._background_settings.get_strv(SETTINGS_SHOW_DESKTOP).length > 0;
-        }).bind(this)));
+        })));
     }
 
     if (this._interface_settings) {
         this._enable_animations = this._interface_settings.get_boolean(SETTINGS_ENABLE_ANIMATIONS);
 
-        this.settingsBoundIds.push(this._interface_settings.connect('changed::' + SETTINGS_ENABLE_ANIMATIONS, (function() {
+        this.settingsBoundIds.push(this._interface_settings.connect('changed::' + SETTINGS_ENABLE_ANIMATIONS, (() => {
             this._enable_animations = this._interface_settings.get_boolean(SETTINGS_ENABLE_ANIMATIONS);
-        }).bind(this)));
+        })));
     }
 
-    this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_APP_OVERRIDES, (function() {
+    this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_APP_OVERRIDES, (() => {
         this._app_overrides = this._settings.get_strv(SETTINGS_APP_OVERRIDES);
         this.app_settings_manager.unbind();
         this.app_settings_manager = new AppSettingsManager(this._app_keys, this.get_app_overrides(), APP_OVERRIDES_SCHEMA_PATH);
-    }).bind(this)));
+    })));
 
-    this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_WINDOW_OVERRIDES, (function() {
+    this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_WINDOW_OVERRIDES, (() => {
         this._window_overrides = this._settings.get_strv(SETTINGS_WINDOW_OVERRIDES);
         this.window_settings_manager.unbind();
         this.window_settings_manager = new AppSettingsManager(this._app_keys, this.get_window_overrides(), WINDOW_OVERRIDES_SCHEMA_PATH);
-    }).bind(this)));
+    })));
 
-    this.get_app_overrides = function() {
+    this.get_app_overrides = () => {
         return this._app_overrides;
     };
 
-    this.get_window_overrides = function() {
+    this.get_window_overrides = () => {
         return this._window_overrides;
     };
 
-    this.gs_show_desktop = function() {
+    this.gs_show_desktop = () => {
         return this._show_desktop;
     };
 
-    this.gs_enable_animations = function() {
+    this.gs_enable_animations = () => {
         return this._enable_animations;
     };
 }
@@ -191,12 +187,12 @@ function bind() {
         let setting = this._keys[i];
 
         /* Watch for changes */
-        this.settingsBoundIds.push(this._settings.connect('changed::' + setting.key, (function() {
+        this.settingsBoundIds.push(this._settings.connect('changed::' + setting.key, (() => {
             this.settings_manager.update(setting);
-        }).bind(this)));
+        })));
 
         if (setting.handler) {
-            this.settingsBoundIds.push(this._settings.connect('changed::' + setting.key, function() {
+            this.settingsBoundIds.push(this._settings.connect('changed::' + setting.key, () => {
                 // TODO: Find a better way to handle settings being changed right as the extension starts up.
                 try {
                     setting.handler.call(this);
@@ -305,9 +301,9 @@ function unbind() {
 }
 
 /* Basic class to hold settings values */
-const SettingsManager = new Lang.Class({
-    Name: 'DynamicPanelTransparency_SettingsManager',
-    _init: function(settings, params) {
+class SettingsManager {
+
+    constructor(settings, params) {
 
         this.values = [];
         this.settings = settings;
@@ -324,8 +320,9 @@ const SettingsManager = new Lang.Class({
                 this[setting.name] = this.settings.get_value(setting.key).unpack();
             }
         }
-    },
-    update: function(setting) {
+    }
+
+    update(setting) {
         if (this.settings.list_keys().indexOf(setting.key) === -1)
             return;
 
@@ -337,11 +334,10 @@ const SettingsManager = new Lang.Class({
             this[setting.name] = this.settings.get_value(setting.key).unpack();
         }
     }
-});
+}
 
-const AppSettingsManager = new Lang.Class({
-    Name: 'DynamicPanelTransparency_AppSettingsManager',
-    _init: function(params, apps, path) {
+class AppSettingsManager {
+   constructor(params, apps, path) {
         this.values = [];
         this.settings = {};
         this.settingsBoundIds = {};
@@ -374,9 +370,9 @@ const AppSettingsManager = new Lang.Class({
                     this.settingsBoundIds[app_id] = [];
                 }
 
-                this.settingsBoundIds[app_id].push(this.settings[app_id].connect('changed::' + setting.key, (function() {
+                this.settingsBoundIds[app_id].push(this.settings[app_id].connect('changed::' + setting.key, (() => {
                     this.update(setting, app_id);
-                }).bind(this)));
+                })));
 
                 let variant = GLib.VariantType.new(setting.type);
 
@@ -387,8 +383,9 @@ const AppSettingsManager = new Lang.Class({
                 }
             }
         }
-    },
-    update: function(setting, app_id) {
+    }
+
+    update(setting, app_id) {
         if (!setting || this.settings[app_id].list_keys().indexOf(setting.key) === -1)
             return;
         let variant = GLib.VariantType.new(setting.type);
@@ -399,12 +396,13 @@ const AppSettingsManager = new Lang.Class({
         } else {
             this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).unpack();
         }
-    },
-    unbind: function() {
+    }
+
+    unbind() {
         for (let app_id of Object.keys(this.settings)) {
             for (let id of this.settingsBoundIds[app_id]) {
                 this.settings[app_id].disconnect(id);
             }
         }
     }
-});
+}

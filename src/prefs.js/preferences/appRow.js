@@ -1,21 +1,21 @@
 /* exported AppRow, CustomRow, AddAppRow */
 
-const Lang = imports.lang;
+const {
+  GObject: { registerClass: GObjectClass },
+  Gdk,
+  Gtk
+} = imports.gi;
 
-const Gdk = imports.gi.Gdk;
-const Gtk = imports.gi.Gtk;
-
-const C_gtk30_ = imports.gettext.domain("gtk30").pgettext;
-const gtk30_ = imports.gettext.domain("gtk30").gettext;
+const C_gtk30_ = imports.gettext.domain('gtk30').pgettext;
+const gtk30_ = imports.gettext.domain('gtk30').gettext;
 
 /* Translated and modified from gnome-tweak-tool's StartupTweak.py */
 // TODO: Transition UI to XML.
 
-var AppRow = new Lang.Class({
-  Name: "DynamicPanelTransparency_AppRow",
-  Extends: Gtk.ListBoxRow,
-  _init: function(app_info, on_configure, on_remove) {
-    this.parent();
+@GObjectClass
+class AppRow extends Gtk.ListBoxRow {
+  _init(app_info, on_configure, on_remove) {
+    super._init();
 
     this.on_configure = on_configure;
     this.on_remove = on_remove;
@@ -27,7 +27,7 @@ var AppRow = new Lang.Class({
     let icn = app_info.get_icon();
     let img = null;
 
-    if (typeof icn !== "undefined" && icn !== null) {
+    if (typeof icn !== 'undefined' && icn !== null) {
       img = Gtk.Image.new_from_gicon(icn, Gtk.IconSize.MENU);
       grid.attach(img, 0, 0, 1, 1);
     }
@@ -36,26 +36,27 @@ var AppRow = new Lang.Class({
     grid.attach_next_to(lbl, img, Gtk.PositionType.RIGHT, 1, 1);
     lbl.hexpand = true;
     lbl.halign = Gtk.Align.START;
-    let btn = Gtk.Button.new_with_mnemonic(C_gtk30_("Action name", "Edit"));
+    let btn = Gtk.Button.new_with_mnemonic(C_gtk30_('Action name', 'Edit'));
     grid.attach_next_to(btn, lbl, Gtk.PositionType.RIGHT, 1, 1);
     btn.vexpand = false;
     btn.valign = Gtk.Align.CENTER;
     this.btn = btn;
-    this.btn.connect("clicked", this.configure.bind(this));
+    this.btn.connect('clicked', this.configure.bind(this));
 
-    let remove_btn = Gtk.Button.new_with_mnemonic(gtk30_("_Remove"));
+    let remove_btn = Gtk.Button.new_with_mnemonic(gtk30_('_Remove'));
     grid.attach_next_to(remove_btn, btn, Gtk.PositionType.RIGHT, 1, 1);
     remove_btn.vexpand = false;
     remove_btn.valign = Gtk.Align.CENTER;
     this.remove_btn = remove_btn;
-    this.remove_btn.connect("clicked", this.remove.bind(this));
+    this.remove_btn.connect('clicked', this.remove.bind(this));
 
     this.add(grid);
     this.margin_start = 1;
     this.margin_end = 1;
-    this.connect("key-press-event", this.on_key_press_event.bind(this));
-  },
-  on_key_press_event: function(row, event) {
+    this.connect('key-press-event', this.on_key_press_event.bind(this));
+  }
+
+  on_key_press_event(row, event) {
     if (
       event.keyval === Gdk.KEY_Delete ||
       event.keyval === Gdk.KEY_KP_Delete ||
@@ -65,26 +66,21 @@ var AppRow = new Lang.Class({
       return true;
     }
     return false;
-  },
-  configure: function() {
+  }
+
+  configure() {
     this.on_configure.call(this, this.app_name, this.app_id);
-  },
-  remove: function() {
+  }
+
+  remove() {
     this.on_remove.call(this, this.app_id, this);
   }
-});
+}
 
-var CustomRow = new Lang.Class({
-  Name: "DynamicPanelTransparency_CustomRow",
-  Extends: Gtk.ListBoxRow,
-  _init: function(
-    name,
-    wm_class,
-    on_configure,
-    on_remove,
-    wm_class_extra = []
-  ) {
-    this.parent();
+@GObjectClass
+class CustomRow extends Gtk.ListBoxRow {
+  _init(name, wm_class, on_configure, on_remove, wm_class_extra = []) {
+    super._init();
 
     this.on_configure = on_configure;
     this.on_remove = on_remove;
@@ -100,26 +96,27 @@ var CustomRow = new Lang.Class({
     grid.attach(lbl, 0, 0, 1, 1);
     lbl.hexpand = true;
     lbl.halign = Gtk.Align.START;
-    let btn = Gtk.Button.new_with_mnemonic(C_gtk30_("Action name", "Edit"));
+    let btn = Gtk.Button.new_with_mnemonic(C_gtk30_('Action name', 'Edit'));
     grid.attach_next_to(btn, lbl, Gtk.PositionType.RIGHT, 1, 1);
     btn.vexpand = false;
     btn.valign = Gtk.Align.CENTER;
     this.btn = btn;
-    this.btn.connect("clicked", this.configure.bind(this));
+    this.btn.connect('clicked', this.configure.bind(this));
 
-    let remove_btn = Gtk.Button.new_with_mnemonic(gtk30_("_Remove"));
+    let remove_btn = Gtk.Button.new_with_mnemonic(gtk30_('_Remove'));
     grid.attach_next_to(remove_btn, btn, Gtk.PositionType.RIGHT, 1, 1);
     remove_btn.vexpand = false;
     remove_btn.valign = Gtk.Align.CENTER;
     this.remove_btn = remove_btn;
-    this.remove_btn.connect("clicked", this.remove.bind(this));
+    this.remove_btn.connect('clicked', this.remove.bind(this));
 
     this.add(grid);
     this.margin_start = 1;
     this.margin_end = 1;
-    this.connect("key-press-event", this.on_key_press_event.bind(this));
-  },
-  on_key_press_event: function(row, event) {
+    this.connect('key-press-event', this.on_key_press_event.bind(this));
+  }
+
+  on_key_press_event(row, event) {
     if (
       event.keyval === Gdk.KEY_Delete ||
       event.keyval === Gdk.KEY_KP_Delete ||
@@ -129,28 +126,29 @@ var CustomRow = new Lang.Class({
       return true;
     }
     return false;
-  },
-  configure: function() {
+  }
+
+  configure() {
     this.on_configure.call(this, this.name, this.wm_class, this.wm_class_extra);
-  },
-  remove: function() {
+  }
+
+  remove() {
     this.on_remove.call(this, this.wm_class, this, this.wm_class_extra);
   }
-});
+}
 
-var AddAppRow = new Lang.Class({
-  Name: "DynamicPanelTransparency_AddAppRow",
-  Extends: Gtk.ListBoxRow,
-  _init: function(options) {
-    this.parent();
+@GObjectClass
+class AddAppRow extends Gtk.ListBoxRow {
+  _init(options) {
+    super._init();
     let img = new Gtk.Image();
-    img.set_from_icon_name("list-add-symbolic", Gtk.IconSize.BUTTON);
+    img.set_from_icon_name('list-add-symbolic', Gtk.IconSize.BUTTON);
     this.btn = new Gtk.Button({
-      label: "",
+      label: '',
       image: img,
       always_show_image: true
     });
-    this.btn.get_style_context().remove_class("button");
+    this.btn.get_style_context().remove_class('button');
     this.add(this.btn);
   }
-});
+}

@@ -2,16 +2,14 @@
 
 const St = imports.gi.St;
 
-const Main = imports.ui.main;
+const { main: Main } = imports.ui;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Params = imports.misc.params;
 
-const Settings = Me.imports.settings;
-const Util = Me.imports.util;
+const { settings: Settings, util: Util } = Me.imports;
 
-const GdkPixbuf = imports.gi.GdkPixbuf;
-const GLib = imports.gi.GLib;
+const { GdkPixbuf, GLib } = imports.gi;
 
 /* Convenience constant for the shell panel. */
 const Panel = Main.panel;

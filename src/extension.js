@@ -1,10 +1,7 @@
 /* exported init, enable, disable */
-
-const Lang = imports.lang;
-
 const { GLib, Gio, St } = imports.gi;
 
-const { ExtensionSystem, Main } = imports.ui;
+const { extensionSystem: ExtensionSystem, main } = imports.ui;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
@@ -108,7 +105,7 @@ function idle_enable(update, theme_settings = null) {
         if (update) {
             log('[Dynamic Panel Transparency] Updating user theme data.');
 
-            let theme = Main.panel.actor.get_theme_node();
+            let theme = main.panel.actor.get_theme_node();
 
             let image_background = Theming.get_background_image_color(theme);
             let theme_background = theme.get_background_color();
@@ -270,8 +267,8 @@ function initialize_settings() {
         type: 'i',
         handler: (
             /* Update the backend24 transition CSS. */
-            function() {
-                Main.panel.actor.remove_style_class_name('dpt-panel-transition-duration');
+            () => {
+                main.panel.actor.remove_style_class_name('dpt-panel-transition-duration');
 
                 let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
 
@@ -398,7 +395,7 @@ function initialize_settings() {
         parser: Util.tuple_to_native_color,
         handler: (
             /* Handler for 3.24+ */
-            function() {
+            () => {
                 Theming.remove_background_color();
 
                 let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();

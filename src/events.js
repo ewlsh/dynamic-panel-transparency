@@ -1,7 +1,5 @@
 /* exported init, cleanup, get_current_maximized_window */
 
-const Lang = imports.lang;
-
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Shell = imports.gi.Shell;

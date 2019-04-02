@@ -1,7 +1,6 @@
 /* exported init, cleanup, asyncCheck, syncCheck, forceAsyncCheck, forceSyncCheck, get_current_maximized_window */
 
 const GLib = imports.gi.GLib;
-const Lang = imports.lang;
 
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
@@ -76,7 +75,7 @@ function asyncCheck() {
     if (timeoutId <= 0) {
         _check();
 
-        timeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, ASYNC_UPDATE_FREQUENCY, (function() {
+        timeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, ASYNC_UPDATE_FREQUENCY, (() => {
             _check();
 
             if (continueCheck) {
@@ -86,7 +85,7 @@ function asyncCheck() {
                 timeoutId = 0;
                 return GLib.SOURCE_REMOVE;
             }
-        }).bind(this));
+        }));
     } else {
         continueCheck = true;
     }

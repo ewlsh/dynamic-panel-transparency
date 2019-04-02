@@ -4,10 +4,10 @@
     "no-magic-numbers": [
       1,
       {
-        "ignore": [-1, 0, 1, 2, 100, 255],
-        "enforceConst": true
+        "ignore": [-1, 0, 1, 2, 100, 255]
       }
     ],
+    "quotes": ["error", "single"],
     "no-delete-var": 1,
     "no-unused-vars": [
       2,

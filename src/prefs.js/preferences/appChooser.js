@@ -1,35 +1,37 @@
 /* exported AppChooser */
 
-const Lang = imports.lang;
-
-const GObject = imports.gi.GObject;
-const Gdk = imports.gi.Gdk;
-const Gio = imports.gi.Gio;
-const Gtk = imports.gi.Gtk;
-
-const ExtensionUtils = imports.misc.extensionUtils;
-
-const Tweaks = imports.preferences.tweaks;
+const {
+  preferences: { Tweaks },
+  misc: { extensionUtils: ExtensionUtils },
+  gi: {
+    Gdk,
+    Gio,
+    Gtk,
+    GObject,
+    GObject: { registerClass: GObjectClass }
+  }
+} = imports;
 
 const gtk30_ = imports.gettext.domain('gtk30').gettext;
 
 /* Translated and modified from gnome-tweak-tool's StartupTweak.py */
 // TODO: Transition UI to XML.
 
-var AppChooser = new Lang.Class({
-  Name: 'DynamicPanelTransparency_AppChooser',
-  Extends: Gtk.Dialog,
-  _init: function(main_window, excluded_apps) {
-    this.parent({
-      title: gtk30_("Select Application"),
+@GObjectClass
+class AppChooser extends Gtk.Dialog {
+  _init(main_window, excluded_apps) {
+    super._init({
+      title: gtk30_('Select Application'),
       use_header_bar: true
     });
+
     this.entry = new Gtk.SearchEntry();
     this.entry.set_width_chars(30);
     this.entry.activates_default = true;
     this.searchbar = new Gtk.SearchBar();
     this.searchbar.add(this.entry);
     this.searchbar.hexpand = true;
+
     let list_box = new Gtk.ListBox();
     list_box.activate_on_single_click = false;
     list_box.set_sort_func(this.sort_apps.bind(this));
@@ -80,8 +82,8 @@ var AppChooser = new Lang.Class({
     scrolled_window.add(list_box);
     scrolled_window.margin = 5;
 
-    this.add_button(gtk30_("_Close"), Gtk.ResponseType.CANCEL);
-    this.add_button(gtk30_("_Select"), Gtk.ResponseType.OK);
+    this.add_button(gtk30_('_Close'), Gtk.ResponseType.CANCEL);
+    this.add_button(gtk30_('_Select'), Gtk.ResponseType.OK);
     this.set_default_response(Gtk.ResponseType.OK);
     let searchbtn = new Gtk.ToggleButton();
     searchbtn.valign = Gtk.Align.CENTER;
@@ -107,9 +109,9 @@ var AppChooser = new Lang.Class({
     this.set_size_request(400, 300);
     this.listbox = list_box;
     this.connect('key-press-event', this.on_key_press.bind(this));
-  },
+  }
 
-  sort_apps: function(a, b) {
+  sort_apps(a, b) {
     let aname, bname;
     let info;
 
@@ -140,9 +142,9 @@ var AppChooser = new Lang.Class({
     } else {
       return 0;
     }
-  },
+  }
 
-  build_widget: function(name, icon) {
+  build_widget(name, icon) {
     let row = new Gtk.ListBoxRow();
 
     let row_grid = new Gtk.Grid();
@@ -181,8 +183,9 @@ var AppChooser = new Lang.Class({
     row.show_all();
 
     return row;
-  },
-  list_header_func: function(row, before, user_data) {
+  }
+
+  list_header_func(row, before, user_data) {
     if (before && !row.get_header()) {
       row.set_header(
         new Gtk.Separator({
@@ -190,8 +193,9 @@ var AppChooser = new Lang.Class({
         })
       );
     }
-  },
-  list_filter_func: function(row, unused) {
+  }
+
+  list_filter_func(row, unused) {
     let txt = this.entry.get_text().toLowerCase();
     let grid = row.get_child();
     for (let sib of grid.get_children()) {
@@ -207,8 +211,9 @@ var AppChooser = new Lang.Class({
       }
     }
     return false;
-  },
-  on_search_entry_changed: function(editable) {
+  }
+
+  on_search_entry_changed(editable) {
     this.listbox.invalidate_filter();
     let selected = this.listbox.get_selected_row();
     if (selected && selected.get_mapped()) {
@@ -216,13 +221,13 @@ var AppChooser = new Lang.Class({
     } else {
       this.set_response_sensitive(Gtk.ResponseType.OK, false);
     }
-  },
+  }
 
-  on_row_selected: function(box, row) {
+  on_row_selected(box, row) {
     this.set_response_sensitive(Gtk.ResponseType.OK, row && row.get_mapped());
-  },
+  }
 
-  on_key_press: function(widget, event) {
+  on_key_press(widget, event) {
     let mods = event.state & Gtk.accelerator_get_default_mod_mask();
     if (event.keyval === this.search_key && mods === this.search_mods) {
       this.searchbar.set_search_mode(!this.searchbar.get_search_mode());
@@ -248,9 +253,9 @@ var AppChooser = new Lang.Class({
       return false;
     }
     return false;
-  },
+  }
 
-  get_selected_app: function() {
+  get_selected_app() {
     let row = this.listbox.get_selected_row();
 
     if (row) {
@@ -260,4 +265,4 @@ var AppChooser = new Lang.Class({
 
     return null;
   }
-});
+}
