@@ -224,8 +224,8 @@ function match_colors(a, b, alpha = false) {
  *
  */
 function deep_freeze(type, recursive = false) {
-  const freeze_children = function (obj) {
-    Object.keys(obj).forEach((value, index, arr) => {
+  function freeze_children(obj) {
+    Object.keys(obj).forEach((value) => {
       if (typeof value === 'object' && !Object.isFrozen(value)) {
         Object.freeze(value);
         if (recursive) {
@@ -233,7 +233,7 @@ function deep_freeze(type, recursive = false) {
         }
       }
     });
-  };
+  }
 
   Object.freeze(type);
   freeze_children(type);
@@ -246,7 +246,5 @@ function deep_freeze(type, recursive = false) {
  *
  */
 function strip_args(method) {
-  return function () {
-    method.call(this);
-  };
+  return () => method();
 }
