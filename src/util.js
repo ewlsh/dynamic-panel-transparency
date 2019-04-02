@@ -1,17 +1,18 @@
-/* exported get_shell_version, is_undef, clamp, is_valid, match_colors, remove_file, get_file, write_to_file, gdk_to_css_color, clutter_to_native_color, tuple_to_native_color, deep_freeze, strip_args */
+/* exported get_shell_version, is_undef, clamp, is_valid, match_colors */
+/* exported remove_file, get_file, write_to_file, gdk_to_css_color, clutter_to_native_color */
+/* exported tuple_to_native_color, deep_freeze, strip_args */
 
 const { GLib, Gio } = imports.gi;
-
 
 /* This import can't be a constant as it requires lazy initialization. */
 let Meta = null;
 
 /* Gnome Versioning */
-const MAJOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[0], 10);
-const MINOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[1], 10);
+const MAJOR_VERSION = Number.parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[0], 10);
+const MINOR_VERSION = Number.parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[1], 10);
 
 /* Permission setting for created files. */
-const PERMISSIONS_MODE = parseInt('0744', 8);
+const PERMISSIONS_MODE = 0o0744;
 
 /* Utility Variable Access */
 
@@ -22,13 +23,14 @@ const PERMISSIONS_MODE = parseInt('0744', 8);
  *
  */
 function get_shell_version() {
-    return { major: MAJOR_VERSION, minor: MINOR_VERSION };
+  return { major: MAJOR_VERSION, minor: MINOR_VERSION };
 }
 
 /* Utility Functions */
 
 /**
- * Evaluates parameter 'value' and returns either 'value' or 'min'/'max' if 'value' is outside of the range.
+ * Evaluates parameter 'value' and returns either 'value' or 'min'/'max'
+ * if 'value' is outside of the range.
  *
  * @param {Number} value - Test value.
  * @param {Number} min - Minimum value.
@@ -38,7 +40,7 @@ function get_shell_version() {
  *
  */
 function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
+  return Math.min(Math.max(value, min), max);
 }
 
 /**
@@ -51,22 +53,22 @@ function clamp(value, min, max) {
  *
  */
 function is_valid(window) {
-    if (!Meta) {
-        Meta = imports.gi.Meta;
-    }
+  if (!Meta) {
+    ({ Meta } = imports.gi);
+  }
 
-    let windowTypes = [
-        Meta.WindowType.NORMAL,
-        Meta.WindowType.DIALOG,
-        Meta.WindowType.MODAL_DIALOG,
-        Meta.WindowType.TOOLBAR,
-        Meta.WindowType.MENU,
-        Meta.WindowType.UTILITY,
-    ];
+  const windowTypes = [
+    Meta.WindowType.NORMAL,
+    Meta.WindowType.DIALOG,
+    Meta.WindowType.MODAL_DIALOG,
+    Meta.WindowType.TOOLBAR,
+    Meta.WindowType.MENU,
+    Meta.WindowType.UTILITY
+  ];
 
-    let type = window.get_window_type();
+  const type = window.get_window_type();
 
-    return (windowTypes.indexOf(type) !== -1);
+  return windowTypes.indexOf(type) !== -1;
 }
 
 /**
@@ -78,13 +80,13 @@ function is_valid(window) {
  *
  */
 function get_file(file_path) {
-    try {
-        return Gio.file_new_for_path(file_path);
-    } catch (error) {
-        log('[Dynamic Panel Transparency] Error getting file: ' + error);
-    }
+  try {
+    return Gio.file_new_for_path(file_path);
+  } catch (error) {
+    log(`[Dynamic Panel Transparency] Error getting file: ${error}`);
+  }
 
-    return null;
+  return null;
 }
 
 /**
@@ -97,20 +99,26 @@ function get_file(file_path) {
  *
  */
 function write_to_file(file_path, text) {
-    try {
-        let file = get_file(file_path);
-        let parent = file.get_parent();
+  try {
+    const file = get_file(file_path);
+    const parent = file.get_parent();
 
-        if (GLib.mkdir_with_parents(parent.get_path(), PERMISSIONS_MODE) === 0) {
-            let success = file.replace_contents(text, null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null);
-            return success[0];
-        }
-    } catch (error) {
-        log('[Dynamic Panel Transparency] Error writing to file: ' + file_path);
-        log(error);
+    if (GLib.mkdir_with_parents(parent.get_path(), PERMISSIONS_MODE) === 0) {
+      const success = file.replace_contents(
+        text,
+        null,
+        false,
+        Gio.FileCreateFlags.REPLACE_DESTINATION,
+        null
+      );
+      return success[0];
     }
+  } catch (error) {
+    log(`[Dynamic Panel Transparency] Error writing to file: ${file_path}`);
+    log(error);
+  }
 
-    return false;
+  return false;
 }
 
 /**
@@ -122,16 +130,16 @@ function write_to_file(file_path, text) {
  *
  */
 function remove_file(file_path) {
-    try {
-        let file = get_file(file_path);
-        let result = file.delete(null);
-        return result;
-    } catch (error) {
-        log('[Dynamic Panel Transparency] Error removing file: ' + file_path);
-        log(error);
-    }
+  try {
+    const file = get_file(file_path);
+    const result = file.delete(null);
+    return result;
+  } catch (error) {
+    log(`[Dynamic Panel Transparency] Error removing file: ${file_path}`);
+    log(error);
+  }
 
-    return false;
+  return false;
 }
 
 /**
@@ -143,11 +151,11 @@ function remove_file(file_path) {
  *
  */
 function gdk_to_css_color(color) {
-    let red = Math.round(clamp((color.red * 255), 0, 255));
-    let green = Math.round(clamp((color.green * 255), 0, 255));
-    let blue = Math.round(clamp((color.blue * 255), 0, 255));
+  const red = Math.round(clamp(color.red * 255, 0, 255));
+  const green = Math.round(clamp(color.green * 255, 0, 255));
+  const blue = Math.round(clamp(color.blue * 255, 0, 255));
 
-    return { 'red': red, 'green': green, 'blue': blue };
+  return { red, green, blue };
 }
 
 /**
@@ -160,11 +168,11 @@ function gdk_to_css_color(color) {
  *
  */
 function clutter_to_native_color(color, alpha = false) {
-    let output = { red: color.red, green: color.green, blue: color.blue };
-    if (alpha) {
-        output.alpha = color.alpha;
-    }
-    return output;
+  const output = { red: color.red, green: color.green, blue: color.blue };
+  if (alpha) {
+    output.alpha = color.alpha;
+  }
+  return output;
 }
 
 /**
@@ -177,11 +185,15 @@ function clutter_to_native_color(color, alpha = false) {
  *
  */
 function tuple_to_native_color(tuple) {
-    let color = { red: tuple[0], green: tuple[1], blue: tuple[2] };
-    if (tuple.length === 4) {
-        color.alpha = tuple[3];
-    }
-    return color;
+  const color = {};
+
+  [color.red, color.green, color.blue] = tuple;
+
+  if (tuple.length > 3) {
+    [, , , color.alpha] = tuple;
+  }
+
+  return color;
 }
 
 /**
@@ -195,13 +207,13 @@ function tuple_to_native_color(tuple) {
  *
  */
 function match_colors(a, b, alpha = false) {
-    let result = (a.red === b.red);
-    result = result && (a.green === b.green);
-    result = result && (a.blue === b.blue);
-    if (alpha) {
-        result = result && (a.alpha === b.alpha);
-    }
-    return result;
+  let result = a.red === b.red;
+  result = result && a.green === b.green;
+  result = result && a.blue === b.blue;
+  if (alpha) {
+    result = result && a.alpha === b.alpha;
+  }
+  return result;
 }
 
 /**
@@ -212,19 +224,19 @@ function match_colors(a, b, alpha = false) {
  *
  */
 function deep_freeze(type, recursive = false) {
-    const freeze_children = function(obj) {
-        Object.keys(obj).forEach(function(value, index, arr) {
-            if (typeof (value) === 'object' && !Object.isFrozen(value)) {
-                Object.freeze(value);
-                if (recursive) {
-                    freeze_children(value);
-                }
-            }
-        });
-    };
+  const freeze_children = function (obj) {
+    Object.keys(obj).forEach((value, index, arr) => {
+      if (typeof value === 'object' && !Object.isFrozen(value)) {
+        Object.freeze(value);
+        if (recursive) {
+          freeze_children(value);
+        }
+      }
+    });
+  };
 
-    Object.freeze(type);
-    freeze_children(type);
+  Object.freeze(type);
+  freeze_children(type);
 }
 
 /**
@@ -234,7 +246,7 @@ function deep_freeze(type, recursive = false) {
  *
  */
 function strip_args(method) {
-    return function() {
-        method.call(this);
-    };
+  return function () {
+    method.call(this);
+  };
 }

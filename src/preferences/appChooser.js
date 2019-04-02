@@ -1,21 +1,96 @@
-/* exported AppChooser */
-
 const {
-  preferences: { Tweaks },
+  tweaks: Tweaks,
   misc: { extensionUtils: ExtensionUtils },
   gi: {
-    Gdk,
-    Gio,
-    Gtk,
-    GObject,
-    GObject: { registerClass: GObjectClass }
-  }
+    Gdk, Gio, Gtk, GObject
+  },
+  classShim: { registerClass: GObjectClass }
 } = imports;
 
 const gtk30_ = imports.gettext.domain('gtk30').gettext;
 
 /* Translated and modified from gnome-tweak-tool's StartupTweak.py */
 // TODO: Transition UI to XML.
+
+function sort_apps(a, b) {
+  let aname;
+  let bname;
+  let info;
+
+  if (typeof a.__dpt__info !== 'undefined') {
+    info = a.__dpt__info;
+  }
+
+  if (typeof info === 'string') {
+    aname = Tweaks.by_uuid(info).name;
+  } else if (info !== null) {
+    aname = info.get_name();
+  }
+
+  if (typeof b.__dpt__info !== 'undefined') {
+    info = b.__dpt__info;
+  }
+
+  if (typeof info === 'string') {
+    bname = Tweaks.by_uuid(info).name;
+  } else if (info !== null) {
+    bname = info.get_name();
+  }
+
+  if (aname < bname) {
+    return -1;
+  }
+  if (aname > bname) {
+    return 1;
+  }
+  return 0;
+}
+
+function build_widget(app_info) {
+  const name = app_info.get_name();
+  const icon = app_info.get_icon();
+
+  const row = new Gtk.ListBoxRow();
+
+  const row_grid = new Gtk.Grid();
+
+  row_grid.set_margin_start(10);
+  row_grid.set_margin_end(10);
+  row_grid.set_column_spacing(5);
+
+  if (!name) {
+    return null;
+  }
+
+  let img = null;
+
+  if (icon) {
+    img = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.MENU);
+  } else {
+    img = Gtk.Image.new_from_icon_name('dialog-question', Gtk.IconSize.MENU);
+  }
+
+  row_grid.attach(img, 0, 0, 1, 1);
+
+  img.hexpand = false;
+
+  const list_box = new Gtk.Label({
+    label: name,
+    xalign: 0,
+    hexpand: true,
+    vexpand: false,
+    halign: Gtk.Align.START,
+    valign: Gtk.Align.CENTER
+  });
+  row_grid.attach_next_to(list_box, img, Gtk.PositionType.RIGHT, 1, 1);
+
+  row.add(row_grid);
+  row.show_all();
+
+  row.__dpt__info = app_info;
+
+  return row;
+}
 
 @GObjectClass
 class AppChooser extends Gtk.Dialog {
@@ -32,52 +107,40 @@ class AppChooser extends Gtk.Dialog {
     this.searchbar.add(this.entry);
     this.searchbar.hexpand = true;
 
-    let list_box = new Gtk.ListBox();
+    const list_box = new Gtk.ListBox();
     list_box.activate_on_single_click = false;
-    list_box.set_sort_func(this.sort_apps.bind(this));
-    list_box.set_header_func(this.list_header_func.bind(this));
+    list_box.set_sort_func(sort_apps.bind(this));
+    list_box.set_header_func((row, before) => {
+      if (before && !row.get_header()) {
+        row.set_header(
+          new Gtk.Separator({
+            orientation: Gtk.Orientation.HORIZONTAL
+          })
+        );
+      }
+    });
     list_box.set_filter_func(this.list_filter_func.bind(this));
-    this.entry.connect(
-      'search-changed',
-      this.on_search_entry_changed.bind(this)
-    );
-    list_box.connect(
-      'row-activated',
-      function(b, r) {
-        return this.response(Gtk.ResponseType.OK) ? r.get_mapped() : null;
-      }.bind(this)
-    );
+    this.entry.connect('search-changed', this.on_search_entry_changed.bind(this));
+    list_box.connect('row-activated', (_, r) => (this.response(Gtk.ResponseType.OK) ? r.get_mapped() : null));
     list_box.connect('row-selected', this.on_row_selected.bind(this));
 
-    let apps = Gio.app_info_get_all();
-    for (let x = 0; x < apps.length; x++) {
-      let app_info = apps[x];
-      if (
-        app_info.should_show() &&
-        excluded_apps.indexOf(app_info.get_id()) === -1
-      ) {
-        let app_widget = this.build_widget(
-          app_info.get_name(),
-          app_info.get_icon()
-        );
-        if (app_widget) {
-          list_box.add(app_widget);
-          app_widget.__dpt__info = app_info;
-        }
-      }
-    }
+    Gio.app_info_get_all()
+      .filter(app_info => app_info.should_show() && excluded_apps.indexOf(app_info.get_id()) === -1)
+      .map(app_info => build_widget(app_info))
+      .forEach(widget => list_box.add(widget));
 
-    for (let tweak of Tweaks.get_tweaks()) {
+    Tweaks.get_tweaks().forEach((tweak) => {
       if (ExtensionUtils.extensions[tweak.uuid]) {
-        let app_widget = this.build_widget(tweak.name, null);
+        const app_widget = build_widget(tweak.name, null);
+
         if (app_widget) {
           list_box.add(app_widget);
           app_widget.__dpt__info = tweak.uuid;
         }
       }
-    }
+    });
 
-    let scrolled_window = new Gtk.ScrolledWindow();
+    const scrolled_window = new Gtk.ScrolledWindow();
     scrolled_window.hscrollist_boxar_policy = Gtk.PolicyType.NEVER;
     scrolled_window.add(list_box);
     scrolled_window.margin = 5;
@@ -85,14 +148,14 @@ class AppChooser extends Gtk.Dialog {
     this.add_button(gtk30_('_Close'), Gtk.ResponseType.CANCEL);
     this.add_button(gtk30_('_Select'), Gtk.ResponseType.OK);
     this.set_default_response(Gtk.ResponseType.OK);
-    let searchbtn = new Gtk.ToggleButton();
+    const searchbtn = new Gtk.ToggleButton();
     searchbtn.valign = Gtk.Align.CENTER;
-    let image = new Gtk.Image({
+    const image = new Gtk.Image({
       icon_name: 'edit-find-symbolic',
       icon_size: Gtk.IconSize.MENU
     });
     searchbtn.add(image);
-    let context = searchbtn.get_style_context();
+    const context = searchbtn.get_style_context();
     context.add_class('image-button');
     context.remove_class('text-button');
     this.get_header_bar().pack_end(searchbtn);
@@ -111,111 +174,23 @@ class AppChooser extends Gtk.Dialog {
     this.connect('key-press-event', this.on_key_press.bind(this));
   }
 
-  sort_apps(a, b) {
-    let aname, bname;
-    let info;
-
-    if (typeof a.__dpt__info !== 'undefined') {
-      info = a.__dpt__info;
-    }
-
-    if (typeof info === 'string') {
-      aname = Tweaks.by_uuid(info).name;
-    } else if (info !== null) {
-      aname = info.get_name();
-    }
-
-    if (typeof b.__dpt__info !== 'undefined') {
-      info = b.__dpt__info;
-    }
-
-    if (typeof info === 'string') {
-      bname = Tweaks.by_uuid(info).name;
-    } else if (info !== null) {
-      bname = info.get_name();
-    }
-
-    if (aname < bname) {
-      return -1;
-    } else if (aname > bname) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-
-  build_widget(name, icon) {
-    let row = new Gtk.ListBoxRow();
-
-    let row_grid = new Gtk.Grid();
-
-    row_grid.set_margin_start(10);
-    row_grid.set_margin_end(10);
-    row_grid.set_column_spacing(5);
-
-    if (!name) {
-      return null;
-    }
-
-    let img = null;
-
-    if (icon) {
-      img = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.MENU);
-    } else {
-      img = Gtk.Image.new_from_icon_name('dialog-question', Gtk.IconSize.MENU);
-    }
-
-    row_grid.attach(img, 0, 0, 1, 1);
-
-    img.hexpand = false;
-
-    let list_box = new Gtk.Label({
-      label: name,
-      xalign: 0,
-      hexpand: true,
-      vexpand: false,
-      halign: Gtk.Align.START,
-      valign: Gtk.Align.CENTER
-    });
-    row_grid.attach_next_to(list_box, img, Gtk.PositionType.RIGHT, 1, 1);
-
-    row.add(row_grid);
-    row.show_all();
-
-    return row;
-  }
-
-  list_header_func(row, before, user_data) {
-    if (before && !row.get_header()) {
-      row.set_header(
-        new Gtk.Separator({
-          orientation: Gtk.Orientation.HORIZONTAL
-        })
+  list_filter_func(row) {
+    const txt = this.entry.get_text().toLowerCase();
+    const grid = row.get_child();
+    return grid
+      .get_children()
+      .filter(sib => sib instanceof Gtk.Label)
+      .some(
+        sib => sib
+          .get_text()
+          .toLowerCase()
+          .indexOf(txt) !== -1
       );
-    }
-  }
-
-  list_filter_func(row, unused) {
-    let txt = this.entry.get_text().toLowerCase();
-    let grid = row.get_child();
-    for (let sib of grid.get_children()) {
-      if (sib.constructor === Gtk.Label) {
-        if (
-          sib
-            .get_text()
-            .toLowerCase()
-            .indexOf(txt) !== -1
-        ) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   on_search_entry_changed(editable) {
     this.listbox.invalidate_filter();
-    let selected = this.listbox.get_selected_row();
+    const selected = this.listbox.get_selected_row();
     if (selected && selected.get_mapped()) {
       this.set_response_sensitive(Gtk.ResponseType.OK, true);
     } else {
@@ -228,13 +203,13 @@ class AppChooser extends Gtk.Dialog {
   }
 
   on_key_press(widget, event) {
-    let mods = event.state & Gtk.accelerator_get_default_mod_mask();
+    const mods = event.state & Gtk.accelerator_get_default_mod_mask(); // eslint-disable-line
     if (event.keyval === this.search_key && mods === this.search_mods) {
       this.searchbar.set_search_mode(!this.searchbar.get_search_mode());
       return true;
     }
 
-    let keyname = Gdk.keyval_name(event.keyval);
+    const keyname = Gdk.keyval_name(event.keyval);
     if (keyname === 'Escape') {
       if (this.searchbar.get_search_mode()) {
         this.searchbar.set_search_mode(false);
@@ -244,7 +219,7 @@ class AppChooser extends Gtk.Dialog {
       if (!this.entry.has_focus && this.searchbar.get_search_mode()) {
         if (this.entry.im_context_filter_keypress(event)) {
           this.entry.grab_focus();
-          let l = this.entry.get_text_length();
+          const l = this.entry.get_text_length();
           this.entry.select_region(l, l);
           return true;
         }
@@ -256,10 +231,10 @@ class AppChooser extends Gtk.Dialog {
   }
 
   get_selected_app() {
-    let row = this.listbox.get_selected_row();
+    const row = this.listbox.get_selected_row();
 
     if (row) {
-      let rowData = row.__dpt__info;
+      const rowData = row.__dpt__info;
       return rowData;
     }
 

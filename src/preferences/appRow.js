@@ -1,10 +1,9 @@
 /* exported AppRow, CustomRow, AddAppRow */
 
 const {
-  GObject: { registerClass: GObjectClass },
-  Gdk,
-  Gtk
-} = imports.gi;
+  classShim: { registerClass: GObjectClass },
+  gi: { Gdk, Gtk }
+} = imports;
 
 const C_gtk30_ = imports.gettext.domain('gtk30').pgettext;
 const gtk30_ = imports.gettext.domain('gtk30').gettext;
@@ -22,9 +21,9 @@ class AppRow extends Gtk.ListBoxRow {
     this.app_name = app_info.get_name();
     this.app_id = app_info.get_id();
 
-    let grid = new Gtk.Grid({ column_spacing: 10 });
+    const grid = new Gtk.Grid({ column_spacing: 10 });
 
-    let icn = app_info.get_icon();
+    const icn = app_info.get_icon();
     let img = null;
 
     if (typeof icn !== 'undefined' && icn !== null) {
@@ -32,18 +31,18 @@ class AppRow extends Gtk.ListBoxRow {
       grid.attach(img, 0, 0, 1, 1);
     }
 
-    let lbl = new Gtk.Label({ label: app_info.get_name(), xalign: 0.0 });
+    const lbl = new Gtk.Label({ label: app_info.get_name(), xalign: 0.0 });
     grid.attach_next_to(lbl, img, Gtk.PositionType.RIGHT, 1, 1);
     lbl.hexpand = true;
     lbl.halign = Gtk.Align.START;
-    let btn = Gtk.Button.new_with_mnemonic(C_gtk30_('Action name', 'Edit'));
+    const btn = Gtk.Button.new_with_mnemonic(C_gtk30_('Action name', 'Edit'));
     grid.attach_next_to(btn, lbl, Gtk.PositionType.RIGHT, 1, 1);
     btn.vexpand = false;
     btn.valign = Gtk.Align.CENTER;
     this.btn = btn;
     this.btn.connect('clicked', this.configure.bind(this));
 
-    let remove_btn = Gtk.Button.new_with_mnemonic(gtk30_('_Remove'));
+    const remove_btn = Gtk.Button.new_with_mnemonic(gtk30_('_Remove'));
     grid.attach_next_to(remove_btn, btn, Gtk.PositionType.RIGHT, 1, 1);
     remove_btn.vexpand = false;
     remove_btn.valign = Gtk.Align.CENTER;
@@ -58,9 +57,9 @@ class AppRow extends Gtk.ListBoxRow {
 
   on_key_press_event(row, event) {
     if (
-      event.keyval === Gdk.KEY_Delete ||
-      event.keyval === Gdk.KEY_KP_Delete ||
-      event.keyval === Gdk.KEY_BackSpace
+      event.keyval === Gdk.KEY_Delete
+      || event.keyval === Gdk.KEY_KP_Delete
+      || event.keyval === Gdk.KEY_BackSpace
     ) {
       this.remove_btn.activate();
       return true;
@@ -90,20 +89,20 @@ class CustomRow extends Gtk.ListBoxRow {
     this.wm_class_extra = wm_class_extra;
     this.name = name;
 
-    let grid = new Gtk.Grid({ column_spacing: 10 });
+    const grid = new Gtk.Grid({ column_spacing: 10 });
 
-    let lbl = new Gtk.Label({ label: this.name, xalign: 0.0 });
+    const lbl = new Gtk.Label({ label: this.name, xalign: 0.0 });
     grid.attach(lbl, 0, 0, 1, 1);
     lbl.hexpand = true;
     lbl.halign = Gtk.Align.START;
-    let btn = Gtk.Button.new_with_mnemonic(C_gtk30_('Action name', 'Edit'));
+    const btn = Gtk.Button.new_with_mnemonic(C_gtk30_('Action name', 'Edit'));
     grid.attach_next_to(btn, lbl, Gtk.PositionType.RIGHT, 1, 1);
     btn.vexpand = false;
     btn.valign = Gtk.Align.CENTER;
     this.btn = btn;
     this.btn.connect('clicked', this.configure.bind(this));
 
-    let remove_btn = Gtk.Button.new_with_mnemonic(gtk30_('_Remove'));
+    const remove_btn = Gtk.Button.new_with_mnemonic(gtk30_('_Remove'));
     grid.attach_next_to(remove_btn, btn, Gtk.PositionType.RIGHT, 1, 1);
     remove_btn.vexpand = false;
     remove_btn.valign = Gtk.Align.CENTER;
@@ -118,9 +117,9 @@ class CustomRow extends Gtk.ListBoxRow {
 
   on_key_press_event(row, event) {
     if (
-      event.keyval === Gdk.KEY_Delete ||
-      event.keyval === Gdk.KEY_KP_Delete ||
-      event.keyval === Gdk.KEY_BackSpace
+      event.keyval === Gdk.KEY_Delete
+      || event.keyval === Gdk.KEY_KP_Delete
+      || event.keyval === Gdk.KEY_BackSpace
     ) {
       this.remove_btn.activate();
       return true;
@@ -141,7 +140,7 @@ class CustomRow extends Gtk.ListBoxRow {
 class AddAppRow extends Gtk.ListBoxRow {
   _init(options) {
     super._init();
-    let img = new Gtk.Image();
+    const img = new Gtk.Image();
     img.set_from_icon_name('list-add-symbolic', Gtk.IconSize.BUTTON);
     this.btn = new Gtk.Button({
       label: '',
