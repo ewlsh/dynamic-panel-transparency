@@ -22,7 +22,7 @@ const PERMISSIONS_MODE = 0o0744;
  * @returns {Object} The current shell version.
  *
  */
-function get_shell_version() {
+export function get_shell_version() {
   return { major: MAJOR_VERSION, minor: MINOR_VERSION };
 }
 
@@ -39,7 +39,7 @@ function get_shell_version() {
  * @returns {Number} 'value' or the minimum or maximum.
  *
  */
-function clamp(value, min, max) {
+export function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
@@ -52,7 +52,7 @@ function clamp(value, min, max) {
  * @returns {Boolean} Whether 'window' is a valid window to watch.
  *
  */
-function is_valid(window) {
+export function is_valid(window) {
   if (!Meta) {
     ({ Meta } = imports.gi);
   }
@@ -79,7 +79,7 @@ function is_valid(window) {
  * @returns {Object} GFile for the path or null if the path is not valid.
  *
  */
-function get_file(file_path) {
+export function get_file(file_path) {
   try {
     return Gio.file_new_for_path(file_path);
   } catch (error) {
@@ -98,7 +98,7 @@ function get_file(file_path) {
  * @returns {Boolean} Whether the file write was a success.
  *
  */
-function write_to_file(file_path, text) {
+export function write_to_file(file_path, text) {
   try {
     const file = get_file(file_path);
     const parent = file.get_parent();
@@ -129,7 +129,7 @@ function write_to_file(file_path, text) {
  * @returns {Boolean} Whether the file deletion was a success.
  *
  */
-function remove_file(file_path) {
+export function remove_file(file_path) {
   try {
     const file = get_file(file_path);
     const result = file.delete(null);
@@ -150,7 +150,7 @@ function remove_file(file_path) {
  * @returns {Object} Converted RGB color.
  *
  */
-function gdk_to_css_color(color) {
+export function gdk_to_css_color(color) {
   const red = Math.round(clamp(color.red * 255, 0, 255));
   const green = Math.round(clamp(color.green * 255, 0, 255));
   const blue = Math.round(clamp(color.blue * 255, 0, 255));
@@ -167,7 +167,7 @@ function gdk_to_css_color(color) {
  * @returns {Object} Converted RGB(A) color.
  *
  */
-function clutter_to_native_color(color, alpha = false) {
+export function clutter_to_native_color(color, alpha = false) {
   const output = { red: color.red, green: color.green, blue: color.blue };
   if (alpha) {
     output.alpha = color.alpha;
@@ -184,7 +184,7 @@ function clutter_to_native_color(color, alpha = false) {
  * @returns {Object} Converted RGB(A) color.
  *
  */
-function tuple_to_native_color(tuple) {
+export function tuple_to_native_color(tuple) {
   const color = {};
 
   [color.red, color.green, color.blue] = tuple;
@@ -206,7 +206,7 @@ function tuple_to_native_color(tuple) {
  * @returns {Boolean} Whether the two colors are equal.
  *
  */
-function match_colors(a, b, alpha = false) {
+export function match_colors(a, b, alpha = false) {
   let result = a.red === b.red;
   result = result && a.green === b.green;
   result = result && a.blue === b.blue;
@@ -223,7 +223,7 @@ function match_colors(a, b, alpha = false) {
  * @param {Boolean} [recursive = false] - Whether to recursively traverse the object's children.
  *
  */
-function deep_freeze(type, recursive = false) {
+export function deep_freeze(type, recursive = false) {
   function freeze_children(obj) {
     Object.keys(obj).forEach((value) => {
       if (typeof value === 'object' && !Object.isFrozen(value)) {
@@ -245,6 +245,6 @@ function deep_freeze(type, recursive = false) {
  * @param {Object} method - Method to call.
  *
  */
-function strip_args(method) {
+export function strip_args(method) {
   return () => method();
 }

@@ -28,10 +28,9 @@
 
 const Gettext = imports.gettext;
 
-const Gio = imports.gi.Gio;
+const { Gio } = imports.gi;
 
 const Config = imports.misc.config;
-const ExtensionUtils = imports.misc.extensionUtils;
 
 /**
  * initTranslations:
@@ -40,22 +39,20 @@ const ExtensionUtils = imports.misc.extensionUtils;
  * Initialize Gettext to load translations from extensionsdir/locale.
  * If @domain is not provided, it will be taken from metadata['gettext-domain']
  */
-function initTranslations(domain) {
-    let extension = ExtensionUtils.getCurrentExtension();
+export function initTranslations(extension, def_domain) {
+  const domain = def_domain || extension.metadata['gettext-domain'];
 
-    domain = domain || extension.metadata['gettext-domain'];
+  // check if this extension was built with "make zip-file", and thus
+  // has the locale files in a subfolder
+  // otherwise assume that extension has been installed in the
+  // same prefix as gnome-shell
+  const localeDir = extension.dir.get_child('locale');
 
-    // check if this extension was built with "make zip-file", and thus
-    // has the locale files in a subfolder
-    // otherwise assume that extension has been installed in the
-    // same prefix as gnome-shell
-    let localeDir = extension.dir.get_child('locale');
-
-    if (localeDir.query_exists(null)) {
-        Gettext.bindtextdomain(domain, localeDir.get_path());
-    } else {
-        Gettext.bindtextdomain(domain, Config.LOCALEDIR);
-    }
+  if (localeDir.query_exists(null)) {
+    Gettext.bindtextdomain(domain, localeDir.get_path());
+  } else {
+    Gettext.bindtextdomain(domain, Config.LOCALEDIR);
+  }
 }
 
 /**
@@ -66,10 +63,10 @@ function initTranslations(domain) {
  * in extensionsdir/schemas. If @schema is not provided, it is taken from
  * metadata['settings-schema'].
  */
-function getSettings(schema) {
-    let schemaObj = getSchemaObj(schema);
+export function getSettings(extension, schema) {
+  const schemaObj = getSchemaObj(extension, schema);
 
-    return new Gio.Settings({ settings_schema: schemaObj });
+  return new Gio.Settings({ settings_schema: schemaObj });
 }
 
 /**
@@ -79,32 +76,34 @@ function getSettings(schema) {
  *
  * @returns {Object} A GSettingsSchema found based on the given schema path.
  */
-function getSchemaObj(schema, defaultSource = false) {
-    let extension = ExtensionUtils.getCurrentExtension();
+export function getSchemaObj(extension, def_schema, defaultSource = false) {
+  const schema = def_schema || extension.metadata['settings-schema'];
 
-    schema = schema || extension.metadata['settings-schema'];
+  const GioSSS = Gio.SettingsSchemaSource;
 
-    const GioSSS = Gio.SettingsSchemaSource;
+  // check if this extension was built with "make zip-file", and thus
+  // has the schema files in a subfolder
+  // otherwise assume that extension has been installed in the
+  // same prefix as gnome-shell (and therefore schemas are available
+  // in the standard folders)
+  const schemaDir = extension.dir.get_child('schemas');
+  let schemaSource = null;
 
-    // check if this extension was built with "make zip-file", and thus
-    // has the schema files in a subfolder
-    // otherwise assume that extension has been installed in the
-    // same prefix as gnome-shell (and therefore schemas are available
-    // in the standard folders)
-    let schemaDir = extension.dir.get_child('schemas');
-    let schemaSource = null;
+  if (schemaDir.query_exists(null) && !defaultSource) {
+    schemaSource = GioSSS.new_from_directory(schemaDir.get_path(), GioSSS.get_default(), false);
+  } else {
+    schemaSource = GioSSS.get_default();
+  }
 
-    if (schemaDir.query_exists(null) && !defaultSource) {
-        schemaSource = GioSSS.new_from_directory(schemaDir.get_path(), GioSSS.get_default(), false);
-    } else {
-        schemaSource = GioSSS.get_default();
-    }
+  const schemaObj = schemaSource.lookup(schema, true);
 
-    let schemaObj = schemaSource.lookup(schema, true);
+  if (!schemaObj) {
+    throw new Error(
+      `Schema ${schema} could not be found for extension ${
+        extension.metadata.uuid
+      }. Please check your installation.`
+    );
+  }
 
-    if (!schemaObj) {
-        throw new Error('Schema ' + schema + ' could not be found for extension ' + extension.metadata.uuid + '. Please check your installation.');
-    }
-
-    return schemaObj;
+  return schemaObj;
 }

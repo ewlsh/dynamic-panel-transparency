@@ -10,4 +10,4 @@ styles/
 globals.d.ts
 node_modules/
 dynamic-panel-transparency@rockon999.github.io/**
-
+dist/**

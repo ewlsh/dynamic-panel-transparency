@@ -1,17 +1,18 @@
 /* exported init, buildPrefsWidget */
 
+import * as Convenience from '../src/convenience';
+import * as Util from '../src/util';
+import * as Tweaks from './tweaks';
+import { AppRow, AddAppRow, CustomRow } from './appRow';
+import AppChooser from './appChooser';
+
 const {
   gi: {
     GLib, GObject, Gdk, Gio, Gtk
-  },
-  appChooser: AppChooser,
-  appRow: AppRow,
-  tweaks: Tweaks
+  }
 } = imports;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-
-const { convenience: Convenience, util: Util } = Me.imports;
 
 const Gettext = imports.gettext.domain('dynamic-panel-transparency');
 const _ = Gettext.gettext;
@@ -73,7 +74,7 @@ const WEBSITE_LABEL_TOP_MARGIN = 20;
 const SCALE_FACTOR = 255.9999999;
 
 function init() {
-  Convenience.initTranslations();
+  Convenience.initTranslations(Me);
 }
 
 /* UI Setup */
@@ -81,7 +82,9 @@ function buildPrefsWidget() {
   /* Stores settings until the user applies them. */
 
   /* Get Settings */
-  const settings = Convenience.getSettings();
+  log(`testing: ${JSON.stringify(Convenience)}`);
+  const settings = Convenience.getSettings(Me);
+  log(settings);
   /* Create a UI Builder */
   const builder = new Gtk.Builder();
   /* Setup Translation */
@@ -434,17 +437,17 @@ function buildPrefsWidget() {
   {
     const app_list = builder.get_object('app_list');
     app_list.set_sort_func((a, b) => {
-      if (a.constructor === AppRow.AddAppRow) {
+      if (a instanceof AddAppRow) {
         return 1;
       }
-      if (b.constructor === AppRow.AddAppRow) {
+      if (b instanceof AddAppRow) {
         return -1;
       }
 
-      if (a.constructor !== AppRow.AppRow) {
+      if (a instanceof AppRow) {
         return 1;
       }
-      if (b.constructor !== AppRow.AppRow) {
+      if (b instanceof AppRow) {
         return -1;
       }
       const aname = a.app_name;
@@ -557,6 +560,7 @@ function buildPrefsWidget() {
       dialog.transient_for = main_widget.get_toplevel();
       const custom_path = `${path}${app_id}/`;
       const obj = Convenience.getSchemaObj(
+        Me,
         'org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides'
       );
       const app_settings = new Gio.Settings({
@@ -669,6 +673,7 @@ function buildPrefsWidget() {
         extras.forEach((extra) => {
           const extra_custom_path = `${path}${extra}/`;
           const extra_obj = Convenience.getSchemaObj(
+            Me,
             'org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides'
           );
           const extra_settings = new Gio.Settings({
@@ -749,7 +754,7 @@ function buildPrefsWidget() {
     app_overrides
       .map(override => Gio.DesktopAppInfo.new(override))
       .filter(a => a)
-      .map(app_info => new AppRow.AppRow(app_info, app_cfg, rmv))
+      .map(app_info => new AppRow(app_info, app_cfg, rmv))
       .forEach((row) => {
         row.show_all();
         app_list.add(row);
@@ -766,7 +771,7 @@ function buildPrefsWidget() {
 
         if (!found) {
           const extra_wm_class = tweak.wm_class.length <= 1 ? [] : tweak.wm_class.slice(1);
-          const row = new AppRow.CustomRow(
+          const row = new CustomRow(
             tweak.name,
             tweak.wm_class[0],
             tweak_cfg,
@@ -778,17 +783,17 @@ function buildPrefsWidget() {
           current_tweaks.push(tweak);
         }
       } else {
-        const row = new AppRow.CustomRow(override, override, window_cfg, window_rmv);
+        const row = new CustomRow(override, override, window_cfg, window_rmv);
         row.show_all();
         app_list.add(row);
       }
     });
 
-    const add = new AppRow.AddAppRow();
+    const add = new AddAppRow();
     add.btn.connect('clicked', () => {
       Gio.Application.get_default().mark_busy();
       let overrides = settings.get_strv('app-overrides');
-      const a2 = new AppChooser.AppChooser(main_widget.get_toplevel(), overrides);
+      const a2 = new AppChooser(main_widget.get_toplevel(), overrides);
       a2.show_all();
       Gio.Application.get_default().unmark_busy();
       const response = a2.run();
@@ -798,7 +803,7 @@ function buildPrefsWidget() {
           if (typeof selected_app === 'string') {
             const tweak = Tweaks.by_uuid(selected_app);
             if (tweak) {
-              const row = new AppRow.CustomRow(
+              const row = new CustomRow(
                 tweak.name,
                 tweak.wm_class[0],
                 tweak_cfg,
@@ -823,7 +828,7 @@ function buildPrefsWidget() {
               }
             }
           } else {
-            const row = new AppRow.AppRow(selected_app, app_cfg, rmv);
+            const row = new AppRow(selected_app, app_cfg, rmv);
             row.show_all();
             app_list.add(row);
             overrides = settings.get_strv('app-overrides');
@@ -872,7 +877,7 @@ function buildPrefsWidget() {
         const text = entry.get_text();
 
         if (response === Gtk.ResponseType.OK) {
-          const row = new AppRow.CustomRow(text, window_cfg, window_rmv);
+          const row = new CustomRow(text, window_cfg, window_rmv);
           row.show_all();
           app_list.add(row);
           const overrides = settings.get_strv('window-overrides');
@@ -982,3 +987,6 @@ function buildPrefsWidget() {
   main_widget.show_all();
   return main_widget;
 }
+
+Me.imports.prefs.init = init;
+Me.imports.prefs.buildPrefsWidget = buildPrefsWidget;

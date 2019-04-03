@@ -1,6 +1,6 @@
 /* exported get_tweaks, by_uuid, by_name, by_wm_class */
 
-var get_tweaks = function() {
+export function get_tweaks() {
   return [
     {
       uuid: 'drop-down-terminal@gs-extensions.zzrough.org',
@@ -9,26 +9,26 @@ var get_tweaks = function() {
       trigger: true
     }
   ];
-};
+}
 
-var by_uuid = function(uuid) {
+export function by_uuid(uuid) {
   return get_tweaks().find(tweak => uuid === tweak.uuid) || null;
-};
+}
 
-var by_name = function(name) {
-  for (let tweak of get_tweaks()) {
+export function by_name(name) {
+  for (const tweak of get_tweaks()) {
     if (name === tweak.name) {
       return tweak;
     }
   }
   return null;
-};
+}
 
-var by_wm_class = function(wm_class) {
-  for (let tweak of get_tweaks()) {
+export function by_wm_class(wm_class) {
+  for (const tweak of get_tweaks()) {
     if (tweak.wm_class.indexOf(wm_class) !== -1) {
       return tweak;
     }
   }
   return null;
-};
+}

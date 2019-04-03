@@ -1,11 +1,10 @@
 /* exported registerClass */
 
-const {
-  lang: Lang,
-  gi: { GObject }
-} = imports;
+const { lang: Lang } = imports;
 
-function registerClass(...args) {
+const { GObject } = imports.gi;
+
+export default function registerClass(...args) {
   if (typeof GObject.registerClass === 'function') {
     return GObject.registerClass(...args);
   }
