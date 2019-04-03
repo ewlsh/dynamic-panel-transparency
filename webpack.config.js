@@ -26,7 +26,11 @@ module.exports = {
   module: {
     rules: [
       {
-        include: [path.resolve(__dirname, 'src')],
+        include: [
+          path.resolve(__dirname, 'lib'),
+          path.resolve(__dirname, 'src'),
+          path.resolve(__dirname, 'preferences')
+        ],
         loader: 'babel-loader',
         options: {
           babelrc: true
