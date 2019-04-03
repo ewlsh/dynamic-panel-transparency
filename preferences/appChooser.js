@@ -63,7 +63,7 @@ function build_widget(app_info) {
   let img = null;
 
   if (icon) {
-    img = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.MENU);
+    img = _image_from_gicon(icon);
   } else {
     img = Gtk.Image.new_from_icon_name('dialog-question', Gtk.IconSize.MENU);
   }
@@ -88,6 +88,13 @@ function build_widget(app_info) {
   row.__dpt__info = app_info;
 
   return row;
+}
+
+function _image_from_gicon(gicon) {
+  const image = Gtk.Image.new_from_gicon(gicon, Gtk.IconSize.DIALOG);
+  const [, , h] = Gtk.IconSize.lookup(Gtk.IconSize.DIALOG);
+  image.set_pixel_size(h);
+  return image;
 }
 
 const AppChooser = GObjectClass(
@@ -169,7 +176,7 @@ const AppChooser = GObjectClass(
       this.get_content_area().pack_start(scrolled_window, true, true, 0);
       this.set_modal(true);
       this.set_transient_for(main_window);
-      this.set_size_request(400, 300);
+      this.set_size_request(800, 600);
       this.listbox = list_box;
       this.connect('key-press-event', this.on_key_press.bind(this));
     }
