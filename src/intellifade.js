@@ -114,9 +114,6 @@ export default class Intellifader {
     }
   }
 
-  /* Main extension logic. Modified to fit Gnome Shell 3.26 design patterns. */
-
-  // TODO: Cleanup use of variable flags.
   _check() {
     if (Main.overview._shown) {
       return;
@@ -179,7 +176,6 @@ export default class Intellifader {
         /* Make sure the window is on the correct monitor, isn't minimized */
         /* isn't supposed to be excluded, and is actually maximized. */
         if (!Util.is_valid(current_window)) {
-          // TODO
           continue; // eslint-disable-line no-continue
         }
 

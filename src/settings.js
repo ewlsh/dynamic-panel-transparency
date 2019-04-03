@@ -306,8 +306,6 @@ export default class Settings {
       if (setting.handler) {
         this.settingsBoundIds.push(
           this._settings.connect(`changed::${setting.key}`, () => {
-            // TODO: Find a better way to handle settings being changed right
-            // as the extension starts up.
             try {
               setting.handler.call(this);
             } catch (error) {
