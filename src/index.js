@@ -1,4 +1,6 @@
 /* exported init, enable, disable */
+import 'core-js/es/symbol/iterator';
+
 import * as Convenience from '../lib/convenience';
 import Intellifade from './intellifade';
 import Settings from './settings';

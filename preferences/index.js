@@ -1,4 +1,5 @@
 /* exported init, buildPrefsWidget */
+import 'core-js/es/symbol/iterator';
 
 import * as Convenience from '../lib/convenience';
 import * as Util from '../lib/util';

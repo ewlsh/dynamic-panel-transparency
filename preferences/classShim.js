@@ -29,9 +29,5 @@ export default function registerClass(...args) {
 
   const Klass = new Lang.Class(meta);
 
-  Object.getOwnPropertyNames(klass).forEach((nm) => {
-    Klass[nm] = klass[nm];
-  });
-
   return Klass;
 }
