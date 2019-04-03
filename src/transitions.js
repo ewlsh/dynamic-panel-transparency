@@ -1,10 +1,10 @@
+import { GLib, Shell } from '../imports/gi';
+import { Equations } from '../imports/tweener';
+
+const { St } = Shell;
+
 /* exported init, cleanup, lock, unlock, get_animation_status, get_transparency_status */
 /* exported fade_in, fade_out, blank_fade_out, minimum_fade_in, update_transition_type */
-
-const {
-  gi: { GLib, St },
-  tweener: { equations: Equations }
-} = imports;
 
 const CORNER_UPDATE_FREQUENCY = 30;
 

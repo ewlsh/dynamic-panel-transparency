@@ -1,7 +1,6 @@
 /* exported init, cleanup, remove_maximized_background_color, remove_unmaximized_background_color set_maximized_background_color, set_unmaximized_background_color, remove_background_color, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */ // eslint-disable-line max-len
 
-import * as Util from './util';
-
+import * as Util from '../lib/util';
 
 const {
   gi: { GdkPixbuf, GLib, St },

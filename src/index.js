@@ -1,9 +1,9 @@
 /* exported init, enable, disable */
-import * as Convenience from './convenience';
+import * as Convenience from '../lib/convenience';
 import Intellifade from './intellifade';
 import Settings from './settings';
 import Events from './events';
-import * as Util from './util';
+import * as Util from '../lib/util';
 
 import Theming from './theming';
 import Transitions from './transitions';
@@ -338,7 +338,6 @@ class Extension {
           }
 
           const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, () => {
-            // eslint-disable-line no-magic-numbers
             if (id !== this.panel_transition_update_id) {
               return false;
             }
@@ -380,7 +379,6 @@ class Extension {
           this.themingManager.initialize_background_styles();
 
           const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, () => {
-            // eslint-disable-line no-magic-numbers
             if (id !== this.panel_color_update_id) {
               return false;
             }
@@ -431,7 +429,6 @@ class Extension {
           this.themingManager.initialize_background_styles();
 
           const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, () => {
-            // eslint-disable-line no-magic-numbers
             if (id !== this.panel_color_update_id) {
               return false;
             }
@@ -482,7 +479,6 @@ class Extension {
           }
           this.themingManager.register_background_color(this.settingsManager.get_panel_color());
           const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, () => {
-            // eslint-disable-line no-magic-numbers
             if (id !== this.panel_color_update_id) {
               return false;
             }
@@ -585,7 +581,6 @@ class Extension {
           this.settingsManager.get_text_shadow_position()
         );
         const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, () => {
-          // eslint-disable-line no-magic-numbers
           if (id !== this.text_shadow_update_id) {
             return false;
           }
@@ -629,7 +624,6 @@ class Extension {
           this.settingsManager.get_icon_shadow_position()
         );
         const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, () => {
-          // eslint-disable-line no-magic-numbers
           if (id !== this.icon_shadow_update_id) {
             return false;
           }
@@ -674,7 +668,6 @@ class Extension {
           this.settingsManager.get_icon_shadow_position()
         );
         const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, () => {
-          // eslint-disable-line no-magic-numbers
           if (id !== this.icon_shadow_update_id) {
             return false;
           }
@@ -720,7 +713,6 @@ class Extension {
         );
 
         const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, SETTINGS_DELAY, () => {
-          // eslint-disable-line no-magic-numbers
           if (id !== this.text_shadow_update_id) {
             return false;
           }

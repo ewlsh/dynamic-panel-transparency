@@ -1,7 +1,7 @@
 /* exported init, cleanup, get_current_maximized_window */
 
-import * as Convenience from './convenience';
-import * as Util from './util';
+import * as Convenience from '../lib/convenience';
+import * as Util from '../lib/util';
 
 const { GLib, Gio, Shell } = imports.gi;
 
@@ -235,7 +235,6 @@ export default class EventsManager {
 
     /* Hopefully every computer is fast enough to apply a theme in three seconds. */
     const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 3000, () => {
-      // eslint-disable-line no-magic-numbers
       if (id !== this.theme_detection_id) {
         return false;
       }

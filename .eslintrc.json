@@ -16,12 +16,6 @@
     "no-underscore-dangle": ["off"],
     "prefer-template": ["error"],
     "no-eq-null": 2,
-    "no-magic-numbers": [
-      1,
-      {
-        "ignore": [-1, 0, 1, 2, 100, 255]
-      }
-    ],
     "quotes": ["error", "single"],
     "no-delete-var": 1,
     "comma-dangle": "off",

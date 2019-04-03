@@ -1,13 +1,9 @@
 import GObjectClass from './classShim';
 import * as Tweaks from './tweaks';
-
-const {
-  misc: { extensionUtils: ExtensionUtils }
-} = imports;
-
-const {
+import {
   Gdk, Gio, Gtk, GObject
-} = imports.gi;
+} from '../imports/gi';
+import { ExtensionUtils } from '../imports/misc';
 
 const gtk30_ = imports.gettext.domain('gtk30').gettext;
 

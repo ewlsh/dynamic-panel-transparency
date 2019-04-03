@@ -21,15 +21,17 @@ export default function registerClass(...args) {
   meta.Name = `shim__${klass.name}`;
   meta.Extends = Object.getPrototypeOf(klass);
 
-  log(`Assigning: ${JSON.stringify(Object.getOwnPropertyNames(klass.prototype))}`);
-
   Object.getOwnPropertyNames(klass.prototype).forEach((nm) => {
     meta[nm] = klass.prototype[nm];
   });
 
   delete meta.constructor;
 
-  log(`Assigned: ${JSON.stringify(Object.getOwnPropertyNames(meta))}`);
+  const Klass = new Lang.Class(meta);
 
-  return new Lang.Class(meta);
+  Object.getOwnPropertyNames(klass).forEach((nm) => {
+    Klass[nm] = klass[nm];
+  });
+
+  return Klass;
 }

@@ -1,18 +1,16 @@
 /* exported init, buildPrefsWidget */
 
-import * as Convenience from '../src/convenience';
-import * as Util from '../src/util';
+import * as Convenience from '../lib/convenience';
+import * as Util from '../lib/util';
 import * as Tweaks from './tweaks';
 import { AppRow, AddAppRow, CustomRow } from './appRow';
+import { ExtensionUtils } from '../imports/misc';
 import AppChooser from './appChooser';
+import {
+  Gtk, GObject, Gdk, Gio, GLib
+} from '../imports/gi';
 
-const {
-  gi: {
-    GLib, GObject, Gdk, Gio, Gtk
-  }
-} = imports;
-
-const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Me = ExtensionUtils.getCurrentExtension();
 
 const Gettext = imports.gettext.domain('dynamic-panel-transparency');
 const _ = Gettext.gettext;
@@ -383,7 +381,7 @@ function buildPrefsWidget() {
     /* Add formatting */
     maximum_scale.connect(
       'format-value',
-      (scale, value) => `${((value / SCALE_FACTOR) * 100).toFixed(0)}%` // eslint-disable-line no-magic-numbers
+      (scale, value) => `${((value / SCALE_FACTOR) * 100).toFixed(0)}%`
     );
     maximum_scale.connect('value-changed', (widget) => {
       settings.set_value(
@@ -399,7 +397,7 @@ function buildPrefsWidget() {
     /* Add formatting */
     minimum_scale.connect(
       'format-value',
-      (scale, value) => `${((value / SCALE_FACTOR) * 100).toFixed(0)}%` // eslint-disable-line no-magic-numbers
+      (scale, value) => `${((value / SCALE_FACTOR) * 100).toFixed(0)}%`
     );
     minimum_scale.connect('value-changed', (widget) => {
       settings.set_value(
@@ -588,7 +586,7 @@ function buildPrefsWidget() {
       /* Add formatting */
       _maximum_scale.connect(
         'format-value',
-        (scale, value) => `${((value / SCALE_FACTOR) * 100).toFixed(0)}%` // eslint-disable-line no-magic-numbers
+        (scale, value) => `${((value / SCALE_FACTOR) * 100).toFixed(0)}%`
       );
       _maximum_scale.connect('value-changed', (widget) => {
         temp_app_settings.maximum_opacity = widget.adjustment.get_value();

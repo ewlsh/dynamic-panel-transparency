@@ -140,7 +140,7 @@ export const CustomRow = GObjectClass(
 export const AddAppRow = GObjectClass(
   class AddAppRow extends Gtk.ListBoxRow {
     _init(options) {
-      super._init();
+      super._init(options);
       const img = new Gtk.Image();
       img.set_from_icon_name('list-add-symbolic', Gtk.IconSize.BUTTON);
       this.btn = new Gtk.Button({

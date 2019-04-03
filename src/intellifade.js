@@ -1,15 +1,10 @@
 /* exported init, cleanup, asyncCheck, syncCheck, forceAsyncCheck, forceSyncCheck, get_current_maximized_window */ // eslint-disable-line max-len
 
-import * as Util from './util';
+import * as Util from '../lib/util';
+import { Shell, GLib } from '../imports/gi';
+import { Main } from '../imports/ui';
 
-
-const {
-  ui: { main: Main }
-} = imports;
-
-const {
-  GLib, Meta, Shell, St
-} = imports.gi;
+const { St, Meta, Actor } = Shell;
 
 /* How often the asynchronous loop should run in milliseconds... */
 const ASYNC_UPDATE_FREQUENCY = 200; // ms
@@ -22,7 +17,7 @@ export default class Intellifader {
   }
 
   initialize() {
-    this._wm_tracker = Shell.WindowTracker.get_default();
+    this._wm_tracker = Actor.WindowTracker.get_default();
 
     this._updateBounds();
 

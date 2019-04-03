@@ -1,6 +1,6 @@
 /* exported init, cleanup, add, add_app_setting, add_app_override, check_overrides, check_triggers, bind, unbind */ // eslint-disable-line max-len
 
-import * as Convenience from './convenience';
+import * as Convenience from '../lib/convenience';
 
 const Params = imports.misc.params;
 const { GLib, Gio } = imports.gi;
