@@ -27,6 +27,7 @@ module.exports = {
     rules: [
       {
         include: [
+          path.resolve(__dirname, 'imports'),
           path.resolve(__dirname, 'lib'),
           path.resolve(__dirname, 'src'),
           path.resolve(__dirname, 'preferences')

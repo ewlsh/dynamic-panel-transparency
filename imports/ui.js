@@ -1,1 +1,1 @@
-export const { main: Main, panel: Panel } = imports.ui;
+export const { main: Main, panel: Panel, extensionSystem: ExtensionSystem } = imports.ui;

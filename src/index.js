@@ -2,18 +2,20 @@
 import 'core-js/es/symbol/iterator';
 
 import * as Convenience from '../lib/convenience';
-import Intellifade from './intellifade';
-import Settings from './settings';
-import Events from './events';
 import * as Util from '../lib/util';
 
-import Theming from './theming';
-import Transitions from './transitions';
+import Intellifader from './intellifade';
+import SettingsManager from './settings';
+import EventsManager from './events';
+import ThemingManager from './theming';
+import TransitionsManager from './transitions';
+import { GLib, Gio, Shell } from '../imports/gi';
+import { Main, ExtensionSystem } from '../imports/ui';
+import { ExtensionUtils } from '../imports/misc';
 
-const { GLib, Gio, St } = imports.gi;
-const Me = imports.misc.extensionUtils.getCurrentExtension();
+const { St } = Shell;
 
-const { extensionSystem: ExtensionSystem, main } = imports.ui;
+const currentExtension = () => ExtensionUtils.getCurrentExtension();
 
 const SETTINGS_DELAY = 3000;
 
@@ -22,24 +24,21 @@ const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
 /* Only way to prevent multiple runs apparently. Hacky-ness. */
 const modified = false;
 
-/* User theme extension settings... */
-let theme_settings = null;
-
 /* Initialize */
 class Extension {
   enable() {
-    this.settingsManager = new Settings();
-    this.themingManager = new Theming(this.settingsManager);
-    this.transitionManager = new Transitions(this.settingsManager, this.themingManager);
-    this.intellifader = new Intellifade(
+    this.settingsManager = new SettingsManager();
+    this.themingManager = new ThemingManager(this.settingsManager);
+    this.transitionsManager = new TransitionsManager(this.settingsManager, this.themingManager);
+    this.intellifader = new Intellifader(
       this.settingsManager,
-      this.transitionManager,
+      this.transitionsManager,
       this.themingManager
     );
 
-    this.eventsManager = new Events(
+    this.eventsManager = new EventsManager(
       this,
-      this.transitionManager,
+      this.transitionsManager,
       this.settingsManager,
       this.intellifader,
       this.themingManager
@@ -48,13 +47,11 @@ class Extension {
     /* Initialize Settings */
     this.initialize_settings();
 
-    /* Initialize Utilities */
-
     try {
-      const schemaObj = Convenience.getSchemaObj(Me, USER_THEME_SCHEMA, true);
+      const schemaObj = Convenience.getSchemaObj(currentExtension(), USER_THEME_SCHEMA, true);
 
       if (schemaObj) {
-        theme_settings = new Gio.Settings({
+        this.theme_settings = new Gio.Settings({
           settings_schema: schemaObj
         });
       }
@@ -62,18 +59,18 @@ class Extension {
       log('[Dynamic Panel Transparency] Failed to find the user theme extension.');
     }
 
-    if (!theme_settings) {
+    if (!this.theme_settings) {
       this.idle_enable(false);
     } else {
       /* Is our data current? */
-      let theme_name = theme_settings.get_string('name');
+      let theme_name = this.theme_settings.get_string('name');
       theme_name = theme_name === '' ? 'Adwaita' : theme_name;
 
       const current = this.settingsManager.get_current_user_theme();
 
       if (current !== theme_name || this.settingsManager.force_theme_update()) {
         /* Wait for the theme extension to initialize and enable. */
-        this.idle_enable(true, theme_settings);
+        this.idle_enable(true, this.theme_settings);
       } else {
         /* Start the plugin. We have our data. */
         log(
@@ -128,7 +125,7 @@ class Extension {
       if (update) {
         log('[Dynamic Panel Transparency] Updating user theme data.');
 
-        const theme = main.panel.actor.get_theme_node();
+        const theme = Main.panel.actor.get_theme_node();
 
         const image_background = this.themingManager.get_background_image_color(theme);
         const theme_background = theme.get_background_color();
@@ -191,27 +188,32 @@ class Extension {
   }
 
   cleanup() {
-    /* Do this first in case any of the upcoming methods fail. */
-    this.unmodify_panel();
+    try {
+      /* Do this first in case any of the upcoming methods fail. */
+      this.unmodify_panel();
 
-    /* Disconnect & Null Signals */
-    this.eventsManager.cleanup();
+      /* Disconnect & Null Signals */
+      this.eventsManager.cleanup();
 
-    /* Cleanup Settings */
-    this.settingsManager.unbind();
-    this.settingsManager.cleanup();
+      /* Cleanup Settings */
+      this.settingsManager.unbind();
+      this.settingsManager.cleanup();
 
-    /* Cleanup Transitions */
-    this.transitionManager.cleanup();
+      /* Cleanup Transitions */
+      this.transitionsManager.cleanup();
 
-    /* Cleanup Theming */
-    this.themingManager.cleanup();
+      /* Cleanup Theming */
+      this.themingManager.cleanup();
 
-    /* Cleanup Intellifade */
-    this.intellifader.cleanup();
+      /* Cleanup Intellifade */
+      this.intellifader.cleanup();
 
-    /* Shouldn't be an issue, but let's make sure it isn't. */
-    this.modified = false;
+      /* Shouldn't be an issue, but let's make sure it isn't. */
+      this.modified = false;
+    } catch (e) {
+      this.modified = false;
+      log(e);
+    }
 
     return false;
   }
@@ -313,7 +315,7 @@ class Extension {
       name: 'hide_corners',
       type: 'b',
       handler: () => {
-        this.transitionManager.update_corner_alpha();
+        this.transitionsManager.update_corner_alpha();
       }
     });
     this.settingsManager.add({
@@ -323,7 +325,7 @@ class Extension {
       handler:
         /* Update the backend24 transition CSS. */
         () => {
-          main.panel.actor.remove_style_class_name('dpt-panel-transition-duration');
+          Main.panel.actor.remove_style_class_name('dpt-panel-transition-duration');
 
           const theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
 
@@ -833,12 +835,14 @@ let extension;
 
 /* exported enable, disable */
 
-Me.imports.extension.enable = function enable() {
+const ext = currentExtension();
+
+ext.imports.extension.enable = function enable() {
   extension = new Extension();
   extension.enable(global.stage);
 };
 
-Me.imports.extension.disable = function disable() {
+ext.imports.extension.disable = function disable() {
   if (extension) {
     extension.cleanup();
   }
