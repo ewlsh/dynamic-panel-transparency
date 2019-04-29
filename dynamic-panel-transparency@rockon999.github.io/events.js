@@ -93,6 +93,16 @@ function init() {
     }
 }
 
+function disconnect(obj, sig) {
+    try {
+        if (sig != null && obj) {
+            obj.disconnect(sig);
+        }
+    } catch (error) {
+        log('[Dynamic Panel Transparency] Failed to disconnect signal: ' + error);
+    }
+}
+
 /**
  * Don't want to hold onto anything that isn't ours.
  *
@@ -100,36 +110,36 @@ function init() {
 function cleanup() {
     /* Disconnect Signals */
     if (this._windowUnminimizeSig) {
-        global.window_manager.disconnect(this._windowUnminimizeSig);
+        disconnect(global.window_manager, this._windowUnminimizeSig);
     }
 
-    Main.overview.disconnect(this._overviewShownSig);
-    Main.overview.disconnect(this._overviewHidingSig);
+    disconnect(Main.overview, this._overviewShownSig);
+    disconnect(Main.overview, this._overviewHidingSig);
 
-    global.window_manager.disconnect(this._workspaceSwitchSig);
+    disconnect(global.window_manager, this._workspaceSwitchSig);
 
-    global.window_group.disconnect(this._windowActorAddedSig);
-    global.window_group.disconnect(this._windowActorRemovedSig);
+    disconnect(global.window_group, this._windowActorAddedSig);
+    disconnect(global.window_group, this._windowActorRemovedSig);
 
     const screen = global.screen || global.display;
 
     if (screen) {
-       screen.disconnect(this._windowRestackedSig);
+        disconnect(screen, this._windowRestackedSig);
     } else {
         log('[Dynamic Panel Transparency] Error could not disconnect \'restacked\' event.');
     }
 
-    this._wm_tracker.disconnect(this._appFocusedSig);
+    disconnect(this._wm_tracker, this._appFocusedSig);
 
     if (this._theme_settings && this._userThemeChangedSig) {
-        this._theme_settings.disconnect(this._userThemeChangedSig);
+        disconnect(this._theme_settings, this._userThemeChangedSig);
     }
 
     for (let window_actor of this.windows) {
 
-        if (typeof(window_actor._dpt_signals) !== 'undefined') {
+        if (typeof (window_actor._dpt_signals) !== 'undefined') {
             for (let signalId of window_actor._dpt_signals) {
-                window_actor.disconnect(signalId);
+                disconnect(window_actor, signalId);
             }
         }
 
@@ -180,14 +190,14 @@ function _overviewShown() {
  *
  */
 function _windowActorRemoved(container, window_actor) {
-    if (typeof(window_actor._dpt_tracking) === 'undefined') {
+    if (typeof (window_actor._dpt_tracking) === 'undefined') {
         return;
     }
 
     /* Remove our tracking variable. */
     delete window_actor._dpt_tracking;
 
-    if (typeof(window_actor._dpt_signals) !== 'undefined') {
+    if (typeof (window_actor._dpt_signals) !== 'undefined') {
         for (let signalId of window_actor._dpt_signals) {
             window_actor.disconnect(signalId);
         }
@@ -264,7 +274,7 @@ function _userThemeChanged() {
  *
  */
 function _windowActorAdded(window_group, window_actor, force = true) {
-    if (window_actor && (force || typeof(window_actor._dpt_tracking) === 'undefined')) {
+    if (window_actor && (force || typeof (window_actor._dpt_tracking) === 'undefined')) {
         window_actor._dpt_tracking = true;
         const ac_wId = window_actor.connect('allocation-changed', (function() {
             Intellifade.asyncCheck();
