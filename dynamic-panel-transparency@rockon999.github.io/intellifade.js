@@ -38,6 +38,10 @@ function init() {
 
 function cleanup() {
     this._wm_tracker = null;
+
+    if (timeoutId > 0) {
+        Mainloop.source_remove(timeoutId);
+    }
 }
 
 function forceSyncCheck() {
