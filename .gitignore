@@ -9,3 +9,6 @@ styles/
 *#
 .buildconfig
 globals.d.ts
+
+
+node_modules/**
