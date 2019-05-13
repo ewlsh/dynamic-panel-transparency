@@ -156,21 +156,25 @@ function disable() {
     /* Do this first in case any of the upcoming methods fail. */
     unmodify_panel();
 
-    /* Disconnect & Null Signals */
-    Events.cleanup();
+    try {
+        /* Disconnect & Null Signals */
+        Events.cleanup();
 
-    /* Cleanup Settings */
-    Settings.unbind();
-    Settings.cleanup();
+        /* Cleanup Settings */
+        Settings.unbind();
+        Settings.cleanup();
 
-    /* Cleanup Transitions */
-    Transitions.cleanup();
+        /* Cleanup Transitions */
+        Transitions.cleanup();
 
-    /* Cleanup Theming */
-    Theming.cleanup();
+        /* Cleanup Theming */
+        Theming.cleanup();
 
-    /* Cleanup Intellifade */
-    Intellifade.cleanup();
+        /* Cleanup Intellifade */
+        Intellifade.cleanup();
+    } catch (error) {
+        log('[DPT] Encountered an error cleaning up extension: ' + error);
+    }
 
     /* Shouldn't be an issue, but let's make sure it isn't. */
     modified = false;
