@@ -31,7 +31,6 @@ const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
  * window_group/actor-added: occurs when a window actor is added
  * window_group/actor-removed: occurs when a window actor is removed
  * wm/switch-workspace: occurs after a workspace is switched
- *
  */
 
 /**
@@ -136,10 +135,11 @@ function cleanup() {
     }
 
     for (let window_actor of this.windows) {
-
-        if (typeof (window_actor._dpt_signals) !== 'undefined') {
-            for (let signalId of window_actor._dpt_signals) {
-                disconnect(window_actor, signalId);
+        if (!window_actor.is_destroyed()) {
+            if (typeof (window_actor._dpt_signals) !== 'undefined') {
+                for (let signalId of window_actor._dpt_signals) {
+                    disconnect(window_actor, signalId);
+                }
             }
         }
 
