@@ -14,6 +14,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
 
+const Compat = Me.imports.compat;
 const Transitions = Me.imports.transitions;
 const Theming = Me.imports.theming;
 
@@ -97,8 +98,9 @@ function asyncCheck() {
 
 }
 
+
 function _updateBounds() {
-    let panel = Main.panel.actor;
+    const panel = Compat.getActorOf(Main.panel);
 
     this.panel_bounds = {
         x: panel.get_x(),
