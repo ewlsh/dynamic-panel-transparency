@@ -28,7 +28,12 @@ var AppRow = new Lang.Class({
     let img = null;
 
     if (typeof icn !== "undefined" && icn !== null) {
-      img = Gtk.Image.new_from_gicon(icn, Gtk.IconSize.MENU);
+      img = Gtk.Image.new_from_gicon(icn, Gtk.IconSize.DIALOG);
+
+      const [,,h] = Gtk.IconSize.lookup(Gtk.IconSize.DIALOG);
+      img.set_pixel_size(h);
+      img.set_hexpand(false);
+
       grid.attach(img, 0, 0, 1, 1);
     }
 
