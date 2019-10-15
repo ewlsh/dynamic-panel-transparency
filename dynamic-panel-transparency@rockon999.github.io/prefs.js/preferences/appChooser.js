@@ -66,7 +66,17 @@ var AppChooser = new Lang.Class({
     }
 
     for (let tweak of Tweaks.get_tweaks()) {
-      if (ExtensionUtils.extensions[tweak.uuid]) {
+      const exists = uuid => {
+        // Support pre-3.34
+        if (ExtensionUtils.extensions) {
+          return ExtensionUtils.extensions[uuid];
+        }
+
+        // No easy way to support 3.34 as GNOME Shell moved the extension state into the shell UI code.
+        return true;
+      };
+
+      if (exists(tweak.uuid)) {
         let app_widget = this.build_widget(tweak.name, null);
         if (app_widget) {
           list_box.add(app_widget);
@@ -110,36 +120,14 @@ var AppChooser = new Lang.Class({
   },
 
   sort_apps: function(a, b) {
-    let aname, bname;
-    let info;
+    let a_info = a.__dpt__info || {};
+    let b_info = b.__dpt__info || {};
 
-    if (typeof a.__dpt__info !== 'undefined') {
-      info = a.__dpt__info;
-    }
+    const aname = typeof a_info === 'string' ? Tweaks.by_uuid(a_info).name : a_info.get_name();
+    const bname = typeof b_info === 'string' ? Tweaks.by_uuid(b_info).name : b_info.get_name();
 
-    if (typeof info === 'string') {
-      aname = Tweaks.by_uuid(info).name;
-    } else if (info !== null) {
-      aname = info.get_name();
-    }
 
-    if (typeof b.__dpt__info !== 'undefined') {
-      info = b.__dpt__info;
-    }
-
-    if (typeof info === 'string') {
-      bname = Tweaks.by_uuid(info).name;
-    } else if (info !== null) {
-      bname = info.get_name();
-    }
-
-    if (aname < bname) {
-      return -1;
-    } else if (aname > bname) {
-      return 1;
-    } else {
-      return 0;
-    }
+    return (aname && aname.localeCompare(bname)) || 1;
   },
 
   build_widget: function(name, icon) {
@@ -158,14 +146,17 @@ var AppChooser = new Lang.Class({
     let img = null;
 
     if (icon) {
-      img = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.MENU);
+      img = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.DIALOG);
     } else {
-      img = Gtk.Image.new_from_icon_name('dialog-question', Gtk.IconSize.MENU);
+      img = Gtk.Image.new_from_icon_name('dialog-question', Gtk.IconSize.DIALOG);
     }
 
     row_grid.attach(img, 0, 0, 1, 1);
 
     img.hexpand = false;
+
+    const [, , h] = Gtk.IconSize.lookup(Gtk.IconSize.DIALOG);
+    img.set_pixel_size(h);
 
     let list_box = new Gtk.Label({
       label: name,
