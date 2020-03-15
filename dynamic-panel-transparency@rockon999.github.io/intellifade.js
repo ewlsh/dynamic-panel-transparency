@@ -112,14 +112,10 @@ function _updateBounds() {
 
     this.scale_factor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
 
-    let anchor_y = -Main.layoutManager.panelBox.get_anchor_point()[1];
     let pivot_y = -Main.layoutManager.panelBox.get_pivot_point()[1];
 
     // Adjust for bottom panel.
-    if (anchor_y > 0) {
-        this.panel_bounds.y = anchor_y;
-        this.panel_bounds.is_top = false;
-    } else if (pivot_y > 0) {
+    if (pivot_y > 0) {
         this.panel_bounds.y = pivot_y;
         this.panel_bounds.is_top = false;
     }
