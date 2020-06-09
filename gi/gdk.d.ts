@@ -4645,7 +4645,7 @@ export function error_trap_push(): void;
 
 export function event_get(): Event | null;
 
-export function event_handler_set(func: EventFunc, data: any | null, notify: GLib.DestroyNotify): void;
+export function event_handler_set(func: EventFunc, notify: GLib.DestroyNotify): void;
 
 export function event_peek(): Event | null;
 
@@ -4731,7 +4731,7 @@ export function pre_parse_libgtk_only(): void;
 
 export function property_delete(window: Window, property: Atom): void;
 
-export function property_get(window: Window, property: Atom, type: Atom, offset: number, length: number, pdelete: number): [boolean, Atom, number, number[]];
+export function property_get(window: Window, property: Atom, type: Atom, offset: number, length: number, pdelete: number): [boolean, Atom, number, Uint8Array];
 
 export function query_depths(): number[];
 
@@ -4759,7 +4759,7 @@ export function set_program_class(program_class: string): void;
 
 export function set_show_events(show_events: boolean): void;
 
-export function setting_get(name: string, value: GObject.Value): boolean;
+export function setting_get(name: string, value: (GObject.Value | string | boolean | number)): boolean;
 
 export function synthesize_window_state(window: Window, unset_flags: WindowState, set_flags: WindowState): void;
 
@@ -4769,13 +4769,13 @@ export function test_simulate_button(window: Window, x: number, y: number, butto
 
 export function test_simulate_key(window: Window, x: number, y: number, keyval: number, modifiers: ModifierType, key_pressrelease: EventType): boolean;
 
-export function text_property_to_utf8_list_for_display(display: Display, encoding: Atom, format: number, text: number[]): [number, string[]];
+export function text_property_to_utf8_list_for_display(display: Display, encoding: Atom, format: number, text: (Uint8Array | string)): [number, string[]];
 
-export function threads_add_idle(priority: number, _function: GLib.SourceFunc, data: any | null, notify: GLib.DestroyNotify | null): number;
+export function threads_add_idle(priority: number, _function: GLib.SourceFunc, notify: GLib.DestroyNotify | null): number;
 
-export function threads_add_timeout(priority: number, interval: number, _function: GLib.SourceFunc, data: any | null, notify: GLib.DestroyNotify | null): number;
+export function threads_add_timeout(priority: number, interval: number, _function: GLib.SourceFunc, notify: GLib.DestroyNotify | null): number;
 
-export function threads_add_timeout_seconds(priority: number, interval: number, _function: GLib.SourceFunc, data: any | null, notify: GLib.DestroyNotify | null): number;
+export function threads_add_timeout_seconds(priority: number, interval: number, _function: GLib.SourceFunc, notify: GLib.DestroyNotify | null): number;
 
 export function threads_enter(): void;
 
@@ -4787,9 +4787,9 @@ export function unicode_to_keyval(wc: number): number;
 
 export function utf8_to_string_target(str: string): string | null;
 
-export type EventFunc = (event: Event, data: any | null) => void;
+export type EventFunc = (event: Event) => void;
 
-export type FilterFunc = (xevent: XEvent, event: Event, data: any | null) => FilterReturn;
+export type FilterFunc = (xevent: XEvent, event: Event) => FilterReturn;
 
 export type SeatGrabPrepareFunc = (seat: Seat, window: Window) => void;
 
@@ -5346,8 +5346,8 @@ export module AppLaunchContext {
     }
 }
 export class AppLaunchContext extends Gio.AppLaunchContext {
-    constructor(properties: Partial<AppLaunchContext.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<AppLaunchContext.ConstructorProperties>);
+    constructor(properties?: Partial<AppLaunchContext.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<AppLaunchContext.ConstructorProperties>, ...args: any[]): void;
     // Properties
     display: Display;
     // Constructors
@@ -5369,8 +5369,8 @@ export module Cursor {
     }
 }
 export abstract class Cursor extends GObject.Object {
-    constructor(properties: Partial<Cursor.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Cursor.ConstructorProperties>);
+    constructor(properties?: Partial<Cursor.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Cursor.ConstructorProperties>, ...args: any[]): void;
     // Properties
     cursor_type: CursorType;
     display: Display;
@@ -5410,8 +5410,8 @@ export module Device {
     }
 }
 export abstract class Device extends GObject.Object {
-    constructor(properties: Partial<Device.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Device.ConstructorProperties>);
+    constructor(properties?: Partial<Device.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Device.ConstructorProperties>, ...args: any[]): void;
     // Properties
     associated_device: Device;
     axes: AxisFlags;
@@ -5476,8 +5476,8 @@ export module DeviceManager {
     }
 }
 export abstract class DeviceManager extends GObject.Object {
-    constructor(properties: Partial<DeviceManager.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DeviceManager.ConstructorProperties>);
+    constructor(properties?: Partial<DeviceManager.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DeviceManager.ConstructorProperties>, ...args: any[]): void;
     // Properties
     display: Display;
     // Signals
@@ -5508,8 +5508,8 @@ export module DeviceTool {
     }
 }
 export class DeviceTool extends GObject.Object {
-    constructor(properties: Partial<DeviceTool.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DeviceTool.ConstructorProperties>);
+    constructor(properties?: Partial<DeviceTool.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DeviceTool.ConstructorProperties>, ...args: any[]): void;
     // Properties
     axes: AxisFlags;
     hardware_id: number;
@@ -5526,8 +5526,8 @@ export module Display {
     }
 }
 export class Display extends GObject.Object {
-    constructor(properties: Partial<Display.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Display.ConstructorProperties>);
+    constructor(properties?: Partial<Display.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Display.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -5607,8 +5607,8 @@ export module DisplayManager {
     }
 }
 export class DisplayManager extends GObject.Object {
-    constructor(properties: Partial<DisplayManager.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DisplayManager.ConstructorProperties>);
+    constructor(properties?: Partial<DisplayManager.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DisplayManager.ConstructorProperties>, ...args: any[]): void;
     // Properties
     default_display: Display;
     // Signals
@@ -5620,7 +5620,7 @@ export class DisplayManager extends GObject.Object {
     emit(signal: 'display-opened', display: Display): void;
     // Members
     get_default_display(): Display | null;
-    list_displays(): string[];
+    list_displays(): GLib.SList;
     open_display(name: string): Display | null;
     set_default_display(display: Display): void;
     static get(): DisplayManager;
@@ -5631,8 +5631,8 @@ export module DragContext {
     }
 }
 export class DragContext extends GObject.Object {
-    constructor(properties: Partial<DragContext.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DragContext.ConstructorProperties>);
+    constructor(properties?: Partial<DragContext.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DragContext.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -5671,8 +5671,8 @@ export module DrawingContext {
     }
 }
 export class DrawingContext extends GObject.Object {
-    constructor(properties: Partial<DrawingContext.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DrawingContext.ConstructorProperties>);
+    constructor(properties?: Partial<DrawingContext.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DrawingContext.ConstructorProperties>, ...args: any[]): void;
     // Properties
     clip: cairo.Region;
     window: Window;
@@ -5688,8 +5688,8 @@ export module FrameClock {
     }
 }
 export abstract class FrameClock extends GObject.Object {
-    constructor(properties: Partial<FrameClock.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FrameClock.ConstructorProperties>);
+    constructor(properties?: Partial<FrameClock.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FrameClock.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -5735,8 +5735,8 @@ export module GLContext {
     }
 }
 export abstract class GLContext extends GObject.Object {
-    constructor(properties: Partial<GLContext.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<GLContext.ConstructorProperties>);
+    constructor(properties?: Partial<GLContext.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<GLContext.ConstructorProperties>, ...args: any[]): void;
     // Properties
     display: Display;
     shared_context: GLContext;
@@ -5766,8 +5766,8 @@ export module Keymap {
     }
 }
 export class Keymap extends GObject.Object {
-    constructor(properties: Partial<Keymap.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Keymap.ConstructorProperties>);
+    constructor(properties?: Partial<Keymap.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Keymap.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -5814,8 +5814,8 @@ export module Monitor {
     }
 }
 export class Monitor extends GObject.Object {
-    constructor(properties: Partial<Monitor.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Monitor.ConstructorProperties>);
+    constructor(properties?: Partial<Monitor.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Monitor.ConstructorProperties>, ...args: any[]): void;
     // Properties
     display: Display;
     geometry: Rectangle;
@@ -5855,8 +5855,8 @@ export module Screen {
     }
 }
 export class Screen extends GObject.Object {
-    constructor(properties: Partial<Screen.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Screen.ConstructorProperties>);
+    constructor(properties?: Partial<Screen.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Screen.ConstructorProperties>, ...args: any[]): void;
     // Properties
     font_options: any;
     resolution: number;
@@ -5893,7 +5893,7 @@ export class Screen extends GObject.Object {
     get_resolution(): number;
     get_rgba_visual(): Visual | null;
     get_root_window(): Window;
-    get_setting(name: string, value: GObject.Value): boolean;
+    get_setting(name: string, value: (GObject.Value | string | boolean | number)): boolean;
     get_system_visual(): Visual;
     get_toplevel_windows(): GLib.List;
     get_width(): number;
@@ -5917,8 +5917,8 @@ export module Seat {
     }
 }
 export abstract class Seat extends GObject.Object {
-    constructor(properties: Partial<Seat.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Seat.ConstructorProperties>);
+    constructor(properties?: Partial<Seat.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Seat.ConstructorProperties>, ...args: any[]): void;
     // Properties
     display: Display;
     // Signals
@@ -5943,7 +5943,7 @@ export abstract class Seat extends GObject.Object {
     get_keyboard(): Device | null;
     get_pointer(): Device | null;
     get_slaves(capabilities: SeatCapabilities): GLib.List;
-    grab(window: Window, capabilities: SeatCapabilities, owner_events: boolean, cursor: Cursor | null, event: Event | null, prepare_func: SeatGrabPrepareFunc | null, prepare_func_data: any | null): GrabStatus;
+    grab(window: Window, capabilities: SeatCapabilities, owner_events: boolean, cursor: Cursor | null, event: Event | null, prepare_func: SeatGrabPrepareFunc | null): GrabStatus;
     ungrab(): void;
 }
 export module Visual {
@@ -5952,8 +5952,8 @@ export module Visual {
     }
 }
 export class Visual extends GObject.Object {
-    constructor(properties: Partial<Visual.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Visual.ConstructorProperties>);
+    constructor(properties?: Partial<Visual.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Visual.ConstructorProperties>, ...args: any[]): void;
     // Members
     get_bits_per_rgb(): number;
     get_blue_pixel_details(): [number | null, number | null, number | null];
@@ -5979,8 +5979,8 @@ export module Window {
     }
 }
 export abstract class Window extends GObject.Object {
-    constructor(properties: Partial<Window.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Window.ConstructorProperties>);
+    constructor(properties?: Partial<Window.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Window.ConstructorProperties>, ...args: any[]): void;
     // Properties
     cursor: Cursor;
     // Signals
@@ -6036,7 +6036,7 @@ export abstract class Window extends GObject.Object {
     get_accept_focus(): boolean;
     get_background_pattern(): cairo.Pattern | null;
     get_children(): GLib.List;
-    get_children_with_user_data(): GLib.List;
+    get_children_with_user_data(user_data: any | null): GLib.List;
     get_clip_region(): cairo.Region;
     get_composited(): boolean;
     get_cursor(): Cursor | null;
@@ -6147,7 +6147,7 @@ export abstract class Window extends GObject.Object {
     set_transient_for(parent: Window): void;
     set_type_hint(hint: WindowTypeHint): void;
     set_urgency_hint(urgent: boolean): void;
-    set_user_data(): void;
+    set_user_data(user_data: GObject.Object | null): void;
     shape_combine_region(shape_region: cairo.Region | null, offset_x: number, offset_y: number): void;
     show(): void;
     show_unraised(): void;
@@ -6175,6 +6175,12 @@ export class Atom {
     static intern_static_string(atom_name: string): Atom;
 }
 export class Color {
+    constructor(properties?: {
+        pixel?: number;
+        red?: number;
+        green?: number;
+        blue?: number;
+    });
     constructor(copy: Color);
     // Fields
     pixel: number;
@@ -6517,6 +6523,11 @@ export class Geometry {
     win_gravity: Gravity;
 }
 export class KeymapKey {
+    constructor(properties?: {
+        keycode?: number;
+        group?: number;
+        level?: number;
+    });
     constructor(copy: KeymapKey);
     // Fields
     keycode: number;
@@ -6524,12 +6535,22 @@ export class KeymapKey {
     level: number;
 }
 export class Point {
+    constructor(properties?: {
+        x?: number;
+        y?: number;
+    });
     constructor(copy: Point);
     // Fields
     x: number;
     y: number;
 }
 export class RGBA {
+    constructor(properties?: {
+        red?: number;
+        green?: number;
+        blue?: number;
+        alpha?: number;
+    });
     constructor(copy: RGBA);
     // Fields
     red: number;
@@ -6545,6 +6566,12 @@ export class RGBA {
     to_string(): string;
 }
 export class Rectangle {
+    constructor(properties?: {
+        x?: number;
+        y?: number;
+        width?: number;
+        height?: number;
+    });
     constructor(copy: Rectangle);
     // Fields
     x: number;
@@ -6557,6 +6584,10 @@ export class Rectangle {
     union(src2: Rectangle): Rectangle;
 }
 export class TimeCoord {
+    constructor(properties?: {
+        time?: number;
+        axes?: number[];
+    });
     constructor(copy: TimeCoord);
     // Fields
     time: number;
@@ -6649,16 +6680,21 @@ export class Event {
     set_source_device(device: Device): void;
     triggers_context_menu(): boolean;
     static get(): Event | null;
-    static handler_set(func: EventFunc, data: any | null, notify: GLib.DestroyNotify): void;
+    static handler_set(func: EventFunc, notify: GLib.DestroyNotify): void;
     static peek(): Event | null;
     static request_motions(event: EventMotion): void;
 }
-export interface DevicePad  {
+export interface DevicePadNamespace {
+    $gtype: GType;
+}
+export interface DevicePad extends Device {
     // Members
     get_feature_group(feature: DevicePadFeature, feature_idx: number): number;
     get_group_n_modes(group_idx: number): number;
     get_n_features(feature: DevicePadFeature): number;
     get_n_groups(): number;
 }
+
+export const DevicePad: DevicePadNamespace;
 
 export type XEvent = void;

@@ -1,13 +1,13 @@
-/** @type {Module} */
-const module = {};
+import type * as st from 'st';
+
+import type { DynamicPanel } from './extension';
 
 const St = imports.gi.St;
-
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const Settings = Me.imports.settings;
-const Util = Me.imports.util;
-const ColorUtil = Me.imports.color_util;
+import * as Util from './util';
+import * as Settings from './settings';
+import * as ColorUtil from './color_util';
 
 const { GLib } = imports.gi;
 
@@ -43,7 +43,7 @@ const ACUTANCE_THRESHOLD = 8;
 const STD_THRESHOLD = 45;
 const LUMINANCE_THRESHOLD = 180;
 
-function load_panel_theme() {
+export function load_panel_theme() {
     let file_name = GLib.build_filenamev([GLib.get_user_data_dir(), 'gnome-shell', 'extensions', Me.uuid, 'theme.css']);
 
     let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
@@ -56,13 +56,20 @@ function load_panel_theme() {
     return file_name;
 }
 
-var Themer = class Themer {
+export class Themer {
+    dp: any;
+    panel: st.Bin;
+    stylesheets: any[];
+    styles: any[];
+    bk_color_info: any;
+    styleStrings: Map<any, any>;
+    background_styles: any[];
 
     /**
      * Initialize.
-     * @param {ImportMap["extension"]["DynamicPanel"]["prototype"]} dp
+     * @param {DynamicPanel} dp
      */
-    constructor(dp) {
+    constructor(dp: DynamicPanel) {
         this.dp = dp;
         this.panel = dp.panel;
 
@@ -88,7 +95,7 @@ var Themer = class Themer {
         // TODO
         let primary_index = 0;
 
-        ColorUtil.getBackgroundColorInfo(primary_index, (info) => {
+        ColorUtil.getBackgroundColorInfo(primary_index, (info: any) => {
             log(`Updating background info: ${JSON.stringify(info)}`);
             this.bk_color_info = info;
 
@@ -103,7 +110,7 @@ var Themer = class Themer {
      * @param {*} has_maximized_window
      * @returns {{translucency: number, background: number}}
      */
-    calculateState(has_maximized_window) {
+    calculateState(has_maximized_window: boolean) {
         let new_state = BackgroundState.TRANSLUCENT_DARK;
         let translucency = Translucency.HIGH;
 
@@ -159,7 +166,7 @@ var Themer = class Themer {
     /**
      * @param {Object.<string, string>} styles
      */
-    update_style(styles) {
+    update_style(styles: any) {
         const { panel } = this;
 
         /** @type {string} */
@@ -174,7 +181,7 @@ var Themer = class Themer {
                 }
 
                 return prev;
-            }, /** @type {Object.<string, string>} */ ({}));
+            }, ({} as { [key: string]: string}));
         log(JSON.stringify(style_map));
         const updated_style_map = Object.assign(style_map, styles);
         log(JSON.stringify(updated_style_map));
@@ -267,7 +274,7 @@ var Themer = class Themer {
     /**
      * @param {string} name
      */
-    add_class(name) {
+    add_class(name: string) {
         const styles = this.styleStrings.get(name);
 
         if (styles) {
@@ -369,8 +376,6 @@ var Themer = class Themer {
         panel.remove_style_class_name('panel-arrow-shadow');
     }
 
-
-
     /**
      * Sets which registered text color stylesheet to use for the text coloring. @see register_text_color
      */
@@ -398,7 +403,7 @@ var Themer = class Themer {
      *
      * @param {string} style - The name of a CSS styling.
      */
-    register_style(style) {
+    register_style(style: string) {
         if (this.styles.indexOf(style) === -1) {
             this.styles.push(style);
         }
@@ -472,7 +477,7 @@ var Themer = class Themer {
      * @param {string} class_name - Name of the intended CSS stylesheet.
      *
      */
-    apply_stylesheet_css(class_name, css) {
+    apply_stylesheet_css(class_name: string, css: { "background-color"?: string; "transition-duration"?: string; }) {
         this.styleStrings.set(class_name, css);
     }
 
@@ -515,7 +520,7 @@ var Themer = class Themer {
     /**
      * @param {string} style
      */
-    register_background_style(style) {
+    register_background_style(style: string) {
         if (this.background_styles.indexOf(style) === -1) {
             this.background_styles.push(style);
         }
@@ -526,7 +531,7 @@ var Themer = class Themer {
      * @param {number} [maximized_opacity]
      * @param {number} [unmaximized_opacity]
      */
-    register_custom_background_color(bg_color, maximized_opacity, unmaximized_opacity) {
+    register_custom_background_color(bg_color: { red: string; green: string; blue: string; }, maximized_opacity: any, unmaximized_opacity: any) {
         let _maximized_opacity = Util.clamp(((maximized_opacity) / SCALE_FACTOR), 0, 1).toFixed(2);
         let _unmaximized_opacity = Util.clamp(((unmaximized_opacity) / SCALE_FACTOR), 0, 1).toFixed(2);
 
@@ -609,5 +614,3 @@ var Themer = class Themer {
 
     }
 }
-
-module.exports = { Themer, Translucency, BackgroundState, load_panel_theme };

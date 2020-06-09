@@ -6,7 +6,7 @@
 import * as GObject from "gobject";
 import * as Gio from "gio";
 import * as GLib from "glib";
-import * as GModule from "gmodule";
+
 type GType = object;
 
 export const PIXBUF_FEATURES_H: number;
@@ -21,9 +21,9 @@ export const PIXBUF_VERSION: string;
 
 export function pixbuf_error_quark(): GLib.Quark;
 
-export type PixbufDestroyNotify = (pixels: number[], data: any | null) => void;
+export type PixbufDestroyNotify = (pixels: (Uint8Array | string)) => void;
 
-export type PixbufSaveFunc = (buf: number[], data: any | null) => boolean;
+export type PixbufSaveFunc = (buf: (Uint8Array | string)) => boolean;
 export enum Colorspace {
     RGB = 0,
 }
@@ -71,8 +71,8 @@ export module Pixbuf {
     }
 }
 export class Pixbuf extends GObject.Object implements Gio.Icon, Gio.LoadableIcon {
-    constructor(properties: Partial<Pixbuf.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Pixbuf.ConstructorProperties>);
+    constructor(properties?: Partial<Pixbuf.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Pixbuf.ConstructorProperties>, ...args: any[]): void;
     // Properties
     bits_per_sample: number;
     colorspace: Colorspace;
@@ -85,12 +85,12 @@ export class Pixbuf extends GObject.Object implements Gio.Icon, Gio.LoadableIcon
     width: number;
     // Constructors
     static ["new"](colorspace: Colorspace, has_alpha: boolean, bits_per_sample: number, width: number, height: number): Pixbuf;
-    static new_from_bytes(data: GLib.Bytes, colorspace: Colorspace, has_alpha: boolean, bits_per_sample: number, width: number, height: number, rowstride: number): Pixbuf;
-    static new_from_data(data: number[], colorspace: Colorspace, has_alpha: boolean, bits_per_sample: number, width: number, height: number, rowstride: number, destroy_fn: PixbufDestroyNotify | null, destroy_fn_data: any | null): Pixbuf;
+    static new_from_bytes(data: (GLib.Bytes | Uint8Array), colorspace: Colorspace, has_alpha: boolean, bits_per_sample: number, width: number, height: number, rowstride: number): Pixbuf;
+    static new_from_data(data: (Uint8Array | string), colorspace: Colorspace, has_alpha: boolean, bits_per_sample: number, width: number, height: number, rowstride: number, destroy_fn: PixbufDestroyNotify | null): Pixbuf;
     static new_from_file(filename: string): Pixbuf;
     static new_from_file_at_scale(filename: string, width: number, height: number, preserve_aspect_ratio: boolean): Pixbuf;
     static new_from_file_at_size(filename: string, width: number, height: number): Pixbuf;
-    static new_from_inline(data: number[], copy_pixels: boolean): Pixbuf;
+    static new_from_inline(data: (Uint8Array | string), copy_pixels: boolean): Pixbuf;
     static new_from_resource(resource_path: string): Pixbuf;
     static new_from_resource_at_scale(resource_path: string, width: number, height: number, preserve_aspect_ratio: boolean): Pixbuf;
     static new_from_stream(stream: Gio.InputStream, cancellable: Gio.Cancellable | null): Pixbuf;
@@ -116,8 +116,8 @@ export class Pixbuf extends GObject.Object implements Gio.Icon, Gio.LoadableIcon
     get_n_channels(): number;
     get_option(key: string): string;
     get_options(): GLib.HashTable;
-    get_pixels(): number[];
-    get_pixels_with_length(): [number[], number];
+    get_pixels(): Uint8Array;
+    get_pixels(): Uint8Array;
     get_rowstride(): number;
     get_width(): number;
     new_subpixbuf(src_x: number, src_y: number, width: number, height: number): Pixbuf;
@@ -126,7 +126,7 @@ export class Pixbuf extends GObject.Object implements Gio.Icon, Gio.LoadableIcon
     remove_option(key: string): boolean;
     rotate_simple(angle: PixbufRotation): Pixbuf | null;
     saturate_and_pixelate(dest: Pixbuf, saturation: number, pixelate: boolean): void;
-    save_to_bufferv(type: string, option_keys: string[], option_values: string[]): [boolean, number[]];
+    save_to_bufferv(type: string, option_keys: string[], option_values: string[]): [boolean, Uint8Array];
     save_to_callbackv(save_func: PixbufSaveFunc, type: string, option_keys: string[], option_values: string[]): boolean;
     save_to_streamv(stream: Gio.OutputStream, type: string, option_keys: string[], option_values: string[], cancellable: Gio.Cancellable | null): boolean;
     save_to_streamv_async(stream: Gio.OutputStream, type: string, option_keys: string[], option_values: string[], cancellable: Gio.Cancellable | null, callback: Gio.AsyncReadyCallback | null): void;
@@ -138,7 +138,7 @@ export class Pixbuf extends GObject.Object implements Gio.Icon, Gio.LoadableIcon
     static get_file_info(filename: string): [PixbufFormat | null, number | null, number | null];
     static get_file_info_async(filename: string, cancellable: Gio.Cancellable | null, callback: Gio.AsyncReadyCallback | null): void;
     static get_file_info_finish(async_result: Gio.AsyncResult): [PixbufFormat, number, number];
-    static get_formats(): string[];
+    static get_formats(): GLib.SList;
     static init_modules(path: string): boolean;
     static new_from_stream_async(stream: Gio.InputStream, cancellable: Gio.Cancellable | null, callback: Gio.AsyncReadyCallback | null): void;
     static new_from_stream_at_scale_async(stream: Gio.InputStream, width: number, height: number, preserve_aspect_ratio: boolean, cancellable: Gio.Cancellable | null, callback: Gio.AsyncReadyCallback | null): void;
@@ -163,8 +163,8 @@ export module PixbufAnimation {
     }
 }
 export class PixbufAnimation extends GObject.Object {
-    constructor(properties: Partial<PixbufAnimation.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<PixbufAnimation.ConstructorProperties>);
+    constructor(properties?: Partial<PixbufAnimation.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<PixbufAnimation.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static new_from_file(filename: string): PixbufAnimation;
     static new_from_resource(resource_path: string): PixbufAnimation;
@@ -184,8 +184,8 @@ export module PixbufAnimationIter {
     }
 }
 export class PixbufAnimationIter extends GObject.Object {
-    constructor(properties: Partial<PixbufAnimationIter.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<PixbufAnimationIter.ConstructorProperties>);
+    constructor(properties?: Partial<PixbufAnimationIter.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<PixbufAnimationIter.ConstructorProperties>, ...args: any[]): void;
     // Members
     advance(current_time: GLib.TimeVal | null): boolean;
     get_delay_time(): number;
@@ -198,8 +198,8 @@ export module PixbufLoader {
     }
 }
 export class PixbufLoader extends GObject.Object {
-    constructor(properties: Partial<PixbufLoader.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<PixbufLoader.ConstructorProperties>);
+    constructor(properties?: Partial<PixbufLoader.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<PixbufLoader.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -226,8 +226,8 @@ export class PixbufLoader extends GObject.Object {
     get_format(): PixbufFormat | null;
     get_pixbuf(): Pixbuf;
     set_size(width: number, height: number): void;
-    write(buf: number[]): boolean;
-    write_bytes(buffer: GLib.Bytes): boolean;
+    write(buf: (Uint8Array | string)): boolean;
+    write_bytes(buffer: (GLib.Bytes | Uint8Array)): boolean;
     vfunc_area_prepared(): void;
     vfunc_area_updated(x: number, y: number, width: number, height: number): void;
     vfunc_closed(): void;
@@ -240,8 +240,8 @@ export module PixbufSimpleAnim {
     }
 }
 export class PixbufSimpleAnim extends PixbufAnimation {
-    constructor(properties: Partial<PixbufSimpleAnim.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<PixbufSimpleAnim.ConstructorProperties>);
+    constructor(properties?: Partial<PixbufSimpleAnim.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<PixbufSimpleAnim.ConstructorProperties>, ...args: any[]): void;
     // Properties
     loop: boolean;
     // Constructors
@@ -257,8 +257,8 @@ export module PixbufSimpleAnimIter {
     }
 }
 export class PixbufSimpleAnimIter extends PixbufAnimationIter {
-    constructor(properties: Partial<PixbufSimpleAnimIter.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<PixbufSimpleAnimIter.ConstructorProperties>);
+    constructor(properties?: Partial<PixbufSimpleAnimIter.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<PixbufSimpleAnimIter.ConstructorProperties>, ...args: any[]): void;
 }
 export class PixbufFormat {
     constructor(copy: PixbufFormat);

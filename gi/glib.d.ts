@@ -361,15 +361,15 @@ export function atomic_ref_count_inc(arc: number): void;
 
 export function atomic_ref_count_init(arc: number): void;
 
-export function base64_decode(text: string): [number[], number];
+export function base64_decode(text: string): Uint8Array;
 
-export function base64_decode_inplace(text: number[]): [number, number[]];
+export function base64_decode_inplace(text: (Uint8Array | string)): [number, Uint8Array];
 
-export function base64_encode(data: number[] | null): string;
+export function base64_encode(data: (Uint8Array | string) | null): string;
 
-export function base64_encode_close(break_lines: boolean, state: number, save: number): [number, number[], number, number];
+export function base64_encode_close(break_lines: boolean, state: number, save: number): [number, Uint8Array, number, number];
 
-export function base64_encode_step(_in: number[], break_lines: boolean, state: number, save: number): [number, number[], number, number];
+export function base64_encode_step(_in: (Uint8Array | string), break_lines: boolean, state: number, save: number): [number, Uint8Array, number, number];
 
 export function basename(file_name: string): string;
 
@@ -391,15 +391,15 @@ export function build_filenamev(args: string[]): string;
 
 export function build_pathv(separator: string, args: string[]): string;
 
-export function byte_array_free(array: number[], free_segment: boolean): number;
+export function byte_array_free(array: (Uint8Array | string), free_segment: boolean): number;
 
-export function byte_array_free_to_bytes(array: number[]): Bytes;
+export function byte_array_free_to_bytes(array: (Uint8Array | string)): Bytes;
 
-export function byte_array_new(): number[];
+export function byte_array_new(): Uint8Array;
 
-export function byte_array_new_take(data: number[]): number[];
+export function byte_array_new_take(data: (Uint8Array | string)): Uint8Array;
 
-export function byte_array_unref(array: number[]): void;
+export function byte_array_unref(array: (Uint8Array | string)): void;
 
 export function canonicalize_filename(filename: string, relative_to: string | null): string;
 
@@ -409,7 +409,7 @@ export function check_version(required_major: number, required_minor: number, re
 
 export function checksum_type_get_length(checksum_type: ChecksumType): number;
 
-export function child_watch_add(priority: number, pid: Pid, _function: ChildWatchFunc, data: any | null, notify: DestroyNotify | null): number;
+export function child_watch_add(priority: number, pid: Pid, _function: ChildWatchFunc, notify: DestroyNotify | null): number;
 
 export function child_watch_source_new(pid: Pid): Source;
 
@@ -417,23 +417,23 @@ export function clear_error(): void;
 
 export function close(fd: number): boolean;
 
-export function compute_checksum_for_bytes(checksum_type: ChecksumType, data: Bytes): string;
+export function compute_checksum_for_bytes(checksum_type: ChecksumType, data: (Bytes | Uint8Array)): string;
 
-export function compute_checksum_for_data(checksum_type: ChecksumType, data: number[]): string;
+export function compute_checksum_for_data(checksum_type: ChecksumType, data: (Uint8Array | string)): string;
 
 export function compute_checksum_for_string(checksum_type: ChecksumType, str: string, length: number): string;
 
-export function compute_hmac_for_bytes(digest_type: ChecksumType, key: Bytes, data: Bytes): string;
+export function compute_hmac_for_bytes(digest_type: ChecksumType, key: (Bytes | Uint8Array), data: (Bytes | Uint8Array)): string;
 
-export function compute_hmac_for_data(digest_type: ChecksumType, key: number[], data: number[]): string;
+export function compute_hmac_for_data(digest_type: ChecksumType, key: (Uint8Array | string), data: (Uint8Array | string)): string;
 
-export function compute_hmac_for_string(digest_type: ChecksumType, key: number[], str: string, length: number): string;
+export function compute_hmac_for_string(digest_type: ChecksumType, key: (Uint8Array | string), str: string, length: number): string;
 
-export function convert(str: number[], to_codeset: string, from_codeset: string): [number[], number | null, number | null];
+export function convert(str: (Uint8Array | string), to_codeset: string, from_codeset: string): [Uint8Array, number | null];
 
 export function convert_error_quark(): Quark;
 
-export function convert_with_fallback(str: number[], to_codeset: string, from_codeset: string, fallback: string): [number[], number | null, number | null];
+export function convert_with_fallback(str: (Uint8Array | string), to_codeset: string, from_codeset: string, fallback: string): [Uint8Array, number | null];
 
 export function datalist_foreach(datalist: Data, func: DataForeachFunc): void;
 
@@ -511,13 +511,13 @@ export function file_error_from_errno(err_no: number): FileError;
 
 export function file_error_quark(): Quark;
 
-export function file_get_contents(filename: string): [boolean, number[]];
+export function file_get_contents(filename: string): [boolean, Uint8Array];
 
 export function file_open_tmp(tmpl: string | null): [number, string];
 
 export function file_read_link(filename: string): string;
 
-export function file_set_contents(filename: string, contents: number[]): boolean;
+export function file_set_contents(filename: string, contents: (Uint8Array | string)): boolean;
 
 export function file_test(filename: string, test: FileTest): boolean;
 
@@ -647,7 +647,7 @@ export function hostname_to_ascii(hostname: string): string;
 
 export function hostname_to_unicode(hostname: string): string;
 
-export function idle_add(priority: number, _function: SourceFunc, data: any | null, notify: DestroyNotify | null): number;
+export function idle_add(priority: number, _function: SourceFunc, notify: DestroyNotify | null): number;
 
 export function idle_remove_by_data(data: any | null): boolean;
 
@@ -677,9 +677,9 @@ export function key_file_error_quark(): Quark;
 
 export function listenv(): string[];
 
-export function locale_from_utf8(utf8string: string, len: number): [number[], number | null, number | null];
+export function locale_from_utf8(utf8string: string, len: number): [Uint8Array, number | null];
 
-export function locale_to_utf8(opsysstring: number[]): [string, number | null, number | null];
+export function locale_to_utf8(opsysstring: (Uint8Array | string)): [string, number | null, number | null];
 
 export function log_default_handler(log_domain: string | null, log_level: LogLevelFlags, message: string | null, unused_data: any | null): void;
 
@@ -691,21 +691,21 @@ export function log_set_fatal_mask(log_domain: string, fatal_mask: LogLevelFlags
 
 export function log_set_handler(log_domain: string | null, log_levels: LogLevelFlags, log_func: LogFunc, destroy: DestroyNotify): number;
 
-export function log_set_writer_func(func: LogWriterFunc | null, user_data_free: DestroyNotify): void;
+export function log_set_writer_func(user_data_free: DestroyNotify): void;
 
 export function log_structured_array(log_level: LogLevelFlags, fields: LogField[]): void;
 
 export function log_variant(log_domain: string | null, log_level: LogLevelFlags, fields: Variant): void;
 
-export function log_writer_default(log_level: LogLevelFlags, fields: LogField[]): LogWriterOutput;
+export function log_writer_default(log_level: LogLevelFlags, fields: LogField[], user_data: any | null): LogWriterOutput;
 
 export function log_writer_format_fields(log_level: LogLevelFlags, fields: LogField[], use_color: boolean): string;
 
 export function log_writer_is_journald(output_fd: number): boolean;
 
-export function log_writer_journald(log_level: LogLevelFlags, fields: LogField[]): LogWriterOutput;
+export function log_writer_journald(log_level: LogLevelFlags, fields: LogField[], user_data: any | null): LogWriterOutput;
 
-export function log_writer_standard_streams(log_level: LogLevelFlags, fields: LogField[]): LogWriterOutput;
+export function log_writer_standard_streams(log_level: LogLevelFlags, fields: LogField[], user_data: any | null): LogWriterOutput;
 
 export function log_writer_supports_color(output_fd: number): boolean;
 
@@ -905,9 +905,9 @@ export function slice_set_config(ckey: SliceConfig, value: number): void;
 
 export function source_remove(tag: number): boolean;
 
-export function source_remove_by_funcs_user_data(funcs: SourceFuncs): boolean;
+export function source_remove_by_funcs_user_data(funcs: SourceFuncs, user_data: any | null): boolean;
 
-export function source_remove_by_user_data(): boolean;
+export function source_remove_by_user_data(user_data: any | null): boolean;
 
 export function source_set_name_by_id(tag: number, name: string): void;
 
@@ -925,13 +925,13 @@ export function spawn_close_pid(pid: Pid): void;
 
 export function spawn_command_line_async(command_line: string): boolean;
 
-export function spawn_command_line_sync(command_line: string): [boolean, number[] | null, number[] | null, number | null];
+export function spawn_command_line_sync(command_line: string): [boolean, Uint8Array | null, Uint8Array | null, number | null];
 
 export function spawn_error_quark(): Quark;
 
 export function spawn_exit_error_quark(): Quark;
 
-export function spawn_sync(working_directory: string | null, argv: string[], envp: string[] | null, flags: SpawnFlags, child_setup: SpawnChildSetupFunc | null): [boolean, number[] | null, number[] | null, number | null];
+export function spawn_sync(working_directory: string | null, argv: string[], envp: string[] | null, flags: SpawnFlags, child_setup: SpawnChildSetupFunc | null): [boolean, Uint8Array | null, Uint8Array | null, number | null];
 
 export function stpcpy(dest: string, src: string): string;
 
@@ -1101,9 +1101,9 @@ export function thread_yield(): void;
 
 export function time_val_from_iso8601(iso_date: string): [boolean, TimeVal];
 
-export function timeout_add(priority: number, interval: number, _function: SourceFunc, data: any | null, notify: DestroyNotify | null): number;
+export function timeout_add(priority: number, interval: number, _function: SourceFunc, notify: DestroyNotify | null): number;
 
-export function timeout_add_seconds(priority: number, interval: number, _function: SourceFunc, data: any | null, notify: DestroyNotify | null): number;
+export function timeout_add_seconds(priority: number, interval: number, _function: SourceFunc, notify: DestroyNotify | null): number;
 
 export function timeout_source_new(interval: number): Source;
 
@@ -1287,9 +1287,9 @@ export function utf8_to_ucs4_fast(str: string, len: number): [number, number | n
 
 export function utf8_to_utf16(str: string, len: number): [number, number | null, number | null];
 
-export function utf8_validate(str: number[]): [boolean, string | null];
+export function utf8_validate(str: (Uint8Array | string)): [boolean, string | null];
 
-export function utf8_validate_len(str: number[]): [boolean, string | null];
+export function utf8_validate_len(str: (Uint8Array | string)): [boolean, string | null];
 
 export function uuid_string_is_valid(str: string): boolean;
 
@@ -2208,6 +2208,10 @@ export enum TraverseFlags {
     NON_LEAFS = 2,
 }
 export class Array {
+    constructor(properties?: {
+        data?: string;
+        len?: number;
+    });
     constructor(copy: Array);
     // Fields
     data: string;
@@ -2246,21 +2250,21 @@ export class BookmarkFile {
     free(): void;
     get_added(uri: string): number;
     get_app_info(uri: string, name: string): [boolean, string | null, number | null, number | null];
-    get_applications(uri: string): [string[], number | null];
+    get_applications(uri: string): string[];
     get_description(uri: string): string;
-    get_groups(uri: string): [string[], number | null];
+    get_groups(uri: string): string[];
     get_icon(uri: string): [boolean, string | null, string | null];
     get_is_private(uri: string): boolean;
     get_mime_type(uri: string): string;
     get_modified(uri: string): number;
     get_size(): number;
     get_title(uri: string | null): string;
-    get_uris(): [string[], number | null];
+    get_uris(): string[];
     get_visited(uri: string): number;
     has_application(uri: string, name: string): boolean;
     has_group(uri: string, group: string): boolean;
     has_item(uri: string): boolean;
-    load_from_data(data: number[]): boolean;
+    load_from_data(data: (Uint8Array | string)): boolean;
     load_from_data_dirs(file: string): [boolean, string | null];
     load_from_file(filename: string): boolean;
     move_item(old_uri: string, new_uri: string | null): boolean;
@@ -2277,39 +2281,43 @@ export class BookmarkFile {
     set_modified(uri: string, modified: number): void;
     set_title(uri: string | null, title: string): void;
     set_visited(uri: string, visited: number): void;
-    to_data(): [number[], number | null];
+    to_data(): Uint8Array;
     to_file(filename: string): boolean;
     static error_quark(): Quark;
 }
 export class ByteArray {
+    constructor(properties?: {
+        data?: number;
+        len?: number;
+    });
     constructor(copy: ByteArray);
     // Fields
     data: number;
     len: number;
     // Members
-    static free(array: number[], free_segment: boolean): number;
-    static free_to_bytes(array: number[]): Bytes;
-    static new(): number[];
-    static new_take(data: number[]): number[];
-    static unref(array: number[]): void;
+    static free(array: (Uint8Array | string), free_segment: boolean): number;
+    static free_to_bytes(array: (Uint8Array | string)): Bytes;
+    static new(): Uint8Array;
+    static new_take(data: (Uint8Array | string)): Uint8Array;
+    static unref(array: (Uint8Array | string)): void;
 }
 export class Bytes {
-    constructor(data: number[] | null);
+    constructor(data: (Uint8Array | string) | null);
     constructor(copy: Bytes);
     // Constructors
-    static ["new"](data: number[] | null): Bytes;
-    static new_take(data: number[] | null): Bytes;
+    static ["new"](data: (Uint8Array | string) | null): Bytes;
+    static new_take(data: (Uint8Array | string) | null): Bytes;
     // Members
-    compare(bytes2: Bytes): number;
-    equal(bytes2: Bytes): boolean;
-    get_data(): [number[] | null, number | null];
+    compare(bytes2: (Bytes | Uint8Array)): number;
+    equal(bytes2: (Bytes | Uint8Array)): boolean;
+    get_data(): Uint8Array | null;
     get_size(): number;
     hash(): number;
     new_from_bytes(offset: number, length: number): Bytes;
     ref(): Bytes;
     unref(): void;
-    unref_to_array(): number[];
-    unref_to_data(): [number[], number];
+    unref_to_array(): Uint8Array;
+    unref_to_data(): Uint8Array;
     toArray(): Uint8Array;
 }
 export class Checksum {
@@ -2322,10 +2330,14 @@ export class Checksum {
     free(): void;
     get_string(): string;
     reset(): void;
-    update(data: number[]): void;
+    update(data: (Uint8Array | string)): void;
     static type_get_length(checksum_type: ChecksumType): number;
 }
 export class Cond {
+    constructor(properties?: {
+        p?: any;
+        i?: number[];
+    });
     constructor(copy: Cond);
     // Fields
     p: any;
@@ -2459,6 +2471,10 @@ export class DateTime {
     static hash(datetime: any): number;
 }
 export class DebugKey {
+    constructor(properties?: {
+        key?: string;
+        value?: number;
+    });
     constructor(copy: DebugKey);
     // Fields
     key: string;
@@ -2473,7 +2489,7 @@ export class Dir {
     static make_tmp(tmpl: string | null): string;
 }
 export class Error {
-    constructor({ message: string, code: number });
+    constructor(values: { message: string, code: number });
     constructor(copy: Error);
     // Fields
     domain: Quark;
@@ -2505,6 +2521,14 @@ export class HashTable {
     static unref(hash_table: HashTable): void;
 }
 export class HashTableIter {
+    constructor(properties?: {
+        dummy1?: any;
+        dummy2?: any;
+        dummy3?: any;
+        dummy4?: number;
+        dummy5?: boolean;
+        dummy6?: any;
+    });
     constructor(copy: HashTableIter);
     // Fields
     dummy1: any;
@@ -2523,10 +2547,10 @@ export class HashTableIter {
 export class Hmac {
     constructor(copy: Hmac);
     // Members
-    get_digest(buffer: number[]): void;
+    get_digest(buffer: (Uint8Array | string)): void;
     get_string(): string;
     unref(): void;
-    update(data: number[]): void;
+    update(data: (Uint8Array | string)): void;
 }
 export class Hook {
     constructor(copy: Hook);
@@ -2600,10 +2624,10 @@ export class IOChannel {
     get_line_term(length: number): string;
     init(): void;
     read(buf: string, count: number, bytes_read: number): IOError;
-    read_chars(): [IOStatus, number[], number | null];
+    read_chars(): [IOStatus, Uint8Array, number | null];
     read_line(): [IOStatus, string, number | null, number | null];
     read_line_string(buffer: String, terminator_pos: number | null): IOStatus;
-    read_to_end(): [IOStatus, number[]];
+    read_to_end(): [IOStatus, Uint8Array];
     read_unichar(): [IOStatus, number];
     ref(): IOChannel;
     seek(offset: number, type: SeekType): IOError;
@@ -2618,7 +2642,7 @@ export class IOChannel {
     unix_get_fd(): number;
     unref(): void;
     write(buf: string, count: number, bytes_written: number): IOError;
-    write_chars(buf: number[], count: number): [IOStatus, number];
+    write_chars(buf: (Uint8Array | string), count: number): [IOStatus, number];
     write_unichar(thechar: number): IOStatus;
     static error_from_errno(en: number): IOChannelError;
     static error_quark(): Quark;
@@ -2633,25 +2657,25 @@ export class KeyFile {
     static ["new"](): KeyFile;
     // Members
     get_boolean(group_name: string, key: string): boolean;
-    get_boolean_list(group_name: string, key: string): [boolean[], number];
+    get_boolean_list(group_name: string, key: string): boolean[];
     get_comment(group_name: string | null, key: string): string;
     get_double(group_name: string, key: string): number;
-    get_double_list(group_name: string, key: string): [number[], number];
+    get_double_list(group_name: string, key: string): number[];
     get_groups(): [string[], number | null];
     get_int64(group_name: string, key: string): number;
     get_integer(group_name: string, key: string): number;
-    get_integer_list(group_name: string, key: string): [number[], number];
+    get_integer_list(group_name: string, key: string): number[];
     get_keys(group_name: string): [string[], number | null];
     get_locale_for_key(group_name: string, key: string, locale: string | null): string | null;
     get_locale_string(group_name: string, key: string, locale: string | null): string;
-    get_locale_string_list(group_name: string, key: string, locale: string | null): [string[], number | null];
+    get_locale_string_list(group_name: string, key: string, locale: string | null): string[];
     get_start_group(): string;
     get_string(group_name: string, key: string): string;
-    get_string_list(group_name: string, key: string): [string[], number | null];
+    get_string_list(group_name: string, key: string): string[];
     get_uint64(group_name: string, key: string): number;
     get_value(group_name: string, key: string): string;
     has_group(group_name: string): boolean;
-    load_from_bytes(bytes: Bytes, flags: KeyFileFlags): boolean;
+    load_from_bytes(bytes: (Bytes | Uint8Array), flags: KeyFileFlags): boolean;
     load_from_data(data: string, length: number, flags: KeyFileFlags): boolean;
     load_from_data_dirs(file: string, flags: KeyFileFlags): [boolean, string | null];
     load_from_dirs(file: string, search_dirs: string[], flags: KeyFileFlags): [boolean, string | null];
@@ -2687,6 +2711,11 @@ export class List {
     prev: List;
 }
 export class LogField {
+    constructor(properties?: {
+        key?: string;
+        value?: any;
+        length?: number;
+    });
     constructor(copy: LogField);
     // Fields
     key: string;
@@ -2703,10 +2732,10 @@ export class MainContext {
     add_poll(fd: PollFD, priority: number): void;
     check(max_priority: number, fds: PollFD[]): boolean;
     dispatch(): void;
-    find_source_by_funcs_user_data(funcs: SourceFuncs): Source;
+    find_source_by_funcs_user_data(funcs: SourceFuncs, user_data: any | null): Source;
     find_source_by_id(source_id: number): Source;
-    find_source_by_user_data(): Source;
-    invoke_full(priority: number, _function: SourceFunc, data: any | null, notify: DestroyNotify | null): void;
+    find_source_by_user_data(user_data: any | null): Source;
+    invoke_full(priority: number, _function: SourceFunc, notify: DestroyNotify | null): void;
     is_owner(): boolean;
     iteration(may_block: boolean): boolean;
     pending(): boolean;
@@ -2752,10 +2781,10 @@ export class MappedFile {
     unref(): void;
 }
 export class MarkupParseContext {
-    constructor(parser: MarkupParser, flags: MarkupParseFlags, user_data_dnotify: DestroyNotify);
+    constructor(parser: MarkupParser, flags: MarkupParseFlags, user_data: any | null, user_data_dnotify: DestroyNotify);
     constructor(copy: MarkupParseContext);
     // Constructors
-    static ["new"](parser: MarkupParser, flags: MarkupParseFlags, user_data_dnotify: DestroyNotify): MarkupParseContext;
+    static ["new"](parser: MarkupParser, flags: MarkupParseFlags, user_data: any | null, user_data_dnotify: DestroyNotify): MarkupParseContext;
     // Members
     end_parse(): boolean;
     free(): void;
@@ -2764,7 +2793,7 @@ export class MarkupParseContext {
     get_user_data(): any | null;
     parse(text: string, text_len: number): boolean;
     pop(): any | null;
-    push(parser: MarkupParser): void;
+    push(parser: MarkupParser, user_data: any | null): void;
     ref(): MarkupParseContext;
     unref(): void;
 }
@@ -2842,7 +2871,7 @@ export class OptionContext {
     set_main_group(group: OptionGroup): void;
     set_strict_posix(strict_posix: boolean): void;
     set_summary(summary: string | null): void;
-    set_translate_func(func: TranslateFunc | null, data: any | null, destroy_notify: DestroyNotify | null): void;
+    set_translate_func(func: TranslateFunc | null, destroy_notify: DestroyNotify | null): void;
     set_translation_domain(domain: string): void;
 }
 export class OptionEntry {
@@ -2857,15 +2886,15 @@ export class OptionEntry {
     arg_description: string;
 }
 export class OptionGroup {
-    constructor(name: string, description: string, help_description: string, destroy: DestroyNotify | null);
+    constructor(name: string, description: string, help_description: string, user_data: any | null, destroy: DestroyNotify | null);
     constructor(copy: OptionGroup);
     // Constructors
-    static ["new"](name: string, description: string, help_description: string, destroy: DestroyNotify | null): OptionGroup;
+    static ["new"](name: string, description: string, help_description: string, user_data: any | null, destroy: DestroyNotify | null): OptionGroup;
     // Members
     add_entries(entries: OptionEntry): void;
     free(): void;
     ref(): OptionGroup;
-    set_translate_func(func: TranslateFunc | null, data: any | null, destroy_notify: DestroyNotify | null): void;
+    set_translate_func(func: TranslateFunc | null, destroy_notify: DestroyNotify | null): void;
     set_translation_domain(domain: string): void;
     unref(): void;
 }
@@ -2876,6 +2905,11 @@ export class PatternSpec {
     free(): void;
 }
 export class PollFD {
+    constructor(properties?: {
+        fd?: number;
+        events?: number;
+        revents?: number;
+    });
     constructor(copy: PollFD);
     // Fields
     fd: number;
@@ -2894,6 +2928,10 @@ export class Private {
     set(value: any | null): void;
 }
 export class PtrArray {
+    constructor(properties?: {
+        pdata?: any;
+        len?: number;
+    });
     constructor(copy: PtrArray);
     // Fields
     pdata: any;
@@ -2928,6 +2966,10 @@ export class Queue {
     reverse(): void;
 }
 export class RWLock {
+    constructor(properties?: {
+        p?: any;
+        i?: number[];
+    });
     constructor(copy: RWLock);
     // Fields
     p: any;
@@ -2954,6 +2996,10 @@ export class Rand {
     set_seed_array(seed: number, seed_length: number): void;
 }
 export class RecMutex {
+    constructor(properties?: {
+        p?: any;
+        i?: number[];
+    });
     constructor(copy: RecMutex);
     // Fields
     p: any;
@@ -3000,7 +3046,7 @@ export class SList {
     constructor(copy: SList);
     // Fields
     data: any;
-    next: string[];
+    next: SList;
 }
 export class Scanner {
     constructor(copy: Scanner);
@@ -3045,6 +3091,35 @@ export class Scanner {
     unexp_token(expected_token: TokenType, identifier_spec: string, symbol_spec: string, symbol_name: string, message: string, is_error: number): void;
 }
 export class ScannerConfig {
+    constructor(properties?: {
+        cset_skip_characters?: string;
+        cset_identifier_first?: string;
+        cset_identifier_nth?: string;
+        cpair_comment_single?: string;
+        case_sensitive?: number;
+        skip_comment_multi?: number;
+        skip_comment_single?: number;
+        scan_comment_multi?: number;
+        scan_identifier?: number;
+        scan_identifier_1char?: number;
+        scan_identifier_NULL?: number;
+        scan_symbols?: number;
+        scan_binary?: number;
+        scan_octal?: number;
+        scan_float?: number;
+        scan_hex?: number;
+        scan_hex_dollar?: number;
+        scan_string_sq?: number;
+        scan_string_dq?: number;
+        numbers_2_int?: number;
+        int_2_float?: number;
+        identifier_2_string?: number;
+        char_2_token?: number;
+        symbol_2_token?: number;
+        scope_0_fallback?: number;
+        store_int64?: number;
+        padding_dummy?: number;
+    });
     constructor(copy: ScannerConfig);
     // Fields
     cset_skip_characters: string;
@@ -3120,7 +3195,7 @@ export class Source {
     priority: number;
     flags: number;
     source_id: number;
-    poll_fds: string[];
+    poll_fds: SList;
     prev: Source;
     next: Source;
     name: string;
@@ -3148,7 +3223,7 @@ export class Source {
     remove_child_source(child_source: Source): void;
     remove_poll(fd: PollFD): void;
     remove_unix_fd(tag: any): void;
-    set_callback(func: SourceFunc, data: any | null, notify: DestroyNotify | null): void;
+    set_callback(func: SourceFunc, notify: DestroyNotify | null): void;
     set_callback_indirect(callback_data: any | null, callback_funcs: SourceCallbackFuncs): void;
     set_can_recurse(can_recurse: boolean): void;
     set_funcs(funcs: SourceFuncs): void;
@@ -3157,8 +3232,8 @@ export class Source {
     set_ready_time(ready_time: number): void;
     unref(): void;
     static remove(tag: number): boolean;
-    static remove_by_funcs_user_data(funcs: SourceFuncs): boolean;
-    static remove_by_user_data(): boolean;
+    static remove_by_funcs_user_data(funcs: SourceFuncs, user_data: any | null): boolean;
+    static remove_by_user_data(user_data: any | null): boolean;
     static set_name_by_id(tag: number, name: string): void;
 }
 export class SourceCallbackFuncs {
@@ -3177,6 +3252,11 @@ export class StatBuf {
     constructor(copy: StatBuf);
 }
 export class String {
+    constructor(properties?: {
+        str?: string;
+        len?: number;
+        allocated_len?: number;
+    });
     constructor(copy: String);
     // Fields
     str: string;
@@ -3224,6 +3304,14 @@ export class TestCase {
     constructor(copy: TestCase);
 }
 export class TestConfig {
+    constructor(properties?: {
+        test_initialized?: boolean;
+        test_quick?: boolean;
+        test_perf?: boolean;
+        test_verbose?: boolean;
+        test_quiet?: boolean;
+        test_undefined?: boolean;
+    });
     constructor(copy: TestConfig);
     // Fields
     test_initialized: boolean;
@@ -3237,7 +3325,7 @@ export class TestLogBuffer {
     constructor(copy: TestLogBuffer);
     // Fields
     data: String;
-    msgs: string[];
+    msgs: SList;
     // Members
     free(): void;
     push(n_bytes: number, bytes: number): void;
@@ -3291,6 +3379,10 @@ export class ThreadPool {
     static stop_unused_threads(): void;
 }
 export class TimeVal {
+    constructor(properties?: {
+        tv_sec?: number;
+        tv_usec?: number;
+    });
     constructor(copy: TimeVal);
     // Fields
     tv_sec: number;
@@ -3359,13 +3451,13 @@ export class Variant {
     static new_array(child_type: VariantType | null, children: Variant[] | null): Variant;
     static new_boolean(value: boolean): Variant;
     static new_byte(value: number): Variant;
-    static new_bytestring(string: number[]): Variant;
+    static new_bytestring(string: (Uint8Array | string)): Variant;
     static new_bytestring_array(strv: string[]): Variant;
     static new_dict_entry(key: Variant, value: Variant): Variant;
     static new_double(value: number): Variant;
     static new_fixed_array(element_type: VariantType, elements: any | null, n_elements: number, element_size: number): Variant;
-    static new_from_bytes(type: VariantType, bytes: Bytes, trusted: boolean): Variant;
-    static new_from_data(type: VariantType, data: number[], trusted: boolean, notify: DestroyNotify): Variant;
+    static new_from_bytes(type: VariantType, bytes: (Bytes | Uint8Array), trusted: boolean): Variant;
+    static new_from_data(type: VariantType, data: (Uint8Array | string), trusted: boolean, notify: DestroyNotify, user_data: any | null): Variant;
     static new_handle(value: number): Variant;
     static new_int16(value: number): Variant;
     static new_int32(value: number): Variant;
@@ -3388,16 +3480,16 @@ export class Variant {
     check_format_string(format_string: string, copy_only: boolean): boolean;
     classify(): VariantClass;
     compare(two: Variant): number;
-    dup_bytestring(): [number[], number | null];
-    dup_bytestring_array(): [string[], number | null];
-    dup_objv(): [string[], number | null];
+    dup_bytestring(): Uint8Array;
+    dup_bytestring_array(): string[];
+    dup_objv(): string[];
     dup_string(): [string, number];
-    dup_strv(): [string[], number | null];
+    dup_strv(): string[];
     equal(two: Variant): boolean;
     get_boolean(): boolean;
     get_byte(): number;
-    get_bytestring(): number[];
-    get_bytestring_array(): [string[], number | null];
+    get_bytestring(): Uint8Array;
+    get_bytestring_array(): string[];
     get_child_value(index_: number): Variant;
     get_data(): any | null;
     get_data_as_bytes(): Bytes;
@@ -3408,10 +3500,10 @@ export class Variant {
     get_int64(): number;
     get_maybe(): Variant | null;
     get_normal_form(): Variant;
-    get_objv(): [string[], number | null];
+    get_objv(): string[];
     get_size(): number;
     get_string(): [string, number | null];
-    get_strv(): [string[], number | null];
+    get_strv(): string[];
     get_type(): VariantType;
     get_type_string(): string;
     get_uint16(): number;
@@ -3509,16 +3601,26 @@ export class VariantType {
     static string_scan(string: string, limit: string | null): [boolean, string | null];
 }
 export class DoubleIEEE754 {
+    constructor(properties?: {
+        v_double?: number;
+    });
     constructor(copy: DoubleIEEE754);
     // Fields
     v_double: number;
 }
 export class FloatIEEE754 {
+    constructor(properties?: {
+        v_float?: number;
+    });
     constructor(copy: FloatIEEE754);
     // Fields
     v_float: number;
 }
 export class Mutex {
+    constructor(properties?: {
+        p?: any;
+        i?: number[];
+    });
     constructor(copy: Mutex);
     // Fields
     p: any;
@@ -3531,6 +3633,20 @@ export class Mutex {
     unlock(): void;
 }
 export class TokenValue {
+    constructor(properties?: {
+        v_symbol?: any;
+        v_identifier?: string;
+        v_binary?: number;
+        v_octal?: number;
+        v_int?: number;
+        v_int64?: number;
+        v_float?: number;
+        v_hex?: number;
+        v_string?: string;
+        v_comment?: string;
+        v_char?: number;
+        v_error?: number;
+    });
     constructor(copy: TokenValue);
     // Fields
     v_symbol: any;
@@ -3569,7 +3685,7 @@ export type TimeSpan = number;
 
 export type Type = number;
 
-export function log_structured(logDomain, logLevel, stringFields);
+export function log_structured(logDomain: any, logLevel: any, stringFields: any): any;
 
 export function strstrip(str: string): string;declare global {
     interface Error {

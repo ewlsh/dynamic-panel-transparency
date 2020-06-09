@@ -1,5 +1,4 @@
-/** @type {Module} */
-const module = {};
+import type * as gio from 'gio';
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Params = imports.misc.params;
@@ -8,10 +7,6 @@ const Convenience = Me.imports.convenience;
 const Util = Me.imports.util;
 
 const { GLib, Gio } = imports.gi;
-
-/* This might impair visibility of the code, but it makes my life a thousand times simpler */
-/* settings.js takes a key and watches for it to change in Gio.Settings & creates a getter for it. */
-/* Also can parse, handle, etc. a setting. */
 
 const GNOME_BACKGROUND_SCHEMA = 'org.gnome.desktop.wm.keybindings';
 const SETTINGS_SHOW_DESKTOP = 'show-desktop';
@@ -32,7 +27,11 @@ const SETTINGS_ENABLE_ANIMATIONS = 'enable-animations';
 
 /* Basic class to hold settings values */
 class SettingsManager {
-    constructor(settings, params) {
+    definitions: any[];
+    values: { [key: string]: any};
+    settings: gio.Settings;
+
+    constructor(settings: any) {
         /** @type {SettingsKey[]} */
         this.definitions = [];
         /** @type {{ [key: string]: any }} */
@@ -43,7 +42,7 @@ class SettingsManager {
     /**
      * @param {SettingsKey} setting
      */
-    add(setting) {
+    add(setting: { key: any; type: string; name: string | number; }) {
         this.definitions.push(setting);
         if (this.settings.list_keys().indexOf(setting.key) === -1 || !setting)
             return;
@@ -58,7 +57,7 @@ class SettingsManager {
     /**
      * @param {SettingsKey} setting
      */
-    update(setting) {
+    update(setting: { key: any; type: string; name: string | number; }) {
         if (this.settings.list_keys().indexOf(setting.key) === -1)
             return;
 
@@ -73,6 +72,31 @@ class SettingsManager {
 };
 
 class Settings {
+    settings_manager: any;
+    settingsBoundIds: any;
+    _settings: any;
+    _keys: any;
+    _background_settings: any;
+    _interface_settings: any;
+    _show_desktop: any;
+    _enable_animations: any;
+    _useWallpaper: any;
+    _transitionSpeed: any;
+    _unmaximizedOpacity: any;
+    _maximizedOpacity: any;
+    _panelColor: any;
+    _themeOpacity: any;
+    _forceThemeUpdate: any;
+    _textShadow: any;
+    _iconShadow: any;
+    _enableMaximizedTextColor: any;
+    _removePanelStyling: any;
+    _enable_overview_text_color: any;
+    _enable_text_color: any;
+    _enable_opacity: any;
+    _enable_background_color: any;
+    _transition_with_overview: any;
+    _transition_windows_touch: any;
     /**
      *
      * @type {<T extends SettingsKey>(key: T) => (
@@ -83,7 +107,7 @@ class Settings {
           T["returnType"] extends ArrayConstructor ? any[] : any
         )}
      */
-    fromKey(setting) {
+    fromKey(setting: { key: string; handler: { call: (arg0: any) => void; }; parser: (input: any) => any; name: string | number; }) {
         this.settings_manager.add(setting);
 
         /* Watch for changes */
@@ -102,11 +126,11 @@ class Settings {
             }));
         }
 
-        const parser = setting.parser || ((input) => {
+        const parser = setting.parser || ((input: any) => {
             return input;
         });
 
-        const getter = (params) => {
+        const getter = (params: { default: any; }) => {
             params = Params.parse(params, { default: false });
 
             if (params.default) {
@@ -341,9 +365,9 @@ class Settings {
 }
 
 /** @type {Settings} */
-let settings;
+let settings: Settings;
 
-function init() {
+export function init() {
     if (settings) {
         settings.cleanup();
         settings = null;
@@ -352,7 +376,7 @@ function init() {
     settings = new Settings();
 }
 
-function cleanup() {
+export function cleanup() {
     settings.cleanup();
     settings = null;
 }
@@ -360,8 +384,6 @@ function cleanup() {
 /**
  * @return {Settings}
  */
-function get() {
+export function get() {
     return settings;
 }
-
-module.exports = { init, cleanup, get };

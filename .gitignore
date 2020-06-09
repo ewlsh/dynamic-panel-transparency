@@ -2,14 +2,13 @@ old_files/
 styles/
 .vscode/
 .buildconfig
-*.json
-~tsconfig.json
 *~
 *.dpt.css
 .goutputstream*
 *#
 .buildconfig
 globals.d.ts
-
+_build/**
+_compiled/**
 
 node_modules/**

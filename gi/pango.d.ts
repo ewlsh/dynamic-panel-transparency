@@ -491,8 +491,8 @@ export module Context {
     }
 }
 export class Context extends GObject.Object {
-    constructor(properties: Partial<Context.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Context.ConstructorProperties>);
+    constructor(properties?: Partial<Context.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Context.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): Context;
     // Members
@@ -526,8 +526,8 @@ export module Coverage {
     }
 }
 export class Coverage extends GObject.Object {
-    constructor(properties: Partial<Coverage.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Coverage.ConstructorProperties>);
+    constructor(properties?: Partial<Coverage.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Coverage.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): Coverage;
     // Members
@@ -538,9 +538,9 @@ export class Coverage extends GObject.Object {
     ref(...args: never[]): never;
     set(index_: number, level: CoverageLevel): void;
     set(...args: never[]): never;
-    to_bytes(): number[];
+    to_bytes(): Uint8Array;
     unref(): void;
-    static from_bytes(bytes: number[]): Coverage | null;
+    static from_bytes(bytes: (Uint8Array | string)): Coverage | null;
 }
 export module Engine {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -548,8 +548,8 @@ export module Engine {
     }
 }
 export abstract class Engine extends GObject.Object {
-    constructor(properties: Partial<Engine.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Engine.ConstructorProperties>);
+    constructor(properties?: Partial<Engine.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Engine.ConstructorProperties>, ...args: any[]): void;
 }
 export module EngineLang {
     export interface ConstructorProperties extends Engine.ConstructorProperties {
@@ -557,8 +557,8 @@ export module EngineLang {
     }
 }
 export abstract class EngineLang extends Engine {
-    constructor(properties: Partial<EngineLang.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<EngineLang.ConstructorProperties>);
+    constructor(properties?: Partial<EngineLang.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<EngineLang.ConstructorProperties>, ...args: any[]): void;
     // Members
     vfunc_script_break(text: string, len: number, analysis: Analysis, attrs: LogAttr, attrs_len: number): void;
 }
@@ -568,8 +568,8 @@ export module EngineShape {
     }
 }
 export abstract class EngineShape extends Engine {
-    constructor(properties: Partial<EngineShape.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<EngineShape.ConstructorProperties>);
+    constructor(properties?: Partial<EngineShape.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<EngineShape.ConstructorProperties>, ...args: any[]): void;
     // Members
     vfunc_covers(font: Font, language: Language, wc: number): CoverageLevel;
     vfunc_script_shape(font: Font, item_text: string, item_length: number, analysis: Analysis, glyphs: GlyphString, paragraph_text: string, paragraph_length: number): void;
@@ -580,8 +580,8 @@ export module Font {
     }
 }
 export abstract class Font extends GObject.Object {
-    constructor(properties: Partial<Font.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Font.ConstructorProperties>);
+    constructor(properties?: Partial<Font.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Font.ConstructorProperties>, ...args: any[]): void;
     // Members
     describe(): FontDescription;
     describe_with_absolute_size(): FontDescription;
@@ -605,8 +605,8 @@ export module FontFace {
     }
 }
 export abstract class FontFace extends GObject.Object {
-    constructor(properties: Partial<FontFace.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FontFace.ConstructorProperties>);
+    constructor(properties?: Partial<FontFace.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FontFace.ConstructorProperties>, ...args: any[]): void;
     // Members
     describe(): FontDescription;
     get_face_name(): string;
@@ -623,8 +623,8 @@ export module FontFamily {
     }
 }
 export abstract class FontFamily extends GObject.Object {
-    constructor(properties: Partial<FontFamily.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FontFamily.ConstructorProperties>);
+    constructor(properties?: Partial<FontFamily.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FontFamily.ConstructorProperties>, ...args: any[]): void;
     // Members
     get_name(): string;
     is_monospace(): boolean;
@@ -641,8 +641,8 @@ export module FontMap {
     }
 }
 export abstract class FontMap extends GObject.Object {
-    constructor(properties: Partial<FontMap.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FontMap.ConstructorProperties>);
+    constructor(properties?: Partial<FontMap.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FontMap.ConstructorProperties>, ...args: any[]): void;
     // Members
     changed(): void;
     create_context(): Context;
@@ -662,13 +662,13 @@ export module Fontset {
     }
 }
 export abstract class Fontset extends GObject.Object {
-    constructor(properties: Partial<Fontset.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Fontset.ConstructorProperties>);
+    constructor(properties?: Partial<Fontset.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Fontset.ConstructorProperties>, ...args: any[]): void;
     // Members
-    foreach(func: FontsetForeachFunc, data: any | null): void;
+    foreach(func: FontsetForeachFunc): void;
     get_font(wc: number): Font;
     get_metrics(): FontMetrics;
-    vfunc_foreach(func: FontsetForeachFunc, data: any | null): void;
+    vfunc_foreach(func: FontsetForeachFunc): void;
     vfunc_get_font(wc: number): Font;
     vfunc_get_language(): Language;
     vfunc_get_metrics(): FontMetrics;
@@ -679,8 +679,8 @@ export module FontsetSimple {
     }
 }
 export class FontsetSimple extends Fontset {
-    constructor(properties: Partial<FontsetSimple.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FontsetSimple.ConstructorProperties>);
+    constructor(properties?: Partial<FontsetSimple.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FontsetSimple.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](language: Language): FontsetSimple;
     // Members
@@ -693,8 +693,8 @@ export module Layout {
     }
 }
 export class Layout extends GObject.Object {
-    constructor(properties: Partial<Layout.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Layout.ConstructorProperties>);
+    constructor(properties?: Partial<Layout.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Layout.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](context: Context): Layout;
     // Members
@@ -718,10 +718,10 @@ export class Layout extends GObject.Object {
     get_line_count(): number;
     get_line_readonly(line: number): LayoutLine | null;
     get_line_spacing(): number;
-    get_lines(): string[];
-    get_lines_readonly(): string[];
+    get_lines(): GLib.SList;
+    get_lines_readonly(): GLib.SList;
     get_log_attrs(): LogAttr[];
-    get_log_attrs_readonly(): [LogAttr[], number];
+    get_log_attrs_readonly(): LogAttr[];
     get_pixel_extents(): [Rectangle | null, Rectangle | null];
     get_pixel_size(): [number | null, number | null];
     get_serial(): number;
@@ -763,8 +763,8 @@ export module Renderer {
     }
 }
 export abstract class Renderer extends GObject.Object {
-    constructor(properties: Partial<Renderer.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Renderer.ConstructorProperties>);
+    constructor(properties?: Partial<Renderer.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Renderer.ConstructorProperties>, ...args: any[]): void;
     // Fields
     matrix: Matrix;
     // Members
@@ -810,7 +810,7 @@ export class Analysis {
     flags: number;
     script: number;
     language: Language;
-    extra_attrs: string[];
+    extra_attrs: GLib.SList;
 }
 export class AttrClass {
     constructor(copy: AttrClass);
@@ -857,8 +857,8 @@ export class AttrIterator {
     copy(): AttrIterator;
     destroy(): void;
     get(type: AttrType): Attribute | null;
-    get_attrs(): string[];
-    get_font(desc: FontDescription, language: Language | null, extra_attrs: string[] | null): void;
+    get_attrs(): GLib.SList;
+    get_font(desc: FontDescription, language: Language | null, extra_attrs: GLib.SList | null): void;
     next(): boolean;
     range(): [number, number];
 }
@@ -878,8 +878,8 @@ export class AttrList {
     // Members
     change(attr: Attribute): void;
     copy(): AttrList | null;
-    filter(func: AttrFilterFunc, data: any | null): AttrList | null;
-    get_attributes(): string[];
+    filter(func: AttrFilterFunc): AttrList | null;
+    get_attributes(): GLib.SList;
     get_iterator(): AttrIterator;
     insert(attr: Attribute): void;
     insert_before(attr: Attribute): void;
@@ -930,6 +930,11 @@ export class Attribute {
     init(klass: AttrClass): void;
 }
 export class Color {
+    constructor(properties?: {
+        red?: number;
+        green?: number;
+        blue?: number;
+    });
     constructor(copy: Color);
     // Fields
     red: number;
@@ -997,6 +1002,18 @@ export class FontDescription {
     static from_string(str: string): FontDescription;
 }
 export class FontMetrics {
+    constructor(properties?: {
+        ref_count?: number;
+        ascent?: number;
+        descent?: number;
+        height?: number;
+        approximate_char_width?: number;
+        approximate_digit_width?: number;
+        underline_position?: number;
+        underline_thickness?: number;
+        strikethrough_position?: number;
+        strikethrough_thickness?: number;
+    });
     constructor(copy: FontMetrics);
     // Fields
     ref_count: number;
@@ -1042,7 +1059,7 @@ export class GlyphItem {
     item: Item;
     glyphs: GlyphString;
     // Members
-    apply_attrs(text: string, list: AttrList): string[];
+    apply_attrs(text: string, list: AttrList): GLib.SList;
     copy(): GlyphItem | null;
     free(): void;
     get_logical_widths(text: string, logical_widths: number[]): void;
@@ -1090,6 +1107,9 @@ export class GlyphString {
     x_to_index(text: string, length: number, analysis: Analysis, x_pos: number): [number, number];
 }
 export class GlyphVisAttr {
+    constructor(properties?: {
+        is_cluster_start?: number;
+    });
     constructor(copy: GlyphVisAttr);
     // Fields
     is_cluster_start: number;
@@ -1117,7 +1137,7 @@ export class Language {
     constructor(copy: Language);
     // Members
     get_sample_string(): string;
-    get_scripts(): [Script[] | null, number | null];
+    get_scripts(): Script[] | null;
     includes_script(script: Script): boolean;
     matches(range_list: string): boolean;
     to_string(): string;
@@ -1154,7 +1174,7 @@ export class LayoutLine {
     layout: Layout;
     start_index: number;
     length: number;
-    runs: string[];
+    runs: GLib.SList;
     is_paragraph_start: number;
     resolved_dir: number;
     // Members
@@ -1168,6 +1188,21 @@ export class LayoutLine {
     x_to_index(x_pos: number): [boolean, number, number];
 }
 export class LogAttr {
+    constructor(properties?: {
+        is_line_break?: number;
+        is_mandatory_break?: number;
+        is_char_break?: number;
+        is_white?: number;
+        is_cursor_position?: number;
+        is_word_start?: number;
+        is_word_end?: number;
+        is_sentence_boundary?: number;
+        is_sentence_start?: number;
+        is_sentence_end?: number;
+        backspace_deletes_character?: number;
+        is_expandable_space?: number;
+        is_word_boundary?: number;
+    });
     constructor(copy: LogAttr);
     // Fields
     is_line_break: number;
@@ -1191,6 +1226,14 @@ export class MapEntry {
     constructor(copy: MapEntry);
 }
 export class Matrix {
+    constructor(properties?: {
+        xx?: number;
+        xy?: number;
+        yx?: number;
+        yy?: number;
+        x0?: number;
+        y0?: number;
+    });
     constructor(copy: Matrix);
     // Fields
     xx: number;
@@ -1214,6 +1257,12 @@ export class Matrix {
     translate(tx: number, ty: number): void;
 }
 export class Rectangle {
+    constructor(properties?: {
+        x?: number;
+        y?: number;
+        width?: number;
+        height?: number;
+    });
     constructor(copy: Rectangle);
     // Fields
     x: number;

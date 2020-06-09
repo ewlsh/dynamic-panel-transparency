@@ -540,7 +540,7 @@ export const TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID: number;
 
 export function accel_groups_activate(object: GObject.Object, accel_key: number, accel_mods: Gdk.ModifierType): boolean;
 
-export function accel_groups_from_object(object: GObject.Object): string[];
+export function accel_groups_from_object(object: GObject.Object): GLib.SList;
 
 export function accelerator_get_default_mod_mask(): Gdk.ModifierType;
 
@@ -564,7 +564,7 @@ export function alternative_dialog_button_order(screen: Gdk.Screen | null): bool
 
 export function binding_entry_add_signal_from_string(binding_set: BindingSet, signal_desc: string): GLib.TokenType;
 
-export function binding_entry_add_signall(binding_set: BindingSet, keyval: number, modifiers: Gdk.ModifierType, signal_name: string, binding_args: string[]): void;
+export function binding_entry_add_signall(binding_set: BindingSet, keyval: number, modifiers: Gdk.ModifierType, signal_name: string, binding_args: GLib.SList): void;
 
 export function binding_entry_remove(binding_set: BindingSet, keyval: number, modifiers: Gdk.ModifierType): void;
 
@@ -736,7 +736,7 @@ export function print_error_quark(): GLib.Quark;
 
 export function print_run_page_setup_dialog(parent: Window | null, page_setup: PageSetup | null, settings: PrintSettings): PageSetup;
 
-export function print_run_page_setup_dialog_async(parent: Window | null, page_setup: PageSetup | null, settings: PrintSettings, done_cb: PageSetupDoneFunc, data: any | null): void;
+export function print_run_page_setup_dialog_async(parent: Window | null, page_setup: PageSetup | null, settings: PrintSettings, done_cb: PageSetupDoneFunc): void;
 
 export function propagate_event(widget: Widget, event: Gdk.Event): void;
 
@@ -772,15 +772,15 @@ export function rc_parse_state(scanner: GLib.Scanner): [number, StateType];
 
 export function rc_parse_string(rc_string: string): void;
 
-export function rc_property_parse_border(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: GObject.Value): boolean;
+export function rc_property_parse_border(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: (GObject.Value | string | boolean | number)): boolean;
 
-export function rc_property_parse_color(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: GObject.Value): boolean;
+export function rc_property_parse_color(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: (GObject.Value | string | boolean | number)): boolean;
 
-export function rc_property_parse_enum(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: GObject.Value): boolean;
+export function rc_property_parse_enum(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: (GObject.Value | string | boolean | number)): boolean;
 
-export function rc_property_parse_flags(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: GObject.Value): boolean;
+export function rc_property_parse_flags(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: (GObject.Value | string | boolean | number)): boolean;
 
-export function rc_property_parse_requisition(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: GObject.Value): boolean;
+export function rc_property_parse_requisition(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: (GObject.Value | string | boolean | number)): boolean;
 
 export function rc_reparse_all(): boolean;
 
@@ -858,15 +858,15 @@ export function stock_add(items: StockItem[]): void;
 
 export function stock_add_static(items: StockItem[]): void;
 
-export function stock_list_ids(): string[];
+export function stock_list_ids(): GLib.SList;
 
 export function stock_lookup(stock_id: string): [boolean, StockItem];
 
-export function stock_set_translate_func(domain: string, func: TranslateFunc, data: any | null, notify: GLib.DestroyNotify): void;
+export function stock_set_translate_func(domain: string, func: TranslateFunc, notify: GLib.DestroyNotify): void;
 
 export function target_table_free(targets: TargetEntry[]): void;
 
-export function target_table_new_from_list(list: TargetList): [TargetEntry[], number];
+export function target_table_new_from_list(list: TargetList): TargetEntry[];
 
 export function targets_include_image(targets: Gdk.Atom[], writable: boolean): boolean;
 
@@ -884,7 +884,7 @@ export function test_find_sibling(base_widget: Widget, widget_type: GType): Widg
 
 export function test_find_widget(widget: Widget, label_pattern: string, widget_type: GType): Widget | null;
 
-export function test_list_all_types(): [GType[], number];
+export function test_list_all_types(): GType[];
 
 export function test_register_all_types(): void;
 
@@ -916,39 +916,39 @@ export function __true(): boolean;
 
 export type AccelGroupActivate = (accel_group: AccelGroup, acceleratable: GObject.Object, keyval: number, modifier: Gdk.ModifierType) => boolean;
 
-export type AccelGroupFindFunc = (key: AccelKey, closure: GObject.Closure, data: any | null) => boolean;
+export type AccelGroupFindFunc = (key: AccelKey, closure: GObject.Closure) => boolean;
 
 export type AccelMapForeach = (data: any | null, accel_path: string, accel_key: number, accel_mods: Gdk.ModifierType, changed: boolean) => void;
 
-export type AssistantPageFunc = (current_page: number, data: any | null) => number;
+export type AssistantPageFunc = (current_page: number) => number;
 
 export type BuilderConnectFunc = (builder: Builder, object: GObject.Object, signal_name: string, handler_name: string, connect_object: GObject.Object | null, flags: GObject.ConnectFlags) => void;
 
 export type CalendarDetailFunc = (calendar: Calendar, year: number, month: number, day: number) => string | null;
 
-export type Callback = (widget: Widget, data: any | null) => void;
+export type Callback = (widget: Widget) => void;
 
-export type CellAllocCallback = (renderer: CellRenderer, cell_area: Gdk.Rectangle, cell_background: Gdk.Rectangle, data: any | null) => boolean;
+export type CellAllocCallback = (renderer: CellRenderer, cell_area: Gdk.Rectangle, cell_background: Gdk.Rectangle) => boolean;
 
-export type CellCallback = (renderer: CellRenderer, data: any | null) => boolean;
+export type CellCallback = (renderer: CellRenderer) => boolean;
 
-export type CellLayoutDataFunc = (cell_layout: CellLayout, cell: CellRenderer, tree_model: TreeModel, iter: TreeIter, data: any | null) => void;
+export type CellLayoutDataFunc = (cell_layout: CellLayout, cell: CellRenderer, tree_model: TreeModel, iter: TreeIter) => void;
 
 export type ClipboardClearFunc = (clipboard: Clipboard, user_data_or_owner: any | null) => void;
 
 export type ClipboardGetFunc = (clipboard: Clipboard, selection_data: SelectionData, info: number, user_data_or_owner: any | null) => void;
 
-export type ClipboardImageReceivedFunc = (clipboard: Clipboard, pixbuf: GdkPixbuf.Pixbuf, data: any | null) => void;
+export type ClipboardImageReceivedFunc = (clipboard: Clipboard, pixbuf: GdkPixbuf.Pixbuf) => void;
 
-export type ClipboardReceivedFunc = (clipboard: Clipboard, selection_data: SelectionData, data: any | null) => void;
+export type ClipboardReceivedFunc = (clipboard: Clipboard, selection_data: SelectionData) => void;
 
-export type ClipboardRichTextReceivedFunc = (clipboard: Clipboard, format: Gdk.Atom, text: string | null, length: number, data: any | null) => void;
+export type ClipboardRichTextReceivedFunc = (clipboard: Clipboard, format: Gdk.Atom, text: string | null, length: number) => void;
 
-export type ClipboardTargetsReceivedFunc = (clipboard: Clipboard, atoms: Gdk.Atom[] | null, data: any | null) => void;
+export type ClipboardTargetsReceivedFunc = (clipboard: Clipboard, atoms: Gdk.Atom[] | null) => void;
 
-export type ClipboardTextReceivedFunc = (clipboard: Clipboard, text: string | null, data: any | null) => void;
+export type ClipboardTextReceivedFunc = (clipboard: Clipboard, text: string | null) => void;
 
-export type ClipboardURIReceivedFunc = (clipboard: Clipboard, uris: string[], data: any | null) => void;
+export type ClipboardURIReceivedFunc = (clipboard: Clipboard, uris: string[]) => void;
 
 export type ColorSelectionChangePaletteFunc = (colors: Gdk.Color[]) => void;
 
@@ -956,9 +956,9 @@ export type ColorSelectionChangePaletteWithScreenFunc = (screen: Gdk.Screen, col
 
 export type EntryCompletionMatchFunc = (completion: EntryCompletion, key: string, iter: TreeIter) => boolean;
 
-export type FileFilterFunc = (filter_info: FileFilterInfo, data: any | null) => boolean;
+export type FileFilterFunc = (filter_info: FileFilterInfo) => boolean;
 
-export type FlowBoxCreateWidgetFunc<Item = GObject.Object> = (item: Item) => Widget;
+export type FlowBoxCreateWidgetFunc = (item: GObject.Object) => Widget;
 
 export type FlowBoxFilterFunc = (child: FlowBoxChild) => boolean;
 
@@ -966,13 +966,13 @@ export type FlowBoxForeachFunc = (box: FlowBox, child: FlowBoxChild) => void;
 
 export type FlowBoxSortFunc = (child1: FlowBoxChild, child2: FlowBoxChild) => number;
 
-export type FontFilterFunc = (family: Pango.FontFamily, face: Pango.FontFace, data: any | null) => boolean;
+export type FontFilterFunc = (family: Pango.FontFamily, face: Pango.FontFace) => boolean;
 
-export type IconViewForeachFunc = (icon_view: IconView, path: TreePath, data: any | null) => void;
+export type IconViewForeachFunc = (icon_view: IconView, path: TreePath) => void;
 
-export type KeySnoopFunc = (grab_widget: Widget, event: Gdk.EventKey, func_data: any | null) => number;
+export type KeySnoopFunc = (grab_widget: Widget, event: Gdk.EventKey) => number;
 
-export type ListBoxCreateWidgetFunc<Item = GObject.Object> = (item: Item) => Widget;
+export type ListBoxCreateWidgetFunc = (item: GObject.Object) => Widget;
 
 export type ListBoxFilterFunc = (row: ListBoxRow) => boolean;
 
@@ -990,53 +990,53 @@ export type ModuleDisplayInitFunc = (display: Gdk.Display) => void;
 
 export type ModuleInitFunc = (argv: string[] | null) => void;
 
-export type PageSetupDoneFunc = (page_setup: PageSetup, data: any | null) => void;
+export type PageSetupDoneFunc = (page_setup: PageSetup) => void;
 
 export type PrintSettingsFunc = (key: string, value: string) => void;
 
-export type RcPropertyParser = (pspec: GObject.ParamSpec, rc_string: GLib.String, property_value: GObject.Value) => boolean;
+export type RcPropertyParser = (pspec: GObject.ParamSpec, rc_string: GLib.String, property_value: (GObject.Value | string | boolean | number)) => boolean;
 
 export type RecentFilterFunc = (filter_info: RecentFilterInfo) => boolean;
 
 export type RecentSortFunc = (a: RecentInfo, b: RecentInfo) => number;
 
-export type StylePropertyParser = (string: string, value: GObject.Value) => boolean;
+export type StylePropertyParser = (string: string, value: (GObject.Value | string | boolean | number)) => boolean;
 
-export type TextBufferDeserializeFunc = (register_buffer: TextBuffer, content_buffer: TextBuffer, iter: TextIter, data: number[], create_tags: boolean) => boolean;
+export type TextBufferDeserializeFunc = (register_buffer: TextBuffer, content_buffer: TextBuffer, iter: TextIter, data: (Uint8Array | string), create_tags: boolean) => boolean;
 
 export type TextBufferSerializeFunc = (register_buffer: TextBuffer, content_buffer: TextBuffer, start: TextIter, end: TextIter, length: number) => number | null;
 
 export type TextCharPredicate = (ch: number) => boolean;
 
-export type TextTagTableForeach = (tag: TextTag, data: any | null) => void;
+export type TextTagTableForeach = (tag: TextTag) => void;
 
 export type TickCallback = (widget: Widget, frame_clock: Gdk.FrameClock) => boolean;
 
-export type TranslateFunc = (path: string, func_data: any | null) => string;
+export type TranslateFunc = (path: string) => string;
 
-export type TreeCellDataFunc = (tree_column: TreeViewColumn, cell: CellRenderer, tree_model: TreeModel, iter: TreeIter, data: any | null) => void;
+export type TreeCellDataFunc = (tree_column: TreeViewColumn, cell: CellRenderer, tree_model: TreeModel, iter: TreeIter) => void;
 
 export type TreeDestroyCountFunc = (tree_view: TreeView, path: TreePath, children: number) => void;
 
 export type TreeIterCompareFunc = (model: TreeModel, a: TreeIter, b: TreeIter) => number;
 
-export type TreeModelFilterModifyFunc = (model: TreeModel, iter: TreeIter, column: number, data: any | null) => void;
+export type TreeModelFilterModifyFunc = (model: TreeModel, iter: TreeIter, column: number) => void;
 
-export type TreeModelFilterVisibleFunc = (model: TreeModel, iter: TreeIter, data: any | null) => boolean;
+export type TreeModelFilterVisibleFunc = (model: TreeModel, iter: TreeIter) => boolean;
 
-export type TreeModelForeachFunc = (model: TreeModel, path: TreePath, iter: TreeIter, data: any | null) => boolean;
+export type TreeModelForeachFunc = (model: TreeModel, path: TreePath, iter: TreeIter) => boolean;
 
-export type TreeSelectionForeachFunc = (model: TreeModel, path: TreePath, iter: TreeIter, data: any | null) => void;
+export type TreeSelectionForeachFunc = (model: TreeModel, path: TreePath, iter: TreeIter) => void;
 
-export type TreeSelectionFunc = (selection: TreeSelection, model: TreeModel, path: TreePath, path_currently_selected: boolean, data: any | null) => boolean;
+export type TreeSelectionFunc = (selection: TreeSelection, model: TreeModel, path: TreePath, path_currently_selected: boolean) => boolean;
 
-export type TreeViewColumnDropFunc = (tree_view: TreeView, column: TreeViewColumn, prev_column: TreeViewColumn, next_column: TreeViewColumn, data: any | null) => boolean;
+export type TreeViewColumnDropFunc = (tree_view: TreeView, column: TreeViewColumn, prev_column: TreeViewColumn, next_column: TreeViewColumn) => boolean;
 
 export type TreeViewMappingFunc = (tree_view: TreeView, path: TreePath) => void;
 
-export type TreeViewRowSeparatorFunc = (model: TreeModel, iter: TreeIter, data: any | null) => boolean;
+export type TreeViewRowSeparatorFunc = (model: TreeModel, iter: TreeIter) => boolean;
 
-export type TreeViewSearchEqualFunc = (model: TreeModel, column: number, key: string, iter: TreeIter, search_data: any | null) => boolean;
+export type TreeViewSearchEqualFunc = (model: TreeModel, column: number, key: string, iter: TreeIter) => boolean;
 
 export type TreeViewSearchPositionFunc = (tree_view: TreeView, search_dialog: Widget) => void;
 export enum Align {
@@ -1308,6 +1308,9 @@ export enum License {
     LGPL_3_0_ONLY = 12,
     AGPL_3_0 = 13,
     AGPL_3_0_ONLY = 14,
+    BSD_3 = 15,
+    APACHE_2_0 = 16,
+    MPL_2_0 = 17,
 }
 export enum MenuDirectionType {
     PARENT = 0,
@@ -1976,11 +1979,42 @@ export enum UIManagerItemType {
 export module AboutDialog {
     export interface ConstructorProperties extends Dialog.ConstructorProperties {
         [key: string]: any;
+        artists: string[];
+        authors: string[];
+        comments: string;
+        copyright: string;
+        documenters: string[];
+        license: string;
+        license_type: License;
+        logo: GdkPixbuf.Pixbuf;
+        logo_icon_name: string;
+        program_name: string;
+        translator_credits: string;
+        version: string;
+        website: string;
+        website_label: string;
+        wrap_license: boolean;
     }
 }
-export class AboutDialog extends Dialog {
+export class AboutDialog extends Dialog implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<AboutDialog.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<AboutDialog.ConstructorProperties>): void;
+    _init(properties?: Partial<AboutDialog.ConstructorProperties>, ...args: any[]): void;
+    // Properties
+    artists: string[];
+    authors: string[];
+    comments: string;
+    copyright: string;
+    documenters: string[];
+    license: string;
+    license_type: License;
+    logo: GdkPixbuf.Pixbuf;
+    logo_icon_name: string;
+    program_name: string;
+    translator_credits: string;
+    version: string;
+    website: string;
+    website_label: string;
+    wrap_license: boolean;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -1991,6 +2025,39 @@ export class AboutDialog extends Dialog {
     // Constructors
     static ["new"](): AboutDialog;
     static ["new"](...args: never[]): never;
+    // Members
+    add_credit_section(section_name: string, people: string[]): void;
+    get_artists(): string[];
+    get_authors(): string[];
+    get_comments(): string;
+    get_copyright(): string;
+    get_documenters(): string[];
+    get_license(): string;
+    get_license_type(): License;
+    get_logo(): GdkPixbuf.Pixbuf;
+    get_logo_icon_name(): string;
+    get_program_name(): string;
+    get_translator_credits(): string;
+    get_version(): string;
+    get_website(): string;
+    get_website_label(): string;
+    get_wrap_license(): boolean;
+    set_artists(artists: string[]): void;
+    set_authors(authors: string[]): void;
+    set_comments(comments: string | null): void;
+    set_copyright(copyright: string | null): void;
+    set_documenters(documenters: string[]): void;
+    set_license(license: string | null): void;
+    set_license_type(license_type: License): void;
+    set_logo(logo: GdkPixbuf.Pixbuf | null): void;
+    set_logo_icon_name(icon_name: string | null): void;
+    set_program_name(name: string): void;
+    set_translator_credits(translator_credits: string | null): void;
+    set_version(version: string | null): void;
+    set_website(website: string | null): void;
+    set_website_label(website_label: string): void;
+    set_wrap_license(wrap_license: boolean): void;
+    vfunc_activate_link(uri: string): boolean;
 }
 export module AccelGroup {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -2001,7 +2068,7 @@ export module AccelGroup {
 }
 export class AccelGroup extends GObject.Object {
     constructor(properties?: Partial<AccelGroup.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<AccelGroup.ConstructorProperties>);
+    _init(properties?: Partial<AccelGroup.ConstructorProperties>, ...args: any[]): void;
     // Properties
     is_locked: boolean;
     modifier_mask: Gdk.ModifierType;
@@ -2024,11 +2091,11 @@ export class AccelGroup extends GObject.Object {
     disconnect(closure: GObject.Closure | null): boolean;
     disconnect(...args: never[]): never;
     disconnect_key(accel_key: number, accel_mods: Gdk.ModifierType): boolean;
-    find(find_func: AccelGroupFindFunc, data: any | null): AccelKey;
+    find(find_func: AccelGroupFindFunc): AccelKey;
     get_is_locked(): boolean;
     get_modifier_mask(): Gdk.ModifierType;
     lock(): void;
-    query(accel_key: number, accel_mods: Gdk.ModifierType): [AccelGroupEntry[] | null, number | null];
+    query(accel_key: number, accel_mods: Gdk.ModifierType): AccelGroupEntry[] | null;
     unlock(): void;
     vfunc_accel_changed(keyval: number, modifier: Gdk.ModifierType, accel_closure: GObject.Closure): void;
     static from_accel_closure(closure: GObject.Closure): AccelGroup | null;
@@ -2042,7 +2109,7 @@ export module AccelLabel {
 }
 export class AccelLabel extends Label implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<AccelLabel.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<AccelLabel.ConstructorProperties>);
+    _init(properties?: Partial<AccelLabel.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accel_closure: GObject.Closure;
     accel_widget: Widget;
@@ -2068,7 +2135,7 @@ export module AccelMap {
 }
 export class AccelMap extends GObject.Object {
     constructor(properties?: Partial<AccelMap.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<AccelMap.ConstructorProperties>);
+    _init(properties?: Partial<AccelMap.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -2100,7 +2167,7 @@ export module Accessible {
 }
 export class Accessible extends Atk.Object {
     constructor(properties?: Partial<Accessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Accessible.ConstructorProperties>);
+    _init(properties?: Partial<Accessible.ConstructorProperties>, ...args: any[]): void;
     // Properties
     widget: Widget;
     // Members
@@ -2134,7 +2201,7 @@ export module Action {
 }
 export class Action extends GObject.Object implements Buildable {
     constructor(properties?: Partial<Action.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Action.ConstructorProperties>);
+    _init(properties?: Partial<Action.ConstructorProperties>, ...args: any[]): void;
     // Properties
     action_group: ActionGroup;
     always_show_image: boolean;
@@ -2180,7 +2247,7 @@ export class Action extends GObject.Object implements Buildable {
     get_is_important(): boolean;
     get_label(): string;
     get_name(): string;
-    get_proxies(): string[];
+    get_proxies(): GLib.SList;
     get_sensitive(): boolean;
     get_short_label(): string;
     get_stock_id(): string;
@@ -2213,23 +2280,23 @@ export class Action extends GObject.Object implements Buildable {
     vfunc_disconnect_proxy(proxy: Widget): void;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     set_name(name: string): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
 }
 export module ActionBar {
@@ -2239,7 +2306,7 @@ export module ActionBar {
 }
 export class ActionBar extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<ActionBar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ActionBar.ConstructorProperties>);
+    _init(properties?: Partial<ActionBar.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): ActionBar;
     // Members
@@ -2259,7 +2326,7 @@ export module ActionGroup {
 }
 export class ActionGroup extends GObject.Object implements Buildable {
     constructor(properties?: Partial<ActionGroup.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ActionGroup.ConstructorProperties>);
+    _init(properties?: Partial<ActionGroup.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accel_group: AccelGroup;
     name: string;
@@ -2295,30 +2362,30 @@ export class ActionGroup extends GObject.Object implements Buildable {
     remove_action(action: Action): void;
     set_accel_group(accel_group: AccelGroup | null): void;
     set_sensitive(sensitive: boolean): void;
-    set_translate_func(func: TranslateFunc, data: any | null, notify: GLib.DestroyNotify): void;
+    set_translate_func(func: TranslateFunc, notify: GLib.DestroyNotify): void;
     set_translation_domain(domain: string | null): void;
     set_visible(visible: boolean): void;
     translate_string(string: string): string;
     vfunc_get_action(action_name: string): Action;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     set_name(name: string): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
 }
 export module Adjustment {
@@ -2334,7 +2401,7 @@ export module Adjustment {
 }
 export class Adjustment extends GObject.InitiallyUnowned {
     constructor(properties?: Partial<Adjustment.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Adjustment.ConstructorProperties>);
+    _init(properties?: Partial<Adjustment.ConstructorProperties>, ...args: any[]): void;
     // Properties
     lower: number;
     page_increment: number;
@@ -2392,7 +2459,7 @@ export module Alignment {
 }
 export class Alignment extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Alignment.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Alignment.ConstructorProperties>);
+    _init(properties?: Partial<Alignment.ConstructorProperties>, ...args: any[]): void;
     // Properties
     bottom_padding: number;
     left_padding: number;
@@ -2422,7 +2489,7 @@ export module AppChooserButton {
 }
 export class AppChooserButton extends ComboBox implements Atk.ImplementorIface, AppChooser, Buildable, CellEditable, CellLayout {
     constructor(properties?: Partial<AppChooserButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<AppChooserButton.ConstructorProperties>);
+    _init(properties?: Partial<AppChooserButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     heading: string;
     show_default_item: boolean;
@@ -2464,7 +2531,7 @@ export module AppChooserDialog {
 }
 export class AppChooserDialog extends Dialog implements Atk.ImplementorIface, AppChooser, Buildable {
     constructor(properties?: Partial<AppChooserDialog.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<AppChooserDialog.ConstructorProperties>);
+    _init(properties?: Partial<AppChooserDialog.ConstructorProperties>, ...args: any[]): void;
     // Properties
     gfile: Gio.File;
     heading: string;
@@ -2495,7 +2562,7 @@ export module AppChooserWidget {
 }
 export class AppChooserWidget extends Box implements Atk.ImplementorIface, AppChooser, Buildable, Orientable {
     constructor(properties?: Partial<AppChooserWidget.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<AppChooserWidget.ConstructorProperties>);
+    _init(properties?: Partial<AppChooserWidget.ConstructorProperties>, ...args: any[]): void;
     // Properties
     default_text: string;
     show_default: boolean;
@@ -2553,7 +2620,7 @@ export module Application {
 }
 export class Application extends Gio.Application implements Gio.ActionGroup, Gio.ActionMap {
     constructor(properties?: Partial<Application.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Application.ConstructorProperties>);
+    _init(properties?: Partial<Application.ConstructorProperties>, ...args: any[]): void;
     // Properties
     active_window: Window;
     app_menu: Gio.MenuModel;
@@ -2631,7 +2698,7 @@ export class Application extends Gio.Application implements Gio.ActionGroup, Gio
     vfunc_query_action(action_name: string): [boolean, boolean, GLib.VariantType | null, GLib.VariantType | null, GLib.Variant | null, GLib.Variant | null];
     add_action(action: Gio.Action): void;
     add_action(...args: never[]): never;
-    add_action_entries(entries: Gio.ActionEntry[]): void;
+    add_action_entries(entries: Gio.ActionEntry[], user_data: any | null): void;
     lookup_action(action_name: string): Gio.Action;
     remove_action(action_name: string): void;
     remove_action(...args: never[]): never;
@@ -2647,7 +2714,7 @@ export module ApplicationWindow {
 }
 export class ApplicationWindow extends Window implements Atk.ImplementorIface, Gio.ActionGroup, Gio.ActionMap, Buildable {
     constructor(properties?: Partial<ApplicationWindow.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ApplicationWindow.ConstructorProperties>);
+    _init(properties?: Partial<ApplicationWindow.ConstructorProperties>, ...args: any[]): void;
     // Properties
     show_menubar: boolean;
     // Constructors
@@ -2689,7 +2756,7 @@ export class ApplicationWindow extends Window implements Atk.ImplementorIface, G
     vfunc_list_actions(): string[];
     vfunc_query_action(action_name: string): [boolean, boolean, GLib.VariantType | null, GLib.VariantType | null, GLib.Variant | null, GLib.Variant | null];
     add_action(action: Gio.Action): void;
-    add_action_entries(entries: Gio.ActionEntry[]): void;
+    add_action_entries(entries: Gio.ActionEntry[], user_data: any | null): void;
     lookup_action(action_name: string): Gio.Action;
     remove_action(action_name: string): void;
     vfunc_add_action(action: Gio.Action): void;
@@ -2705,7 +2772,7 @@ export module Arrow {
 }
 export class Arrow extends Misc implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Arrow.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Arrow.ConstructorProperties>);
+    _init(properties?: Partial<Arrow.ConstructorProperties>, ...args: any[]): void;
     // Properties
     arrow_type: ArrowType;
     shadow_type: ShadowType;
@@ -2724,7 +2791,7 @@ export module ArrowAccessible {
 }
 export class ArrowAccessible extends WidgetAccessible implements Atk.Component, Atk.Image {
     constructor(properties?: Partial<ArrowAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ArrowAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ArrowAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ArrowAccessiblePrivate | any;
     // Implemented Members
@@ -2750,7 +2817,7 @@ export module AspectFrame {
 }
 export class AspectFrame extends Frame implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<AspectFrame.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<AspectFrame.ConstructorProperties>);
+    _init(properties?: Partial<AspectFrame.ConstructorProperties>, ...args: any[]): void;
     // Properties
     obey_child: boolean;
     ratio: number;
@@ -2773,7 +2840,7 @@ export module Assistant {
 }
 export class Assistant extends Window implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Assistant.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Assistant.ConstructorProperties>);
+    _init(properties?: Partial<Assistant.ConstructorProperties>, ...args: any[]): void;
     // Properties
     use_header_bar: number;
     // Signals
@@ -2818,7 +2885,7 @@ export class Assistant extends Window implements Atk.ImplementorIface, Buildable
     remove_action_widget(child: Widget): void;
     remove_page(page_num: number): void;
     set_current_page(page_num: number): void;
-    set_forward_page_func(page_func: AssistantPageFunc | null, data: any | null, destroy: GLib.DestroyNotify): void;
+    set_forward_page_func(page_func: AssistantPageFunc | null, destroy: GLib.DestroyNotify): void;
     set_page_complete(page: Widget, complete: boolean): void;
     set_page_has_padding(page: Widget, has_padding: boolean): void;
     set_page_header_image(page: Widget, pixbuf: GdkPixbuf.Pixbuf | null): void;
@@ -2838,7 +2905,7 @@ export module Bin {
 }
 export abstract class Bin extends Container implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Bin.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Bin.ConstructorProperties>);
+    _init(properties?: Partial<Bin.ConstructorProperties>, ...args: any[]): void;
     // Fields
     container: Container;
     // Members
@@ -2851,7 +2918,7 @@ export module BooleanCellAccessible {
 }
 export class BooleanCellAccessible extends RendererCellAccessible implements Atk.Action, Atk.Component, Atk.TableCell {
     constructor(properties?: Partial<BooleanCellAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<BooleanCellAccessible.ConstructorProperties>);
+    _init(properties?: Partial<BooleanCellAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: BooleanCellAccessiblePrivate | any;
 }
@@ -2865,7 +2932,7 @@ export module Box {
 }
 export class Box extends Container implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<Box.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Box.ConstructorProperties>);
+    _init(properties?: Partial<Box.ConstructorProperties>, ...args: any[]): void;
     // Properties
     baseline_position: BaselinePosition;
     homogeneous: boolean;
@@ -2902,7 +2969,7 @@ export module Builder {
 }
 export class Builder extends GObject.Object {
     constructor(properties?: Partial<Builder.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Builder.ConstructorProperties>);
+    _init(properties?: Partial<Builder.ConstructorProperties>, ...args: any[]): void;
     // Properties
     translation_domain: string;
     // Fields
@@ -2920,13 +2987,13 @@ export class Builder extends GObject.Object {
     add_objects_from_file(filename: string, object_ids: string[]): number;
     add_objects_from_resource(resource_path: string, object_ids: string[]): number;
     add_objects_from_string(buffer: string, length: number, object_ids: string[]): number;
-    connect_signals(): void;
+    connect_signals(user_data: any | null): void;
     connect_signals_full(func: BuilderConnectFunc): void;
     expose_object(name: string, object: GObject.Object): void;
     extend_with_template(widget: Widget, template_type: GType, buffer: string, length: number): number;
     get_application(): Application | null;
     get_object<T = GObject.Object>(name: string): T | null;
-    get_objects(): string[];
+    get_objects(): GLib.SList;
     get_translation_domain(): string;
     get_type_from_name(type_name: string): GType;
     set_application(application: Application): void;
@@ -2951,7 +3018,7 @@ export module Button {
 }
 export class Button extends Bin implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<Button.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Button.ConstructorProperties>);
+    _init(properties?: Partial<Button.ConstructorProperties>, ...args: any[]): void;
     // Properties
     always_show_image: boolean;
     image: Widget;
@@ -3052,7 +3119,7 @@ export module ButtonAccessible {
 }
 export class ButtonAccessible extends ContainerAccessible implements Atk.Action, Atk.Component, Atk.Image {
     constructor(properties?: Partial<ButtonAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ButtonAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ButtonAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ButtonAccessiblePrivate | any;
     // Implemented Members
@@ -3095,7 +3162,7 @@ export module ButtonBox {
 }
 export class ButtonBox extends Box implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<ButtonBox.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ButtonBox.ConstructorProperties>);
+    _init(properties?: Partial<ButtonBox.ConstructorProperties>, ...args: any[]): void;
     // Properties
     layout_style: ButtonBoxStyle;
     // Fields
@@ -3128,7 +3195,7 @@ export module Calendar {
 }
 export class Calendar extends Widget implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Calendar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Calendar.ConstructorProperties>);
+    _init(properties?: Partial<Calendar.ConstructorProperties>, ...args: any[]): void;
     // Properties
     day: number;
     detail_height_rows: number;
@@ -3180,7 +3247,7 @@ export class Calendar extends Widget implements Atk.ImplementorIface, Buildable 
     mark_day(day: number): void;
     select_day(day: number): void;
     select_month(month: number, year: number): void;
-    set_detail_func(func: CalendarDetailFunc, data: any | null, destroy: GLib.DestroyNotify): void;
+    set_detail_func(func: CalendarDetailFunc, destroy: GLib.DestroyNotify): void;
     set_detail_height_rows(rows: number): void;
     set_detail_width_chars(chars: number): void;
     set_display_options(flags: CalendarDisplayOptions): void;
@@ -3200,7 +3267,7 @@ export module CellAccessible {
 }
 export class CellAccessible extends Accessible implements Atk.Action, Atk.Component, Atk.TableCell {
     constructor(properties?: Partial<CellAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellAccessible.ConstructorProperties>);
+    _init(properties?: Partial<CellAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: CellAccessiblePrivate;
     // Members
@@ -3285,9 +3352,8 @@ export module CellArea {
     }
 }
 export abstract class CellArea extends GObject.InitiallyUnowned implements Buildable, CellLayout {
-    orientation: Orientation;
     constructor(properties?: Partial<CellArea.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellArea.ConstructorProperties>);
+    _init(properties?: Partial<CellArea.ConstructorProperties>, ...args: any[]): void;
     // Properties
     edit_widget: CellEditable;
     edited_cell: CellRenderer;
@@ -3317,14 +3383,14 @@ export abstract class CellArea extends GObject.InitiallyUnowned implements Build
     attribute_connect(renderer: CellRenderer, attribute: string, column: number): void;
     attribute_disconnect(renderer: CellRenderer, attribute: string): void;
     attribute_get_column(renderer: CellRenderer, attribute: string): number;
-    cell_get_property(renderer: CellRenderer, property_name: string, value: GObject.Value): void;
-    cell_set_property(renderer: CellRenderer, property_name: string, value: GObject.Value): void;
+    cell_get_property(renderer: CellRenderer, property_name: string, value: (GObject.Value | string | boolean | number)): void;
+    cell_set_property(renderer: CellRenderer, property_name: string, value: (GObject.Value | string | boolean | number)): void;
     copy_context(context: CellAreaContext): CellAreaContext;
     create_context(): CellAreaContext;
     event(context: CellAreaContext, widget: Widget, event: Gdk.Event, cell_area: Gdk.Rectangle, flags: CellRendererState): number;
     focus(direction: DirectionType): boolean;
-    foreach(callback: CellCallback, callback_data: any | null): void;
-    foreach_alloc(context: CellAreaContext, widget: Widget, cell_area: Gdk.Rectangle, background_area: Gdk.Rectangle, callback: CellAllocCallback, callback_data: any | null): void;
+    foreach(callback: CellCallback): void;
+    foreach_alloc(context: CellAreaContext, widget: Widget, cell_area: Gdk.Rectangle, background_area: Gdk.Rectangle, callback: CellAllocCallback): void;
     get_cell_allocation(context: CellAreaContext, widget: Widget, renderer: CellRenderer, cell_area: Gdk.Rectangle): Gdk.Rectangle;
     get_cell_at_position(context: CellAreaContext, widget: Widget, cell_area: Gdk.Rectangle, x: number, y: number): [CellRenderer, Gdk.Rectangle | null];
     get_current_path_string(): string;
@@ -3355,9 +3421,9 @@ export abstract class CellArea extends GObject.InitiallyUnowned implements Build
     vfunc_create_context(): CellAreaContext;
     vfunc_event(context: CellAreaContext, widget: Widget, event: Gdk.Event, cell_area: Gdk.Rectangle, flags: CellRendererState): number;
     vfunc_focus(direction: DirectionType): boolean;
-    vfunc_foreach(callback: CellCallback, callback_data: any | null): void;
-    vfunc_foreach_alloc(context: CellAreaContext, widget: Widget, cell_area: Gdk.Rectangle, background_area: Gdk.Rectangle, callback: CellAllocCallback, callback_data: any | null): void;
-    vfunc_get_cell_property(renderer: CellRenderer, property_id: number, value: GObject.Value, pspec: GObject.ParamSpec): void;
+    vfunc_foreach(callback: CellCallback): void;
+    vfunc_foreach_alloc(context: CellAreaContext, widget: Widget, cell_area: Gdk.Rectangle, background_area: Gdk.Rectangle, callback: CellAllocCallback): void;
+    vfunc_get_cell_property(renderer: CellRenderer, property_id: number, value: (GObject.Value | string | boolean | number), pspec: GObject.ParamSpec): void;
     vfunc_get_preferred_height(context: CellAreaContext, widget: Widget): [number | null, number | null];
     vfunc_get_preferred_height_for_width(context: CellAreaContext, widget: Widget, width: number): [number | null, number | null];
     vfunc_get_preferred_width(context: CellAreaContext, widget: Widget): [number | null, number | null];
@@ -3366,27 +3432,27 @@ export abstract class CellArea extends GObject.InitiallyUnowned implements Build
     vfunc_is_activatable(): boolean;
     vfunc_remove(renderer: CellRenderer): void;
     vfunc_render(context: CellAreaContext, widget: Widget, cr: cairo.Context, background_area: Gdk.Rectangle, cell_area: Gdk.Rectangle, flags: CellRendererState, paint_focus: boolean): void;
-    vfunc_set_cell_property(renderer: CellRenderer, property_id: number, value: GObject.Value, pspec: GObject.ParamSpec): void;
+    vfunc_set_cell_property(renderer: CellRenderer, property_id: number, value: (GObject.Value | string | boolean | number), pspec: GObject.ParamSpec): void;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     get_name(): string;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     set_name(name: string): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
     add_attribute(cell: CellRenderer, attribute: string, column: number): void;
     clear(): void;
@@ -3396,7 +3462,7 @@ export abstract class CellArea extends GObject.InitiallyUnowned implements Build
     pack_end(cell: CellRenderer, expand: boolean): void;
     pack_start(cell: CellRenderer, expand: boolean): void;
     reorder(cell: CellRenderer, position: number): void;
-    set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
     vfunc_add_attribute(cell: CellRenderer, attribute: string, column: number): void;
     vfunc_clear(): void;
     vfunc_clear_attributes(cell: CellRenderer): void;
@@ -3406,7 +3472,7 @@ export abstract class CellArea extends GObject.InitiallyUnowned implements Build
     vfunc_pack_end(cell: CellRenderer, expand: boolean): void;
     vfunc_pack_start(cell: CellRenderer, expand: boolean): void;
     vfunc_reorder(cell: CellRenderer, position: number): void;
-    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
 }
 export module CellAreaBox {
     export interface ConstructorProperties extends CellArea.ConstructorProperties {
@@ -3416,7 +3482,7 @@ export module CellAreaBox {
 }
 export class CellAreaBox extends CellArea implements Buildable, CellLayout, Orientable {
     constructor(properties?: Partial<CellAreaBox.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellAreaBox.ConstructorProperties>);
+    _init(properties?: Partial<CellAreaBox.ConstructorProperties>, ...args: any[]): void;
     // Properties
     spacing: number;
     // Implemented Properties
@@ -3446,7 +3512,7 @@ export module CellAreaContext {
 }
 export class CellAreaContext extends GObject.Object {
     constructor(properties?: Partial<CellAreaContext.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellAreaContext.ConstructorProperties>);
+    _init(properties?: Partial<CellAreaContext.ConstructorProperties>, ...args: any[]): void;
     // Properties
     area: CellArea;
     minimum_height: number;
@@ -3469,7 +3535,6 @@ export class CellAreaContext extends GObject.Object {
     vfunc_get_preferred_width_for_height(height: number): [number | null, number | null];
     vfunc_reset(): void;
 }
-
 export module CellRenderer {
     export interface ConstructorProperties extends GObject.InitiallyUnowned.ConstructorProperties {
         [key: string]: any;
@@ -3493,7 +3558,7 @@ export module CellRenderer {
 }
 export abstract class CellRenderer extends GObject.InitiallyUnowned {
     constructor(properties?: Partial<CellRenderer.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellRenderer.ConstructorProperties>);
+    _init(properties?: Partial<CellRenderer.ConstructorProperties>, ...args: any[]): void;
     // Properties
     cell_background: string;
     cell_background_gdk: Gdk.Color;
@@ -3570,7 +3635,7 @@ export module CellRendererAccel {
 }
 export class CellRendererAccel extends CellRendererText {
     constructor(properties?: Partial<CellRendererAccel.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellRendererAccel.ConstructorProperties>);
+    _init(properties?: Partial<CellRendererAccel.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accel_key: number;
     accel_mode: CellRendererAccelMode;
@@ -3603,7 +3668,7 @@ export module CellRendererCombo {
 }
 export class CellRendererCombo extends CellRendererText {
     constructor(properties?: Partial<CellRendererCombo.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellRendererCombo.ConstructorProperties>);
+    _init(properties?: Partial<CellRendererCombo.ConstructorProperties>, ...args: any[]): void;
     // Properties
     has_entry: boolean;
     model: TreeModel;
@@ -3636,7 +3701,7 @@ export module CellRendererPixbuf {
 }
 export class CellRendererPixbuf extends CellRenderer {
     constructor(properties?: Partial<CellRendererPixbuf.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellRendererPixbuf.ConstructorProperties>);
+    _init(properties?: Partial<CellRendererPixbuf.ConstructorProperties>, ...args: any[]): void;
     // Properties
     follow_state: boolean;
     gicon: Gio.Icon;
@@ -3664,7 +3729,7 @@ export module CellRendererProgress {
 }
 export class CellRendererProgress extends CellRenderer implements Orientable {
     constructor(properties?: Partial<CellRendererProgress.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellRendererProgress.ConstructorProperties>);
+    _init(properties?: Partial<CellRendererProgress.ConstructorProperties>, ...args: any[]): void;
     // Properties
     inverted: boolean;
     pulse: number;
@@ -3690,7 +3755,7 @@ export module CellRendererSpin {
 }
 export class CellRendererSpin extends CellRendererText {
     constructor(properties?: Partial<CellRendererSpin.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellRendererSpin.ConstructorProperties>);
+    _init(properties?: Partial<CellRendererSpin.ConstructorProperties>, ...args: any[]): void;
     // Properties
     adjustment: Adjustment;
     climb_rate: number;
@@ -3709,7 +3774,7 @@ export module CellRendererSpinner {
 }
 export class CellRendererSpinner extends CellRenderer {
     constructor(properties?: Partial<CellRendererSpinner.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellRendererSpinner.ConstructorProperties>);
+    _init(properties?: Partial<CellRendererSpinner.ConstructorProperties>, ...args: any[]): void;
     // Properties
     active: boolean;
     pulse: number;
@@ -3772,7 +3837,7 @@ export module CellRendererText {
 }
 export class CellRendererText extends CellRenderer {
     constructor(properties?: Partial<CellRendererText.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellRendererText.ConstructorProperties>);
+    _init(properties?: Partial<CellRendererText.ConstructorProperties>, ...args: any[]): void;
     // Properties
     align_set: boolean;
     alignment: Pango.Alignment;
@@ -3847,7 +3912,7 @@ export module CellRendererToggle {
 }
 export class CellRendererToggle extends CellRenderer {
     constructor(properties?: Partial<CellRendererToggle.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellRendererToggle.ConstructorProperties>);
+    _init(properties?: Partial<CellRendererToggle.ConstructorProperties>, ...args: any[]): void;
     // Properties
     activatable: boolean;
     active: boolean;
@@ -3888,7 +3953,7 @@ export module CellView {
 }
 export class CellView extends Widget implements Atk.ImplementorIface, Buildable, CellLayout, Orientable {
     constructor(properties?: Partial<CellView.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CellView.ConstructorProperties>);
+    _init(properties?: Partial<CellView.ConstructorProperties>, ...args: any[]): void;
     // Properties
     background: string;
     background_gdk: Gdk.Color;
@@ -3928,7 +3993,7 @@ export class CellView extends Widget implements Atk.ImplementorIface, Buildable,
     pack_end(cell: CellRenderer, expand: boolean): void;
     pack_start(cell: CellRenderer, expand: boolean): void;
     reorder(cell: CellRenderer, position: number): void;
-    set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
     vfunc_add_attribute(cell: CellRenderer, attribute: string, column: number): void;
     vfunc_clear(): void;
     vfunc_clear_attributes(cell: CellRenderer): void;
@@ -3937,7 +4002,7 @@ export class CellView extends Widget implements Atk.ImplementorIface, Buildable,
     vfunc_pack_end(cell: CellRenderer, expand: boolean): void;
     vfunc_pack_start(cell: CellRenderer, expand: boolean): void;
     vfunc_reorder(cell: CellRenderer, position: number): void;
-    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
     get_orientation(): Orientation;
     set_orientation(orientation: Orientation): void;
 }
@@ -3948,7 +4013,7 @@ export module CheckButton {
 }
 export class CheckButton extends ToggleButton implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<CheckButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CheckButton.ConstructorProperties>);
+    _init(properties?: Partial<CheckButton.ConstructorProperties>, ...args: any[]): void;
     // Fields
     toggle_button: ToggleButton;
     // Constructors
@@ -3971,7 +4036,7 @@ export module CheckMenuItem {
 }
 export class CheckMenuItem extends MenuItem implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<CheckMenuItem.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CheckMenuItem.ConstructorProperties>);
+    _init(properties?: Partial<CheckMenuItem.ConstructorProperties>, ...args: any[]): void;
     // Properties
     active: boolean;
     draw_as_radio: boolean;
@@ -4010,7 +4075,7 @@ export module CheckMenuItemAccessible {
 }
 export class CheckMenuItemAccessible extends MenuItemAccessible implements Atk.Action, Atk.Component, Atk.Selection {
     constructor(properties?: Partial<CheckMenuItemAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CheckMenuItemAccessible.ConstructorProperties>);
+    _init(properties?: Partial<CheckMenuItemAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: CheckMenuItemAccessiblePrivate | any;
 }
@@ -4021,7 +4086,7 @@ export module Clipboard {
 }
 export class Clipboard extends GObject.Object {
     constructor(properties?: Partial<Clipboard.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Clipboard.ConstructorProperties>);
+    _init(properties?: Partial<Clipboard.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -4032,7 +4097,7 @@ export class Clipboard extends GObject.Object {
     // Members
     clear(): void;
     get_display(): Gdk.Display;
-    get_owner(): GObject.Object | null;
+    get_owner<T = GObject.Object>(): T | null;
     request_contents(target: Gdk.Atom, callback: ClipboardReceivedFunc): void;
     request_image(callback: ClipboardImageReceivedFunc): void;
     request_rich_text(buffer: TextBuffer, callback: ClipboardRichTextReceivedFunc): void;
@@ -4045,7 +4110,7 @@ export class Clipboard extends GObject.Object {
     store(): void;
     wait_for_contents(target: Gdk.Atom): SelectionData | null;
     wait_for_image(): GdkPixbuf.Pixbuf | null;
-    wait_for_rich_text(buffer: TextBuffer): [number[] | null, Gdk.Atom, number];
+    wait_for_rich_text(buffer: TextBuffer): [Uint8Array | null, Gdk.Atom];
     wait_for_targets(): [boolean, Gdk.Atom[]];
     wait_for_text(): string | null;
     wait_for_uris(): string[] | null;
@@ -4071,7 +4136,7 @@ export module ColorButton {
 }
 export class ColorButton extends Button implements Atk.ImplementorIface, Actionable, Activatable, Buildable, ColorChooser {
     constructor(properties?: Partial<ColorButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ColorButton.ConstructorProperties>);
+    _init(properties?: Partial<ColorButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     alpha: number;
     color: Gdk.Color;
@@ -4120,7 +4185,7 @@ export module ColorChooserDialog {
 }
 export class ColorChooserDialog extends Dialog implements Atk.ImplementorIface, Buildable, ColorChooser {
     constructor(properties?: Partial<ColorChooserDialog.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ColorChooserDialog.ConstructorProperties>): void;
+    _init(properties?: Partial<ColorChooserDialog.ConstructorProperties>, ...args: any[]): void;
     // Properties
     show_editor: boolean;
     // Implemented Properties
@@ -4148,7 +4213,7 @@ export module ColorChooserWidget {
 }
 export class ColorChooserWidget extends Box implements Atk.ImplementorIface, Buildable, ColorChooser, Orientable {
     constructor(properties?: Partial<ColorChooserWidget.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ColorChooserWidget.ConstructorProperties>);
+    _init(properties?: Partial<ColorChooserWidget.ConstructorProperties>, ...args: any[]): void;
     // Properties
     show_editor: boolean;
     // Implemented Properties
@@ -4180,7 +4245,7 @@ export module ColorSelection {
 }
 export class ColorSelection extends Box implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<ColorSelection.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ColorSelection.ConstructorProperties>);
+    _init(properties?: Partial<ColorSelection.ConstructorProperties>, ...args: any[]): void;
     // Properties
     current_alpha: number;
     current_color: Gdk.Color;
@@ -4230,7 +4295,7 @@ export module ColorSelectionDialog {
 }
 export class ColorSelectionDialog extends Dialog implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<ColorSelectionDialog.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ColorSelectionDialog.ConstructorProperties>);
+    _init(properties?: Partial<ColorSelectionDialog.ConstructorProperties>, ...args: any[]): void;
     // Properties
     cancel_button: Widget;
     color_selection: Widget;
@@ -4265,7 +4330,7 @@ export module ComboBox {
 }
 export class ComboBox extends Bin implements Atk.ImplementorIface, Buildable, CellEditable, CellLayout {
     constructor(properties?: Partial<ComboBox.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ComboBox.ConstructorProperties>);
+    _init(properties?: Partial<ComboBox.ConstructorProperties>, ...args: any[]): void;
     // Properties
     active: number;
     active_id: string;
@@ -4342,7 +4407,7 @@ export class ComboBox extends Bin implements Atk.ImplementorIface, Buildable, Ce
     set_id_column(id_column: number): void;
     set_model(model: TreeModel | null): void;
     set_popup_fixed_width(fixed: boolean): void;
-    set_row_separator_func(func: TreeViewRowSeparatorFunc, data: any | null, destroy: GLib.DestroyNotify | null): void;
+    set_row_separator_func(func: TreeViewRowSeparatorFunc, destroy: GLib.DestroyNotify | null): void;
     set_row_span_column(row_span: number): void;
     set_title(title: string): void;
     set_wrap_width(width: number): void;
@@ -4363,7 +4428,7 @@ export class ComboBox extends Bin implements Atk.ImplementorIface, Buildable, Ce
     pack_end(cell: CellRenderer, expand: boolean): void;
     pack_start(cell: CellRenderer, expand: boolean): void;
     reorder(cell: CellRenderer, position: number): void;
-    set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
     vfunc_add_attribute(cell: CellRenderer, attribute: string, column: number): void;
     vfunc_clear(): void;
     vfunc_clear_attributes(cell: CellRenderer): void;
@@ -4372,7 +4437,7 @@ export class ComboBox extends Bin implements Atk.ImplementorIface, Buildable, Ce
     vfunc_pack_end(cell: CellRenderer, expand: boolean): void;
     vfunc_pack_start(cell: CellRenderer, expand: boolean): void;
     vfunc_reorder(cell: CellRenderer, position: number): void;
-    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
 }
 export module ComboBoxAccessible {
     export interface ConstructorProperties extends ContainerAccessible.ConstructorProperties {
@@ -4381,7 +4446,7 @@ export module ComboBoxAccessible {
 }
 export class ComboBoxAccessible extends ContainerAccessible implements Atk.Action, Atk.Component, Atk.Selection {
     constructor(properties?: Partial<ComboBoxAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ComboBoxAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ComboBoxAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ComboBoxAccessiblePrivate | any;
     // Implemented Members
@@ -4428,7 +4493,7 @@ export module ComboBoxText {
 }
 export class ComboBoxText extends ComboBox implements Atk.ImplementorIface, Buildable, CellEditable, CellLayout {
     constructor(properties?: Partial<ComboBoxText.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ComboBoxText.ConstructorProperties>);
+    _init(properties?: Partial<ComboBoxText.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): ComboBoxText;
     static ["new"](...args: never[]): never;
@@ -4456,7 +4521,7 @@ export module Container {
 }
 export abstract class Container extends Widget implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Container.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Container.ConstructorProperties>);
+    _init(properties?: Partial<Container.ConstructorProperties>, ...args: any[]): void;
     // Properties
     border_width: number;
     child: Widget;
@@ -4482,14 +4547,14 @@ export abstract class Container extends Widget implements Atk.ImplementorIface, 
     // Members
     add(widget: Widget): void;
     check_resize(): void;
-    child_get_property(child: Widget, property_name: string, value: GObject.Value): void;
+    child_get_property(child: Widget, property_name: string, value: (GObject.Value | string | boolean | number)): void;
     child_notify(child: Widget, child_property: string): void;
     child_notify(...args: never[]): never;
     child_notify_by_pspec(child: Widget, pspec: GObject.ParamSpec): void;
-    child_set_property(child: Widget, property_name: string, value: GObject.Value | number | string | boolean): void;
+    child_set_property(child: Widget, property_name: string, value: (GObject.Value | string | boolean | number)): void;
     child_type(): GType;
-    forall(callback: Callback): void; // , callback_data: any | null
-    foreach(callback: Callback): void; // , callback_data: any | null
+    forall(callback: Callback): void;
+    foreach(callback: Callback): void;
     get_border_width(): number;
     get_children(): GLib.List;
     get_focus_chain(): [boolean, GLib.List];
@@ -4513,11 +4578,11 @@ export abstract class Container extends Widget implements Atk.ImplementorIface, 
     vfunc_check_resize(): void;
     vfunc_child_type(): GType;
     vfunc_composite_name(child: Widget): string;
-    vfunc_forall(include_internals: boolean, callback: Callback, callback_data: any | null): void;
-    vfunc_get_child_property(child: Widget, property_id: number, value: GObject.Value, pspec: GObject.ParamSpec): void;
+    vfunc_forall(include_internals: boolean, callback: Callback): void;
+    vfunc_get_child_property(child: Widget, property_id: number, value: (GObject.Value | string | boolean | number), pspec: GObject.ParamSpec): void;
     vfunc_get_path_for_child(child: Widget): WidgetPath;
     vfunc_remove(widget: Widget): void;
-    vfunc_set_child_property(child: Widget, property_id: number, value: GObject.Value, pspec: GObject.ParamSpec): void;
+    vfunc_set_child_property(child: Widget, property_id: number, value: (GObject.Value | string | boolean | number), pspec: GObject.ParamSpec): void;
     vfunc_set_focus_child(child: Widget | null): void;
 }
 export module ContainerAccessible {
@@ -4527,7 +4592,7 @@ export module ContainerAccessible {
 }
 export class ContainerAccessible extends WidgetAccessible implements Atk.Component {
     constructor(properties?: Partial<ContainerAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ContainerAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ContainerAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ContainerAccessiblePrivate | any;
 }
@@ -4538,7 +4603,7 @@ export module ContainerCellAccessible {
 }
 export class ContainerCellAccessible extends CellAccessible implements Atk.Action, Atk.Component, Atk.TableCell {
     constructor(properties?: Partial<ContainerCellAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ContainerCellAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ContainerCellAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ContainerCellAccessiblePrivate | any;
     // Constructors
@@ -4555,7 +4620,7 @@ export module CssProvider {
 }
 export class CssProvider extends GObject.Object implements StyleProvider {
     constructor(properties?: Partial<CssProvider.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<CssProvider.ConstructorProperties>);
+    _init(properties?: Partial<CssProvider.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: CssProviderPrivate;
     // Signals
@@ -4568,7 +4633,7 @@ export class CssProvider extends GObject.Object implements StyleProvider {
     // Constructors
     static ["new"](): CssProvider;
     // Members
-    load_from_data(data: string | number[]): boolean;
+    load_from_data(data: (Uint8Array | string)): boolean;
     load_from_file(file: Gio.File): boolean;
     load_from_path(path: string): boolean;
     load_from_resource(resource_path: string): void;
@@ -4587,12 +4652,12 @@ export class CssProvider extends GObject.Object implements StyleProvider {
 export module Dialog {
     export interface ConstructorProperties extends Window.ConstructorProperties {
         [key: string]: any;
-        use_header_bar: boolean;
+        use_header_bar: number;
     }
 }
 export class Dialog extends Window implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Dialog.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Dialog.ConstructorProperties>);
+    _init(properties?: Partial<Dialog.ConstructorProperties>, ...args: any[]): void;
     // Properties
     use_header_bar: number;
     // Fields
@@ -4633,7 +4698,7 @@ export module DrawingArea {
 }
 export class DrawingArea extends Widget implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<DrawingArea.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<DrawingArea.ConstructorProperties>);
+    _init(properties?: Partial<DrawingArea.ConstructorProperties>, ...args: any[]): void;
     // Fields
     widget: Widget;
     // Constructors
@@ -4697,7 +4762,7 @@ export module Entry {
 }
 export class Entry extends Widget implements Atk.ImplementorIface, Buildable, CellEditable, Editable {
     constructor(properties?: Partial<Entry.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Entry.ConstructorProperties>);
+    _init(properties?: Partial<Entry.ConstructorProperties>, ...args: any[]): void;
     // Properties
     activates_default: boolean;
     attributes: Pango.AttrList;
@@ -4927,7 +4992,7 @@ export module EntryAccessible {
 }
 export class EntryAccessible extends WidgetAccessible implements Atk.Action, Atk.Component, Atk.EditableText, Atk.Text {
     constructor(properties?: Partial<EntryAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<EntryAccessible.ConstructorProperties>);
+    _init(properties?: Partial<EntryAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: EntryAccessiblePrivate | any;
     // Implemented Members
@@ -5024,7 +5089,7 @@ export module EntryBuffer {
 }
 export class EntryBuffer extends GObject.Object {
     constructor(properties?: Partial<EntryBuffer.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<EntryBuffer.ConstructorProperties>);
+    _init(properties?: Partial<EntryBuffer.ConstructorProperties>, ...args: any[]): void;
     // Properties
     length: number;
     max_length: number;
@@ -5075,7 +5140,7 @@ export module EntryCompletion {
 }
 export class EntryCompletion extends GObject.Object implements Buildable, CellLayout {
     constructor(properties?: Partial<EntryCompletion.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<EntryCompletion.ConstructorProperties>);
+    _init(properties?: Partial<EntryCompletion.ConstructorProperties>, ...args: any[]): void;
     // Properties
     cell_area: CellArea;
     inline_completion: boolean;
@@ -5127,7 +5192,7 @@ export class EntryCompletion extends GObject.Object implements Buildable, CellLa
     insert_prefix(): void;
     set_inline_completion(inline_completion: boolean): void;
     set_inline_selection(inline_selection: boolean): void;
-    set_match_func(func: EntryCompletionMatchFunc, func_data: any | null, func_notify: GLib.DestroyNotify): void;
+    set_match_func(func: EntryCompletionMatchFunc, func_notify: GLib.DestroyNotify): void;
     set_minimum_key_length(length: number): void;
     set_model(model: TreeModel | null): void;
     set_popup_completion(popup_completion: boolean): void;
@@ -5141,24 +5206,24 @@ export class EntryCompletion extends GObject.Object implements Buildable, CellLa
     vfunc_no_matches(): void;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     get_name(): string;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     set_name(name: string): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
     add_attribute(cell: CellRenderer, attribute: string, column: number): void;
     clear(): void;
@@ -5168,7 +5233,7 @@ export class EntryCompletion extends GObject.Object implements Buildable, CellLa
     pack_end(cell: CellRenderer, expand: boolean): void;
     pack_start(cell: CellRenderer, expand: boolean): void;
     reorder(cell: CellRenderer, position: number): void;
-    set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
     vfunc_add_attribute(cell: CellRenderer, attribute: string, column: number): void;
     vfunc_clear(): void;
     vfunc_clear_attributes(cell: CellRenderer): void;
@@ -5177,7 +5242,7 @@ export class EntryCompletion extends GObject.Object implements Buildable, CellLa
     vfunc_pack_end(cell: CellRenderer, expand: boolean): void;
     vfunc_pack_start(cell: CellRenderer, expand: boolean): void;
     vfunc_reorder(cell: CellRenderer, position: number): void;
-    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
 }
 export module EntryIconAccessible {
     export interface ConstructorProperties extends Atk.Object.ConstructorProperties {
@@ -5186,7 +5251,7 @@ export module EntryIconAccessible {
 }
 export class EntryIconAccessible extends Atk.Object implements Atk.Action, Atk.Component {
     constructor(properties?: Partial<EntryIconAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<EntryIconAccessible.ConstructorProperties>);
+    _init(properties?: Partial<EntryIconAccessible.ConstructorProperties>, ...args: any[]): void;
     // Implemented Members
     do_action(i: number): boolean;
     get_description(i: number): string | null;
@@ -5249,7 +5314,7 @@ export module EventBox {
 }
 export class EventBox extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<EventBox.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<EventBox.ConstructorProperties>);
+    _init(properties?: Partial<EventBox.ConstructorProperties>, ...args: any[]): void;
     // Properties
     above_child: boolean;
     visible_window: boolean;
@@ -5272,7 +5337,7 @@ export module EventController {
 }
 export abstract class EventController extends GObject.Object {
     constructor(properties?: Partial<EventController.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<EventController.ConstructorProperties>);
+    _init(properties?: Partial<EventController.ConstructorProperties>, ...args: any[]): void;
     // Properties
     propagation_phase: PropagationPhase;
     widget: Widget;
@@ -5290,7 +5355,7 @@ export module EventControllerKey {
 }
 export class EventControllerKey extends EventController {
     constructor(properties?: Partial<EventControllerKey.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<EventControllerKey.ConstructorProperties>);
+    _init(properties?: Partial<EventControllerKey.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -5328,7 +5393,7 @@ export module EventControllerMotion {
 }
 export class EventControllerMotion extends EventController {
     constructor(properties?: Partial<EventControllerMotion.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<EventControllerMotion.ConstructorProperties>);
+    _init(properties?: Partial<EventControllerMotion.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -5353,7 +5418,7 @@ export module EventControllerScroll {
 }
 export class EventControllerScroll extends EventController {
     constructor(properties?: Partial<EventControllerScroll.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<EventControllerScroll.ConstructorProperties>);
+    _init(properties?: Partial<EventControllerScroll.ConstructorProperties>, ...args: any[]): void;
     // Properties
     flags: EventControllerScrollFlags;
     // Signals
@@ -5393,7 +5458,7 @@ export module Expander {
 }
 export class Expander extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Expander.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Expander.ConstructorProperties>);
+    _init(properties?: Partial<Expander.ConstructorProperties>, ...args: any[]): void;
     // Properties
     expanded: boolean;
     label: string;
@@ -5442,7 +5507,7 @@ export module ExpanderAccessible {
 }
 export class ExpanderAccessible extends ContainerAccessible implements Atk.Action, Atk.Component {
     constructor(properties?: Partial<ExpanderAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ExpanderAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ExpanderAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ExpanderAccessiblePrivate | any;
     // Implemented Members
@@ -5477,7 +5542,7 @@ export module FileChooserButton {
 }
 export class FileChooserButton extends Box implements Atk.ImplementorIface, Buildable, FileChooser, Orientable {
     constructor(properties?: Partial<FileChooserButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FileChooserButton.ConstructorProperties>);
+    _init(properties?: Partial<FileChooserButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     dialog: FileChooser;
     title: string;
@@ -5529,8 +5594,8 @@ export class FileChooserButton extends Box implements Atk.ImplementorIface, Buil
     get_extra_widget(): Widget | null;
     get_file(): Gio.File;
     get_filename(): string | null;
-    get_filenames(): string[];
-    get_files(): string[];
+    get_filenames(): GLib.SList;
+    get_files(): GLib.SList;
     get_filter(): FileFilter | null;
     get_local_only(): boolean;
     get_preview_file(): Gio.File | null;
@@ -5541,11 +5606,11 @@ export class FileChooserButton extends Box implements Atk.ImplementorIface, Buil
     get_select_multiple(): boolean;
     get_show_hidden(): boolean;
     get_uri(): string | null;
-    get_uris(): string[];
+    get_uris(): GLib.SList;
     get_use_preview_label(): boolean;
-    list_filters(): string[];
-    list_shortcut_folder_uris(): string[] | null;
-    list_shortcut_folders(): string[] | null;
+    list_filters(): GLib.SList;
+    list_shortcut_folder_uris(): GLib.SList | null;
+    list_shortcut_folders(): GLib.SList | null;
     remove_choice(id: string): void;
     remove_filter(filter: FileFilter): void;
     remove_shortcut_folder(folder: string): boolean;
@@ -5585,7 +5650,7 @@ export module FileChooserDialog {
 }
 export class FileChooserDialog extends Dialog implements Atk.ImplementorIface, Buildable, FileChooser {
     constructor(properties?: Partial<FileChooserDialog.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FileChooserDialog.ConstructorProperties>);
+    _init(properties?: Partial<FileChooserDialog.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: FileChooserDialogPrivate | any;
     // Implemented Properties
@@ -5616,8 +5681,8 @@ export class FileChooserDialog extends Dialog implements Atk.ImplementorIface, B
     get_extra_widget(): Widget | null;
     get_file(): Gio.File;
     get_filename(): string | null;
-    get_filenames(): string[];
-    get_files(): string[];
+    get_filenames(): GLib.SList;
+    get_files(): GLib.SList;
     get_filter(): FileFilter | null;
     get_local_only(): boolean;
     get_preview_file(): Gio.File | null;
@@ -5628,11 +5693,11 @@ export class FileChooserDialog extends Dialog implements Atk.ImplementorIface, B
     get_select_multiple(): boolean;
     get_show_hidden(): boolean;
     get_uri(): string | null;
-    get_uris(): string[];
+    get_uris(): GLib.SList;
     get_use_preview_label(): boolean;
-    list_filters(): string[];
-    list_shortcut_folder_uris(): string[] | null;
-    list_shortcut_folders(): string[] | null;
+    list_filters(): GLib.SList;
+    list_shortcut_folder_uris(): GLib.SList | null;
+    list_shortcut_folders(): GLib.SList | null;
     remove_choice(id: string): void;
     remove_filter(filter: FileFilter): void;
     remove_shortcut_folder(folder: string): boolean;
@@ -5674,7 +5739,7 @@ export module FileChooserNative {
 }
 export class FileChooserNative extends NativeDialog implements FileChooser {
     constructor(properties?: Partial<FileChooserNative.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FileChooserNative.ConstructorProperties>);
+    _init(properties?: Partial<FileChooserNative.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accept_label: string;
     cancel_label: string;
@@ -5713,8 +5778,8 @@ export class FileChooserNative extends NativeDialog implements FileChooser {
     get_extra_widget(): Widget | null;
     get_file(): Gio.File;
     get_filename(): string | null;
-    get_filenames(): string[];
-    get_files(): string[];
+    get_filenames(): GLib.SList;
+    get_files(): GLib.SList;
     get_filter(): FileFilter | null;
     get_local_only(): boolean;
     get_preview_file(): Gio.File | null;
@@ -5725,11 +5790,11 @@ export class FileChooserNative extends NativeDialog implements FileChooser {
     get_select_multiple(): boolean;
     get_show_hidden(): boolean;
     get_uri(): string | null;
-    get_uris(): string[];
+    get_uris(): GLib.SList;
     get_use_preview_label(): boolean;
-    list_filters(): string[];
-    list_shortcut_folder_uris(): string[] | null;
-    list_shortcut_folders(): string[] | null;
+    list_filters(): GLib.SList;
+    list_shortcut_folder_uris(): GLib.SList | null;
+    list_shortcut_folders(): GLib.SList | null;
     remove_choice(id: string): void;
     remove_filter(filter: FileFilter): void;
     remove_shortcut_folder(folder: string): boolean;
@@ -5771,7 +5836,7 @@ export module FileChooserWidget {
 }
 export class FileChooserWidget extends Box implements Atk.ImplementorIface, Buildable, FileChooser, Orientable {
     constructor(properties?: Partial<FileChooserWidget.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FileChooserWidget.ConstructorProperties>);
+    _init(properties?: Partial<FileChooserWidget.ConstructorProperties>, ...args: any[]): void;
     // Properties
     search_mode: boolean;
     subtitle: string;
@@ -5848,8 +5913,8 @@ export class FileChooserWidget extends Box implements Atk.ImplementorIface, Buil
     get_extra_widget(): Widget | null;
     get_file(): Gio.File;
     get_filename(): string | null;
-    get_filenames(): string[];
-    get_files(): string[];
+    get_filenames(): GLib.SList;
+    get_files(): GLib.SList;
     get_filter(): FileFilter | null;
     get_local_only(): boolean;
     get_preview_file(): Gio.File | null;
@@ -5860,11 +5925,11 @@ export class FileChooserWidget extends Box implements Atk.ImplementorIface, Buil
     get_select_multiple(): boolean;
     get_show_hidden(): boolean;
     get_uri(): string | null;
-    get_uris(): string[];
+    get_uris(): GLib.SList;
     get_use_preview_label(): boolean;
-    list_filters(): string[];
-    list_shortcut_folder_uris(): string[] | null;
-    list_shortcut_folders(): string[] | null;
+    list_filters(): GLib.SList;
+    list_shortcut_folder_uris(): GLib.SList | null;
+    list_shortcut_folders(): GLib.SList | null;
     remove_choice(id: string): void;
     remove_filter(filter: FileFilter): void;
     remove_shortcut_folder(folder: string): boolean;
@@ -5904,38 +5969,40 @@ export module FileFilter {
 }
 export class FileFilter extends GObject.InitiallyUnowned implements Buildable {
     constructor(properties?: Partial<FileFilter.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FileFilter.ConstructorProperties>);
+    _init(properties?: Partial<FileFilter.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): FileFilter;
     static new_from_gvariant(variant: GLib.Variant): FileFilter;
     // Members
-    add_custom(needed: FileFilterFlags, func: FileFilterFunc, data: any | null, notify: GLib.DestroyNotify): void;
+    add_custom(needed: FileFilterFlags, func: FileFilterFunc, notify: GLib.DestroyNotify): void;
     add_mime_type(mime_type: string): void;
     add_pattern(pattern: string): void;
     add_pixbuf_formats(): void;
     filter(filter_info: FileFilterInfo): boolean;
     get_name(): string | null;
+    get_name(...args: never[]): never;
     get_needed(): FileFilterFlags;
     set_name(name: string | null): void;
+    set_name(...args: never[]): never;
     to_gvariant(): GLib.Variant;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
 }
 export module Fixed {
@@ -5945,7 +6012,7 @@ export module Fixed {
 }
 export class Fixed extends Container implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Fixed.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Fixed.ConstructorProperties>);
+    _init(properties?: Partial<Fixed.ConstructorProperties>, ...args: any[]): void;
     // Fields
     container: Container;
     // Constructors
@@ -5968,7 +6035,7 @@ export module FlowBox {
 }
 export class FlowBox extends Container implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<FlowBox.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FlowBox.ConstructorProperties>);
+    _init(properties?: Partial<FlowBox.ConstructorProperties>, ...args: any[]): void;
     // Properties
     activate_on_single_click: boolean;
     column_spacing: number;
@@ -6009,7 +6076,7 @@ export class FlowBox extends Container implements Atk.ImplementorIface, Buildabl
     // Constructors
     static ["new"](): FlowBox;
     // Members
-    bind_model<T = GObject.Object>(model: Gio.ListModel<T> | null, create_widget_func: FlowBoxCreateWidgetFunc<T>, user_data_free_func: GLib.DestroyNotify): void;
+    bind_model(model: Gio.ListModel | null, create_widget_func: FlowBoxCreateWidgetFunc, user_data_free_func: GLib.DestroyNotify): void;
     get_activate_on_single_click(): boolean;
     get_child_at_index(idx: number): FlowBoxChild | null;
     get_child_at_pos(x: number, y: number): FlowBoxChild | null;
@@ -6025,7 +6092,7 @@ export class FlowBox extends Container implements Atk.ImplementorIface, Buildabl
     invalidate_sort(): void;
     select_all(): void;
     select_child(child: FlowBoxChild): void;
-    selected_foreach(func: FlowBoxForeachFunc, data: any | null): void;
+    selected_foreach(func: FlowBoxForeachFunc): void;
     set_activate_on_single_click(single: boolean): void;
     set_column_spacing(spacing: number): void;
     set_filter_func(filter_func: FlowBoxFilterFunc | null, destroy: GLib.DestroyNotify): void;
@@ -6057,7 +6124,7 @@ export module FlowBoxAccessible {
 }
 export class FlowBoxAccessible extends ContainerAccessible implements Atk.Component, Atk.Selection {
     constructor(properties?: Partial<FlowBoxAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FlowBoxAccessible.ConstructorProperties>);
+    _init(properties?: Partial<FlowBoxAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: FlowBoxAccessiblePrivate | any;
     // Implemented Members
@@ -6084,7 +6151,7 @@ export module FlowBoxChild {
 }
 export class FlowBoxChild extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<FlowBoxChild.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FlowBoxChild.ConstructorProperties>);
+    _init(properties?: Partial<FlowBoxChild.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -6107,7 +6174,7 @@ export module FlowBoxChildAccessible {
 }
 export class FlowBoxChildAccessible extends ContainerAccessible implements Atk.Component {
     constructor(properties?: Partial<FlowBoxChildAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FlowBoxChildAccessible.ConstructorProperties>);
+    _init(properties?: Partial<FlowBoxChildAccessible.ConstructorProperties>, ...args: any[]): void;
 }
 export module FontButton {
     export interface ConstructorProperties extends Button.ConstructorProperties {
@@ -6122,7 +6189,7 @@ export module FontButton {
 }
 export class FontButton extends Button implements Atk.ImplementorIface, Actionable, Activatable, Buildable, FontChooser {
     constructor(properties?: Partial<FontButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FontButton.ConstructorProperties>);
+    _init(properties?: Partial<FontButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     font_name: string;
     show_size: boolean;
@@ -6200,7 +6267,7 @@ export module FontChooserDialog {
 }
 export class FontChooserDialog extends Dialog implements Atk.ImplementorIface, Buildable, FontChooser {
     constructor(properties?: Partial<FontChooserDialog.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FontChooserDialog.ConstructorProperties>);
+    _init(properties?: Partial<FontChooserDialog.ConstructorProperties>, ...args: any[]): void;
     // Implemented Properties
     font: string;
     font_desc: Pango.FontDescription;
@@ -6248,7 +6315,7 @@ export module FontChooserWidget {
 }
 export class FontChooserWidget extends Box implements Atk.ImplementorIface, Buildable, FontChooser, Orientable {
     constructor(properties?: Partial<FontChooserWidget.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FontChooserWidget.ConstructorProperties>);
+    _init(properties?: Partial<FontChooserWidget.ConstructorProperties>, ...args: any[]): void;
     // Properties
     tweak_action: Gio.Action;
     // Implemented Properties
@@ -6299,7 +6366,7 @@ export module FontSelection {
 }
 export class FontSelection extends Box implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<FontSelection.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FontSelection.ConstructorProperties>);
+    _init(properties?: Partial<FontSelection.ConstructorProperties>, ...args: any[]): void;
     // Properties
     font_name: string;
     preview_text: string;
@@ -6327,7 +6394,7 @@ export module FontSelectionDialog {
 }
 export class FontSelectionDialog extends Dialog implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<FontSelectionDialog.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FontSelectionDialog.ConstructorProperties>);
+    _init(properties?: Partial<FontSelectionDialog.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](title: string): FontSelectionDialog;
     static ["new"](...args: never[]): never;
@@ -6352,7 +6419,7 @@ export module Frame {
 }
 export class Frame extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Frame.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Frame.ConstructorProperties>);
+    _init(properties?: Partial<Frame.ConstructorProperties>, ...args: any[]): void;
     // Properties
     label: string;
     label_widget: Widget;
@@ -6381,7 +6448,7 @@ export module FrameAccessible {
 }
 export class FrameAccessible extends ContainerAccessible implements Atk.Component {
     constructor(properties?: Partial<FrameAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<FrameAccessible.ConstructorProperties>);
+    _init(properties?: Partial<FrameAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: FrameAccessiblePrivate | any;
 }
@@ -6398,7 +6465,7 @@ export module GLArea {
 }
 export class GLArea extends Widget implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<GLArea.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<GLArea.ConstructorProperties>);
+    _init(properties?: Partial<GLArea.ConstructorProperties>, ...args: any[]): void;
     // Properties
     auto_render: boolean;
     context: Gdk.GLContext;
@@ -6452,7 +6519,7 @@ export module Gesture {
 }
 export abstract class Gesture extends EventController {
     constructor(properties?: Partial<Gesture.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Gesture.ConstructorProperties>);
+    _init(properties?: Partial<Gesture.ConstructorProperties>, ...args: any[]): void;
     // Properties
     n_points: number;
     window: Gdk.Window;
@@ -6503,7 +6570,7 @@ export module GestureDrag {
 }
 export class GestureDrag extends GestureSingle {
     constructor(properties?: Partial<GestureDrag.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<GestureDrag.ConstructorProperties>);
+    _init(properties?: Partial<GestureDrag.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -6531,7 +6598,7 @@ export module GestureLongPress {
 }
 export class GestureLongPress extends GestureSingle {
     constructor(properties?: Partial<GestureLongPress.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<GestureLongPress.ConstructorProperties>);
+    _init(properties?: Partial<GestureLongPress.ConstructorProperties>, ...args: any[]): void;
     // Properties
     delay_factor: number;
     // Signals
@@ -6554,7 +6621,7 @@ export module GestureMultiPress {
 }
 export class GestureMultiPress extends GestureSingle {
     constructor(properties?: Partial<GestureMultiPress.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<GestureMultiPress.ConstructorProperties>);
+    _init(properties?: Partial<GestureMultiPress.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -6582,7 +6649,7 @@ export module GesturePan {
 }
 export class GesturePan extends GestureDrag {
     constructor(properties?: Partial<GesturePan.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<GesturePan.ConstructorProperties>);
+    _init(properties?: Partial<GesturePan.ConstructorProperties>, ...args: any[]): void;
     // Properties
     orientation: Orientation;
     // Signals
@@ -6606,7 +6673,7 @@ export module GestureRotate {
 }
 export class GestureRotate extends Gesture {
     constructor(properties?: Partial<GestureRotate.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<GestureRotate.ConstructorProperties>);
+    _init(properties?: Partial<GestureRotate.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -6629,7 +6696,7 @@ export module GestureSingle {
 }
 export class GestureSingle extends Gesture {
     constructor(properties?: Partial<GestureSingle.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<GestureSingle.ConstructorProperties>);
+    _init(properties?: Partial<GestureSingle.ConstructorProperties>, ...args: any[]): void;
     // Properties
     button: number;
     exclusive: boolean;
@@ -6651,7 +6718,7 @@ export module GestureStylus {
 }
 export class GestureStylus extends GestureSingle {
     constructor(properties?: Partial<GestureStylus.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<GestureStylus.ConstructorProperties>);
+    _init(properties?: Partial<GestureStylus.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -6682,7 +6749,7 @@ export module GestureSwipe {
 }
 export class GestureSwipe extends GestureSingle {
     constructor(properties?: Partial<GestureSwipe.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<GestureSwipe.ConstructorProperties>);
+    _init(properties?: Partial<GestureSwipe.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -6702,7 +6769,7 @@ export module GestureZoom {
 }
 export class GestureZoom extends Gesture {
     constructor(properties?: Partial<GestureZoom.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<GestureZoom.ConstructorProperties>);
+    _init(properties?: Partial<GestureZoom.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -6727,7 +6794,7 @@ export module Grid {
 }
 export class Grid extends Container implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<Grid.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Grid.ConstructorProperties>);
+    _init(properties?: Partial<Grid.ConstructorProperties>, ...args: any[]): void;
     // Properties
     baseline_row: number;
     column_homogeneous: boolean;
@@ -6770,7 +6837,7 @@ export module HBox {
 }
 export class HBox extends Box implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<HBox.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<HBox.ConstructorProperties>);
+    _init(properties?: Partial<HBox.ConstructorProperties>, ...args: any[]): void;
     // Fields
     box: Box;
     // Constructors
@@ -6784,7 +6851,7 @@ export module HButtonBox {
 }
 export class HButtonBox extends ButtonBox implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<HButtonBox.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<HButtonBox.ConstructorProperties>);
+    _init(properties?: Partial<HButtonBox.ConstructorProperties>, ...args: any[]): void;
     // Fields
     button_box: ButtonBox;
     // Constructors
@@ -6798,7 +6865,7 @@ export module HPaned {
 }
 export class HPaned extends Paned implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<HPaned.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<HPaned.ConstructorProperties>);
+    _init(properties?: Partial<HPaned.ConstructorProperties>, ...args: any[]): void;
     // Fields
     paned: Paned;
     // Constructors
@@ -6812,7 +6879,7 @@ export module HSV {
 }
 export class HSV extends Widget implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<HSV.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<HSV.ConstructorProperties>);
+    _init(properties?: Partial<HSV.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -6842,7 +6909,7 @@ export module HScale {
 }
 export class HScale extends Scale implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<HScale.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<HScale.ConstructorProperties>);
+    _init(properties?: Partial<HScale.ConstructorProperties>, ...args: any[]): void;
     // Fields
     scale: Scale;
     // Constructors
@@ -6858,7 +6925,7 @@ export module HScrollbar {
 }
 export class HScrollbar extends Scrollbar implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<HScrollbar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<HScrollbar.ConstructorProperties>);
+    _init(properties?: Partial<HScrollbar.ConstructorProperties>, ...args: any[]): void;
     // Fields
     scrollbar: Scrollbar;
     // Constructors
@@ -6872,7 +6939,7 @@ export module HSeparator {
 }
 export class HSeparator extends Separator implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<HSeparator.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<HSeparator.ConstructorProperties>);
+    _init(properties?: Partial<HSeparator.ConstructorProperties>, ...args: any[]): void;
     // Fields
     separator: Separator;
     // Constructors
@@ -6891,7 +6958,7 @@ export module HandleBox {
 }
 export class HandleBox extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<HandleBox.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<HandleBox.ConstructorProperties>);
+    _init(properties?: Partial<HandleBox.ConstructorProperties>, ...args: any[]): void;
     // Properties
     child_detached: boolean;
     handle_position: PositionType;
@@ -6938,7 +7005,7 @@ export module HeaderBar {
 }
 export class HeaderBar extends Container implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<HeaderBar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<HeaderBar.ConstructorProperties>);
+    _init(properties?: Partial<HeaderBar.ConstructorProperties>, ...args: any[]): void;
     // Properties
     custom_title: Widget;
     decoration_layout: string;
@@ -6975,7 +7042,7 @@ export module HeaderBarAccessible {
 }
 export class HeaderBarAccessible extends ContainerAccessible implements Atk.Component {
     constructor(properties?: Partial<HeaderBarAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<HeaderBarAccessible.ConstructorProperties>);
+    _init(properties?: Partial<HeaderBarAccessible.ConstructorProperties>, ...args: any[]): void;
 }
 export module IMContext {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -6986,7 +7053,7 @@ export module IMContext {
 }
 export abstract class IMContext extends GObject.Object {
     constructor(properties?: Partial<IMContext.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<IMContext.ConstructorProperties>);
+    _init(properties?: Partial<IMContext.ConstructorProperties>, ...args: any[]): void;
     // Properties
     input_hints: InputHints;
     input_purpose: InputPurpose;
@@ -7048,7 +7115,7 @@ export module IMContextSimple {
 }
 export class IMContextSimple extends IMContext {
     constructor(properties?: Partial<IMContextSimple.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<IMContextSimple.ConstructorProperties>);
+    _init(properties?: Partial<IMContextSimple.ConstructorProperties>, ...args: any[]): void;
     // Fields
     object: IMContext;
     // Constructors
@@ -7063,7 +7130,7 @@ export module IMMulticontext {
 }
 export class IMMulticontext extends IMContext {
     constructor(properties?: Partial<IMMulticontext.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<IMMulticontext.ConstructorProperties>);
+    _init(properties?: Partial<IMMulticontext.ConstructorProperties>, ...args: any[]): void;
     // Fields
     object: IMContext;
     // Constructors
@@ -7080,7 +7147,7 @@ export module IconFactory {
 }
 export class IconFactory extends GObject.Object implements Buildable {
     constructor(properties?: Partial<IconFactory.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<IconFactory.ConstructorProperties>);
+    _init(properties?: Partial<IconFactory.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): IconFactory;
     // Members
@@ -7091,24 +7158,24 @@ export class IconFactory extends GObject.Object implements Buildable {
     static lookup_default(stock_id: string): IconSet;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     get_name(): string;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     set_name(name: string): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
 }
 export module IconInfo {
@@ -7118,7 +7185,7 @@ export module IconInfo {
 }
 export class IconInfo extends GObject.Object {
     constructor(properties?: Partial<IconInfo.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<IconInfo.ConstructorProperties>);
+    _init(properties?: Partial<IconInfo.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static new_for_pixbuf(icon_theme: IconTheme, pixbuf: GdkPixbuf.Pixbuf): IconInfo;
     // Members
@@ -7150,7 +7217,7 @@ export module IconTheme {
 }
 export class IconTheme extends GObject.Object {
     constructor(properties?: Partial<IconTheme.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<IconTheme.ConstructorProperties>);
+    _init(properties?: Partial<IconTheme.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -7212,7 +7279,7 @@ export module IconView {
 }
 export class IconView extends Container implements Atk.ImplementorIface, Buildable, CellLayout, Scrollable {
     constructor(properties?: Partial<IconView.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<IconView.ConstructorProperties>);
+    _init(properties?: Partial<IconView.ConstructorProperties>, ...args: any[]): void;
     // Properties
     activate_on_single_click: boolean;
     cell_area: CellArea;
@@ -7305,7 +7372,7 @@ export class IconView extends Container implements Atk.ImplementorIface, Buildab
     scroll_to_path(path: TreePath, use_align: boolean, row_align: number, col_align: number): void;
     select_all(): void;
     select_path(path: TreePath): void;
-    selected_foreach(func: IconViewForeachFunc, data: any | null): void;
+    selected_foreach(func: IconViewForeachFunc): void;
     set_activate_on_single_click(single: boolean): void;
     set_column_spacing(column_spacing: number): void;
     set_columns(columns: number): void;
@@ -7347,7 +7414,7 @@ export class IconView extends Container implements Atk.ImplementorIface, Buildab
     pack_end(cell: CellRenderer, expand: boolean): void;
     pack_start(cell: CellRenderer, expand: boolean): void;
     reorder(cell: CellRenderer, position: number): void;
-    set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
     vfunc_add_attribute(cell: CellRenderer, attribute: string, column: number): void;
     vfunc_clear(): void;
     vfunc_clear_attributes(cell: CellRenderer): void;
@@ -7356,7 +7423,7 @@ export class IconView extends Container implements Atk.ImplementorIface, Buildab
     vfunc_pack_end(cell: CellRenderer, expand: boolean): void;
     vfunc_pack_start(cell: CellRenderer, expand: boolean): void;
     vfunc_reorder(cell: CellRenderer, position: number): void;
-    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
     get_border(): [boolean, Border];
     get_hadjustment(): Adjustment;
     get_hscroll_policy(): ScrollablePolicy;
@@ -7375,7 +7442,7 @@ export module IconViewAccessible {
 }
 export class IconViewAccessible extends ContainerAccessible implements Atk.Component, Atk.Selection {
     constructor(properties?: Partial<IconViewAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<IconViewAccessible.ConstructorProperties>);
+    _init(properties?: Partial<IconViewAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: IconViewAccessiblePrivate | any;
     // Implemented Members
@@ -7415,7 +7482,7 @@ export module Image {
 }
 export class Image extends Misc implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Image.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Image.ConstructorProperties>);
+    _init(properties?: Partial<Image.ConstructorProperties>, ...args: any[]): void;
     // Properties
     file: string;
     gicon: Gio.Icon;
@@ -7471,7 +7538,7 @@ export module ImageAccessible {
 }
 export class ImageAccessible extends WidgetAccessible implements Atk.Component, Atk.Image {
     constructor(properties?: Partial<ImageAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ImageAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ImageAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ImageAccessiblePrivate | any;
     // Implemented Members
@@ -7493,7 +7560,7 @@ export module ImageCellAccessible {
 }
 export class ImageCellAccessible extends RendererCellAccessible implements Atk.Action, Atk.Component, Atk.Image, Atk.TableCell {
     constructor(properties?: Partial<ImageCellAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ImageCellAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ImageCellAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ImageCellAccessiblePrivate | any;
     // Implemented Members
@@ -7519,7 +7586,7 @@ export module ImageMenuItem {
 }
 export class ImageMenuItem extends MenuItem implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<ImageMenuItem.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ImageMenuItem.ConstructorProperties>);
+    _init(properties?: Partial<ImageMenuItem.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accel_group: AccelGroup;
     always_show_image: boolean;
@@ -7554,7 +7621,7 @@ export module InfoBar {
 }
 export class InfoBar extends Box implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<InfoBar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<InfoBar.ConstructorProperties>);
+    _init(properties?: Partial<InfoBar.ConstructorProperties>, ...args: any[]): void;
     // Properties
     message_type: MessageType;
     revealed: boolean;
@@ -7597,7 +7664,7 @@ export module Invisible {
 }
 export class Invisible extends Widget implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Invisible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Invisible.ConstructorProperties>);
+    _init(properties?: Partial<Invisible.ConstructorProperties>, ...args: any[]): void;
     // Properties
     screen: Gdk.Screen;
     // Fields
@@ -7638,7 +7705,7 @@ export module Label {
 }
 export class Label extends Misc implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Label.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Label.ConstructorProperties>);
+    _init(properties?: Partial<Label.ConstructorProperties>, ...args: any[]): void;
     // Properties
     angle: number;
     attributes: Pango.AttrList;
@@ -7747,7 +7814,7 @@ export module LabelAccessible {
 }
 export class LabelAccessible extends WidgetAccessible implements Atk.Component, Atk.Hypertext, Atk.Text {
     constructor(properties?: Partial<LabelAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<LabelAccessible.ConstructorProperties>);
+    _init(properties?: Partial<LabelAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: LabelAccessiblePrivate | any;
     // Implemented Members
@@ -7816,7 +7883,7 @@ export module Layout {
 }
 export class Layout extends Container implements Atk.ImplementorIface, Buildable, Scrollable {
     constructor(properties?: Partial<Layout.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Layout.ConstructorProperties>);
+    _init(properties?: Partial<Layout.ConstructorProperties>, ...args: any[]): void;
     // Properties
     height: number;
     width: number;
@@ -7859,7 +7926,7 @@ export module LevelBar {
 }
 export class LevelBar extends Widget implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<LevelBar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<LevelBar.ConstructorProperties>);
+    _init(properties?: Partial<LevelBar.ConstructorProperties>, ...args: any[]): void;
     // Properties
     inverted: boolean;
     max_value: number;
@@ -7904,7 +7971,7 @@ export module LevelBarAccessible {
 }
 export class LevelBarAccessible extends WidgetAccessible implements Atk.Component, Atk.Value {
     constructor(properties?: Partial<LevelBarAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<LevelBarAccessible.ConstructorProperties>);
+    _init(properties?: Partial<LevelBarAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: LevelBarAccessiblePrivate | any;
     // Implemented Members
@@ -7914,9 +7981,9 @@ export class LevelBarAccessible extends WidgetAccessible implements Atk.Componen
     get_minimum_increment(): GObject.Value;
     get_minimum_value(): GObject.Value;
     get_range(): Atk.Range | null;
-    get_sub_ranges(): string[];
+    get_sub_ranges(): GLib.SList;
     get_value_and_text(): [number, string | null];
-    set_current_value(value: GObject.Value): boolean;
+    set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     set_value(new_value: number): void;
     vfunc_get_current_value(): GObject.Value;
     vfunc_get_increment(): number;
@@ -7924,9 +7991,9 @@ export class LevelBarAccessible extends WidgetAccessible implements Atk.Componen
     vfunc_get_minimum_increment(): GObject.Value;
     vfunc_get_minimum_value(): GObject.Value;
     vfunc_get_range(): Atk.Range | null;
-    vfunc_get_sub_ranges(): string[];
+    vfunc_get_sub_ranges(): GLib.SList;
     vfunc_get_value_and_text(): [number, string | null];
-    vfunc_set_current_value(value: GObject.Value): boolean;
+    vfunc_set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     vfunc_set_value(new_value: number): void;
 }
 export module LinkButton {
@@ -7938,7 +8005,7 @@ export module LinkButton {
 }
 export class LinkButton extends Button implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<LinkButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<LinkButton.ConstructorProperties>);
+    _init(properties?: Partial<LinkButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     uri: string;
     visited: boolean;
@@ -7968,7 +8035,7 @@ export module LinkButtonAccessible {
 }
 export class LinkButtonAccessible extends ButtonAccessible implements Atk.Action, Atk.Component, Atk.HyperlinkImpl, Atk.Image {
     constructor(properties?: Partial<LinkButtonAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<LinkButtonAccessible.ConstructorProperties>);
+    _init(properties?: Partial<LinkButtonAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: LinkButtonAccessiblePrivate | any;
     // Implemented Members
@@ -7984,7 +8051,7 @@ export module ListBox {
 }
 export class ListBox extends Container implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<ListBox.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ListBox.ConstructorProperties>);
+    _init(properties?: Partial<ListBox.ConstructorProperties>, ...args: any[]): void;
     // Properties
     activate_on_single_click: boolean;
     selection_mode: SelectionMode;
@@ -8019,7 +8086,7 @@ export class ListBox extends Container implements Atk.ImplementorIface, Buildabl
     // Constructors
     static ["new"](): ListBox;
     // Members
-    bind_model<T = GObject.Object>(model: Gio.ListModel<T> | null, create_widget_func: ListBoxCreateWidgetFunc<T> | null, user_data_free_func: GLib.DestroyNotify): void;
+    bind_model(model: Gio.ListModel | null, create_widget_func: ListBoxCreateWidgetFunc | null, user_data_free_func: GLib.DestroyNotify): void;
     drag_highlight_row(row: ListBoxRow): void;
     drag_unhighlight_row(): void;
     get_activate_on_single_click(): boolean;
@@ -8036,7 +8103,7 @@ export class ListBox extends Container implements Atk.ImplementorIface, Buildabl
     prepend(child: Widget): void;
     select_all(): void;
     select_row(row: ListBoxRow | null): void;
-    selected_foreach(func: ListBoxForeachFunc, data: any | null): void;
+    selected_foreach(func: ListBoxForeachFunc): void;
     set_activate_on_single_click(single: boolean): void;
     set_adjustment(adjustment: Adjustment | null): void;
     set_filter_func(filter_func: ListBoxFilterFunc | null, destroy: GLib.DestroyNotify): void;
@@ -8062,7 +8129,7 @@ export module ListBoxAccessible {
 }
 export class ListBoxAccessible extends ContainerAccessible implements Atk.Component, Atk.Selection {
     constructor(properties?: Partial<ListBoxAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ListBoxAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ListBoxAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ListBoxAccessiblePrivate | any;
     // Implemented Members
@@ -8091,7 +8158,7 @@ export module ListBoxRow {
 }
 export class ListBoxRow extends Bin implements Atk.ImplementorIface, Actionable, Buildable {
     constructor(properties?: Partial<ListBoxRow.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ListBoxRow.ConstructorProperties>);
+    _init(properties?: Partial<ListBoxRow.ConstructorProperties>, ...args: any[]): void;
     // Properties
     activatable: boolean;
     selectable: boolean;
@@ -8136,7 +8203,7 @@ export module ListBoxRowAccessible {
 }
 export class ListBoxRowAccessible extends ContainerAccessible implements Atk.Component {
     constructor(properties?: Partial<ListBoxRowAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ListBoxRowAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ListBoxRowAccessible.ConstructorProperties>, ...args: any[]): void;
 }
 export module ListStore {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -8145,17 +8212,16 @@ export module ListStore {
 }
 export class ListStore extends GObject.Object implements Buildable, TreeDragDest, TreeDragSource, TreeModel, TreeSortable {
     constructor(properties?: Partial<ListStore.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ListStore.ConstructorProperties>);
+    _init(properties?: Partial<ListStore.ConstructorProperties>, ...args: any[]): void;
     // Constructors
-    static newv(types: GType[]): ListStore;
-    static newv(...args: never[]): never;
+    static ["new"](types: GType[]): ListStore;
     // Members
     append(): TreeIter;
     clear(): void;
     insert(position: number): TreeIter;
     insert_after(sibling: TreeIter | null): TreeIter;
     insert_before(sibling: TreeIter | null): TreeIter;
-    insert_with_valuesv(position: number, columns: number[], values: GObject.Value[]): TreeIter | null;
+    insert_with_valuesv(position: number, columns: number[], values: (GObject.Value | string | boolean | number)[]): TreeIter | null;
     iter_is_valid(iter: TreeIter): boolean;
     move_after(iter: TreeIter, position: TreeIter | null): void;
     move_before(iter: TreeIter, position: TreeIter | null): void;
@@ -8163,29 +8229,30 @@ export class ListStore extends GObject.Object implements Buildable, TreeDragDest
     remove(iter: TreeIter): boolean;
     reorder(new_order: number[]): void;
     set_column_types(types: GType[]): void;
-    set_value(iter: TreeIter, column: number, value: GObject.Value): void;
-    set_valuesv(iter: TreeIter, columns: number[], values: GObject.Value[]): void;
+    set_value(iter: TreeIter, column: number, value: (GObject.Value | string | boolean | number)): void;
+    set(iter: TreeIter, columns: number[], values: (GObject.Value | string | boolean | number)[]): void;
+    set(...args: never[]): never;
     swap(a: TreeIter, b: TreeIter): void;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     get_name(): string;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     set_name(name: string): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
     drag_data_received(dest: TreePath, selection_data: SelectionData): boolean;
     row_drop_possible(dest_path: TreePath, selection_data: SelectionData): boolean;
@@ -8220,7 +8287,7 @@ export class ListStore extends GObject.Object implements Buildable, TreeDragDest
     row_deleted(path: TreePath): void;
     row_has_child_toggled(path: TreePath, iter: TreeIter): void;
     row_inserted(path: TreePath, iter: TreeIter): void;
-    rows_reordered_with_length(path: TreePath, iter: TreeIter | null, new_order: number[]): void;
+    rows_reordered(path: TreePath, iter: TreeIter | null, new_order: number[]): void;
     unref_node(iter: TreeIter): void;
     vfunc_get_column_type(index_: number): GType;
     vfunc_get_flags(): TreeModelFlags;
@@ -8267,7 +8334,7 @@ export module LockButton {
 }
 export class LockButton extends Button implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<LockButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<LockButton.ConstructorProperties>);
+    _init(properties?: Partial<LockButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     permission: Gio.Permission;
     text_lock: string;
@@ -8291,7 +8358,7 @@ export module LockButtonAccessible {
 }
 export class LockButtonAccessible extends ButtonAccessible implements Atk.Action, Atk.Component, Atk.Image {
     constructor(properties?: Partial<LockButtonAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<LockButtonAccessible.ConstructorProperties>);
+    _init(properties?: Partial<LockButtonAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: LockButtonAccessiblePrivate | any;
 }
@@ -8314,7 +8381,7 @@ export module Menu {
 }
 export class Menu extends MenuShell implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Menu.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Menu.ConstructorProperties>);
+    _init(properties?: Partial<Menu.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accel_group: AccelGroup;
     accel_path: string;
@@ -8357,11 +8424,11 @@ export class Menu extends MenuShell implements Atk.ImplementorIface, Buildable {
     get_title(): string;
     place_on_monitor(monitor: Gdk.Monitor): void;
     popdown(): void;
-    popup(parent_menu_shell: Widget | null, parent_menu_item: Widget | null, func: MenuPositionFunc | null, data: any | null, button: number, activate_time: number): void;
+    popup(parent_menu_shell: Widget | null, parent_menu_item: Widget | null, func: MenuPositionFunc | null, button: number, activate_time: number): void;
     popup_at_pointer(trigger_event: Gdk.Event | null): void;
     popup_at_rect(rect_window: Gdk.Window, rect: Gdk.Rectangle, rect_anchor: Gdk.Gravity, menu_anchor: Gdk.Gravity, trigger_event: Gdk.Event | null): void;
     popup_at_widget(widget: Widget, widget_anchor: Gdk.Gravity, menu_anchor: Gdk.Gravity, trigger_event: Gdk.Event | null): void;
-    popup_for_device(device: Gdk.Device | null, parent_menu_shell: Widget | null, parent_menu_item: Widget | null, func: MenuPositionFunc | null, data: any | null, destroy: GLib.DestroyNotify | null, button: number, activate_time: number): void;
+    popup_for_device(device: Gdk.Device | null, parent_menu_shell: Widget | null, parent_menu_item: Widget | null, func: MenuPositionFunc | null, destroy: GLib.DestroyNotify | null, button: number, activate_time: number): void;
     reorder_child(child: Widget, position: number): void;
     reposition(): void;
     set_accel_group(accel_group: AccelGroup | null): void;
@@ -8382,7 +8449,7 @@ export module MenuAccessible {
 }
 export class MenuAccessible extends MenuShellAccessible implements Atk.Component, Atk.Selection {
     constructor(properties?: Partial<MenuAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<MenuAccessible.ConstructorProperties>);
+    _init(properties?: Partial<MenuAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: MenuAccessiblePrivate | any;
 }
@@ -8395,7 +8462,7 @@ export module MenuBar {
 }
 export class MenuBar extends MenuShell implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<MenuBar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<MenuBar.ConstructorProperties>);
+    _init(properties?: Partial<MenuBar.ConstructorProperties>, ...args: any[]): void;
     // Properties
     child_pack_direction: PackDirection;
     pack_direction: PackDirection;
@@ -8423,7 +8490,7 @@ export module MenuButton {
 }
 export class MenuButton extends ToggleButton implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<MenuButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<MenuButton.ConstructorProperties>);
+    _init(properties?: Partial<MenuButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     align_widget: Container;
     direction: ArrowType;
@@ -8457,7 +8524,7 @@ export module MenuButtonAccessible {
 }
 export class MenuButtonAccessible extends ToggleButtonAccessible implements Atk.Action, Atk.Component, Atk.Image {
     constructor(properties?: Partial<MenuButtonAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<MenuButtonAccessible.ConstructorProperties>);
+    _init(properties?: Partial<MenuButtonAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: MenuButtonAccessiblePrivate | any;
 }
@@ -8473,7 +8540,7 @@ export module MenuItem {
 }
 export class MenuItem extends Bin implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<MenuItem.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<MenuItem.ConstructorProperties>);
+    _init(properties?: Partial<MenuItem.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accel_path: string;
     label: string;
@@ -8567,7 +8634,7 @@ export module MenuItemAccessible {
 }
 export class MenuItemAccessible extends ContainerAccessible implements Atk.Action, Atk.Component, Atk.Selection {
     constructor(properties?: Partial<MenuItemAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<MenuItemAccessible.ConstructorProperties>);
+    _init(properties?: Partial<MenuItemAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: MenuItemAccessiblePrivate | any;
     // Implemented Members
@@ -8615,7 +8682,7 @@ export module MenuShell {
 }
 export abstract class MenuShell extends Container implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<MenuShell.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<MenuShell.ConstructorProperties>);
+    _init(properties?: Partial<MenuShell.ConstructorProperties>, ...args: any[]): void;
     // Properties
     take_focus: boolean;
     // Fields
@@ -8680,7 +8747,7 @@ export module MenuShellAccessible {
 }
 export class MenuShellAccessible extends ContainerAccessible implements Atk.Component, Atk.Selection {
     constructor(properties?: Partial<MenuShellAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<MenuShellAccessible.ConstructorProperties>);
+    _init(properties?: Partial<MenuShellAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: MenuShellAccessiblePrivate | any;
     // Implemented Members
@@ -8708,7 +8775,7 @@ export module MenuToolButton {
 }
 export class MenuToolButton extends ToolButton implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<MenuToolButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<MenuToolButton.ConstructorProperties>);
+    _init(properties?: Partial<MenuToolButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     menu: Menu;
     // Signals
@@ -8733,7 +8800,7 @@ export class MenuToolButton extends ToolButton implements Atk.ImplementorIface, 
 export module MessageDialog {
     export interface ConstructorProperties extends Dialog.ConstructorProperties {
         [key: string]: any;
-        buttons: ButtonsType | ButtonsType[]; // TODO
+        buttons: ButtonsType;
         image: Widget;
         message_area: Widget;
         message_type: MessageType;
@@ -8745,9 +8812,9 @@ export module MessageDialog {
 }
 export class MessageDialog extends Dialog implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<MessageDialog.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<MessageDialog.ConstructorProperties>);
+    _init(properties?: Partial<MessageDialog.ConstructorProperties>, ...args: any[]): void;
     // Properties
-    buttons: ButtonsType | ButtonsType[] // TODO;
+    buttons: ButtonsType;
     image: Widget;
     message_area: Widget;
     message_type: MessageType;
@@ -8772,7 +8839,7 @@ export module Misc {
 }
 export abstract class Misc extends Widget implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Misc.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Misc.ConstructorProperties>);
+    _init(properties?: Partial<Misc.ConstructorProperties>, ...args: any[]): void;
     // Properties
     xalign: number;
     xpad: number;
@@ -8802,7 +8869,7 @@ export module ModelButton {
 }
 export class ModelButton extends Button implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<ModelButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ModelButton.ConstructorProperties>);
+    _init(properties?: Partial<ModelButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     active: boolean;
     centered: boolean;
@@ -8826,12 +8893,12 @@ export module MountOperation {
 }
 export class MountOperation extends Gio.MountOperation {
     constructor(properties?: Partial<MountOperation.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<MountOperation.ConstructorProperties>);
+    _init(properties?: Partial<MountOperation.ConstructorProperties>, ...args: any[]): void;
     // Properties
     is_showing: boolean;
     screen: Gdk.Screen;
     // Fields
-    priv: MountOperationPrivate;
+    priv: MountOperationPrivate | any;
     // Constructors
     static ["new"](parent: Window | null): MountOperation;
     static ["new"](...args: never[]): never;
@@ -8852,7 +8919,7 @@ export module NativeDialog {
 }
 export abstract class NativeDialog extends GObject.Object {
     constructor(properties?: Partial<NativeDialog.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<NativeDialog.ConstructorProperties>);
+    _init(properties?: Partial<NativeDialog.ConstructorProperties>, ...args: any[]): void;
     // Properties
     modal: boolean;
     title: string;
@@ -8895,7 +8962,7 @@ export module Notebook {
 }
 export class Notebook extends Container implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Notebook.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Notebook.ConstructorProperties>);
+    _init(properties?: Partial<Notebook.ConstructorProperties>, ...args: any[]): void;
     // Properties
     enable_popup: boolean;
     group_name: string;
@@ -9003,7 +9070,7 @@ export module NotebookAccessible {
 }
 export class NotebookAccessible extends ContainerAccessible implements Atk.Component, Atk.Selection {
     constructor(properties?: Partial<NotebookAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<NotebookAccessible.ConstructorProperties>);
+    _init(properties?: Partial<NotebookAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: NotebookAccessiblePrivate | any;
     // Implemented Members
@@ -9030,7 +9097,7 @@ export module NotebookPageAccessible {
 }
 export class NotebookPageAccessible extends Atk.Object implements Atk.Component {
     constructor(properties?: Partial<NotebookPageAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<NotebookPageAccessible.ConstructorProperties>);
+    _init(properties?: Partial<NotebookPageAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: NotebookPageAccessiblePrivate;
     // Constructors
@@ -9082,7 +9149,7 @@ export module NumerableIcon {
 }
 export class NumerableIcon extends Gio.EmblemedIcon implements Gio.Icon {
     constructor(properties?: Partial<NumerableIcon.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<NumerableIcon.ConstructorProperties>);
+    _init(properties?: Partial<NumerableIcon.ConstructorProperties>, ...args: any[]): void;
     // Properties
     background_icon: Gio.Icon;
     background_icon_name: string;
@@ -9118,7 +9185,7 @@ export module OffscreenWindow {
 }
 export class OffscreenWindow extends Window implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<OffscreenWindow.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<OffscreenWindow.ConstructorProperties>);
+    _init(properties?: Partial<OffscreenWindow.ConstructorProperties>, ...args: any[]): void;
     // Fields
     parent_object: Window;
     // Constructors
@@ -9135,7 +9202,7 @@ export module Overlay {
 }
 export class Overlay extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Overlay.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Overlay.ConstructorProperties>);
+    _init(properties?: Partial<Overlay.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: OverlayPrivate;
     // Signals
@@ -9163,7 +9230,7 @@ export module PadController {
 }
 export class PadController extends EventController {
     constructor(properties?: Partial<PadController.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<PadController.ConstructorProperties>);
+    _init(properties?: Partial<PadController.ConstructorProperties>, ...args: any[]): void;
     // Properties
     action_group: Gio.ActionGroup;
     pad: Gdk.Device;
@@ -9180,7 +9247,7 @@ export module PageSetup {
 }
 export class PageSetup extends GObject.Object {
     constructor(properties?: Partial<PageSetup.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<PageSetup.ConstructorProperties>);
+    _init(properties?: Partial<PageSetup.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): PageSetup;
     static new_from_file(file_name: string): PageSetup;
@@ -9223,7 +9290,7 @@ export module Paned {
 }
 export class Paned extends Container implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<Paned.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Paned.ConstructorProperties>);
+    _init(properties?: Partial<Paned.ConstructorProperties>, ...args: any[]): void;
     // Properties
     max_position: number;
     min_position: number;
@@ -9287,7 +9354,7 @@ export module PanedAccessible {
 }
 export class PanedAccessible extends ContainerAccessible implements Atk.Component, Atk.Value {
     constructor(properties?: Partial<PanedAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<PanedAccessible.ConstructorProperties>);
+    _init(properties?: Partial<PanedAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: PanedAccessiblePrivate | any;
     // Implemented Members
@@ -9297,9 +9364,9 @@ export class PanedAccessible extends ContainerAccessible implements Atk.Componen
     get_minimum_increment(): GObject.Value;
     get_minimum_value(): GObject.Value;
     get_range(): Atk.Range | null;
-    get_sub_ranges(): string[];
+    get_sub_ranges(): GLib.SList;
     get_value_and_text(): [number, string | null];
-    set_current_value(value: GObject.Value): boolean;
+    set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     set_value(new_value: number): void;
     vfunc_get_current_value(): GObject.Value;
     vfunc_get_increment(): number;
@@ -9307,9 +9374,9 @@ export class PanedAccessible extends ContainerAccessible implements Atk.Componen
     vfunc_get_minimum_increment(): GObject.Value;
     vfunc_get_minimum_value(): GObject.Value;
     vfunc_get_range(): Atk.Range | null;
-    vfunc_get_sub_ranges(): string[];
+    vfunc_get_sub_ranges(): GLib.SList;
     vfunc_get_value_and_text(): [number, string | null];
-    vfunc_set_current_value(value: GObject.Value): boolean;
+    vfunc_set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     vfunc_set_value(new_value: number): void;
 }
 export module PlacesSidebar {
@@ -9330,7 +9397,7 @@ export module PlacesSidebar {
 }
 export class PlacesSidebar extends ScrolledWindow implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<PlacesSidebar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<PlacesSidebar.ConstructorProperties>);
+    _init(properties?: Partial<PlacesSidebar.ConstructorProperties>, ...args: any[]): void;
     // Properties
     local_only: boolean;
     location: Gio.File;
@@ -9402,7 +9469,7 @@ export class PlacesSidebar extends ScrolledWindow implements Atk.ImplementorIfac
     get_show_recent(): boolean;
     get_show_starred_location(): boolean;
     get_show_trash(): boolean;
-    list_shortcuts(): string[];
+    list_shortcuts(): GLib.SList;
     remove_shortcut(location: Gio.File): void;
     set_drop_targets_visible(visible: boolean, context: Gdk.DragContext): void;
     set_local_only(local_only: boolean): void;
@@ -9425,7 +9492,7 @@ export module Plug {
 }
 export class Plug extends Window implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Plug.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Plug.ConstructorProperties>);
+    _init(properties?: Partial<Plug.ConstructorProperties>, ...args: any[]): void;
     // Properties
     embedded: boolean;
     socket_window: Gdk.Window;
@@ -9464,7 +9531,7 @@ export module Popover {
 }
 export class Popover extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Popover.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Popover.ConstructorProperties>);
+    _init(properties?: Partial<Popover.ConstructorProperties>, ...args: any[]): void;
     // Properties
     constrain_to: PopoverConstraint;
     modal: boolean;
@@ -9509,7 +9576,7 @@ export module PopoverAccessible {
 }
 export class PopoverAccessible extends ContainerAccessible implements Atk.Component {
     constructor(properties?: Partial<PopoverAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<PopoverAccessible.ConstructorProperties>);
+    _init(properties?: Partial<PopoverAccessible.ConstructorProperties>, ...args: any[]): void;
 }
 export module PopoverMenu {
     export interface ConstructorProperties extends Popover.ConstructorProperties {
@@ -9519,7 +9586,7 @@ export module PopoverMenu {
 }
 export class PopoverMenu extends Popover implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<PopoverMenu.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<PopoverMenu.ConstructorProperties>);
+    _init(properties?: Partial<PopoverMenu.ConstructorProperties>, ...args: any[]): void;
     // Properties
     visible_submenu: string;
     // Constructors
@@ -9535,7 +9602,7 @@ export module PrintContext {
 }
 export class PrintContext extends GObject.Object {
     constructor(properties?: Partial<PrintContext.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<PrintContext.ConstructorProperties>);
+    _init(properties?: Partial<PrintContext.ConstructorProperties>, ...args: any[]): void;
     // Members
     create_pango_context(): Pango.Context;
     create_pango_layout(): Pango.Layout;
@@ -9574,7 +9641,7 @@ export module PrintOperation {
 }
 export class PrintOperation extends GObject.Object implements PrintOperationPreview {
     constructor(properties?: Partial<PrintOperation.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<PrintOperation.ConstructorProperties>);
+    _init(properties?: Partial<PrintOperation.ConstructorProperties>, ...args: any[]): void;
     // Properties
     allow_async: boolean;
     current_page: number;
@@ -9690,7 +9757,7 @@ export module PrintSettings {
 }
 export class PrintSettings extends GObject.Object {
     constructor(properties?: Partial<PrintSettings.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<PrintSettings.ConstructorProperties>);
+    _init(properties?: Partial<PrintSettings.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): PrintSettings;
     static new_from_file(file_name: string): PrintSettings;
@@ -9717,7 +9784,7 @@ export class PrintSettings extends GObject.Object {
     get_number_up_layout(): NumberUpLayout;
     get_orientation(): PageOrientation;
     get_output_bin(): string;
-    get_page_ranges(): [PageRange[], number];
+    get_page_ranges(): PageRange[];
     get_page_set(): PageSet;
     get_paper_height(unit: Unit): number;
     get_paper_size(): PaperSize;
@@ -9784,7 +9851,7 @@ export module ProgressBar {
 }
 export class ProgressBar extends Widget implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<ProgressBar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ProgressBar.ConstructorProperties>);
+    _init(properties?: Partial<ProgressBar.ConstructorProperties>, ...args: any[]): void;
     // Properties
     ellipsize: Pango.EllipsizeMode;
     fraction: number;
@@ -9821,7 +9888,7 @@ export module ProgressBarAccessible {
 }
 export class ProgressBarAccessible extends WidgetAccessible implements Atk.Component, Atk.Value {
     constructor(properties?: Partial<ProgressBarAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ProgressBarAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ProgressBarAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ProgressBarAccessiblePrivate | any;
     // Implemented Members
@@ -9831,9 +9898,9 @@ export class ProgressBarAccessible extends WidgetAccessible implements Atk.Compo
     get_minimum_increment(): GObject.Value;
     get_minimum_value(): GObject.Value;
     get_range(): Atk.Range | null;
-    get_sub_ranges(): string[];
+    get_sub_ranges(): GLib.SList;
     get_value_and_text(): [number, string | null];
-    set_current_value(value: GObject.Value): boolean;
+    set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     set_value(new_value: number): void;
     vfunc_get_current_value(): GObject.Value;
     vfunc_get_increment(): number;
@@ -9841,9 +9908,9 @@ export class ProgressBarAccessible extends WidgetAccessible implements Atk.Compo
     vfunc_get_minimum_increment(): GObject.Value;
     vfunc_get_minimum_value(): GObject.Value;
     vfunc_get_range(): Atk.Range | null;
-    vfunc_get_sub_ranges(): string[];
+    vfunc_get_sub_ranges(): GLib.SList;
     vfunc_get_value_and_text(): [number, string | null];
-    vfunc_set_current_value(value: GObject.Value): boolean;
+    vfunc_set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     vfunc_set_value(new_value: number): void;
 }
 export module RadioAction {
@@ -9856,7 +9923,7 @@ export module RadioAction {
 }
 export class RadioAction extends ToggleAction implements Buildable {
     constructor(properties?: Partial<RadioAction.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RadioAction.ConstructorProperties>);
+    _init(properties?: Partial<RadioAction.ConstructorProperties>, ...args: any[]): void;
     // Properties
     current_value: number;
     group: RadioAction;
@@ -9873,10 +9940,10 @@ export class RadioAction extends ToggleAction implements Buildable {
     static ["new"](...args: never[]): never;
     // Members
     get_current_value(): number;
-    get_group(): string[];
+    get_group(): GLib.SList;
     join_group(group_source: RadioAction | null): void;
     set_current_value(current_value: number): void;
-    set_group(group: string[] | null): void;
+    set_group(group: GLib.SList | null): void;
     vfunc_changed(current: RadioAction): void;
 }
 export module RadioButton {
@@ -9887,7 +9954,7 @@ export module RadioButton {
 }
 export class RadioButton extends CheckButton implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<RadioButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RadioButton.ConstructorProperties>);
+    _init(properties?: Partial<RadioButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     group: RadioButton;
     // Fields
@@ -9900,19 +9967,19 @@ export class RadioButton extends CheckButton implements Atk.ImplementorIface, Ac
     connect_after(signal: 'group-changed', callback: (_source: this) => void): number;
     emit(signal: 'group-changed'): void;
     // Constructors
-    static ["new"](group: string[] | null): RadioButton;
+    static ["new"](group: GLib.SList | null): RadioButton;
     static ["new"](...args: never[]): never;
     static new_from_widget(radio_group_member: RadioButton | null): RadioButton;
-    static new_with_label(group: string[] | null, label: string): RadioButton;
+    static new_with_label(group: GLib.SList | null, label: string): RadioButton;
     static new_with_label(...args: never[]): never;
     static new_with_label_from_widget(radio_group_member: RadioButton | null, label: string): RadioButton;
-    static new_with_mnemonic(group: string[] | null, label: string): RadioButton;
+    static new_with_mnemonic(group: GLib.SList | null, label: string): RadioButton;
     static new_with_mnemonic(...args: never[]): never;
     static new_with_mnemonic_from_widget(radio_group_member: RadioButton | null, label: string): RadioButton;
     // Members
-    get_group(): string[];
+    get_group(): GLib.SList;
     join_group(group_source: RadioButton | null): void;
-    set_group(group: string[] | null): void;
+    set_group(group: GLib.SList | null): void;
     vfunc_group_changed(): void;
 }
 export module RadioButtonAccessible {
@@ -9922,7 +9989,7 @@ export module RadioButtonAccessible {
 }
 export class RadioButtonAccessible extends ToggleButtonAccessible implements Atk.Action, Atk.Component, Atk.Image {
     constructor(properties?: Partial<RadioButtonAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RadioButtonAccessible.ConstructorProperties>);
+    _init(properties?: Partial<RadioButtonAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: RadioButtonAccessiblePrivate | any;
 }
@@ -9934,7 +10001,7 @@ export module RadioMenuItem {
 }
 export class RadioMenuItem extends CheckMenuItem implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<RadioMenuItem.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RadioMenuItem.ConstructorProperties>);
+    _init(properties?: Partial<RadioMenuItem.ConstructorProperties>, ...args: any[]): void;
     // Properties
     group: RadioMenuItem;
     // Fields
@@ -9947,19 +10014,19 @@ export class RadioMenuItem extends CheckMenuItem implements Atk.ImplementorIface
     connect_after(signal: 'group-changed', callback: (_source: this) => void): number;
     emit(signal: 'group-changed'): void;
     // Constructors
-    static ["new"](group: string[] | null): RadioMenuItem;
+    static ["new"](group: GLib.SList | null): RadioMenuItem;
     static ["new"](...args: never[]): never;
     static new_from_widget(group: RadioMenuItem | null): RadioMenuItem;
-    static new_with_label(group: string[] | null, label: string): RadioMenuItem;
+    static new_with_label(group: GLib.SList | null, label: string): RadioMenuItem;
     static new_with_label(...args: never[]): never;
     static new_with_label_from_widget(group: RadioMenuItem | null, label: string | null): RadioMenuItem;
-    static new_with_mnemonic(group: string[] | null, label: string): RadioMenuItem;
+    static new_with_mnemonic(group: GLib.SList | null, label: string): RadioMenuItem;
     static new_with_mnemonic(...args: never[]): never;
     static new_with_mnemonic_from_widget(group: RadioMenuItem | null, label: string | null): RadioMenuItem;
     // Members
-    get_group(): string[];
+    get_group(): GLib.SList;
     join_group(group_source: RadioMenuItem | null): void;
-    set_group(group: string[] | null): void;
+    set_group(group: GLib.SList | null): void;
     vfunc_group_changed(): void;
 }
 export module RadioMenuItemAccessible {
@@ -9969,7 +10036,7 @@ export module RadioMenuItemAccessible {
 }
 export class RadioMenuItemAccessible extends CheckMenuItemAccessible implements Atk.Action, Atk.Component, Atk.Selection {
     constructor(properties?: Partial<RadioMenuItemAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RadioMenuItemAccessible.ConstructorProperties>);
+    _init(properties?: Partial<RadioMenuItemAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: RadioMenuItemAccessiblePrivate | any;
 }
@@ -9981,19 +10048,19 @@ export module RadioToolButton {
 }
 export class RadioToolButton extends ToggleToolButton implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<RadioToolButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RadioToolButton.ConstructorProperties>);
+    _init(properties?: Partial<RadioToolButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     group: RadioToolButton;
     // Constructors
-    static ["new"](group: string[] | null): RadioToolButton;
+    static ["new"](group: GLib.SList | null): RadioToolButton;
     static ["new"](...args: never[]): never;
-    static new_from_stock(group: string[] | null, stock_id: string): RadioToolButton;
+    static new_from_stock(group: GLib.SList | null, stock_id: string): RadioToolButton;
     static new_from_stock(...args: never[]): never;
     static new_from_widget(group: RadioToolButton | null): RadioToolButton;
     static new_with_stock_from_widget(group: RadioToolButton | null, stock_id: string): RadioToolButton;
     // Members
-    get_group(): string[];
-    set_group(group: string[] | null): void;
+    get_group(): GLib.SList;
+    set_group(group: GLib.SList | null): void;
 }
 export module Range {
     export interface ConstructorProperties extends Widget.ConstructorProperties {
@@ -10010,7 +10077,7 @@ export module Range {
 }
 export abstract class Range extends Widget implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<Range.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Range.ConstructorProperties>);
+    _init(properties?: Partial<Range.ConstructorProperties>, ...args: any[]): void;
     // Properties
     adjustment: Adjustment;
     fill_level: number;
@@ -10087,7 +10154,7 @@ export module RangeAccessible {
 }
 export class RangeAccessible extends WidgetAccessible implements Atk.Component, Atk.Value {
     constructor(properties?: Partial<RangeAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RangeAccessible.ConstructorProperties>);
+    _init(properties?: Partial<RangeAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: RangeAccessiblePrivate | any;
     // Implemented Members
@@ -10097,9 +10164,9 @@ export class RangeAccessible extends WidgetAccessible implements Atk.Component, 
     get_minimum_increment(): GObject.Value;
     get_minimum_value(): GObject.Value;
     get_range(): Atk.Range | null;
-    get_sub_ranges(): string[];
+    get_sub_ranges(): GLib.SList;
     get_value_and_text(): [number, string | null];
-    set_current_value(value: GObject.Value): boolean;
+    set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     set_value(new_value: number): void;
     vfunc_get_current_value(): GObject.Value;
     vfunc_get_increment(): number;
@@ -10107,9 +10174,9 @@ export class RangeAccessible extends WidgetAccessible implements Atk.Component, 
     vfunc_get_minimum_increment(): GObject.Value;
     vfunc_get_minimum_value(): GObject.Value;
     vfunc_get_range(): Atk.Range | null;
-    vfunc_get_sub_ranges(): string[];
+    vfunc_get_sub_ranges(): GLib.SList;
     vfunc_get_value_and_text(): [number, string | null];
-    vfunc_set_current_value(value: GObject.Value): boolean;
+    vfunc_set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     vfunc_set_value(new_value: number): void;
 }
 export module RcStyle {
@@ -10119,7 +10186,7 @@ export module RcStyle {
 }
 export class RcStyle extends GObject.Object {
     constructor(properties?: Partial<RcStyle.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RcStyle.ConstructorProperties>);
+    _init(properties?: Partial<RcStyle.ConstructorProperties>, ...args: any[]): void;
     // Fields
     name: string;
     bg_pixmap_name: string[];
@@ -10146,7 +10213,7 @@ export module RecentAction {
 }
 export class RecentAction extends Action implements Buildable, RecentChooser {
     constructor(properties?: Partial<RecentAction.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RecentAction.ConstructorProperties>);
+    _init(properties?: Partial<RecentAction.ConstructorProperties>, ...args: any[]): void;
     // Properties
     show_numbers: boolean;
     // Implemented Properties
@@ -10181,8 +10248,8 @@ export class RecentAction extends Action implements Buildable, RecentChooser {
     get_show_private(): boolean;
     get_show_tips(): boolean;
     get_sort_type(): RecentSortType;
-    get_uris(): [string[], number | null];
-    list_filters(): string[];
+    get_uris(): string[];
+    list_filters(): GLib.SList;
     remove_filter(filter: RecentFilter): void;
     select_all(): void;
     select_uri(uri: string): boolean;
@@ -10195,7 +10262,7 @@ export class RecentAction extends Action implements Buildable, RecentChooser {
     set_show_not_found(show_not_found: boolean): void;
     set_show_private(show_private: boolean): void;
     set_show_tips(show_tips: boolean): void;
-    set_sort_func(sort_func: RecentSortFunc, sort_data: any | null, data_destroy: GLib.DestroyNotify | null): void;
+    set_sort_func(sort_func: RecentSortFunc, data_destroy: GLib.DestroyNotify | null): void;
     set_sort_type(sort_type: RecentSortType): void;
     unselect_all(): void;
     unselect_uri(uri: string): void;
@@ -10203,13 +10270,13 @@ export class RecentAction extends Action implements Buildable, RecentChooser {
     vfunc_get_current_uri(): string;
     vfunc_get_items(): GLib.List;
     vfunc_item_activated(): void;
-    vfunc_list_filters(): string[];
+    vfunc_list_filters(): GLib.SList;
     vfunc_remove_filter(filter: RecentFilter): void;
     vfunc_select_all(): void;
     vfunc_select_uri(uri: string): boolean;
     vfunc_selection_changed(): void;
     vfunc_set_current_uri(uri: string): boolean;
-    vfunc_set_sort_func(sort_func: RecentSortFunc, sort_data: any | null, data_destroy: GLib.DestroyNotify | null): void;
+    vfunc_set_sort_func(sort_func: RecentSortFunc, data_destroy: GLib.DestroyNotify | null): void;
     vfunc_unselect_all(): void;
     vfunc_unselect_uri(uri: string): void;
 }
@@ -10220,7 +10287,7 @@ export module RecentChooserDialog {
 }
 export class RecentChooserDialog extends Dialog implements Atk.ImplementorIface, Buildable, RecentChooser {
     constructor(properties?: Partial<RecentChooserDialog.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RecentChooserDialog.ConstructorProperties>);
+    _init(properties?: Partial<RecentChooserDialog.ConstructorProperties>, ...args: any[]): void;
     // Implemented Properties
     filter: RecentFilter;
     limit: number;
@@ -10246,8 +10313,8 @@ export class RecentChooserDialog extends Dialog implements Atk.ImplementorIface,
     get_show_private(): boolean;
     get_show_tips(): boolean;
     get_sort_type(): RecentSortType;
-    get_uris(): [string[], number | null];
-    list_filters(): string[];
+    get_uris(): string[];
+    list_filters(): GLib.SList;
     remove_filter(filter: RecentFilter): void;
     select_all(): void;
     select_uri(uri: string): boolean;
@@ -10260,7 +10327,7 @@ export class RecentChooserDialog extends Dialog implements Atk.ImplementorIface,
     set_show_not_found(show_not_found: boolean): void;
     set_show_private(show_private: boolean): void;
     set_show_tips(show_tips: boolean): void;
-    set_sort_func(sort_func: RecentSortFunc, sort_data: any | null, data_destroy: GLib.DestroyNotify | null): void;
+    set_sort_func(sort_func: RecentSortFunc, data_destroy: GLib.DestroyNotify | null): void;
     set_sort_type(sort_type: RecentSortType): void;
     unselect_all(): void;
     unselect_uri(uri: string): void;
@@ -10268,13 +10335,13 @@ export class RecentChooserDialog extends Dialog implements Atk.ImplementorIface,
     vfunc_get_current_uri(): string;
     vfunc_get_items(): GLib.List;
     vfunc_item_activated(): void;
-    vfunc_list_filters(): string[];
+    vfunc_list_filters(): GLib.SList;
     vfunc_remove_filter(filter: RecentFilter): void;
     vfunc_select_all(): void;
     vfunc_select_uri(uri: string): boolean;
     vfunc_selection_changed(): void;
     vfunc_set_current_uri(uri: string): boolean;
-    vfunc_set_sort_func(sort_func: RecentSortFunc, sort_data: any | null, data_destroy: GLib.DestroyNotify | null): void;
+    vfunc_set_sort_func(sort_func: RecentSortFunc, data_destroy: GLib.DestroyNotify | null): void;
     vfunc_unselect_all(): void;
     vfunc_unselect_uri(uri: string): void;
 }
@@ -10286,7 +10353,7 @@ export module RecentChooserMenu {
 }
 export class RecentChooserMenu extends Menu implements Atk.ImplementorIface, Activatable, Buildable, RecentChooser {
     constructor(properties?: Partial<RecentChooserMenu.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RecentChooserMenu.ConstructorProperties>);
+    _init(properties?: Partial<RecentChooserMenu.ConstructorProperties>, ...args: any[]): void;
     // Properties
     show_numbers: boolean;
     // Implemented Properties
@@ -10331,8 +10398,8 @@ export class RecentChooserMenu extends Menu implements Atk.ImplementorIface, Act
     get_show_private(): boolean;
     get_show_tips(): boolean;
     get_sort_type(): RecentSortType;
-    get_uris(): [string[], number | null];
-    list_filters(): string[];
+    get_uris(): string[];
+    list_filters(): GLib.SList;
     remove_filter(filter: RecentFilter): void;
     select_all(): void;
     select_uri(uri: string): boolean;
@@ -10345,7 +10412,7 @@ export class RecentChooserMenu extends Menu implements Atk.ImplementorIface, Act
     set_show_not_found(show_not_found: boolean): void;
     set_show_private(show_private: boolean): void;
     set_show_tips(show_tips: boolean): void;
-    set_sort_func(sort_func: RecentSortFunc, sort_data: any | null, data_destroy: GLib.DestroyNotify | null): void;
+    set_sort_func(sort_func: RecentSortFunc, data_destroy: GLib.DestroyNotify | null): void;
     set_sort_type(sort_type: RecentSortType): void;
     unselect_all(): void;
     unselect_uri(uri: string): void;
@@ -10353,13 +10420,13 @@ export class RecentChooserMenu extends Menu implements Atk.ImplementorIface, Act
     vfunc_get_current_uri(): string;
     vfunc_get_items(): GLib.List;
     vfunc_item_activated(): void;
-    vfunc_list_filters(): string[];
+    vfunc_list_filters(): GLib.SList;
     vfunc_remove_filter(filter: RecentFilter): void;
     vfunc_select_all(): void;
     vfunc_select_uri(uri: string): boolean;
     vfunc_selection_changed(): void;
     vfunc_set_current_uri(uri: string): boolean;
-    vfunc_set_sort_func(sort_func: RecentSortFunc, sort_data: any | null, data_destroy: GLib.DestroyNotify | null): void;
+    vfunc_set_sort_func(sort_func: RecentSortFunc, data_destroy: GLib.DestroyNotify | null): void;
     vfunc_unselect_all(): void;
     vfunc_unselect_uri(uri: string): void;
 }
@@ -10370,7 +10437,7 @@ export module RecentChooserWidget {
 }
 export class RecentChooserWidget extends Box implements Atk.ImplementorIface, Buildable, Orientable, RecentChooser {
     constructor(properties?: Partial<RecentChooserWidget.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RecentChooserWidget.ConstructorProperties>);
+    _init(properties?: Partial<RecentChooserWidget.ConstructorProperties>, ...args: any[]): void;
     // Implemented Properties
     filter: RecentFilter;
     limit: number;
@@ -10400,8 +10467,8 @@ export class RecentChooserWidget extends Box implements Atk.ImplementorIface, Bu
     get_show_private(): boolean;
     get_show_tips(): boolean;
     get_sort_type(): RecentSortType;
-    get_uris(): [string[], number | null];
-    list_filters(): string[];
+    get_uris(): string[];
+    list_filters(): GLib.SList;
     remove_filter(filter: RecentFilter): void;
     select_all(): void;
     select_uri(uri: string): boolean;
@@ -10414,7 +10481,7 @@ export class RecentChooserWidget extends Box implements Atk.ImplementorIface, Bu
     set_show_not_found(show_not_found: boolean): void;
     set_show_private(show_private: boolean): void;
     set_show_tips(show_tips: boolean): void;
-    set_sort_func(sort_func: RecentSortFunc, sort_data: any | null, data_destroy: GLib.DestroyNotify | null): void;
+    set_sort_func(sort_func: RecentSortFunc, data_destroy: GLib.DestroyNotify | null): void;
     set_sort_type(sort_type: RecentSortType): void;
     unselect_all(): void;
     unselect_uri(uri: string): void;
@@ -10422,13 +10489,13 @@ export class RecentChooserWidget extends Box implements Atk.ImplementorIface, Bu
     vfunc_get_current_uri(): string;
     vfunc_get_items(): GLib.List;
     vfunc_item_activated(): void;
-    vfunc_list_filters(): string[];
+    vfunc_list_filters(): GLib.SList;
     vfunc_remove_filter(filter: RecentFilter): void;
     vfunc_select_all(): void;
     vfunc_select_uri(uri: string): boolean;
     vfunc_selection_changed(): void;
     vfunc_set_current_uri(uri: string): boolean;
-    vfunc_set_sort_func(sort_func: RecentSortFunc, sort_data: any | null, data_destroy: GLib.DestroyNotify | null): void;
+    vfunc_set_sort_func(sort_func: RecentSortFunc, data_destroy: GLib.DestroyNotify | null): void;
     vfunc_unselect_all(): void;
     vfunc_unselect_uri(uri: string): void;
 }
@@ -10439,39 +10506,40 @@ export module RecentFilter {
 }
 export class RecentFilter extends GObject.InitiallyUnowned implements Buildable {
     constructor(properties?: Partial<RecentFilter.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RecentFilter.ConstructorProperties>);
+    _init(properties?: Partial<RecentFilter.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): RecentFilter;
     // Members
     add_age(days: number): void;
     add_application(application: string): void;
-    add_custom(needed: RecentFilterFlags, func: RecentFilterFunc, data: any | null, data_destroy: GLib.DestroyNotify): void;
+    add_custom(needed: RecentFilterFlags, func: RecentFilterFunc, data_destroy: GLib.DestroyNotify): void;
     add_group(group: string): void;
     add_mime_type(mime_type: string): void;
     add_pattern(pattern: string): void;
     add_pixbuf_formats(): void;
     filter(filter_info: RecentFilterInfo): boolean;
     get_name(): string | null;
+    get_name(...args: never[]): never;
     get_needed(): RecentFilterFlags;
     set_name(name: string): void;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
 }
 export module RecentManager {
@@ -10483,7 +10551,7 @@ export module RecentManager {
 }
 export class RecentManager extends GObject.Object {
     constructor(properties?: Partial<RecentManager.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RecentManager.ConstructorProperties>);
+    _init(properties?: Partial<RecentManager.ConstructorProperties>, ...args: any[]): void;
     // Properties
     filename: string;
     size: number;
@@ -10516,7 +10584,7 @@ export module RendererCellAccessible {
 }
 export class RendererCellAccessible extends CellAccessible implements Atk.Action, Atk.Component, Atk.TableCell {
     constructor(properties?: Partial<RendererCellAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<RendererCellAccessible.ConstructorProperties>);
+    _init(properties?: Partial<RendererCellAccessible.ConstructorProperties>, ...args: any[]): void;
     // Properties
     renderer: CellRenderer;
     // Fields
@@ -10535,7 +10603,7 @@ export module Revealer {
 }
 export class Revealer extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Revealer.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Revealer.ConstructorProperties>);
+    _init(properties?: Partial<Revealer.ConstructorProperties>, ...args: any[]): void;
     // Properties
     child_revealed: boolean;
     reveal_child: boolean;
@@ -10563,7 +10631,7 @@ export module Scale {
 }
 export class Scale extends Range implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<Scale.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Scale.ConstructorProperties>);
+    _init(properties?: Partial<Scale.ConstructorProperties>, ...args: any[]): void;
     // Properties
     digits: number;
     draw_value: boolean;
@@ -10605,7 +10673,7 @@ export module ScaleAccessible {
 }
 export class ScaleAccessible extends RangeAccessible implements Atk.Component, Atk.Value {
     constructor(properties?: Partial<ScaleAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ScaleAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ScaleAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ScaleAccessiblePrivate | any;
 }
@@ -10613,13 +10681,19 @@ export module ScaleButton {
     export interface ConstructorProperties extends Button.ConstructorProperties {
         [key: string]: any;
         adjustment: Adjustment;
+        icons: string[];
+        size: IconSize;
+        value: number;
     }
 }
-export class ScaleButton extends Button {
+export class ScaleButton extends Button implements Atk.ImplementorIface, Actionable, Activatable, Buildable, Orientable {
     constructor(properties?: Partial<ScaleButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ScaleButton.ConstructorProperties>);
+    _init(properties?: Partial<ScaleButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     adjustment: Adjustment;
+    icons: string[];
+    size: IconSize;
+    value: number;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -10633,9 +10707,24 @@ export class ScaleButton extends Button {
     connect(signal: 'value-changed', callback: (_source: this, value: number) => void): number;
     connect_after(signal: 'value-changed', callback: (_source: this, value: number) => void): number;
     emit(signal: 'value-changed', value: number): void;
+    // Implemented Properties
+    orientation: Orientation;
     // Constructors
     static ["new"](size: number, min: number, max: number, step: number, icons: string[] | null): ScaleButton;
     static ["new"](...args: never[]): never;
+    // Members
+    get_adjustment(): Adjustment;
+    get_minus_button(): Button;
+    get_plus_button(): Button;
+    get_popup(): Widget;
+    get_value(): number;
+    set_adjustment(adjustment: Adjustment): void;
+    set_icons(icons: string[]): void;
+    set_value(value: number): void;
+    vfunc_value_changed(value: number): void;
+    // Implemented Members
+    get_orientation(): Orientation;
+    set_orientation(orientation: Orientation): void;
 }
 export module ScaleButtonAccessible {
     export interface ConstructorProperties extends ButtonAccessible.ConstructorProperties {
@@ -10644,7 +10733,7 @@ export module ScaleButtonAccessible {
 }
 export class ScaleButtonAccessible extends ButtonAccessible implements Atk.Action, Atk.Component, Atk.Image, Atk.Value {
     constructor(properties?: Partial<ScaleButtonAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ScaleButtonAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ScaleButtonAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ScaleButtonAccessiblePrivate | any;
     // Implemented Members
@@ -10654,9 +10743,9 @@ export class ScaleButtonAccessible extends ButtonAccessible implements Atk.Actio
     get_minimum_increment(): GObject.Value;
     get_minimum_value(): GObject.Value;
     get_range(): Atk.Range | null;
-    get_sub_ranges(): string[];
+    get_sub_ranges(): GLib.SList;
     get_value_and_text(): [number, string | null];
-    set_current_value(value: GObject.Value): boolean;
+    set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     set_value(new_value: number): void;
     vfunc_get_current_value(): GObject.Value;
     vfunc_get_increment(): number;
@@ -10664,9 +10753,9 @@ export class ScaleButtonAccessible extends ButtonAccessible implements Atk.Actio
     vfunc_get_minimum_increment(): GObject.Value;
     vfunc_get_minimum_value(): GObject.Value;
     vfunc_get_range(): Atk.Range | null;
-    vfunc_get_sub_ranges(): string[];
+    vfunc_get_sub_ranges(): GLib.SList;
     vfunc_get_value_and_text(): [number, string | null];
-    vfunc_set_current_value(value: GObject.Value): boolean;
+    vfunc_set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     vfunc_set_value(new_value: number): void;
 }
 export module Scrollbar {
@@ -10676,7 +10765,7 @@ export module Scrollbar {
 }
 export class Scrollbar extends Range implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<Scrollbar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Scrollbar.ConstructorProperties>);
+    _init(properties?: Partial<Scrollbar.ConstructorProperties>, ...args: any[]): void;
     // Fields
     range: Range;
     // Constructors
@@ -10704,7 +10793,7 @@ export module ScrolledWindow {
 }
 export class ScrolledWindow extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<ScrolledWindow.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ScrolledWindow.ConstructorProperties>);
+    _init(properties?: Partial<ScrolledWindow.ConstructorProperties>, ...args: any[]): void;
     // Properties
     hadjustment: Adjustment;
     hscrollbar_policy: PolicyType;
@@ -10785,7 +10874,7 @@ export module ScrolledWindowAccessible {
 }
 export class ScrolledWindowAccessible extends ContainerAccessible implements Atk.Component {
     constructor(properties?: Partial<ScrolledWindowAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ScrolledWindowAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ScrolledWindowAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ScrolledWindowAccessiblePrivate | any;
 }
@@ -10798,7 +10887,7 @@ export module SearchBar {
 }
 export class SearchBar extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<SearchBar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<SearchBar.ConstructorProperties>);
+    _init(properties?: Partial<SearchBar.ConstructorProperties>, ...args: any[]): void;
     // Properties
     search_mode_enabled: boolean;
     show_close_button: boolean;
@@ -10819,7 +10908,7 @@ export module SearchEntry {
 }
 export class SearchEntry extends Entry implements Atk.ImplementorIface, Buildable, CellEditable, Editable {
     constructor(properties?: Partial<SearchEntry.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<SearchEntry.ConstructorProperties>);
+    _init(properties?: Partial<SearchEntry.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -10853,7 +10942,7 @@ export module Separator {
 }
 export class Separator extends Widget implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<Separator.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Separator.ConstructorProperties>);
+    _init(properties?: Partial<Separator.ConstructorProperties>, ...args: any[]): void;
     // Fields
     widget: Widget;
     priv: SeparatorPrivate;
@@ -10872,7 +10961,7 @@ export module SeparatorMenuItem {
 }
 export class SeparatorMenuItem extends MenuItem implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<SeparatorMenuItem.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<SeparatorMenuItem.ConstructorProperties>);
+    _init(properties?: Partial<SeparatorMenuItem.ConstructorProperties>, ...args: any[]): void;
     // Fields
     menu_item: MenuItem;
     // Constructors
@@ -10886,7 +10975,7 @@ export module SeparatorToolItem {
 }
 export class SeparatorToolItem extends ToolItem implements Atk.ImplementorIface, Activatable, Buildable {
     constructor(properties?: Partial<SeparatorToolItem.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<SeparatorToolItem.ConstructorProperties>);
+    _init(properties?: Partial<SeparatorToolItem.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): SeparatorToolItem;
     static ["new"](...args: never[]): never;
@@ -10985,7 +11074,7 @@ export module Settings {
 }
 export class Settings extends GObject.Object implements StyleProvider {
     constructor(properties?: Partial<Settings.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Settings.ConstructorProperties>);
+    _init(properties?: Partial<Settings.ConstructorProperties>, ...args: any[]): void;
     // Properties
     color_hash: GLib.HashTable;
     gtk_alternative_button_order: boolean;
@@ -11098,7 +11187,7 @@ export module ShortcutLabel {
 }
 export class ShortcutLabel extends Box implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<ShortcutLabel.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ShortcutLabel.ConstructorProperties>);
+    _init(properties?: Partial<ShortcutLabel.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accelerator: string;
     disabled_text: string;
@@ -11123,7 +11212,7 @@ export module ShortcutsGroup {
 }
 export class ShortcutsGroup extends Box implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<ShortcutsGroup.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ShortcutsGroup.ConstructorProperties>);
+    _init(properties?: Partial<ShortcutsGroup.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accel_size_group: SizeGroup;
     height: number;
@@ -11142,7 +11231,7 @@ export module ShortcutsSection {
 }
 export class ShortcutsSection extends Box implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<ShortcutsSection.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ShortcutsSection.ConstructorProperties>);
+    _init(properties?: Partial<ShortcutsSection.ConstructorProperties>, ...args: any[]): void;
     // Properties
     max_height: number;
     section_name: string;
@@ -11174,7 +11263,7 @@ export module ShortcutsShortcut {
 }
 export class ShortcutsShortcut extends Box implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<ShortcutsShortcut.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ShortcutsShortcut.ConstructorProperties>);
+    _init(properties?: Partial<ShortcutsShortcut.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accel_size_group: SizeGroup;
     accelerator: string;
@@ -11197,7 +11286,7 @@ export module ShortcutsWindow {
 }
 export class ShortcutsWindow extends Window implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<ShortcutsWindow.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ShortcutsWindow.ConstructorProperties>);
+    _init(properties?: Partial<ShortcutsWindow.ConstructorProperties>, ...args: any[]): void;
     // Properties
     section_name: string;
     view_name: string;
@@ -11226,7 +11315,7 @@ export module SizeGroup {
 }
 export class SizeGroup extends GObject.Object implements Buildable {
     constructor(properties?: Partial<SizeGroup.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<SizeGroup.ConstructorProperties>);
+    _init(properties?: Partial<SizeGroup.ConstructorProperties>, ...args: any[]): void;
     // Properties
     ignore_hidden: boolean;
     mode: SizeGroupMode;
@@ -11236,30 +11325,30 @@ export class SizeGroup extends GObject.Object implements Buildable {
     add_widget(widget: Widget): void;
     get_ignore_hidden(): boolean;
     get_mode(): SizeGroupMode;
-    get_widgets(): string[];
+    get_widgets(): GLib.SList;
     remove_widget(widget: Widget): void;
     set_ignore_hidden(ignore_hidden: boolean): void;
     set_mode(mode: SizeGroupMode): void;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     get_name(): string;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     set_name(name: string): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
 }
 export module Socket {
@@ -11269,7 +11358,7 @@ export module Socket {
 }
 export class Socket extends Container implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Socket.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Socket.ConstructorProperties>);
+    _init(properties?: Partial<Socket.ConstructorProperties>, ...args: any[]): void;
     // Fields
     container: Container;
     priv: SocketPrivate;
@@ -11307,7 +11396,7 @@ export module SpinButton {
 }
 export class SpinButton extends Entry implements Atk.ImplementorIface, Buildable, CellEditable, Editable, Orientable {
     constructor(properties?: Partial<SpinButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<SpinButton.ConstructorProperties>);
+    _init(properties?: Partial<SpinButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     adjustment: Adjustment;
     climb_rate: number;
@@ -11383,7 +11472,7 @@ export module SpinButtonAccessible {
 }
 export class SpinButtonAccessible extends EntryAccessible implements Atk.Action, Atk.Component, Atk.EditableText, Atk.Text, Atk.Value {
     constructor(properties?: Partial<SpinButtonAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<SpinButtonAccessible.ConstructorProperties>);
+    _init(properties?: Partial<SpinButtonAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: SpinButtonAccessiblePrivate | any;
     // Implemented Members
@@ -11393,9 +11482,9 @@ export class SpinButtonAccessible extends EntryAccessible implements Atk.Action,
     get_minimum_increment(): GObject.Value;
     get_minimum_value(): GObject.Value;
     get_range(): Atk.Range | null;
-    get_sub_ranges(): string[];
+    get_sub_ranges(): GLib.SList;
     get_value_and_text(): [number, string | null];
-    set_current_value(value: GObject.Value): boolean;
+    set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     set_value(new_value: number): void;
     vfunc_get_current_value(): GObject.Value;
     vfunc_get_increment(): number;
@@ -11403,9 +11492,9 @@ export class SpinButtonAccessible extends EntryAccessible implements Atk.Action,
     vfunc_get_minimum_increment(): GObject.Value;
     vfunc_get_minimum_value(): GObject.Value;
     vfunc_get_range(): Atk.Range | null;
-    vfunc_get_sub_ranges(): string[];
+    vfunc_get_sub_ranges(): GLib.SList;
     vfunc_get_value_and_text(): [number, string | null];
-    vfunc_set_current_value(value: GObject.Value): boolean;
+    vfunc_set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     vfunc_set_value(new_value: number): void;
 }
 export module Spinner {
@@ -11416,7 +11505,7 @@ export module Spinner {
 }
 export class Spinner extends Widget implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Spinner.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Spinner.ConstructorProperties>);
+    _init(properties?: Partial<Spinner.ConstructorProperties>, ...args: any[]): void;
     // Properties
     active: boolean;
     // Constructors
@@ -11432,7 +11521,7 @@ export module SpinnerAccessible {
 }
 export class SpinnerAccessible extends WidgetAccessible implements Atk.Component, Atk.Image {
     constructor(properties?: Partial<SpinnerAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<SpinnerAccessible.ConstructorProperties>);
+    _init(properties?: Partial<SpinnerAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: SpinnerAccessiblePrivate | any;
     // Implemented Members
@@ -11463,7 +11552,7 @@ export module Stack {
 }
 export class Stack extends Container implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Stack.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Stack.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Stack.ConstructorProperties>, ...args: any[]): void;
     // Properties
     hhomogeneous: boolean;
     homogeneous: boolean;
@@ -11506,7 +11595,7 @@ export module StackAccessible {
 }
 export class StackAccessible extends ContainerAccessible implements Atk.Component {
     constructor(properties?: Partial<StackAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<StackAccessible.ConstructorProperties>);
+    _init(properties?: Partial<StackAccessible.ConstructorProperties>, ...args: any[]): void;
 }
 export module StackSidebar {
     export interface ConstructorProperties extends Bin.ConstructorProperties {
@@ -11516,7 +11605,7 @@ export module StackSidebar {
 }
 export class StackSidebar extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<StackSidebar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<StackSidebar.ConstructorProperties>);
+    _init(properties?: Partial<StackSidebar.ConstructorProperties>, ...args: any[]): void;
     // Properties
     stack: Stack;
     // Constructors
@@ -11534,7 +11623,7 @@ export module StackSwitcher {
 }
 export class StackSwitcher extends Box implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<StackSwitcher.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<StackSwitcher.ConstructorProperties>);
+    _init(properties?: Partial<StackSwitcher.ConstructorProperties>, ...args: any[]): void;
     // Properties
     icon_size: number;
     stack: Stack;
@@ -11569,7 +11658,7 @@ export module StatusIcon {
 }
 export class StatusIcon extends GObject.Object {
     constructor(properties?: Partial<StatusIcon.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<StatusIcon.ConstructorProperties>);
+    _init(properties?: Partial<StatusIcon.ConstructorProperties>, ...args: any[]): void;
     // Properties
     embedded: boolean;
     file: string;
@@ -11655,7 +11744,7 @@ export class StatusIcon extends GObject.Object {
     vfunc_query_tooltip(x: number, y: number, keyboard_mode: boolean, tooltip: Tooltip): boolean;
     vfunc_scroll_event(event: Gdk.EventScroll): boolean;
     vfunc_size_changed(size: number): boolean;
-    static position_menu(menu: Menu, x: number, y: number): [number, number, boolean];
+    static position_menu(menu: Menu, x: number, y: number, user_data: StatusIcon): [number, number, boolean];
 }
 export module Statusbar {
     export interface ConstructorProperties extends Box.ConstructorProperties {
@@ -11664,7 +11753,7 @@ export module Statusbar {
 }
 export class Statusbar extends Box implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<Statusbar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Statusbar.ConstructorProperties>);
+    _init(properties?: Partial<Statusbar.ConstructorProperties>, ...args: any[]): void;
     // Fields
     parent_widget: Box;
     // Signals
@@ -11698,7 +11787,7 @@ export module StatusbarAccessible {
 }
 export class StatusbarAccessible extends ContainerAccessible implements Atk.Component {
     constructor(properties?: Partial<StatusbarAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<StatusbarAccessible.ConstructorProperties>);
+    _init(properties?: Partial<StatusbarAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: StatusbarAccessiblePrivate | any;
 }
@@ -11710,7 +11799,7 @@ export module Style {
 }
 export class Style extends GObject.Object {
     constructor(properties?: Partial<Style.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Style.ConstructorProperties>);
+    _init(properties?: Partial<Style.ConstructorProperties>, ...args: any[]): void;
     // Properties
     context: StyleContext;
     // Fields
@@ -11787,7 +11876,7 @@ export module StyleContext {
 }
 export class StyleContext extends GObject.Object {
     constructor(properties?: Partial<StyleContext.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<StyleContext.ConstructorProperties>);
+    _init(properties?: Partial<StyleContext.ConstructorProperties>, ...args: any[]): void;
     // Properties
     direction: TextDirection;
     paint_clock: Gdk.FrameClock;
@@ -11827,7 +11916,7 @@ export class StyleContext extends GObject.Object {
     get_screen(): Gdk.Screen;
     get_section(property: string): CssSection | null;
     get_state(): StateFlags;
-    get_style_property(property_name: string, value: GObject.Value): void;
+    get_style_property(property_name: string, value: (GObject.Value | string | boolean | number)): void;
     has_class(class_name: string): boolean;
     has_region(region_name: string): [boolean, RegionFlags | null];
     invalidate(): void;
@@ -11867,7 +11956,7 @@ export module StyleProperties {
 }
 export class StyleProperties extends GObject.Object implements StyleProvider {
     constructor(properties?: Partial<StyleProperties.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<StyleProperties.ConstructorProperties>);
+    _init(properties?: Partial<StyleProperties.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): StyleProperties;
     // Members
@@ -11877,7 +11966,7 @@ export class StyleProperties extends GObject.Object implements StyleProvider {
     lookup_color(name: string): SymbolicColor;
     map_color(name: string, color: SymbolicColor): void;
     merge(props_to_merge: StyleProperties, replace: boolean): void;
-    set_property(property: string, state: StateFlags, value: GObject.Value): void;
+    set_property(property: string, state: StateFlags, value: (GObject.Value | string | boolean | number)): void;
     set_property(...args: never[]): never;
     unset_property(property: string, state: StateFlags): void;
     // Implemented Members
@@ -11898,7 +11987,7 @@ export module Switch {
 }
 export class Switch extends Widget implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<Switch.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Switch.ConstructorProperties>);
+    _init(properties?: Partial<Switch.ConstructorProperties>, ...args: any[]): void;
     // Properties
     active: boolean;
     state: boolean;
@@ -11954,7 +12043,7 @@ export module SwitchAccessible {
 }
 export class SwitchAccessible extends WidgetAccessible implements Atk.Action, Atk.Component {
     constructor(properties?: Partial<SwitchAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<SwitchAccessible.ConstructorProperties>);
+    _init(properties?: Partial<SwitchAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: SwitchAccessiblePrivate | any;
     // Implemented Members
@@ -11991,7 +12080,7 @@ export module Table {
 }
 export class Table extends Container implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Table.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Table.ConstructorProperties>);
+    _init(properties?: Partial<Table.ConstructorProperties>, ...args: any[]): void;
     // Properties
     column_spacing: number;
     homogeneous: boolean;
@@ -12025,7 +12114,7 @@ export module TearoffMenuItem {
 }
 export class TearoffMenuItem extends MenuItem implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<TearoffMenuItem.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TearoffMenuItem.ConstructorProperties>);
+    _init(properties?: Partial<TearoffMenuItem.ConstructorProperties>, ...args: any[]): void;
     // Fields
     menu_item: MenuItem;
     // Constructors
@@ -12045,7 +12134,7 @@ export module TextBuffer {
 }
 export class TextBuffer extends GObject.Object {
     constructor(properties?: Partial<TextBuffer.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TextBuffer.ConstructorProperties>);
+    _init(properties?: Partial<TextBuffer.ConstructorProperties>, ...args: any[]): void;
     // Properties
     copy_target_list: TargetList;
     cursor_position: number;
@@ -12116,14 +12205,14 @@ export class TextBuffer extends GObject.Object {
     delete_mark(mark: TextMark): void;
     delete_mark_by_name(name: string): void;
     delete_selection(interactive: boolean, default_editable: boolean): boolean;
-    deserialize(content_buffer: TextBuffer, format: Gdk.Atom, iter: TextIter, data: number[]): boolean;
+    deserialize(content_buffer: TextBuffer, format: Gdk.Atom, iter: TextIter, data: (Uint8Array | string)): boolean;
     deserialize_get_can_create_tags(format: Gdk.Atom): boolean;
     deserialize_set_can_create_tags(format: Gdk.Atom, can_create_tags: boolean): void;
     end_user_action(): void;
     get_bounds(): [TextIter, TextIter];
     get_char_count(): number;
     get_copy_target_list(): TargetList;
-    get_deserialize_formats(): [Gdk.Atom[], number];
+    get_deserialize_formats(): Gdk.Atom[];
     get_end_iter(): TextIter;
     get_has_selection(): boolean;
     get_insert(): TextMark;
@@ -12139,7 +12228,7 @@ export class TextBuffer extends GObject.Object {
     get_paste_target_list(): TargetList;
     get_selection_bound(): TextMark;
     get_selection_bounds(): [boolean, TextIter, TextIter];
-    get_serialize_formats(): [Gdk.Atom[], number];
+    get_serialize_formats(): Gdk.Atom[];
     get_slice(start: TextIter, end: TextIter, include_hidden_chars: boolean): string;
     get_start_iter(): TextIter;
     get_tag_table(): TextTagTable;
@@ -12166,7 +12255,7 @@ export class TextBuffer extends GObject.Object {
     remove_tag(tag: TextTag, start: TextIter, end: TextIter): void;
     remove_tag_by_name(name: string, start: TextIter, end: TextIter): void;
     select_range(ins: TextIter, bound: TextIter): void;
-    serialize(content_buffer: TextBuffer, format: Gdk.Atom, start: TextIter, end: TextIter): [number[], number];
+    serialize(content_buffer: TextBuffer, format: Gdk.Atom, start: TextIter, end: TextIter): Uint8Array;
     set_modified(setting: boolean): void;
     set_text(text: string, len: number): void;
     unregister_deserialize_format(format: Gdk.Atom): void;
@@ -12192,7 +12281,7 @@ export module TextCellAccessible {
 }
 export class TextCellAccessible extends RendererCellAccessible implements Atk.Action, Atk.Component, Atk.TableCell, Atk.Text {
     constructor(properties?: Partial<TextCellAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TextCellAccessible.ConstructorProperties>);
+    _init(properties?: Partial<TextCellAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: TextCellAccessiblePrivate | any;
     // Implemented Members
@@ -12252,7 +12341,7 @@ export module TextChildAnchor {
 }
 export class TextChildAnchor extends GObject.Object {
     constructor(properties?: Partial<TextChildAnchor.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TextChildAnchor.ConstructorProperties>);
+    _init(properties?: Partial<TextChildAnchor.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): TextChildAnchor;
     // Members
@@ -12268,7 +12357,7 @@ export module TextMark {
 }
 export class TextMark extends GObject.Object {
     constructor(properties?: Partial<TextMark.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TextMark.ConstructorProperties>);
+    _init(properties?: Partial<TextMark.ConstructorProperties>, ...args: any[]): void;
     // Properties
     left_gravity: boolean;
     name: string;
@@ -12363,7 +12452,7 @@ export module TextTag {
 }
 export class TextTag extends GObject.Object {
     constructor(properties?: Partial<TextTag.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TextTag.ConstructorProperties>);
+    _init(properties?: Partial<TextTag.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accumulative_margin: boolean;
     background: string;
@@ -12464,7 +12553,7 @@ export module TextTagTable {
 }
 export class TextTagTable extends GObject.Object implements Buildable {
     constructor(properties?: Partial<TextTagTable.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TextTagTable.ConstructorProperties>);
+    _init(properties?: Partial<TextTagTable.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: TextTagTablePrivate;
     // Signals
@@ -12484,7 +12573,7 @@ export class TextTagTable extends GObject.Object implements Buildable {
     static ["new"](): TextTagTable;
     // Members
     add(tag: TextTag): boolean;
-    foreach(func: TextTagTableForeach, data: any | null): void;
+    foreach(func: TextTagTableForeach): void;
     get_size(): number;
     lookup(name: string): TextTag | null;
     remove(tag: TextTag): void;
@@ -12493,24 +12582,24 @@ export class TextTagTable extends GObject.Object implements Buildable {
     vfunc_tag_removed(tag: TextTag): void;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     get_name(): string;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     set_name(name: string): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
 }
 export module TextView {
@@ -12541,7 +12630,7 @@ export module TextView {
 }
 export class TextView extends Container implements Atk.ImplementorIface, Buildable, Scrollable {
     constructor(properties?: Partial<TextView.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TextView.ConstructorProperties>);
+    _init(properties?: Partial<TextView.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accepts_tab: boolean;
     bottom_margin: number;
@@ -12727,7 +12816,7 @@ export module TextViewAccessible {
 }
 export class TextViewAccessible extends ContainerAccessible implements Atk.Component, Atk.EditableText, Atk.StreamableContent, Atk.Text {
     constructor(properties?: Partial<TextViewAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TextViewAccessible.ConstructorProperties>);
+    _init(properties?: Partial<TextViewAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: TextViewAccessiblePrivate | any;
     // Implemented Members
@@ -12810,7 +12899,7 @@ export module ThemingEngine {
 }
 export class ThemingEngine extends GObject.Object {
     constructor(properties?: Partial<ThemingEngine.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ThemingEngine.ConstructorProperties>);
+    _init(properties?: Partial<ThemingEngine.ConstructorProperties>, ...args: any[]): void;
     // Properties
     name: string;
     // Fields
@@ -12863,7 +12952,7 @@ export module ToggleAction {
 }
 export class ToggleAction extends Action implements Buildable {
     constructor(properties?: Partial<ToggleAction.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ToggleAction.ConstructorProperties>);
+    _init(properties?: Partial<ToggleAction.ConstructorProperties>, ...args: any[]): void;
     // Properties
     active: boolean;
     draw_as_radio: boolean;
@@ -12895,7 +12984,7 @@ export module ToggleButton {
 }
 export class ToggleButton extends Button implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<ToggleButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ToggleButton.ConstructorProperties>);
+    _init(properties?: Partial<ToggleButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     active: boolean;
     draw_indicator: boolean;
@@ -12931,7 +13020,7 @@ export module ToggleButtonAccessible {
 }
 export class ToggleButtonAccessible extends ButtonAccessible implements Atk.Action, Atk.Component, Atk.Image {
     constructor(properties?: Partial<ToggleButtonAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ToggleButtonAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ToggleButtonAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ToggleButtonAccessiblePrivate | any;
 }
@@ -12943,7 +13032,7 @@ export module ToggleToolButton {
 }
 export class ToggleToolButton extends ToolButton implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<ToggleToolButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ToggleToolButton.ConstructorProperties>);
+    _init(properties?: Partial<ToggleToolButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     active: boolean;
     // Signals
@@ -12976,7 +13065,7 @@ export module ToolButton {
 }
 export class ToolButton extends ToolItem implements Atk.ImplementorIface, Actionable, Activatable, Buildable {
     constructor(properties?: Partial<ToolButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ToolButton.ConstructorProperties>);
+    _init(properties?: Partial<ToolButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     icon_name: string;
     icon_widget: Widget;
@@ -13033,7 +13122,7 @@ export module ToolItem {
 }
 export class ToolItem extends Bin implements Atk.ImplementorIface, Activatable, Buildable {
     constructor(properties?: Partial<ToolItem.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ToolItem.ConstructorProperties>);
+    _init(properties?: Partial<ToolItem.ConstructorProperties>, ...args: any[]): void;
     // Properties
     is_important: boolean;
     visible_horizontal: boolean;
@@ -13076,7 +13165,9 @@ export class ToolItem extends Bin implements Atk.ImplementorIface, Activatable, 
     set_is_important(is_important: boolean): void;
     set_proxy_menu_item(menu_item_id: string, menu_item: Widget | null): void;
     set_tooltip_markup(markup: string): void;
+    set_tooltip_markup(...args: never[]): never;
     set_tooltip_text(text: string): void;
+    set_tooltip_text(...args: never[]): never;
     set_use_drag_window(use_drag_window: boolean): void;
     set_visible_horizontal(visible_horizontal: boolean): void;
     set_visible_vertical(visible_vertical: boolean): void;
@@ -13105,7 +13196,7 @@ export module ToolItemGroup {
 }
 export class ToolItemGroup extends Container implements Atk.ImplementorIface, Buildable, ToolShell {
     constructor(properties?: Partial<ToolItemGroup.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ToolItemGroup.ConstructorProperties>);
+    _init(properties?: Partial<ToolItemGroup.ConstructorProperties>, ...args: any[]): void;
     // Properties
     collapsed: boolean;
     ellipsize: Pango.EllipsizeMode;
@@ -13164,7 +13255,7 @@ export module ToolPalette {
 }
 export class ToolPalette extends Container implements Atk.ImplementorIface, Buildable, Orientable, Scrollable {
     constructor(properties?: Partial<ToolPalette.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ToolPalette.ConstructorProperties>);
+    _init(properties?: Partial<ToolPalette.ConstructorProperties>, ...args: any[]): void;
     // Properties
     icon_size: IconSize;
     icon_size_set: boolean;
@@ -13226,7 +13317,7 @@ export module Toolbar {
 }
 export class Toolbar extends Container implements Atk.ImplementorIface, Buildable, Orientable, ToolShell {
     constructor(properties?: Partial<Toolbar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Toolbar.ConstructorProperties>);
+    _init(properties?: Partial<Toolbar.ConstructorProperties>, ...args: any[]): void;
     // Properties
     icon_size: IconSize;
     icon_size_set: boolean;
@@ -13303,7 +13394,7 @@ export module Tooltip {
 }
 export class Tooltip extends GObject.Object {
     constructor(properties?: Partial<Tooltip.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Tooltip.ConstructorProperties>);
+    _init(properties?: Partial<Tooltip.ConstructorProperties>, ...args: any[]): void;
     // Members
     set_custom(custom_widget: Widget | null): void;
     set_icon(pixbuf: GdkPixbuf.Pixbuf | null): void;
@@ -13322,7 +13413,7 @@ export module ToplevelAccessible {
 }
 export class ToplevelAccessible extends Atk.Object {
     constructor(properties?: Partial<ToplevelAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<ToplevelAccessible.ConstructorProperties>);
+    _init(properties?: Partial<ToplevelAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ToplevelAccessiblePrivate;
     // Members
@@ -13337,7 +13428,7 @@ export module TreeModelFilter {
 }
 export class TreeModelFilter extends GObject.Object implements TreeDragSource, TreeModel {
     constructor(properties?: Partial<TreeModelFilter.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TreeModelFilter.ConstructorProperties>);
+    _init(properties?: Partial<TreeModelFilter.ConstructorProperties>, ...args: any[]): void;
     // Properties
     child_model: TreeModel;
     virtual_root: TreePath;
@@ -13349,10 +13440,10 @@ export class TreeModelFilter extends GObject.Object implements TreeDragSource, T
     convert_path_to_child_path(filter_path: TreePath): TreePath | null;
     get_model(): TreeModel;
     refilter(): void;
-    set_modify_func(types: GType[], func: TreeModelFilterModifyFunc, data: any | null, destroy: GLib.DestroyNotify | null): void;
+    set_modify_func(types: GType[], func: TreeModelFilterModifyFunc, destroy: GLib.DestroyNotify | null): void;
     set_visible_column(column: number): void;
-    set_visible_func(func: TreeModelFilterVisibleFunc, data: any | null, destroy: GLib.DestroyNotify | null): void;
-    vfunc_modify(child_model: TreeModel, iter: TreeIter, value: GObject.Value, column: number): void;
+    set_visible_func(func: TreeModelFilterVisibleFunc, destroy: GLib.DestroyNotify | null): void;
+    vfunc_modify(child_model: TreeModel, iter: TreeIter, value: (GObject.Value | string | boolean | number), column: number): void;
     vfunc_visible(child_model: TreeModel, iter: TreeIter): boolean;
     // Implemented Members
     drag_data_delete(path: TreePath): boolean;
@@ -13384,7 +13475,7 @@ export class TreeModelFilter extends GObject.Object implements TreeDragSource, T
     row_deleted(path: TreePath): void;
     row_has_child_toggled(path: TreePath, iter: TreeIter): void;
     row_inserted(path: TreePath, iter: TreeIter): void;
-    rows_reordered_with_length(path: TreePath, iter: TreeIter | null, new_order: number[]): void;
+    rows_reordered(path: TreePath, iter: TreeIter | null, new_order: number[]): void;
     unref_node(iter: TreeIter): void;
     vfunc_get_column_type(index_: number): GType;
     vfunc_get_flags(): TreeModelFlags;
@@ -13414,7 +13505,7 @@ export module TreeModelSort {
 }
 export class TreeModelSort extends GObject.Object implements TreeDragSource, TreeModel, TreeSortable {
     constructor(properties?: Partial<TreeModelSort.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TreeModelSort.ConstructorProperties>);
+    _init(properties?: Partial<TreeModelSort.ConstructorProperties>, ...args: any[]): void;
     // Properties
     model: TreeModel;
     // Constructors
@@ -13458,7 +13549,7 @@ export class TreeModelSort extends GObject.Object implements TreeDragSource, Tre
     row_deleted(path: TreePath): void;
     row_has_child_toggled(path: TreePath, iter: TreeIter): void;
     row_inserted(path: TreePath, iter: TreeIter): void;
-    rows_reordered_with_length(path: TreePath, iter: TreeIter | null, new_order: number[]): void;
+    rows_reordered(path: TreePath, iter: TreeIter | null, new_order: number[]): void;
     unref_node(iter: TreeIter): void;
     vfunc_get_column_type(index_: number): GType;
     vfunc_get_flags(): TreeModelFlags;
@@ -13500,7 +13591,7 @@ export module TreeSelection {
 }
 export class TreeSelection extends GObject.Object {
     constructor(properties?: Partial<TreeSelection.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TreeSelection.ConstructorProperties>);
+    _init(properties?: Partial<TreeSelection.ConstructorProperties>, ...args: any[]): void;
     // Properties
     mode: SelectionMode;
     // Signals
@@ -13522,9 +13613,9 @@ export class TreeSelection extends GObject.Object {
     select_iter(iter: TreeIter): void;
     select_path(path: TreePath): void;
     select_range(start_path: TreePath, end_path: TreePath): void;
-    selected_foreach(func: TreeSelectionForeachFunc, data: any | null): void;
+    selected_foreach(func: TreeSelectionForeachFunc): void;
     set_mode(type: SelectionMode): void;
-    set_select_function(func: TreeSelectionFunc | null, data: any | null, destroy: GLib.DestroyNotify): void;
+    set_select_function(func: TreeSelectionFunc | null, destroy: GLib.DestroyNotify): void;
     unselect_all(): void;
     unselect_iter(iter: TreeIter): void;
     unselect_path(path: TreePath): void;
@@ -13538,19 +13629,18 @@ export module TreeStore {
 }
 export class TreeStore extends GObject.Object implements Buildable, TreeDragDest, TreeDragSource, TreeModel, TreeSortable {
     constructor(properties?: Partial<TreeStore.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TreeStore.ConstructorProperties>);
+    _init(properties?: Partial<TreeStore.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: TreeStorePrivate;
     // Constructors
-    static newv(types: GType[]): TreeStore;
-    static newv(...args: never[]): never;
+    static ["new"](types: GType[]): TreeStore;
     // Members
     append(parent: TreeIter | null): TreeIter;
     clear(): void;
     insert(parent: TreeIter | null, position: number): TreeIter;
     insert_after(parent: TreeIter | null, sibling: TreeIter | null): TreeIter;
     insert_before(parent: TreeIter | null, sibling: TreeIter | null): TreeIter;
-    insert_with_valuesv(parent: TreeIter | null, position: number, columns: number[], values: GObject.Value[]): TreeIter | null;
+    insert_with_values(parent: TreeIter | null, position: number, columns: number[], values: (GObject.Value | string | boolean | number)[]): TreeIter | null;
     is_ancestor(iter: TreeIter, descendant: TreeIter): boolean;
     iter_depth(iter: TreeIter): number;
     iter_is_valid(iter: TreeIter): boolean;
@@ -13559,29 +13649,30 @@ export class TreeStore extends GObject.Object implements Buildable, TreeDragDest
     prepend(parent: TreeIter | null): TreeIter;
     remove(iter: TreeIter): boolean;
     set_column_types(types: GType[]): void;
-    set_value(iter: TreeIter, column: number, value: GObject.Value): void;
-    set_valuesv(iter: TreeIter, columns: number[], values: GObject.Value[]): void;
+    set_value(iter: TreeIter, column: number, value: (GObject.Value | string | boolean | number)): void;
+    set(iter: TreeIter, columns: number[], values: (GObject.Value | string | boolean | number)[]): void;
+    set(...args: never[]): never;
     swap(a: TreeIter, b: TreeIter): void;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     get_name(): string;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     set_name(name: string): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
     drag_data_received(dest: TreePath, selection_data: SelectionData): boolean;
     row_drop_possible(dest_path: TreePath, selection_data: SelectionData): boolean;
@@ -13616,7 +13707,7 @@ export class TreeStore extends GObject.Object implements Buildable, TreeDragDest
     row_deleted(path: TreePath): void;
     row_has_child_toggled(path: TreePath, iter: TreeIter): void;
     row_inserted(path: TreePath, iter: TreeIter): void;
-    rows_reordered_with_length(path: TreePath, iter: TreeIter | null, new_order: number[]): void;
+    rows_reordered(path: TreePath, iter: TreeIter | null, new_order: number[]): void;
     unref_node(iter: TreeIter): void;
     vfunc_get_column_type(index_: number): GType;
     vfunc_get_flags(): TreeModelFlags;
@@ -13675,7 +13766,7 @@ export module TreeView {
 }
 export class TreeView extends Container implements Atk.ImplementorIface, Buildable, Scrollable {
     constructor(properties?: Partial<TreeView.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TreeView.ConstructorProperties>);
+    _init(properties?: Partial<TreeView.ConstructorProperties>, ...args: any[]): void;
     // Properties
     activate_on_single_click: boolean;
     enable_grid_lines: TreeViewGridLines;
@@ -13805,10 +13896,10 @@ export class TreeView extends Container implements Atk.ImplementorIface, Buildab
     get_visible_range(): [boolean, TreePath | null, TreePath | null];
     get_visible_rect(): Gdk.Rectangle;
     insert_column(column: TreeViewColumn, position: number): number;
-    insert_column_with_data_func(position: number, title: string, cell: CellRenderer, func: TreeCellDataFunc, data: any | null, dnotify: GLib.DestroyNotify): number;
+    insert_column_with_data_func(position: number, title: string, cell: CellRenderer, func: TreeCellDataFunc, dnotify: GLib.DestroyNotify): number;
     is_blank_at_pos(x: number, y: number): [boolean, TreePath | null, TreeViewColumn | null, number | null, number | null];
     is_rubber_banding_active(): boolean;
-    map_expanded_rows(func: TreeViewMappingFunc, data: any | null): void;
+    map_expanded_rows(func: TreeViewMappingFunc): void;
     move_column_after(column: TreeViewColumn, base_column: TreeViewColumn | null): void;
     remove_column(column: TreeViewColumn): number;
     row_activated(path: TreePath, column: TreeViewColumn): void;
@@ -13819,7 +13910,7 @@ export class TreeView extends Container implements Atk.ImplementorIface, Buildab
     set_column_drag_function(func: TreeViewColumnDropFunc | null, destroy: GLib.DestroyNotify | null): void;
     set_cursor(path: TreePath, focus_column: TreeViewColumn | null, start_editing: boolean): void;
     set_cursor_on_cell(path: TreePath, focus_column: TreeViewColumn | null, focus_cell: CellRenderer | null, start_editing: boolean): void;
-    set_destroy_count_func(func: TreeDestroyCountFunc | null, data: any | null, destroy: GLib.DestroyNotify | null): void;
+    set_destroy_count_func(func: TreeDestroyCountFunc | null, destroy: GLib.DestroyNotify | null): void;
     set_drag_dest_row(path: TreePath | null, pos: TreeViewDropPosition): void;
     set_enable_search(enable_search: boolean): void;
     set_enable_tree_lines(enabled: boolean): void;
@@ -13834,13 +13925,13 @@ export class TreeView extends Container implements Atk.ImplementorIface, Buildab
     set_level_indentation(indentation: number): void;
     set_model(model: TreeModel | null): void;
     set_reorderable(reorderable: boolean): void;
-    set_row_separator_func(func: TreeViewRowSeparatorFunc | null, data: any | null, destroy: GLib.DestroyNotify | null): void;
+    set_row_separator_func(func: TreeViewRowSeparatorFunc | null, destroy: GLib.DestroyNotify | null): void;
     set_rubber_banding(enable: boolean): void;
     set_rules_hint(setting: boolean): void;
     set_search_column(column: number): void;
     set_search_entry(entry: Entry | null): void;
-    set_search_equal_func(search_equal_func: TreeViewSearchEqualFunc, search_user_data: any | null, search_destroy: GLib.DestroyNotify | null): void;
-    set_search_position_func(func: TreeViewSearchPositionFunc | null, data: any | null, destroy: GLib.DestroyNotify | null): void;
+    set_search_equal_func(search_equal_func: TreeViewSearchEqualFunc, search_destroy: GLib.DestroyNotify | null): void;
+    set_search_position_func(func: TreeViewSearchPositionFunc | null, destroy: GLib.DestroyNotify | null): void;
     set_show_expanders(enabled: boolean): void;
     set_tooltip_cell(tooltip: Tooltip, path: TreePath | null, column: TreeViewColumn | null, cell: CellRenderer | null): void;
     set_tooltip_column(column: number): void;
@@ -13878,7 +13969,7 @@ export module TreeViewAccessible {
 }
 export class TreeViewAccessible extends ContainerAccessible implements Atk.Component, Atk.Selection, Atk.Table, CellAccessibleParent {
     constructor(properties?: Partial<TreeViewAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TreeViewAccessible.ConstructorProperties>);
+    _init(properties?: Partial<TreeViewAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: TreeViewAccessiblePrivate | any;
     // Implemented Members
@@ -14015,7 +14106,7 @@ export module TreeViewColumn {
 }
 export class TreeViewColumn extends GObject.InitiallyUnowned implements Buildable, CellLayout {
     constructor(properties?: Partial<TreeViewColumn.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<TreeViewColumn.ConstructorProperties>);
+    _init(properties?: Partial<TreeViewColumn.ConstructorProperties>, ...args: any[]): void;
     // Properties
     alignment: number;
     cell_area: CellArea;
@@ -14082,7 +14173,7 @@ export class TreeViewColumn extends GObject.InitiallyUnowned implements Buildabl
     pack_start(cell: CellRenderer, expand: boolean): void;
     queue_resize(): void;
     set_alignment(xalign: number): void;
-    set_cell_data_func(cell_renderer: CellRenderer, func: TreeCellDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    set_cell_data_func(cell_renderer: CellRenderer, func: TreeCellDataFunc | null, destroy: GLib.DestroyNotify): void;
     set_cell_data_func(...args: never[]): never;
     set_clickable(clickable: boolean): void;
     set_expand(expand: boolean): void;
@@ -14102,24 +14193,24 @@ export class TreeViewColumn extends GObject.InitiallyUnowned implements Buildabl
     vfunc_clicked(): void;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     get_name(): string;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     set_name(name: string): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
     get_area(): CellArea | null;
     get_cells(): GLib.List;
@@ -14132,7 +14223,7 @@ export class TreeViewColumn extends GObject.InitiallyUnowned implements Buildabl
     vfunc_pack_end(cell: CellRenderer, expand: boolean): void;
     vfunc_pack_start(cell: CellRenderer, expand: boolean): void;
     vfunc_reorder(cell: CellRenderer, position: number): void;
-    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
 }
 export module UIManager {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -14143,7 +14234,7 @@ export module UIManager {
 }
 export class UIManager extends GObject.Object implements Buildable {
     constructor(properties?: Partial<UIManager.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<UIManager.ConstructorProperties>);
+    _init(properties?: Partial<UIManager.ConstructorProperties>, ...args: any[]): void;
     // Properties
     add_tearoffs: boolean;
     ui: string;
@@ -14181,7 +14272,7 @@ export class UIManager extends GObject.Object implements Buildable {
     get_action(path: string): Action;
     get_action_groups(): GLib.List;
     get_add_tearoffs(): boolean;
-    get_toplevels(types: UIManagerItemType): string[];
+    get_toplevels(types: UIManagerItemType): GLib.SList;
     get_ui(): string;
     get_widget(path: string): Widget;
     insert_action_group(action_group: ActionGroup, pos: number): void;
@@ -14199,24 +14290,24 @@ export class UIManager extends GObject.Object implements Buildable {
     vfunc_pre_activate(action: Action): void;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     get_name(): string;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     set_name(name: string): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
 }
 export module VBox {
@@ -14226,7 +14317,7 @@ export module VBox {
 }
 export class VBox extends Box implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<VBox.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<VBox.ConstructorProperties>);
+    _init(properties?: Partial<VBox.ConstructorProperties>, ...args: any[]): void;
     // Fields
     box: Box;
     // Constructors
@@ -14240,7 +14331,7 @@ export module VButtonBox {
 }
 export class VButtonBox extends ButtonBox implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<VButtonBox.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<VButtonBox.ConstructorProperties>);
+    _init(properties?: Partial<VButtonBox.ConstructorProperties>, ...args: any[]): void;
     // Fields
     button_box: ButtonBox;
     // Constructors
@@ -14254,7 +14345,7 @@ export module VPaned {
 }
 export class VPaned extends Paned implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<VPaned.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<VPaned.ConstructorProperties>);
+    _init(properties?: Partial<VPaned.ConstructorProperties>, ...args: any[]): void;
     // Fields
     paned: Paned;
     // Constructors
@@ -14268,7 +14359,7 @@ export module VScale {
 }
 export class VScale extends Scale implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<VScale.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<VScale.ConstructorProperties>);
+    _init(properties?: Partial<VScale.ConstructorProperties>, ...args: any[]): void;
     // Fields
     scale: Scale;
     // Constructors
@@ -14284,7 +14375,7 @@ export module VScrollbar {
 }
 export class VScrollbar extends Scrollbar implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<VScrollbar.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<VScrollbar.ConstructorProperties>);
+    _init(properties?: Partial<VScrollbar.ConstructorProperties>, ...args: any[]): void;
     // Fields
     scrollbar: Scrollbar;
     // Constructors
@@ -14298,7 +14389,7 @@ export module VSeparator {
 }
 export class VSeparator extends Separator implements Atk.ImplementorIface, Buildable, Orientable {
     constructor(properties?: Partial<VSeparator.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<VSeparator.ConstructorProperties>);
+    _init(properties?: Partial<VSeparator.ConstructorProperties>, ...args: any[]): void;
     // Fields
     separator: Separator;
     // Constructors
@@ -14313,7 +14404,7 @@ export module Viewport {
 }
 export class Viewport extends Bin implements Atk.ImplementorIface, Buildable, Scrollable {
     constructor(properties?: Partial<Viewport.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Viewport.ConstructorProperties>);
+    _init(properties?: Partial<Viewport.ConstructorProperties>, ...args: any[]): void;
     // Properties
     shadow_type: ShadowType;
     // Fields
@@ -14350,20 +14441,15 @@ export module VolumeButton {
 }
 export class VolumeButton extends ScaleButton implements Atk.ImplementorIface, Actionable, Activatable, Buildable, Orientable {
     constructor(properties?: Partial<VolumeButton.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<VolumeButton.ConstructorProperties>);
+    _init(properties?: Partial<VolumeButton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     use_symbolic: boolean;
-    // Implemented Properties
-    orientation: Orientation;
     // Constructors
     static ["new"](): VolumeButton;
     static ["new"](...args: never[]): never;
-    // Implemented Members
-    get_orientation(): Orientation;
-    set_orientation(orientation: Orientation): void;
 }
 export module Widget {
-    export interface ConstructorProperties {
+    export interface ConstructorProperties extends GObject.InitiallyUnowned.ConstructorProperties {
         [key: string]: any;
         app_paintable: boolean;
         can_default: boolean;
@@ -14407,7 +14493,7 @@ export module Widget {
 }
 export abstract class Widget extends GObject.InitiallyUnowned implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Widget.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Widget.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Widget.ConstructorProperties>, ...args: any[]): void;
     // Properties
     app_paintable: boolean;
     can_default: boolean;
@@ -14777,7 +14863,7 @@ export abstract class Widget extends GObject.InitiallyUnowned implements Atk.Imp
     get_style(): Style;
     get_style_context(): StyleContext;
     get_support_multidevice(): boolean;
-    get_template_child(widget_type: GType, name: string): GObject.Object;
+    get_template_child<T = GObject.Object>(widget_type: GType, name: string): T;
     get_tooltip_markup(): string | null;
     get_tooltip_text(): string | null;
     get_tooltip_window(): Window;
@@ -14908,7 +14994,7 @@ export abstract class Widget extends GObject.InitiallyUnowned implements Atk.Imp
     size_allocate_with_baseline(allocation: Allocation, baseline: number): void;
     size_request(): Requisition;
     style_attach(): void;
-    style_get_property(property_name: string, value: GObject.Value): void;
+    style_get_property(property_name: string, value: (GObject.Value | string | boolean | number)): void;
     thaw_child_notify(): void;
     translate_coordinates(dest_widget: Widget, src_x: number, src_y: number): [boolean, number | null, number | null];
     trigger_tooltip_query(): void;
@@ -15006,22 +15092,22 @@ export abstract class Widget extends GObject.InitiallyUnowned implements Atk.Imp
     static set_default_direction(dir: TextDirection): void;
     // Implemented Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
 }
 export module WidgetAccessible {
@@ -15031,7 +15117,7 @@ export module WidgetAccessible {
 }
 export class WidgetAccessible extends Accessible implements Atk.Component {
     constructor(properties?: Partial<WidgetAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<WidgetAccessible.ConstructorProperties>);
+    _init(properties?: Partial<WidgetAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: WidgetAccessiblePrivate;
     // Implemented Members
@@ -15107,7 +15193,7 @@ export module Window {
 }
 export class Window extends Bin implements Atk.ImplementorIface, Buildable {
     constructor(properties?: Partial<Window.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<Window.ConstructorProperties>);
+    _init(properties?: Partial<Window.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accept_focus: boolean;
     application: Application;
@@ -15161,9 +15247,9 @@ export class Window extends Bin implements Atk.ImplementorIface, Buildable {
     connect(signal: 'keys-changed', callback: (_source: this) => void): number;
     connect_after(signal: 'keys-changed', callback: (_source: this) => void): number;
     emit(signal: 'keys-changed'): void;
-    connect(signal: 'set-focus', callback: (_source: this, object: Widget) => void): number;
-    connect_after(signal: 'set-focus', callback: (_source: this, object: Widget) => void): number;
-    emit(signal: 'set-focus', object: Widget): void;
+    connect(signal: 'set-focus', callback: (_source: this, widget: Widget | null) => void): number;
+    connect_after(signal: 'set-focus', callback: (_source: this, widget: Widget | null) => void): number;
+    emit(signal: 'set-focus', widget: Widget | null): void;
     // Constructors
     static ["new"](type: WindowType): Window;
     // Members
@@ -15296,7 +15382,7 @@ export module WindowAccessible {
 }
 export class WindowAccessible extends ContainerAccessible implements Atk.Component, Atk.Window {
     constructor(properties?: Partial<WindowAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<WindowAccessible.ConstructorProperties>);
+    _init(properties?: Partial<WindowAccessible.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: WindowAccessiblePrivate | any;
 }
@@ -15307,7 +15393,7 @@ export module WindowGroup {
 }
 export class WindowGroup extends GObject.Object {
     constructor(properties?: Partial<WindowGroup.ConstructorProperties>, ...args: any[]);
-    _init(properties?: Partial<WindowGroup.ConstructorProperties>);
+    _init(properties?: Partial<WindowGroup.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: WindowGroupPrivate;
     // Constructors
@@ -15401,6 +15487,9 @@ export class BinPrivate {
     constructor(copy: BinPrivate);
 }
 export class BindingArg {
+    constructor(properties?: {
+        arg_type?: GType;
+    });
     constructor(copy: BindingArg);
     // Fields
     arg_type: GType;
@@ -15419,7 +15508,7 @@ export class BindingEntry {
     signals: BindingSignal;
     // Members
     static add_signal_from_string(binding_set: BindingSet, signal_desc: string): GLib.TokenType;
-    static add_signall(binding_set: BindingSet, keyval: number, modifiers: Gdk.ModifierType, signal_name: string, binding_args: string[]): void;
+    static add_signall(binding_set: BindingSet, keyval: number, modifiers: Gdk.ModifierType, signal_name: string, binding_args: GLib.SList): void;
     static remove(binding_set: BindingSet, keyval: number, modifiers: Gdk.ModifierType): void;
     static skip(binding_set: BindingSet, keyval: number, modifiers: Gdk.ModifierType): void;
 }
@@ -15428,9 +15517,9 @@ export class BindingSet {
     // Fields
     set_name: string;
     priority: number;
-    widget_path_pspecs: string[];
-    widget_class_pspecs: string[];
-    class_branch_pspecs: string[];
+    widget_path_pspecs: GLib.SList;
+    widget_class_pspecs: GLib.SList;
+    class_branch_pspecs: GLib.SList;
     entries: BindingEntry;
     current: BindingEntry;
     parsed: number;
@@ -15688,6 +15777,13 @@ export class HeaderBarPrivate {
     constructor(copy: HeaderBarPrivate);
 }
 export class IMContextInfo {
+    constructor(properties?: {
+        context_id?: string;
+        context_name?: string;
+        domain?: string;
+        domain_dirname?: string;
+        default_locales?: string;
+    });
     constructor(copy: IMContextInfo);
     // Fields
     context_id: string;
@@ -15875,6 +15971,10 @@ export class PadActionEntry {
     action_name: string;
 }
 export class PageRange {
+    constructor(properties?: {
+        start?: number;
+        end?: number;
+    });
     constructor(copy: PageRange);
     // Fields
     start: number;
@@ -15933,6 +16033,14 @@ export class ProgressBarPrivate {
     constructor(copy: ProgressBarPrivate);
 }
 export class RadioActionEntry {
+    constructor(properties?: {
+        name?: string;
+        stock_id?: string;
+        label?: string;
+        accelerator?: string;
+        tooltip?: string;
+        value?: number;
+    });
     constructor(copy: RadioActionEntry);
     // Fields
     name: string;
@@ -15974,11 +16082,11 @@ export class RcProperty {
     origin: string;
     value: GObject.Value;
     // Members
-    static parse_border(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: GObject.Value): boolean;
-    static parse_color(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: GObject.Value): boolean;
-    static parse_enum(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: GObject.Value): boolean;
-    static parse_flags(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: GObject.Value): boolean;
-    static parse_requisition(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: GObject.Value): boolean;
+    static parse_border(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: (GObject.Value | string | boolean | number)): boolean;
+    static parse_color(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: (GObject.Value | string | boolean | number)): boolean;
+    static parse_enum(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: (GObject.Value | string | boolean | number)): boolean;
+    static parse_flags(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: (GObject.Value | string | boolean | number)): boolean;
+    static parse_requisition(pspec: GObject.ParamSpec, gstring: GLib.String, property_value: (GObject.Value | string | boolean | number)): boolean;
 }
 export class RecentActionPrivate {
     constructor(copy: RecentActionPrivate);
@@ -15993,6 +16101,15 @@ export class RecentChooserWidgetPrivate {
     constructor(copy: RecentChooserWidgetPrivate);
 }
 export class RecentData {
+    constructor(properties?: {
+        display_name?: string;
+        description?: string;
+        mime_type?: string;
+        app_name?: string;
+        app_exec?: string;
+        groups?: string[];
+        is_private?: boolean;
+    });
     constructor(copy: RecentData);
     // Fields
     display_name: string;
@@ -16022,11 +16139,11 @@ export class RecentInfo {
     get_added(): number;
     get_age(): number;
     get_application_info(app_name: string): [boolean, string, number, number];
-    get_applications(): [string[], number | null];
+    get_applications(): string[];
     get_description(): string;
     get_display_name(): string;
     get_gicon(): Gio.Icon | null;
-    get_groups(): [string[], number | null];
+    get_groups(): string[];
     get_icon(size: number): GdkPixbuf.Pixbuf | null;
     get_mime_type(): string;
     get_modified(): number;
@@ -16050,6 +16167,11 @@ export class RendererCellAccessiblePrivate {
     constructor(copy: RendererCellAccessiblePrivate);
 }
 export class RequestedSize {
+    constructor(properties?: {
+        data?: any;
+        minimum_size?: number;
+        natural_size?: number;
+    });
     constructor(copy: RequestedSize);
     // Fields
     data: any;
@@ -16092,7 +16214,7 @@ export class SelectionData {
     copy(): SelectionData;
     free(): void;
     get_data_type(): Gdk.Atom;
-    get_data_with_length(): [number[], number];
+    get_data(): Uint8Array;
     get_display(): Gdk.Display;
     get_format(): number;
     get_length(): number;
@@ -16102,7 +16224,7 @@ export class SelectionData {
     get_targets(): [boolean, Gdk.Atom[]];
     get_text(): string | null;
     get_uris(): string[];
-    set(type: Gdk.Atom, format: number, data: number[]): void;
+    set(type: Gdk.Atom, format: number, data: (Uint8Array | string)): void;
     set_pixbuf(pixbuf: GdkPixbuf.Pixbuf): boolean;
     set_text(str: string, len: number): boolean;
     set_uris(uris: string[]): boolean;
@@ -16121,6 +16243,10 @@ export class SettingsPrivate {
     constructor(copy: SettingsPrivate);
 }
 export class SettingsValue {
+    constructor(properties?: {
+        origin?: string;
+        value?: GObject.Value;
+    });
     constructor(copy: SettingsValue);
     // Fields
     origin: string;
@@ -16216,6 +16342,16 @@ export class TablePrivate {
     constructor(copy: TablePrivate);
 }
 export class TableRowCol {
+    constructor(properties?: {
+        requisition?: number;
+        allocation?: number;
+        spacing?: number;
+        need_expand?: number;
+        need_shrink?: number;
+        expand?: number;
+        shrink?: number;
+        empty?: number;
+    });
     constructor(copy: TableRowCol);
     // Fields
     requisition: number;
@@ -16268,6 +16404,16 @@ export class TearoffMenuItemPrivate {
     constructor(copy: TearoffMenuItemPrivate);
 }
 export class TextAppearance {
+    constructor(properties?: {
+        bg_color?: Gdk.Color;
+        fg_color?: Gdk.Color;
+        rise?: number;
+        underline?: number;
+        strikethrough?: number;
+        draw_bg?: number;
+        inside_selection?: number;
+        is_text?: number;
+    });
     constructor(copy: TextAppearance);
     // Fields
     bg_color: Gdk.Color;
@@ -16323,6 +16469,22 @@ export class TextCellAccessiblePrivate {
     constructor(copy: TextCellAccessiblePrivate);
 }
 export class TextIter {
+    constructor(properties?: {
+        dummy1?: any;
+        dummy2?: any;
+        dummy3?: number;
+        dummy4?: number;
+        dummy5?: number;
+        dummy6?: number;
+        dummy7?: number;
+        dummy8?: number;
+        dummy9?: any;
+        dummy10?: any;
+        dummy11?: number;
+        dummy12?: number;
+        dummy13?: number;
+        dummy14?: any;
+    });
     constructor(copy: TextIter);
     // Fields
     dummy1: any;
@@ -16402,13 +16564,13 @@ export class TextIter {
     get_line(): number;
     get_line_index(): number;
     get_line_offset(): number;
-    get_marks(): string[];
+    get_marks(): GLib.SList;
     get_offset(): number;
     get_pixbuf(): GdkPixbuf.Pixbuf;
     get_slice(end: TextIter): string;
-    get_tags(): string[];
+    get_tags(): GLib.SList;
     get_text(end: TextIter): string;
-    get_toggled_tags(toggled_on: boolean): string[];
+    get_toggled_tags(toggled_on: boolean): GLib.SList;
     get_visible_line_index(): number;
     get_visible_line_offset(): number;
     get_visible_slice(end: TextIter): string;
@@ -16493,6 +16655,12 @@ export class ToplevelAccessiblePrivate {
     constructor(copy: ToplevelAccessiblePrivate);
 }
 export class TreeIter {
+    constructor(properties?: {
+        stamp?: number;
+        user_data?: any;
+        user_data2?: any;
+        user_data3?: any;
+    });
     constructor(copy: TreeIter);
     // Fields
     stamp: number;
@@ -16515,7 +16683,7 @@ export class TreePath {
     // Constructors
     static ["new"](): TreePath;
     static new_first(): TreePath;
-    static new_from_indicesv(indices: number[]): TreePath;
+    static new_from_indices(indices: number[]): TreePath;
     static new_from_string(path: string): TreePath;
     // Members
     append_index(index_: number): void;
@@ -16524,7 +16692,7 @@ export class TreePath {
     down(): void;
     free(): void;
     get_depth(): number;
-    get_indices_with_depth(): [number[], number | null];
+    get_indices(): number[];
     is_ancestor(descendant: TreePath): boolean;
     is_descendant(ancestor: TreePath): boolean;
     next(): void;
@@ -16605,8 +16773,8 @@ export class WidgetPath {
     iter_has_qname(pos: number, qname: GLib.Quark): boolean;
     iter_has_qregion(pos: number, qname: GLib.Quark): [boolean, RegionFlags];
     iter_has_region(pos: number, name: string): [boolean, RegionFlags];
-    iter_list_classes(pos: number): string[];
-    iter_list_regions(pos: number): string[];
+    iter_list_classes(pos: number): GLib.SList;
+    iter_list_regions(pos: number): GLib.SList;
     iter_remove_class(pos: number, name: string): void;
     iter_remove_region(pos: number, name: string): void;
     iter_set_name(pos: number, name: string): void;
@@ -16634,7 +16802,10 @@ export class WindowGroupPrivate {
 export class WindowPrivate {
     constructor(copy: WindowPrivate);
 }
-export interface Actionable  {
+export interface ActionableNamespace {
+    $gtype: GType;
+}
+export interface Actionable extends Widget {
     // Properties
     action_name: string;
     action_target: GLib.Variant;
@@ -16649,7 +16820,12 @@ export interface Actionable  {
     vfunc_set_action_name(action_name: string | null): void;
     vfunc_set_action_target_value(target_value: GLib.Variant | null): void;
 }
-export interface Activatable  {
+
+export const Actionable: ActionableNamespace;
+export interface ActivatableNamespace {
+    $gtype: GType;
+}
+export interface Activatable extends GObject.Object {
     // Properties
     related_action: Action;
     use_action_appearance: boolean;
@@ -16663,7 +16839,12 @@ export interface Activatable  {
     vfunc_sync_action_properties(action: Action | null): void;
     vfunc_update(action: Action, property_name: string): void;
 }
-export interface AppChooser  {
+
+export const Activatable: ActivatableNamespace;
+export interface AppChooserNamespace {
+    $gtype: GType;
+}
+export interface AppChooser extends Widget {
     // Properties
     content_type: string;
     // Members
@@ -16671,30 +16852,40 @@ export interface AppChooser  {
     get_content_type(): string;
     refresh(): void;
 }
-export interface Buildable  {
+
+export const AppChooser: AppChooserNamespace;
+export interface BuildableNamespace {
+    $gtype: GType;
+}
+export interface Buildable extends GObject.Object {
     // Members
     add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    construct_child(builder: Builder, name: string): GObject.Object;
+    construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    get_internal_child(builder: Builder, childname: string): GObject.Object;
+    get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     get_name(): string;
     parser_finished(builder: Builder): void;
-    set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     set_name(name: string): void;
     vfunc_add_child(builder: Builder, child: GObject.Object, type: string | null): void;
-    vfunc_construct_child(builder: Builder, name: string): GObject.Object;
+    vfunc_construct_child<T = GObject.Object>(builder: Builder, name: string): T;
     vfunc_custom_finished(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_end(builder: Builder, child: GObject.Object | null, tagname: string, data: any | null): void;
     vfunc_custom_tag_start(builder: Builder, child: GObject.Object | null, tagname: string): [boolean, GLib.MarkupParser, any | null];
-    vfunc_get_internal_child(builder: Builder, childname: string): GObject.Object;
+    vfunc_get_internal_child<T = GObject.Object>(builder: Builder, childname: string): T;
     vfunc_get_name(): string;
     vfunc_parser_finished(builder: Builder): void;
-    vfunc_set_buildable_property(builder: Builder, name: string, value: GObject.Value): void;
+    vfunc_set_buildable_property(builder: Builder, name: string, value: (GObject.Value | string | boolean | number)): void;
     vfunc_set_name(name: string): void;
 }
-export interface CellAccessibleParent  {
+
+export const Buildable: BuildableNamespace;
+export interface CellAccessibleParentNamespace {
+    $gtype: GType;
+}
+export interface CellAccessibleParent extends GObject.Object {
     // Members
     activate(cell: CellAccessible): void;
     edit(cell: CellAccessible): void;
@@ -16721,7 +16912,12 @@ export interface CellAccessibleParent  {
     vfunc_grab_focus(cell: CellAccessible): boolean;
     vfunc_update_relationset(cell: CellAccessible, relationset: Atk.RelationSet): void;
 }
-export interface CellEditable  {
+
+export const CellAccessibleParent: CellAccessibleParentNamespace;
+export interface CellEditableNamespace {
+    $gtype: GType;
+}
+export interface CellEditable extends Widget {
     // Properties
     editing_canceled: boolean;
     // Members
@@ -16732,7 +16928,12 @@ export interface CellEditable  {
     vfunc_remove_widget(): void;
     vfunc_start_editing(event: Gdk.Event | null): void;
 }
-export interface CellLayout  {
+
+export const CellEditable: CellEditableNamespace;
+export interface CellLayoutNamespace {
+    $gtype: GType;
+}
+export interface CellLayout extends GObject.Object {
     // Members
     add_attribute(cell: CellRenderer, attribute: string, column: number): void;
     clear(): void;
@@ -16742,7 +16943,7 @@ export interface CellLayout  {
     pack_end(cell: CellRenderer, expand: boolean): void;
     pack_start(cell: CellRenderer, expand: boolean): void;
     reorder(cell: CellRenderer, position: number): void;
-    set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
     vfunc_add_attribute(cell: CellRenderer, attribute: string, column: number): void;
     vfunc_clear(): void;
     vfunc_clear_attributes(cell: CellRenderer): void;
@@ -16751,9 +16952,14 @@ export interface CellLayout  {
     vfunc_pack_end(cell: CellRenderer, expand: boolean): void;
     vfunc_pack_start(cell: CellRenderer, expand: boolean): void;
     vfunc_reorder(cell: CellRenderer, position: number): void;
-    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, func_data: any | null, destroy: GLib.DestroyNotify): void;
+    vfunc_set_cell_data_func(cell: CellRenderer, func: CellLayoutDataFunc | null, destroy: GLib.DestroyNotify): void;
 }
-export interface ColorChooser  {
+
+export const CellLayout: CellLayoutNamespace;
+export interface ColorChooserNamespace {
+    $gtype: GType;
+}
+export interface ColorChooser extends GObject.Object {
     // Properties
     rgba: Gdk.RGBA;
     use_alpha: boolean;
@@ -16768,7 +16974,12 @@ export interface ColorChooser  {
     vfunc_get_rgba(): Gdk.RGBA;
     vfunc_set_rgba(color: Gdk.RGBA): void;
 }
-export interface Editable  {
+
+export const ColorChooser: ColorChooserNamespace;
+export interface EditableNamespace {
+    $gtype: GType;
+}
+export interface Editable extends GObject.Object {
     // Members
     copy_clipboard(): void;
     cut_clipboard(): void;
@@ -16794,7 +17005,12 @@ export interface Editable  {
     vfunc_set_position(position: number): void;
     vfunc_set_selection_bounds(start_pos: number, end_pos: number): void;
 }
-export interface FileChooser  {
+
+export const Editable: EditableNamespace;
+export interface FileChooserNamespace {
+    $gtype: GType;
+}
+export interface FileChooser extends GObject.Object {
     // Properties
     action: FileChooserAction;
     create_folders: boolean;
@@ -16823,8 +17039,8 @@ export interface FileChooser  {
     get_extra_widget(): Widget | null;
     get_file(): Gio.File;
     get_filename(): string | null;
-    get_filenames(): string[];
-    get_files(): string[];
+    get_filenames(): GLib.SList;
+    get_files(): GLib.SList;
     get_filter(): FileFilter | null;
     get_local_only(): boolean;
     get_preview_file(): Gio.File | null;
@@ -16835,11 +17051,11 @@ export interface FileChooser  {
     get_select_multiple(): boolean;
     get_show_hidden(): boolean;
     get_uri(): string | null;
-    get_uris(): string[];
+    get_uris(): GLib.SList;
     get_use_preview_label(): boolean;
-    list_filters(): string[];
-    list_shortcut_folder_uris(): string[] | null;
-    list_shortcut_folders(): string[] | null;
+    list_filters(): GLib.SList;
+    list_shortcut_folder_uris(): GLib.SList | null;
+    list_shortcut_folders(): GLib.SList | null;
     remove_choice(id: string): void;
     remove_filter(filter: FileFilter): void;
     remove_shortcut_folder(folder: string): boolean;
@@ -16872,7 +17088,12 @@ export interface FileChooser  {
     unselect_filename(filename: string): void;
     unselect_uri(uri: string): void;
 }
-export interface FontChooser  {
+
+export const FileChooser: FileChooserNamespace;
+export interface FontChooserNamespace {
+    $gtype: GType;
+}
+export interface FontChooser extends GObject.Object {
     // Properties
     font: string;
     font_desc: Pango.FontDescription;
@@ -16909,14 +17130,24 @@ export interface FontChooser  {
     vfunc_set_filter_func(filter: FontFilterFunc | null, destroy: GLib.DestroyNotify): void;
     vfunc_set_font_map(fontmap: Pango.FontMap | null): void;
 }
-export interface Orientable  {
+
+export const FontChooser: FontChooserNamespace;
+export interface OrientableNamespace {
+    $gtype: GType;
+}
+export interface Orientable extends GObject.Object {
     // Properties
     orientation: Orientation;
     // Members
     get_orientation(): Orientation;
     set_orientation(orientation: Orientation): void;
 }
-export interface PrintOperationPreview  {
+
+export const Orientable: OrientableNamespace;
+export interface PrintOperationPreviewNamespace {
+    $gtype: GType;
+}
+export interface PrintOperationPreview extends GObject.Object {
     // Members
     end_preview(): void;
     is_selected(page_nr: number): boolean;
@@ -16927,7 +17158,12 @@ export interface PrintOperationPreview  {
     vfunc_ready(context: PrintContext): void;
     vfunc_render_page(page_nr: number): void;
 }
-export interface RecentChooser  {
+
+export const PrintOperationPreview: PrintOperationPreviewNamespace;
+export interface RecentChooserNamespace {
+    $gtype: GType;
+}
+export interface RecentChooser extends GObject.Object {
     // Properties
     filter: RecentFilter;
     limit: number;
@@ -16953,8 +17189,8 @@ export interface RecentChooser  {
     get_show_private(): boolean;
     get_show_tips(): boolean;
     get_sort_type(): RecentSortType;
-    get_uris(): [string[], number | null];
-    list_filters(): string[];
+    get_uris(): string[];
+    list_filters(): GLib.SList;
     remove_filter(filter: RecentFilter): void;
     select_all(): void;
     select_uri(uri: string): boolean;
@@ -16967,7 +17203,7 @@ export interface RecentChooser  {
     set_show_not_found(show_not_found: boolean): void;
     set_show_private(show_private: boolean): void;
     set_show_tips(show_tips: boolean): void;
-    set_sort_func(sort_func: RecentSortFunc, sort_data: any | null, data_destroy: GLib.DestroyNotify | null): void;
+    set_sort_func(sort_func: RecentSortFunc, data_destroy: GLib.DestroyNotify | null): void;
     set_sort_type(sort_type: RecentSortType): void;
     unselect_all(): void;
     unselect_uri(uri: string): void;
@@ -16975,17 +17211,22 @@ export interface RecentChooser  {
     vfunc_get_current_uri(): string;
     vfunc_get_items(): GLib.List;
     vfunc_item_activated(): void;
-    vfunc_list_filters(): string[];
+    vfunc_list_filters(): GLib.SList;
     vfunc_remove_filter(filter: RecentFilter): void;
     vfunc_select_all(): void;
     vfunc_select_uri(uri: string): boolean;
     vfunc_selection_changed(): void;
     vfunc_set_current_uri(uri: string): boolean;
-    vfunc_set_sort_func(sort_func: RecentSortFunc, sort_data: any | null, data_destroy: GLib.DestroyNotify | null): void;
+    vfunc_set_sort_func(sort_func: RecentSortFunc, data_destroy: GLib.DestroyNotify | null): void;
     vfunc_unselect_all(): void;
     vfunc_unselect_uri(uri: string): void;
 }
-export interface Scrollable  {
+
+export const RecentChooser: RecentChooserNamespace;
+export interface ScrollableNamespace {
+    $gtype: GType;
+}
+export interface Scrollable extends GObject.Object {
     // Properties
     hadjustment: Adjustment;
     hscroll_policy: ScrollablePolicy;
@@ -17003,7 +17244,12 @@ export interface Scrollable  {
     set_vscroll_policy(policy: ScrollablePolicy): void;
     vfunc_get_border(): [boolean, Border];
 }
-export interface StyleProvider  {
+
+export const Scrollable: ScrollableNamespace;
+export interface StyleProviderNamespace {
+    $gtype: GType;
+}
+export interface StyleProvider extends GObject.Object {
     // Members
     get_icon_factory(path: WidgetPath): IconFactory | null;
     get_style(path: WidgetPath): StyleProperties | null;
@@ -17012,13 +17258,19 @@ export interface StyleProvider  {
     vfunc_get_style(path: WidgetPath): StyleProperties | null;
     vfunc_get_style_property(path: WidgetPath, state: StateFlags, pspec: GObject.ParamSpec): [boolean, GObject.Value];
 }
-export interface ToolShell  {
+
+export const StyleProvider: StyleProviderNamespace;
+export interface ToolShellNamespace {
+    $gtype: GType;
+}
+export interface ToolShell extends Widget {
     // Members
     get_ellipsize_mode(): Pango.EllipsizeMode;
     get_icon_size(): number;
     get_orientation(): Orientation;
     get_relief_style(): ReliefStyle;
     get_style(): ToolbarStyle;
+    get_style(...args: never[]): never;
     get_text_alignment(): number;
     get_text_orientation(): Orientation;
     get_text_size_group(): SizeGroup;
@@ -17033,14 +17285,24 @@ export interface ToolShell  {
     vfunc_get_text_size_group(): SizeGroup;
     vfunc_rebuild_menu(): void;
 }
-export interface TreeDragDest  {
+
+export const ToolShell: ToolShellNamespace;
+export interface TreeDragDestNamespace {
+    $gtype: GType;
+}
+export interface TreeDragDest extends GObject.Object {
     // Members
     drag_data_received(dest: TreePath, selection_data: SelectionData): boolean;
     row_drop_possible(dest_path: TreePath, selection_data: SelectionData): boolean;
     vfunc_drag_data_received(dest: TreePath, selection_data: SelectionData): boolean;
     vfunc_row_drop_possible(dest_path: TreePath, selection_data: SelectionData): boolean;
 }
-export interface TreeDragSource  {
+
+export const TreeDragDest: TreeDragDestNamespace;
+export interface TreeDragSourceNamespace {
+    $gtype: GType;
+}
+export interface TreeDragSource extends GObject.Object {
     // Members
     drag_data_delete(path: TreePath): boolean;
     drag_data_get(path: TreePath, selection_data: SelectionData): boolean;
@@ -17049,7 +17311,12 @@ export interface TreeDragSource  {
     vfunc_drag_data_get(path: TreePath, selection_data: SelectionData): boolean;
     vfunc_row_draggable(path: TreePath): boolean;
 }
-export interface TreeModel  {
+
+export const TreeDragSource: TreeDragSourceNamespace;
+export interface TreeModelNamespace {
+    $gtype: GType;
+}
+export interface TreeModel extends GObject.Object {
     // Members
     filter_new(root: TreePath | null): TreeModel;
     foreach(func: TreeModelForeachFunc): void;
@@ -17074,7 +17341,7 @@ export interface TreeModel  {
     row_deleted(path: TreePath): void;
     row_has_child_toggled(path: TreePath, iter: TreeIter): void;
     row_inserted(path: TreePath, iter: TreeIter): void;
-    rows_reordered_with_length(path: TreePath, iter: TreeIter | null, new_order: number[]): void;
+    rows_reordered(path: TreePath, iter: TreeIter | null, new_order: number[]): void;
     unref_node(iter: TreeIter): void;
     vfunc_get_column_type(index_: number): GType;
     vfunc_get_flags(): TreeModelFlags;
@@ -17096,7 +17363,12 @@ export interface TreeModel  {
     vfunc_row_inserted(path: TreePath, iter: TreeIter): void;
     vfunc_unref_node(iter: TreeIter): void;
 }
-export interface TreeSortable  {
+
+export const TreeModel: TreeModelNamespace;
+export interface TreeSortableNamespace {
+    $gtype: GType;
+}
+export interface TreeSortable extends TreeModel {
     // Members
     get_sort_column_id(): [boolean, number, SortType];
     has_default_sort_func(): boolean;
@@ -17111,6 +17383,8 @@ export interface TreeSortable  {
     vfunc_set_sort_func(sort_column_id: number, sort_func: TreeIterCompareFunc, destroy: GLib.DestroyNotify | null): void;
     vfunc_sort_column_changed(): void;
 }
+
+export const TreeSortable: TreeSortableNamespace;
 
 export type Allocation = Gdk.Rectangle;
 

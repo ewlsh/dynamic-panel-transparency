@@ -39,51 +39,51 @@ export function boxed_copy(boxed_type: GType, src_boxed: any): any;
 
 export function boxed_free(boxed_type: GType, boxed: any): void;
 
-export function cclosure_marshal_BOOLEAN__BOXED_BOXED(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_BOOLEAN__BOXED_BOXED(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_BOOLEAN__FLAGS(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_BOOLEAN__FLAGS(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_STRING__OBJECT_POINTER(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_STRING__OBJECT_POINTER(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__BOOLEAN(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__BOOLEAN(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__BOXED(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__BOXED(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__CHAR(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__CHAR(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__DOUBLE(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__DOUBLE(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__ENUM(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__ENUM(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__FLAGS(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__FLAGS(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__FLOAT(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__FLOAT(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__INT(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__INT(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__LONG(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__LONG(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__OBJECT(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__OBJECT(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__PARAM(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__PARAM(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__POINTER(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__POINTER(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__STRING(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__STRING(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__UCHAR(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__UCHAR(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__UINT(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__UINT(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__UINT_POINTER(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__UINT_POINTER(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__ULONG(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__ULONG(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__VARIANT(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__VARIANT(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_VOID__VOID(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_VOID__VOID(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
-export function cclosure_marshal_generic(closure: Closure, return_gvalue: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+export function cclosure_marshal_generic(closure: Closure, return_gvalue: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 
 export function enum_complete_type_info(g_enum_type: GType, const_values: EnumValue): TypeInfo;
 
@@ -157,31 +157,31 @@ export function param_spec_variant(name: string, nick: string, blurb: string, ty
 
 export function param_type_register_static(name: string, pspec_info: ParamSpecTypeInfo): GType;
 
-export function param_value_convert(pspec: ParamSpec, src_value: Value, dest_value: Value, strict_validation: boolean): boolean;
+export function param_value_convert(pspec: ParamSpec, src_value: (Value | string | boolean | number), dest_value: (Value | string | boolean | number), strict_validation: boolean): boolean;
 
-export function param_value_defaults(pspec: ParamSpec, value: Value): boolean;
+export function param_value_defaults(pspec: ParamSpec, value: (Value | string | boolean | number)): boolean;
 
-export function param_value_set_default(pspec: ParamSpec, value: Value): void;
+export function param_value_set_default(pspec: ParamSpec, value: (Value | string | boolean | number)): void;
 
-export function param_value_validate(pspec: ParamSpec, value: Value): boolean;
+export function param_value_validate(pspec: ParamSpec, value: (Value | string | boolean | number)): boolean;
 
-export function param_values_cmp(pspec: ParamSpec, value1: Value, value2: Value): number;
+export function param_values_cmp(pspec: ParamSpec, value1: (Value | string | boolean | number), value2: (Value | string | boolean | number)): number;
 
 export function pointer_type_register_static(name: string): GType;
 
-export function signal_accumulator_first_wins(ihint: SignalInvocationHint, return_accu: Value, handler_return: Value, dummy: any | null): boolean;
+export function signal_accumulator_first_wins(ihint: SignalInvocationHint, return_accu: (Value | string | boolean | number), handler_return: (Value | string | boolean | number), dummy: any | null): boolean;
 
-export function signal_accumulator_true_handled(ihint: SignalInvocationHint, return_accu: Value, handler_return: Value, dummy: any | null): boolean;
+export function signal_accumulator_true_handled(ihint: SignalInvocationHint, return_accu: (Value | string | boolean | number), handler_return: (Value | string | boolean | number), dummy: any | null): boolean;
 
-export function signal_add_emission_hook(signal_id: number, detail: GLib.Quark, hook_func: SignalEmissionHook, hook_data: any | null, data_destroy: GLib.DestroyNotify): number;
+export function signal_add_emission_hook(signal_id: number, detail: GLib.Quark, hook_func: SignalEmissionHook, data_destroy: GLib.DestroyNotify): number;
 
-export function signal_chain_from_overridden(instance_and_params: Value[], return_value: Value): void;
+export function signal_chain_from_overridden(instance_and_params: (Value | string | boolean | number)[], return_value: (Value | string | boolean | number)): void;
 
 export function signal_connect_closure(instance: Object, detailed_signal: string, closure: Closure, after: boolean): number;
 
 export function signal_connect_closure_by_id(instance: Object, signal_id: number, detail: GLib.Quark, closure: Closure, after: boolean): number;
 
-export function signal_emitv(instance_and_params: Value[], signal_id: number, detail: GLib.Quark, return_value: Value | null): Value | null;
+export function signal_emitv(instance_and_params: (Value | string | boolean | number)[], signal_id: number, detail: GLib.Quark, return_value: (Value | string | boolean | number) | null): Value | null;
 
 export function signal_get_invocation_hint(instance: Object): SignalInvocationHint;
 
@@ -229,7 +229,7 @@ export function _real_signal_handlers_unblock_matched(instance: Object, mask: Si
 
 export function signal_has_handler_pending(instance: Object, signal_id: number, detail: GLib.Quark, may_be_blocked: boolean): boolean;
 
-export function signal_list_ids(itype: GType): [number[], number];
+export function signal_list_ids(itype: GType): number[];
 
 export function signal_lookup(name: string, itype: GType): number;
 
@@ -255,7 +255,7 @@ export function source_set_closure(source: GLib.Source, closure: Closure): void;
 
 export function source_set_dummy_callback(source: GLib.Source): void;
 
-export function strdup_value_contents(value: Value): string;
+export function strdup_value_contents(value: (Value | string | boolean | number)): string;
 
 export function type_add_class_private(class_type: GType, private_size: number): void;
 
@@ -275,11 +275,11 @@ export function type_check_instance_is_fundamentally_a(instance: TypeInstance, f
 
 export function type_check_is_value_type(type: GType): boolean;
 
-export function type_check_value(value: Value): boolean;
+export function type_check_value(value: (Value | string | boolean | number)): boolean;
 
-export function type_check_value_holds(value: Value, type: GType): boolean;
+export function type_check_value_holds(value: (Value | string | boolean | number), type: GType): boolean;
 
-export function type_children(type: GType): [GType[], number | null];
+export function type_children(type: GType): GType[];
 
 export function type_class_adjust_private_offset(g_class: any | null, private_size_or_offset: number): void;
 
@@ -325,9 +325,9 @@ export function type_interface_get_plugin(instance_type: GType, interface_type: 
 
 export function type_interface_peek(instance_class: TypeClass, iface_type: GType): TypeInterface;
 
-export function type_interface_prerequisites(interface_type: GType): [GType[], number | null];
+export function type_interface_prerequisites(interface_type: GType): GType[];
 
-export function type_interfaces(type: GType): [GType[], number | null];
+export function type_interfaces(type: GType): GType[];
 
 export function type_is_a(type: GType, is_a_type: GType): boolean;
 
@@ -363,7 +363,7 @@ export type BaseFinalizeFunc = (g_class: TypeClass) => void;
 
 export type BaseInitFunc = (g_class: TypeClass) => void;
 
-export type BindingTransformFunc = (binding: Binding, from_value: Value, to_value: Value) => boolean;
+export type BindingTransformFunc = (binding: Binding, from_value: (Value | string | boolean | number), to_value: (Value | string | boolean | number)) => boolean;
 
 export type BoxedCopyFunc = (boxed: any) => any;
 
@@ -375,7 +375,7 @@ export type ClassFinalizeFunc = (g_class: TypeClass, class_data: any | null) => 
 
 export type ClassInitFunc = (g_class: TypeClass, class_data: any | null) => void;
 
-export type ClosureMarshal = (closure: Closure, return_value: Value | null, param_values: Value[], invocation_hint: any | null, marshal_data: any | null) => void;
+export type ClosureMarshal = (closure: Closure, return_value: (Value | string | boolean | number) | null, param_values: (Value | string | boolean | number)[], invocation_hint: any | null, marshal_data: any | null) => void;
 
 export type ClosureNotify = (data: any | null, closure: Closure) => void;
 
@@ -387,13 +387,13 @@ export type InterfaceInitFunc = (g_iface: TypeInterface, iface_data: any | null)
 
 export type ObjectFinalizeFunc = (object: Object) => void;
 
-export type ObjectGetPropertyFunc = (object: Object, property_id: number, value: Value, pspec: ParamSpec) => void;
+export type ObjectGetPropertyFunc = (object: Object, property_id: number, value: (Value | string | boolean | number), pspec: ParamSpec) => void;
 
-export type ObjectSetPropertyFunc = (object: Object, property_id: number, value: Value, pspec: ParamSpec) => void;
+export type ObjectSetPropertyFunc = (object: Object, property_id: number, value: (Value | string | boolean | number), pspec: ParamSpec) => void;
 
-export type SignalAccumulator = (ihint: SignalInvocationHint, return_accu: Value, handler_return: Value, data: any | null) => boolean;
+export type SignalAccumulator = (ihint: SignalInvocationHint, return_accu: (Value | string | boolean | number), handler_return: (Value | string | boolean | number), data: any | null) => boolean;
 
-export type SignalEmissionHook = (ihint: SignalInvocationHint, param_values: Value[], data: any | null) => boolean;
+export type SignalEmissionHook = (ihint: SignalInvocationHint, param_values: (Value | string | boolean | number)[], data: any | null) => boolean;
 
 export type ToggleNotify = (data: any | null, object: Object, is_last_ref: boolean) => void;
 
@@ -409,7 +409,7 @@ export type TypePluginUnuse = (plugin: TypePlugin) => void;
 
 export type TypePluginUse = (plugin: TypePlugin) => void;
 
-export type ValueTransform = (src_value: Value, dest_value: Value) => void;
+export type ValueTransform = (src_value: (Value | string | boolean | number), dest_value: (Value | string | boolean | number)) => void;
 
 export type WeakNotify = (data: any | null, where_the_object_was: Object) => void;
 export enum BindingFlags {
@@ -483,8 +483,8 @@ export module Binding {
     }
 }
 export class Binding extends Object {
-    constructor(properties: Partial<Binding.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Binding.ConstructorProperties>);
+    constructor(properties?: Partial<Binding.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Binding.ConstructorProperties>, ...args: any[]): void;
     // Properties
     flags: BindingFlags;
     source: Object;
@@ -493,9 +493,9 @@ export class Binding extends Object {
     target_property: string;
     // Members
     get_flags(): BindingFlags;
-    get_source(): Object;
+    get_source<T = Object>(): T;
     get_source_property(): string;
-    get_target(): Object;
+    get_target<T = Object>(): T;
     get_target_property(): string;
     unbind(): void;
 }
@@ -505,8 +505,8 @@ export module InitiallyUnowned {
     }
 }
 export class InitiallyUnowned extends Object {
-    constructor(properties: Partial<InitiallyUnowned.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<InitiallyUnowned.ConstructorProperties>);
+    constructor(properties?: Partial<InitiallyUnowned.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<InitiallyUnowned.ConstructorProperties>, ...args: any[]): void;
     // Fields
     g_type_instance: TypeInstance;
 }
@@ -516,8 +516,8 @@ export module Object {
     }
 }
 export class Object {
-    constructor(properties: Partial<Object.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Object.ConstructorProperties>);
+    constructor(properties?: Partial<Object.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Object.ConstructorProperties>, ...args: any[]): void;
     // Fields
     g_type_instance: TypeInstance;
     // Signals
@@ -532,21 +532,21 @@ export class Object {
     // Members
     bind_property(source_property: string, target: Object, target_property: string, flags: BindingFlags): Binding;
     bind_property_full(source_property: string, target: Object, target_property: string, flags: BindingFlags, transform_to: BindingTransformFunc | null, transform_from: BindingTransformFunc | null, notify: GLib.DestroyNotify | null): Binding;
-    bind_property_with_closures(source_property: string, target: Object, target_property: string, flags: BindingFlags, transform_to: Closure, transform_from: Closure): Binding;
+    bind_property_full(source_property: string, target: Object, target_property: string, flags: BindingFlags, transform_to: Closure, transform_from: Closure): Binding;
     force_floating(): void;
     freeze_notify(): void;
     get_data(key: string): any | null;
-    get_property(property_name: string, value: Value): void;
+    get_property(property_name: string, value: (Value | string | boolean | number)): void;
     get_qdata(quark: GLib.Quark): any | null;
-    getv(names: string[], values: Value[]): void;
+    getv(names: string[], values: (Value | string | boolean | number)[]): void;
     is_floating(): boolean;
     notify(property_name: string): void;
     notify_by_pspec(pspec: ParamSpec): void;
-    ref(): Object;
-    ref_sink(): Object;
+    ref<T = Object>(): T;
+    ref_sink<T = Object>(): T;
     run_dispose(): void;
     set_data(key: string, data: any | null): void;
-    set_property(property_name: string, value: Value): void;
+    set_property(property_name: string, value: (Value | string | boolean | number)): void;
     steal_data(key: string): any | null;
     steal_qdata(quark: GLib.Quark): any | null;
     thaw_notify(): void;
@@ -556,22 +556,23 @@ export class Object {
     vfunc_dispatch_properties_changed(n_pspecs: number, pspecs: ParamSpec): void;
     vfunc_dispose(): void;
     vfunc_finalize(): void;
-    vfunc_get_property(property_id: number, value: Value, pspec: ParamSpec): void;
+    vfunc_get_property(property_id: number, value: (Value | string | boolean | number), pspec: ParamSpec): void;
     vfunc_notify(pspec: ParamSpec): void;
-    vfunc_set_property(property_id: number, value: Value, pspec: ParamSpec): void;
+    vfunc_set_property(property_id: number, value: (Value | string | boolean | number), pspec: ParamSpec): void;
     static compat_control(what: number, data: any | null): number;
     static interface_find_property(g_iface: TypeInterface, property_name: string): ParamSpec;
     static interface_install_property(g_iface: TypeInterface, pspec: ParamSpec): void;
-    static interface_list_properties(g_iface: TypeInterface): [ParamSpec[], number];
+    static interface_list_properties(g_iface: TypeInterface): ParamSpec[];
+    static $gtype: GType;
     static _classInit: (klass: any) => any;
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
     emit(id: string, ...args: any[]): void;
     disconnect(id: number): void;
     set<T = any>(params: T): void
-    block_signal_handler(id: number);
-    unblock_signal_handler(id: number);
-    stop_emission_by_name(detailedName: string);
+    block_signal_handler(id: number): number;
+    unblock_signal_handler(id: number): number;
+    stop_emission_by_name(detailedName: string): number;
 }
 export module ParamSpec {
     export interface ConstructorProperties {
@@ -579,8 +580,8 @@ export module ParamSpec {
     }
 }
 export abstract class ParamSpec {
-    constructor(properties: Partial<ParamSpec.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpec.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpec.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpec.ConstructorProperties>, ...args: any[]): void;
     // Fields
     g_type_instance: TypeInstance;
     name: string;
@@ -599,9 +600,9 @@ export abstract class ParamSpec {
     sink(): void;
     steal_qdata(quark: GLib.Quark): any | null;
     vfunc_finalize(): void;
-    vfunc_value_set_default(value: Value): void;
-    vfunc_value_validate(value: Value): boolean;
-    vfunc_values_cmp(value1: Value, value2: Value): number;
+    vfunc_value_set_default(value: (Value | string | boolean | number)): void;
+    vfunc_value_validate(value: (Value | string | boolean | number)): boolean;
+    vfunc_values_cmp(value1: (Value | string | boolean | number), value2: (Value | string | boolean | number)): number;
     static char(name: any, nick: any, blurb: any, flags: any, minimum: any, maximum: any, defaultValue: any): ParamSpec;
     static uchar(name: any, nick: any, blurb: any, flags: any, minimum: any, maximum: any, defaultValue: any):ParamSpec;
     static int(name: any, nick: any, blurb: any, flags: any, minimum: any, maximum: any, defaultValue: any): ParamSpec;
@@ -627,8 +628,8 @@ export module ParamSpecBoolean {
     }
 }
 export class ParamSpecBoolean extends ParamSpec {
-    constructor(properties: Partial<ParamSpecBoolean.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecBoolean.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecBoolean.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecBoolean.ConstructorProperties>, ...args: any[]): void;
     // Fields
     default_value: boolean;
 }
@@ -638,8 +639,8 @@ export module ParamSpecBoxed {
     }
 }
 export class ParamSpecBoxed extends ParamSpec {
-    constructor(properties: Partial<ParamSpecBoxed.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecBoxed.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecBoxed.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecBoxed.ConstructorProperties>, ...args: any[]): void;
 }
 export module ParamSpecChar {
     export interface ConstructorProperties extends ParamSpec.ConstructorProperties {
@@ -647,8 +648,8 @@ export module ParamSpecChar {
     }
 }
 export class ParamSpecChar extends ParamSpec {
-    constructor(properties: Partial<ParamSpecChar.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecChar.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecChar.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecChar.ConstructorProperties>, ...args: any[]): void;
     // Fields
     minimum: number;
     maximum: number;
@@ -660,8 +661,8 @@ export module ParamSpecDouble {
     }
 }
 export class ParamSpecDouble extends ParamSpec {
-    constructor(properties: Partial<ParamSpecDouble.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecDouble.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecDouble.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecDouble.ConstructorProperties>, ...args: any[]): void;
     // Fields
     minimum: number;
     maximum: number;
@@ -674,8 +675,8 @@ export module ParamSpecEnum {
     }
 }
 export class ParamSpecEnum extends ParamSpec {
-    constructor(properties: Partial<ParamSpecEnum.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecEnum.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecEnum.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecEnum.ConstructorProperties>, ...args: any[]): void;
     // Fields
     enum_class: EnumClass;
     default_value: number;
@@ -686,8 +687,8 @@ export module ParamSpecFlags {
     }
 }
 export class ParamSpecFlags extends ParamSpec {
-    constructor(properties: Partial<ParamSpecFlags.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecFlags.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecFlags.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecFlags.ConstructorProperties>, ...args: any[]): void;
     // Fields
     flags_class: FlagsClass;
     default_value: number;
@@ -698,8 +699,8 @@ export module ParamSpecFloat {
     }
 }
 export class ParamSpecFloat extends ParamSpec {
-    constructor(properties: Partial<ParamSpecFloat.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecFloat.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecFloat.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecFloat.ConstructorProperties>, ...args: any[]): void;
     // Fields
     minimum: number;
     maximum: number;
@@ -712,8 +713,8 @@ export module ParamSpecGType {
     }
 }
 export class ParamSpecGType extends ParamSpec {
-    constructor(properties: Partial<ParamSpecGType.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecGType.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecGType.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecGType.ConstructorProperties>, ...args: any[]): void;
     // Fields
     is_a_type: GType;
 }
@@ -723,8 +724,8 @@ export module ParamSpecInt {
     }
 }
 export class ParamSpecInt extends ParamSpec {
-    constructor(properties: Partial<ParamSpecInt.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecInt.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecInt.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecInt.ConstructorProperties>, ...args: any[]): void;
     // Fields
     minimum: number;
     maximum: number;
@@ -736,8 +737,8 @@ export module ParamSpecInt64 {
     }
 }
 export class ParamSpecInt64 extends ParamSpec {
-    constructor(properties: Partial<ParamSpecInt64.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecInt64.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecInt64.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecInt64.ConstructorProperties>, ...args: any[]): void;
     // Fields
     minimum: number;
     maximum: number;
@@ -749,8 +750,8 @@ export module ParamSpecLong {
     }
 }
 export class ParamSpecLong extends ParamSpec {
-    constructor(properties: Partial<ParamSpecLong.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecLong.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecLong.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecLong.ConstructorProperties>, ...args: any[]): void;
     // Fields
     minimum: number;
     maximum: number;
@@ -762,8 +763,8 @@ export module ParamSpecObject {
     }
 }
 export class ParamSpecObject extends ParamSpec {
-    constructor(properties: Partial<ParamSpecObject.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecObject.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecObject.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecObject.ConstructorProperties>, ...args: any[]): void;
 }
 export module ParamSpecOverride {
     export interface ConstructorProperties extends ParamSpec.ConstructorProperties {
@@ -771,8 +772,8 @@ export module ParamSpecOverride {
     }
 }
 export class ParamSpecOverride extends ParamSpec {
-    constructor(properties: Partial<ParamSpecOverride.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecOverride.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecOverride.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecOverride.ConstructorProperties>, ...args: any[]): void;
 }
 export module ParamSpecParam {
     export interface ConstructorProperties extends ParamSpec.ConstructorProperties {
@@ -780,8 +781,8 @@ export module ParamSpecParam {
     }
 }
 export class ParamSpecParam extends ParamSpec {
-    constructor(properties: Partial<ParamSpecParam.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecParam.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecParam.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecParam.ConstructorProperties>, ...args: any[]): void;
 }
 export module ParamSpecPointer {
     export interface ConstructorProperties extends ParamSpec.ConstructorProperties {
@@ -789,8 +790,8 @@ export module ParamSpecPointer {
     }
 }
 export class ParamSpecPointer extends ParamSpec {
-    constructor(properties: Partial<ParamSpecPointer.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecPointer.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecPointer.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecPointer.ConstructorProperties>, ...args: any[]): void;
 }
 export module ParamSpecString {
     export interface ConstructorProperties extends ParamSpec.ConstructorProperties {
@@ -798,8 +799,8 @@ export module ParamSpecString {
     }
 }
 export class ParamSpecString extends ParamSpec {
-    constructor(properties: Partial<ParamSpecString.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecString.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecString.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecString.ConstructorProperties>, ...args: any[]): void;
     // Fields
     default_value: string;
     cset_first: string;
@@ -814,8 +815,8 @@ export module ParamSpecUChar {
     }
 }
 export class ParamSpecUChar extends ParamSpec {
-    constructor(properties: Partial<ParamSpecUChar.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecUChar.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecUChar.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecUChar.ConstructorProperties>, ...args: any[]): void;
     // Fields
     minimum: number;
     maximum: number;
@@ -827,8 +828,8 @@ export module ParamSpecUInt {
     }
 }
 export class ParamSpecUInt extends ParamSpec {
-    constructor(properties: Partial<ParamSpecUInt.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecUInt.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecUInt.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecUInt.ConstructorProperties>, ...args: any[]): void;
     // Fields
     minimum: number;
     maximum: number;
@@ -840,8 +841,8 @@ export module ParamSpecUInt64 {
     }
 }
 export class ParamSpecUInt64 extends ParamSpec {
-    constructor(properties: Partial<ParamSpecUInt64.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecUInt64.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecUInt64.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecUInt64.ConstructorProperties>, ...args: any[]): void;
     // Fields
     minimum: number;
     maximum: number;
@@ -853,8 +854,8 @@ export module ParamSpecULong {
     }
 }
 export class ParamSpecULong extends ParamSpec {
-    constructor(properties: Partial<ParamSpecULong.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecULong.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecULong.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecULong.ConstructorProperties>, ...args: any[]): void;
     // Fields
     minimum: number;
     maximum: number;
@@ -866,8 +867,8 @@ export module ParamSpecUnichar {
     }
 }
 export class ParamSpecUnichar extends ParamSpec {
-    constructor(properties: Partial<ParamSpecUnichar.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecUnichar.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecUnichar.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecUnichar.ConstructorProperties>, ...args: any[]): void;
     // Fields
     default_value: number;
 }
@@ -877,8 +878,8 @@ export module ParamSpecValueArray {
     }
 }
 export class ParamSpecValueArray extends ParamSpec {
-    constructor(properties: Partial<ParamSpecValueArray.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecValueArray.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecValueArray.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecValueArray.ConstructorProperties>, ...args: any[]): void;
     // Fields
     element_spec: ParamSpec;
     fixed_n_elements: number;
@@ -889,8 +890,8 @@ export module ParamSpecVariant {
     }
 }
 export class ParamSpecVariant extends ParamSpec {
-    constructor(properties: Partial<ParamSpecVariant.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ParamSpecVariant.ConstructorProperties>);
+    constructor(properties?: Partial<ParamSpecVariant.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ParamSpecVariant.ConstructorProperties>, ...args: any[]): void;
     // Fields
     type: GLib.VariantType;
     default_value: GLib.Variant;
@@ -901,12 +902,12 @@ export module TypeModule {
     }
 }
 export abstract class TypeModule extends Object implements TypePlugin {
-    constructor(properties: Partial<TypeModule.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<TypeModule.ConstructorProperties>);
+    constructor(properties?: Partial<TypeModule.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<TypeModule.ConstructorProperties>, ...args: any[]): void;
     // Fields
     use_count: number;
-    type_infos: string[];
-    interface_infos: string[];
+    type_infos: GLib.SList;
+    interface_infos: GLib.SList;
     name: string;
     // Members
     add_interface(instance_type: GType, interface_type: GType, interface_info: InterfaceInfo): void;
@@ -929,29 +930,29 @@ export class CClosure {
     closure: Closure;
     callback: any;
     // Members
-    static marshal_BOOLEAN__BOXED_BOXED(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_BOOLEAN__FLAGS(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_STRING__OBJECT_POINTER(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__BOOLEAN(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__BOXED(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__CHAR(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__DOUBLE(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__ENUM(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__FLAGS(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__FLOAT(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__INT(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__LONG(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__OBJECT(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__PARAM(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__POINTER(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__STRING(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__UCHAR(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__UINT(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__UINT_POINTER(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__ULONG(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__VARIANT(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_VOID__VOID(closure: Closure, return_value: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
-    static marshal_generic(closure: Closure, return_gvalue: Value, n_param_values: number, param_values: Value, invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_BOOLEAN__BOXED_BOXED(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_BOOLEAN__FLAGS(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_STRING__OBJECT_POINTER(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__BOOLEAN(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__BOXED(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__CHAR(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__DOUBLE(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__ENUM(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__FLAGS(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__FLOAT(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__INT(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__LONG(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__OBJECT(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__PARAM(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__POINTER(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__STRING(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__UCHAR(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__UINT(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__UINT_POINTER(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__ULONG(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__VARIANT(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_VOID__VOID(closure: Closure, return_value: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
+    static marshal_generic(closure: Closure, return_gvalue: (Value | string | boolean | number), n_param_values: number, param_values: (Value | string | boolean | number), invocation_hint: any | null, marshal_data: any | null): void;
 }
 
 export type Closure<R = any, P = any> = (...args: P[]) => R;
@@ -962,6 +963,13 @@ export class ClosureNotifyData {
     notify: ClosureNotify;
 }
 export class EnumClass {
+    constructor(properties?: {
+        g_type_class?: TypeClass;
+        minimum?: number;
+        maximum?: number;
+        n_values?: number;
+        values?: EnumValue;
+    });
     constructor(copy: EnumClass);
     // Fields
     g_type_class: TypeClass;
@@ -971,6 +979,11 @@ export class EnumClass {
     values: EnumValue;
 }
 export class EnumValue {
+    constructor(properties?: {
+        value?: number;
+        value_name?: string;
+        value_nick?: string;
+    });
     constructor(copy: EnumValue);
     // Fields
     value: number;
@@ -978,6 +991,12 @@ export class EnumValue {
     value_nick: string;
 }
 export class FlagsClass {
+    constructor(properties?: {
+        g_type_class?: TypeClass;
+        mask?: number;
+        n_values?: number;
+        values?: FlagsValue;
+    });
     constructor(copy: FlagsClass);
     // Fields
     g_type_class: TypeClass;
@@ -986,6 +1005,11 @@ export class FlagsClass {
     values: FlagsValue;
 }
 export class FlagsValue {
+    constructor(properties?: {
+        value?: number;
+        value_name?: string;
+        value_nick?: string;
+    });
     constructor(copy: FlagsValue);
     // Fields
     value: number;
@@ -1009,13 +1033,18 @@ export class ParamSpecPool {
     constructor(copy: ParamSpecPool);
     // Members
     insert(pspec: ParamSpec, owner_type: GType): void;
-    list(owner_type: GType): [ParamSpec[], number];
+    list(owner_type: GType): ParamSpec[];
     list_owned(owner_type: GType): GLib.List;
     lookup(param_name: string, owner_type: GType, walk_ancestors: boolean): ParamSpec;
     remove(pspec: ParamSpec): void;
     static new(type_prefixing: boolean): ParamSpecPool;
 }
 export class ParamSpecTypeInfo {
+    constructor(properties?: {
+        instance_size?: number;
+        n_preallocs?: number;
+        value_type?: GType;
+    });
     constructor(copy: ParamSpecTypeInfo);
     // Fields
     instance_size: number;
@@ -1023,6 +1052,10 @@ export class ParamSpecTypeInfo {
     value_type: GType;
 }
 export class Parameter {
+    constructor(properties?: {
+        name?: string;
+        value?: Value;
+    });
     constructor(copy: Parameter);
     // Fields
     name: string;
@@ -1047,6 +1080,9 @@ export class SignalQuery {
     param_types: GType[];
 }
 export class TypeClass {
+    constructor(properties?: {
+        g_type?: GType;
+    });
     constructor(copy: TypeClass);
     // Fields
     g_type: GType;
@@ -1080,6 +1116,9 @@ export class TypeInfo {
     value_table: TypeValueTable;
 }
 export class TypeInstance {
+    constructor(properties?: {
+        g_class?: TypeClass;
+    });
     constructor(copy: TypeInstance);
     // Fields
     g_class: TypeClass;
@@ -1087,6 +1126,10 @@ export class TypeInstance {
     get_private(private_type: GType): any | null;
 }
 export class TypeInterface {
+    constructor(properties?: {
+        g_type?: GType;
+        g_instance_type?: GType;
+    });
     constructor(copy: TypeInterface);
     // Fields
     g_type: GType;
@@ -1096,7 +1139,7 @@ export class TypeInterface {
     static add_prerequisite(interface_type: GType, prerequisite_type: GType): void;
     static get_plugin(instance_type: GType, interface_type: GType): TypePlugin;
     static peek(instance_class: TypeClass, iface_type: GType): TypeInterface;
-    static prerequisites(interface_type: GType): [GType[], number | null];
+    static prerequisites(interface_type: GType): GType[];
 }
 export class TypePluginClass {
     constructor(copy: TypePluginClass);
@@ -1108,6 +1151,12 @@ export class TypePluginClass {
     complete_interface_info: TypePluginCompleteInterfaceInfo;
 }
 export class TypeQuery {
+    constructor(properties?: {
+        type?: GType;
+        type_name?: string;
+        class_size?: number;
+        instance_size?: number;
+    });
     constructor(copy: TypeQuery);
     // Fields
     type: GType;
@@ -1116,19 +1165,27 @@ export class TypeQuery {
     instance_size: number;
 }
 export class TypeValueTable {
+    constructor(properties?: {
+        collect_format?: string;
+        lcopy_format?: string;
+    });
     constructor(copy: TypeValueTable);
     // Fields
     collect_format: string;
     lcopy_format: string;
 }
 export class Value {
+    constructor(properties?: {
+        g_type?: GType;
+        data?: _Value__data__union[];
+    });
     constructor(copy: Value);
     // Fields
     g_type: GType;
     data: _Value__data__union[];
     // Members
-    copy(dest_value: Value): void;
-    dup_object(): Object;
+    copy(dest_value: (Value | string | boolean | number)): void;
+    dup_object<T = Object>(): T;
     dup_string(): string;
     dup_variant(): GLib.Variant | null;
     fits_pointer(): boolean;
@@ -1143,7 +1200,7 @@ export class Value {
     get_int(): number;
     get_int64(): number;
     get_long(): number;
-    get_object(): Object;
+    get_object<T = Object>(): T;
     get_param(): ParamSpec;
     get_pointer(): any | null;
     get_schar(): number;
@@ -1186,7 +1243,7 @@ export class Value {
     take_boxed(v_boxed: any | null): void;
     take_string(v_string: string | null): void;
     take_variant(variant: GLib.Variant | null): void;
-    transform(dest_value: Value): boolean;
+    transform(dest_value: (Value | string | boolean | number)): boolean;
     unset(): void;
     static type_compatible(src_type: GType, dest_type: GType): boolean;
     static type_transformable(src_type: GType, dest_type: GType): boolean;
@@ -1201,14 +1258,14 @@ export class ValueArray {
     // Constructors
     static ["new"](n_prealloced: number): ValueArray;
     // Members
-    append(value: Value | null): ValueArray;
+    append(value: (Value | string | boolean | number) | null): ValueArray;
     copy(): ValueArray;
     get_nth(index_: number): Value;
-    insert(index_: number, value: Value | null): ValueArray;
-    prepend(value: Value | null): ValueArray;
+    insert(index_: number, value: (Value | string | boolean | number) | null): ValueArray;
+    prepend(value: (Value | string | boolean | number) | null): ValueArray;
     remove(index_: number): ValueArray;
     sort(compare_func: GLib.CompareFunc): ValueArray;
-    sort_with_data(compare_func: GLib.CompareDataFunc): ValueArray;
+    sort(compare_func: GLib.CompareDataFunc): ValueArray;
 }
 export class WeakRef {
     constructor(copy: WeakRef);
@@ -1217,6 +1274,17 @@ export class TypeCValue {
     constructor(copy: TypeCValue);
 }
 export class _Value__data__union {
+    constructor(properties?: {
+        v_int?: number;
+        v_uint?: number;
+        v_long?: number;
+        v_ulong?: number;
+        v_int64?: number;
+        v_uint64?: number;
+        v_float?: number;
+        v_double?: number;
+        v_pointer?: any;
+    });
     constructor(copy: _Value__data__union);
     // Fields
     v_int: number;
@@ -1229,7 +1297,10 @@ export class _Value__data__union {
     v_double: number;
     v_pointer: any;
 }
-export interface TypePlugin  {
+export interface TypePluginNamespace {
+    $gtype: GType;
+}
+export interface TypePlugin extends Object {
     // Members
     complete_interface_info(instance_type: GType, interface_type: GType, info: InterfaceInfo): void;
     complete_type_info(g_type: GType, info: TypeInfo, value_table: TypeValueTable): void;
@@ -1237,17 +1308,21 @@ export interface TypePlugin  {
     use(): void;
 }
 
+export const TypePlugin: TypePluginNamespace;
+
 export type SignalCMarshaller = ClosureMarshal;
 
 export type SignalCVaMarshaller = unknown;
 
 export type Type = number;
 
-export function signal_handlers_block_by_func(instance: Object, func: Function);
+export function signal_handlers_block_by_func(instance: Object, func: Function): number;
 
-export function signal_handlers_unblock_by_func  (instance: Object, func: Function);
+export function signal_handlers_unblock_by_func  (instance: Object, func: Function): number;
 
-export function signal_handlers_disconnect_by_func(instance: Object, func: Function);export class Interface {
+export function signal_handlers_disconnect_by_func(instance: Object, func: Function): number;
+
+export class Interface {
     static _classInit: (klass: any) => any;
     __name__: string;
     _construct: (params: any, ...otherArgs: any[]) => any;
@@ -1261,9 +1336,9 @@ export interface SignalMatch {
     func: Function;
 }
 
-export function signal_connect (object: Object, name: string, handler: Function);
-export function signal_connect_after(object: Object, name: string, handler: Function);
-export function signal_emit_by_name(object: Object, name: string, ...args: any[]);
+export function signal_connect (object: Object, name: string, handler: Function): number;
+export function signal_connect_after(object: Object, name: string, handler: Function): number;
+export function signal_emit_by_name(object: Object, name: string, ...args: any[]): number;
 
 export let __gtkCssName__: symbol;
 export let __gtkTemplate__: symbol;
@@ -1322,6 +1397,7 @@ export let TYPE_PARAM: GType;
 export let TYPE_INTERFACE: GType;
 export let TYPE_OBJECT: GType;
 export let TYPE_VARIANT: GType;
+export let TYPE_INT: GType;
 
 export function registerClass<
   K,
@@ -1330,22 +1406,54 @@ export function registerClass<
 >(
   klass: T
 ): {
+  $gtype: GType;
   new (...args: Parameters<T["prototype"]["_init"]>): T["prototype"];
   prototype: T["prototype"];
+};
+
+export type Property<K extends ParamSpec> = K extends ParamSpecBoolean
+  ? boolean
+  : K extends ParamSpecDouble | ParamSpecInt | ParamSpecUInt | ParamSpecFloat | ParamSpecLong
+  ? number
+  : K extends ParamSpecInt64 | ParamSpecUInt64 | ParamSpecULong
+  ? number
+  : K extends ParamSpecFlags | ParamSpecEnum
+  ? number
+  : K extends ParamSpecString | ParamSpecUnichar
+  ? string
+  : K extends ParamSpecValueArray
+  ? any[]
+  : K extends ParamSpecObject
+  ? any
+  : K extends ParamSpecVariant
+  ? GLib.Variant
+  : any;
+
+export type Properties<
+  Properties extends { [key: string]: ParamSpec }
+> = {
+  [key in keyof Properties]: Property<Properties["key"]>;
 };
 
 export function registerClass<
   K,
   P extends { _init(...args: K[]): void },
-  T extends { prototype: P }
+  T extends { prototype: P },
+  Props extends { [key: string]: ParamSpec }
 >(
   options: {
     GTypeName?: string;
-    Properties?: { [key: string]: ParamSpec };
+    Properties?: Props;
     Signals?: { [key: string]: {} };
+    Implements?: any[];
+    CssName?: string;
+    Template?: string;
+    Children?: string[];
+    InternalChildren?: string[];
   },
   klass: T
 ): {
-  new (...args: Parameters<T["prototype"]["_init"]>): T["prototype"];
-  prototype: T["prototype"];
+  $gtype: GType;
+  new (...args: Parameters<T["prototype"]["_init"]>): T["prototype"] & Properties<Props>;
+  prototype: T["prototype"] & Properties<Props>;
 };

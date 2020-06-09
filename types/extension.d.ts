@@ -1,4 +1,9 @@
-declare interface ImportMap {}
+declare interface ImportMap {
+    extension: any;
+    settings: any;
+    convenience: any;
+    util: any;
+}
 
 declare interface Extension {
   extensionState: any;
@@ -18,6 +23,8 @@ declare interface GiImports {
   GLib: typeof import('glib');
   Gio: typeof import('gio');
   GdkPixbuf: typeof import('gdkpixbuf');
+  St: typeof import('st');
+  Shell: typeof import('shell');
 }
 
 declare interface Imports {

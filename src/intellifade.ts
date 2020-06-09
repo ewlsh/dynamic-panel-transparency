@@ -1,5 +1,5 @@
 /** @type {Module} */
-const module = {};
+const module: Module = {};
 
 const { GLib, Meta, Shell, St } = imports.gi;
 const Mainloop = imports.mainloop;
@@ -9,19 +9,28 @@ const Main = imports.ui.main;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings;
 const Util = Me.imports.util;
-
-const { TransitionManager } = Me.imports.transitions;
-const { Themer } = Me.imports.theming;
+import {Themer, load_panel_theme} from './theming';
+import { TransitionManager } from './transitions';
 
 /* How often the asynchronous loop should run in milliseconds... */
 const ASYNC_UPDATE_FREQUENCY = 200; // ms
 
-var Intellifader = class Intellifader {
+export class Intellifader {
+    transitions: TransitionManager;
+    themer: Themer;
+    continueCheck: boolean;
+    override_optimization: boolean;
+    timeoutId: number;
+    maximized_window: any;
+    _wm_tracker: any;
+    panel_bounds: { x: any; y: any; height: any; width: any; is_top: boolean; };
+    scale_factor: number;
+
     /**
      * @param {typeof TransitionManager.prototype} transitions
      * @param {typeof Themer.prototype} themer
      */
-    constructor(transitions, themer) {
+    constructor(transitions: typeof TransitionManager.prototype, themer: typeof Themer.prototype) {
         this.transitions = transitions;
         this.themer = themer;
 
@@ -271,9 +280,7 @@ var Intellifader = class Intellifader {
      *
      * @returns {Object} The current visible maximized window.
      */
-    get_current_maximized_window() {
+    get_current_maximized_window(): object {
         return this.maximized_window;
     }
 }
-
-module.exports = { Intellifader };

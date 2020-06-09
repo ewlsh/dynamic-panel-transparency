@@ -289,7 +289,7 @@ export function content_type_get_mime_type(type: string): string | null;
 
 export function content_type_get_symbolic_icon(type: string): Icon;
 
-export function content_type_guess(filename: string | null, data: number[] | null): [string, boolean | null];
+export function content_type_guess(filename: string | null, data: (Uint8Array | string) | null): [string, boolean | null];
 
 export function content_type_guess_for_tree(root: File): string[];
 
@@ -335,7 +335,7 @@ export function dbus_error_unregister_error(error_domain: GLib.Quark, error_code
 
 export function dbus_generate_guid(): string;
 
-export function dbus_gvalue_to_gvariant(gvalue: GObject.Value, type: GLib.VariantType): GLib.Variant;
+export function dbus_gvalue_to_gvariant(gvalue: (GObject.Value | string | boolean | number), type: GLib.VariantType): GLib.Variant;
 
 export function dbus_gvariant_to_gvalue(value: GLib.Variant): GObject.Value;
 
@@ -413,11 +413,11 @@ export function pollable_source_new(pollable_stream: GObject.Object): GLib.Sourc
 
 export function pollable_source_new_full(pollable_stream: GObject.Object, child_source: GLib.Source | null, cancellable: Cancellable | null): GLib.Source;
 
-export function pollable_stream_read(stream: InputStream, buffer: number[], blocking: boolean, cancellable: Cancellable | null): number;
+export function pollable_stream_read(stream: InputStream, buffer: (Uint8Array | string), blocking: boolean, cancellable: Cancellable | null): number;
 
-export function pollable_stream_write(stream: OutputStream, buffer: number[], blocking: boolean, cancellable: Cancellable | null): number;
+export function pollable_stream_write(stream: OutputStream, buffer: (Uint8Array | string), blocking: boolean, cancellable: Cancellable | null): number;
 
-export function pollable_stream_write_all(stream: OutputStream, buffer: number[], blocking: boolean, cancellable: Cancellable | null): [boolean, number];
+export function pollable_stream_write_all(stream: OutputStream, buffer: (Uint8Array | string), blocking: boolean, cancellable: Cancellable | null): [boolean, number];
 
 export function proxy_get_default_for_protocol(protocol: string): Proxy;
 
@@ -541,7 +541,7 @@ export type FileMeasureProgressCallback = (reporting: boolean, current_size: num
 
 export type FileProgressCallback = (current_num_bytes: number, total_num_bytes: number) => void;
 
-export type FileReadMoreCallback = (file_contents: string, file_size: number, callback_data: any | null) => boolean;
+export type FileReadMoreCallback = (file_contents: string, file_size: number) => boolean;
 
 export type IOSchedulerJobFunc = (job: IOSchedulerJob, cancellable: Cancellable | null) => boolean;
 
@@ -549,9 +549,9 @@ export type PollableSourceFunc = (pollable_stream: GObject.Object) => boolean;
 
 export type ReallocFunc = (data: any | null, size: number) => any | null;
 
-export type SettingsBindGetMapping = (value: GObject.Value, variant: GLib.Variant) => boolean;
+export type SettingsBindGetMapping = (value: (GObject.Value | string | boolean | number), variant: GLib.Variant) => boolean;
 
-export type SettingsBindSetMapping = (value: GObject.Value, expected_type: GLib.VariantType) => GLib.Variant;
+export type SettingsBindSetMapping = (value: (GObject.Value | string | boolean | number), expected_type: GLib.VariantType) => GLib.Variant;
 
 export type SettingsGetMapping = (value: GLib.Variant) => boolean;
 
@@ -1151,8 +1151,8 @@ export module AppInfoMonitor {
     }
 }
 export class AppInfoMonitor extends GObject.Object {
-    constructor(properties: Partial<AppInfoMonitor.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<AppInfoMonitor.ConstructorProperties>);
+    constructor(properties?: Partial<AppInfoMonitor.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<AppInfoMonitor.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -1169,8 +1169,8 @@ export module AppLaunchContext {
     }
 }
 export class AppLaunchContext extends GObject.Object {
-    constructor(properties: Partial<AppLaunchContext.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<AppLaunchContext.ConstructorProperties>);
+    constructor(properties?: Partial<AppLaunchContext.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<AppLaunchContext.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -1209,8 +1209,8 @@ export module Application {
     }
 }
 export class Application extends GObject.Object implements ActionGroup, ActionMap {
-    constructor(properties: Partial<Application.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Application.ConstructorProperties>);
+    constructor(properties?: Partial<Application.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Application.ConstructorProperties>, ...args: any[]): void;
     // Properties
     action_group: ActionGroup;
     application_id: string;
@@ -1329,7 +1329,7 @@ export class Application extends GObject.Object implements ActionGroup, ActionMa
     vfunc_list_actions(): string[];
     vfunc_query_action(action_name: string): [boolean, boolean, GLib.VariantType | null, GLib.VariantType | null, GLib.Variant | null, GLib.Variant | null];
     add_action(action: Action): void;
-    add_action_entries(entries: ActionEntry[]): void;
+    add_action_entries(entries: ActionEntry[], user_data: any | null): void;
     lookup_action(action_name: string): Action;
     remove_action(action_name: string): void;
     vfunc_add_action(action: Action): void;
@@ -1346,8 +1346,8 @@ export module ApplicationCommandLine {
     }
 }
 export class ApplicationCommandLine extends GObject.Object {
-    constructor(properties: Partial<ApplicationCommandLine.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ApplicationCommandLine.ConstructorProperties>);
+    constructor(properties?: Partial<ApplicationCommandLine.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ApplicationCommandLine.ConstructorProperties>, ...args: any[]): void;
     // Properties
     "arguments": GLib.Variant;
     is_remote: boolean;
@@ -1355,7 +1355,7 @@ export class ApplicationCommandLine extends GObject.Object {
     platform_data: GLib.Variant;
     // Members
     create_file_for_arg(arg: string): File;
-    get_arguments(): [string[], number | null];
+    get_arguments(): string[];
     get_cwd(): string | null;
     get_environ(): string[];
     get_exit_status(): number;
@@ -1376,8 +1376,8 @@ export module BufferedInputStream {
     }
 }
 export class BufferedInputStream extends FilterInputStream implements Seekable {
-    constructor(properties: Partial<BufferedInputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<BufferedInputStream.ConstructorProperties>);
+    constructor(properties?: Partial<BufferedInputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<BufferedInputStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     buffer_size: number;
     // Constructors
@@ -1389,8 +1389,8 @@ export class BufferedInputStream extends FilterInputStream implements Seekable {
     fill_finish(result: AsyncResult): number;
     get_available(): number;
     get_buffer_size(): number;
-    peek(buffer: number[], offset: number): number;
-    peek_buffer(): [number[], number];
+    peek(buffer: (Uint8Array | string), offset: number): number;
+    peek_buffer(): Uint8Array;
     read_byte(cancellable: Cancellable | null): number;
     set_buffer_size(size: number): void;
     vfunc_fill(count: number, cancellable: Cancellable | null): number;
@@ -1416,8 +1416,8 @@ export module BufferedOutputStream {
     }
 }
 export class BufferedOutputStream extends FilterOutputStream implements Seekable {
-    constructor(properties: Partial<BufferedOutputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<BufferedOutputStream.ConstructorProperties>);
+    constructor(properties?: Partial<BufferedOutputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<BufferedOutputStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     auto_grow: boolean;
     buffer_size: number;
@@ -1450,12 +1450,12 @@ export module BytesIcon {
     }
 }
 export class BytesIcon extends GObject.Object implements Icon, LoadableIcon {
-    constructor(properties: Partial<BytesIcon.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<BytesIcon.ConstructorProperties>);
+    constructor(properties?: Partial<BytesIcon.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<BytesIcon.ConstructorProperties>, ...args: any[]): void;
     // Properties
     bytes: GLib.Bytes;
     // Constructors
-    static ["new"](bytes: GLib.Bytes): BytesIcon;
+    static ["new"](bytes: (GLib.Bytes | Uint8Array)): BytesIcon;
     // Members
     get_bytes(): GLib.Bytes;
     // Implemented Members
@@ -1478,8 +1478,8 @@ export module Cancellable {
     }
 }
 export class Cancellable extends GObject.Object {
-    constructor(properties: Partial<Cancellable.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Cancellable.ConstructorProperties>);
+    constructor(properties?: Partial<Cancellable.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Cancellable.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect_after(id: string, callback: (...args: any[]) => any): number;
     emit(id: string, ...args: any[]): void;
@@ -1489,7 +1489,7 @@ export class Cancellable extends GObject.Object {
     static ["new"](): Cancellable;
     // Members
     cancel(): void;
-    connect(callback: GObject.Callback, data: any | null, data_destroy_func: GLib.DestroyNotify | null): number;
+    connect(callback: GObject.Callback, data_destroy_func: GLib.DestroyNotify | null): number;
     connect(...args: never[]): never;
     disconnect(handler_id: number): void;
     disconnect(...args: never[]): never;
@@ -1513,8 +1513,8 @@ export module CharsetConverter {
     }
 }
 export class CharsetConverter extends GObject.Object implements Converter, Initable {
-    constructor(properties: Partial<CharsetConverter.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<CharsetConverter.ConstructorProperties>);
+    constructor(properties?: Partial<CharsetConverter.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<CharsetConverter.ConstructorProperties>, ...args: any[]): void;
     // Properties
     from_charset: string;
     to_charset: string;
@@ -1526,9 +1526,9 @@ export class CharsetConverter extends GObject.Object implements Converter, Inita
     get_use_fallback(): boolean;
     set_use_fallback(use_fallback: boolean): void;
     // Implemented Members
-    convert(inbuf: number[], outbuf: number[], flags: ConverterFlags): [ConverterResult, number, number];
+    convert(inbuf: (Uint8Array | string), outbuf: (Uint8Array | string), flags: ConverterFlags): [ConverterResult, number, number];
     reset(): void;
-    vfunc_convert(inbuf: number[] | null, outbuf: number[] | null, flags: ConverterFlags): [ConverterResult, number, number];
+    vfunc_convert(inbuf: (Uint8Array | string) | null, outbuf: (Uint8Array | string) | null, flags: ConverterFlags): [ConverterResult, number, number];
     vfunc_reset(): void;
     init(cancellable: Cancellable | null): boolean;
     vfunc_init(cancellable: Cancellable | null): boolean;
@@ -1540,8 +1540,8 @@ export module ConverterInputStream {
     }
 }
 export class ConverterInputStream extends FilterInputStream implements PollableInputStream {
-    constructor(properties: Partial<ConverterInputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ConverterInputStream.ConstructorProperties>);
+    constructor(properties?: Partial<ConverterInputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ConverterInputStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     converter: Converter;
     // Constructors
@@ -1552,11 +1552,11 @@ export class ConverterInputStream extends FilterInputStream implements PollableI
     can_poll(): boolean;
     create_source(cancellable: Cancellable | null): GLib.Source;
     is_readable(): boolean;
-    read_nonblocking(buffer: number[], cancellable: Cancellable | null): number;
+    read_nonblocking(buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
     vfunc_can_poll(): boolean;
     vfunc_create_source(cancellable: Cancellable | null): GLib.Source;
     vfunc_is_readable(): boolean;
-    vfunc_read_nonblocking(buffer: number[] | null): number;
+    vfunc_read_nonblocking(buffer: (Uint8Array | string) | null): number;
 }
 export module ConverterOutputStream {
     export interface ConstructorProperties extends FilterOutputStream.ConstructorProperties {
@@ -1565,8 +1565,8 @@ export module ConverterOutputStream {
     }
 }
 export class ConverterOutputStream extends FilterOutputStream implements PollableOutputStream {
-    constructor(properties: Partial<ConverterOutputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ConverterOutputStream.ConstructorProperties>);
+    constructor(properties?: Partial<ConverterOutputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ConverterOutputStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     converter: Converter;
     // Constructors
@@ -1577,12 +1577,12 @@ export class ConverterOutputStream extends FilterOutputStream implements Pollabl
     can_poll(): boolean;
     create_source(cancellable: Cancellable | null): GLib.Source;
     is_writable(): boolean;
-    write_nonblocking(buffer: number[], cancellable: Cancellable | null): number;
+    write_nonblocking(buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
     writev_nonblocking(vectors: OutputVector[], cancellable: Cancellable | null): [PollableReturn, number | null];
     vfunc_can_poll(): boolean;
     vfunc_create_source(cancellable: Cancellable | null): GLib.Source;
     vfunc_is_writable(): boolean;
-    vfunc_write_nonblocking(buffer: number[] | null): number;
+    vfunc_write_nonblocking(buffer: (Uint8Array | string) | null): number;
     vfunc_writev_nonblocking(vectors: OutputVector[]): [PollableReturn, number | null];
 }
 export module Credentials {
@@ -1591,8 +1591,8 @@ export module Credentials {
     }
 }
 export class Credentials extends GObject.Object {
-    constructor(properties: Partial<Credentials.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Credentials.ConstructorProperties>);
+    constructor(properties?: Partial<Credentials.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Credentials.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): Credentials;
     // Members
@@ -1609,8 +1609,8 @@ export module DBusActionGroup {
     }
 }
 export class DBusActionGroup extends GObject.Object implements ActionGroup, RemoteActionGroup {
-    constructor(properties: Partial<DBusActionGroup.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusActionGroup.ConstructorProperties>);
+    constructor(properties?: Partial<DBusActionGroup.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusActionGroup.ConstructorProperties>, ...args: any[]): void;
     // Members
     static get(connection: DBusConnection, bus_name: string | null, object_path: string): DBusActionGroup;
     // Implemented Members
@@ -1653,8 +1653,8 @@ export module DBusAuthObserver {
     }
 }
 export class DBusAuthObserver extends GObject.Object {
-    constructor(properties: Partial<DBusAuthObserver.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusAuthObserver.ConstructorProperties>);
+    constructor(properties?: Partial<DBusAuthObserver.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusAuthObserver.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -1686,8 +1686,8 @@ export module DBusConnection {
     }
 }
 export class DBusConnection extends GObject.Object implements AsyncInitable, Initable {
-    constructor(properties: Partial<DBusConnection.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusConnection.ConstructorProperties>);
+    constructor(properties?: Partial<DBusConnection.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusConnection.ConstructorProperties>, ...args: any[]): void;
     // Properties
     address: string;
     authentication_observer: DBusAuthObserver;
@@ -1737,9 +1737,9 @@ export class DBusConnection extends GObject.Object implements AsyncInitable, Ini
     get_stream(): IOStream;
     get_unique_name(): string | null;
     is_closed(): boolean;
-    register_object(object_path: string, interface_info: DBusInterfaceInfo, vtable: DBusInterfaceVTable | null, user_data_free_func: GLib.DestroyNotify): number;
-    register_object_with_closures(object_path: string, interface_info: DBusInterfaceInfo, method_call_closure: GObject.Closure | null, get_property_closure: GObject.Closure | null, set_property_closure: GObject.Closure | null): number;
-    register_subtree(object_path: string, vtable: DBusSubtreeVTable, flags: DBusSubtreeFlags, user_data_free_func: GLib.DestroyNotify): number;
+    register_object(object_path: string, interface_info: DBusInterfaceInfo, vtable: DBusInterfaceVTable | null, user_data: any | null, user_data_free_func: GLib.DestroyNotify): number;
+    register_object(object_path: string, interface_info: DBusInterfaceInfo, method_call_closure: GObject.Closure | null, get_property_closure: GObject.Closure | null, set_property_closure: GObject.Closure | null): number;
+    register_subtree(object_path: string, vtable: DBusSubtreeVTable, flags: DBusSubtreeFlags, user_data: any | null, user_data_free_func: GLib.DestroyNotify): number;
     remove_filter(filter_id: number): void;
     send_message(message: DBusMessage, flags: DBusSendMessageFlags): [boolean, number | null];
     send_message_with_reply(message: DBusMessage, flags: DBusSendMessageFlags, timeout_msec: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): number | null;
@@ -1758,7 +1758,7 @@ export class DBusConnection extends GObject.Object implements AsyncInitable, Ini
     // Implemented Members
     init_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     init_finish(res: AsyncResult): boolean;
-    new_finish(res: AsyncResult): GObject.Object;
+    new_finish<T = GObject.Object>(res: AsyncResult): T;
     vfunc_init_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_init_finish(res: AsyncResult): boolean;
     init(cancellable: Cancellable | null): boolean;
@@ -1771,8 +1771,8 @@ export module DBusInterfaceSkeleton {
     }
 }
 export abstract class DBusInterfaceSkeleton extends GObject.Object implements DBusInterface {
-    constructor(properties: Partial<DBusInterfaceSkeleton.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusInterfaceSkeleton.ConstructorProperties>);
+    constructor(properties?: Partial<DBusInterfaceSkeleton.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusInterfaceSkeleton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     g_flags: DBusInterfaceSkeletonFlags;
     // Signals
@@ -1800,7 +1800,7 @@ export abstract class DBusInterfaceSkeleton extends GObject.Object implements DB
     vfunc_get_info(): DBusInterfaceInfo;
     vfunc_get_properties(): GLib.Variant;
     // Implemented Members
-    dup_object(): DBusObject;
+    get_object(): DBusObject;
     set_object(object: DBusObject | null): void;
     vfunc_dup_object(): DBusObject;
     vfunc_set_object(object: DBusObject | null): void;
@@ -1811,8 +1811,8 @@ export module DBusMenuModel {
     }
 }
 export class DBusMenuModel extends MenuModel {
-    constructor(properties: Partial<DBusMenuModel.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusMenuModel.ConstructorProperties>);
+    constructor(properties?: Partial<DBusMenuModel.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusMenuModel.ConstructorProperties>, ...args: any[]): void;
     // Members
     static get(connection: DBusConnection, bus_name: string | null, object_path: string): DBusMenuModel;
 }
@@ -1823,13 +1823,13 @@ export module DBusMessage {
     }
 }
 export class DBusMessage extends GObject.Object {
-    constructor(properties: Partial<DBusMessage.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusMessage.ConstructorProperties>);
+    constructor(properties?: Partial<DBusMessage.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusMessage.ConstructorProperties>, ...args: any[]): void;
     // Properties
     locked: boolean;
     // Constructors
     static ["new"](): DBusMessage;
-    static new_from_blob(blob: number[], capabilities: DBusCapabilityFlags): DBusMessage;
+    static new_from_blob(blob: (Uint8Array | string), capabilities: DBusCapabilityFlags): DBusMessage;
     static new_method_call(name: string | null, path: string, interface_: string | null, method: string): DBusMessage;
     static new_signal(path: string, interface_: string, signal: string): DBusMessage;
     // Members
@@ -1841,7 +1841,7 @@ export class DBusMessage extends GObject.Object {
     get_error_name(): string;
     get_flags(): DBusMessageFlags;
     get_header(header_field: DBusMessageHeaderField): GLib.Variant | null;
-    get_header_fields(): number[];
+    get_header_fields(): Uint8Array;
     get_interface(): string;
     get_locked(): boolean;
     get_member(): string;
@@ -1873,9 +1873,9 @@ export class DBusMessage extends GObject.Object {
     set_serial(serial: number): void;
     set_signature(value: string): void;
     set_unix_fd_list(fd_list: UnixFDList | null): void;
-    to_blob(capabilities: DBusCapabilityFlags): [number[], number];
+    to_blob(capabilities: DBusCapabilityFlags): Uint8Array;
     to_gerror(): boolean;
-    static bytes_needed(blob: number[]): number;
+    static bytes_needed(blob: (Uint8Array | string)): number;
 }
 export module DBusMethodInvocation {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -1883,8 +1883,8 @@ export module DBusMethodInvocation {
     }
 }
 export class DBusMethodInvocation extends GObject.Object {
-    constructor(properties: Partial<DBusMethodInvocation.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusMethodInvocation.ConstructorProperties>);
+    constructor(properties?: Partial<DBusMethodInvocation.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusMethodInvocation.ConstructorProperties>, ...args: any[]): void;
     // Members
     get_connection(): DBusConnection;
     get_interface_name(): string;
@@ -1904,16 +1904,75 @@ export class DBusMethodInvocation extends GObject.Object {
 export module DBusObjectManagerClient {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
         [key: string]: any;
+        bus_type: BusType;
+        connection: DBusConnection;
+        flags: DBusObjectManagerClientFlags;
+        get_proxy_type_destroy_notify: any;
+        get_proxy_type_func: any;
+        get_proxy_type_user_data: any;
+        name: string;
+        name_owner: string;
+        object_path: string;
     }
 }
-export class DBusObjectManagerClient extends GObject.Object {
-    constructor(properties: Partial<DBusObjectManagerClient.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusObjectManagerClient.ConstructorProperties>);
+export class DBusObjectManagerClient extends GObject.Object implements AsyncInitable, DBusObjectManager, Initable {
+    constructor(properties?: Partial<DBusObjectManagerClient.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusObjectManagerClient.ConstructorProperties>, ...args: any[]): void;
+    // Properties
+    bus_type: BusType;
+    connection: DBusConnection;
+    flags: DBusObjectManagerClientFlags;
+    get_proxy_type_destroy_notify: any;
+    get_proxy_type_func: any;
+    get_proxy_type_user_data: any;
+    name: string;
+    name_owner: string;
+    object_path: string;
+    // Signals
+    connect(id: string, callback: (...args: any[]) => any): number;
+    connect_after(id: string, callback: (...args: any[]) => any): number;
+    emit(id: string, ...args: any[]): void;
+    connect(signal: 'interface-proxy-properties-changed', callback: (_source: this, object_proxy: DBusObjectProxy, interface_proxy: DBusProxy, changed_properties: GLib.Variant, invalidated_properties: string[]) => void): number;
+    connect_after(signal: 'interface-proxy-properties-changed', callback: (_source: this, object_proxy: DBusObjectProxy, interface_proxy: DBusProxy, changed_properties: GLib.Variant, invalidated_properties: string[]) => void): number;
+    emit(signal: 'interface-proxy-properties-changed', object_proxy: DBusObjectProxy, interface_proxy: DBusProxy, changed_properties: GLib.Variant, invalidated_properties: string[]): void;
+    connect(signal: 'interface-proxy-signal', callback: (_source: this, object_proxy: DBusObjectProxy, interface_proxy: DBusProxy, sender_name: string, signal_name: string, parameters: GLib.Variant) => void): number;
+    connect_after(signal: 'interface-proxy-signal', callback: (_source: this, object_proxy: DBusObjectProxy, interface_proxy: DBusProxy, sender_name: string, signal_name: string, parameters: GLib.Variant) => void): number;
+    emit(signal: 'interface-proxy-signal', object_proxy: DBusObjectProxy, interface_proxy: DBusProxy, sender_name: string, signal_name: string, parameters: GLib.Variant): void;
     // Constructors
     static new_finish(res: AsyncResult): DBusObjectManagerClient;
+    static new_finish(...args: never[]): never;
     static new_for_bus_finish(res: AsyncResult): DBusObjectManagerClient;
-    static new_for_bus_sync(bus_type: BusType, flags: DBusObjectManagerClientFlags, name: string, object_path: string, get_proxy_type_func: DBusProxyTypeFunc | null, get_proxy_type_user_data: any | null, get_proxy_type_destroy_notify: GLib.DestroyNotify | null, cancellable: Cancellable | null): DBusObjectManagerClient;
-    static new_sync(connection: DBusConnection, flags: DBusObjectManagerClientFlags, name: string | null, object_path: string, get_proxy_type_func: DBusProxyTypeFunc | null, get_proxy_type_user_data: any | null, get_proxy_type_destroy_notify: GLib.DestroyNotify | null, cancellable: Cancellable | null): DBusObjectManagerClient;
+    static new_for_bus_sync(bus_type: BusType, flags: DBusObjectManagerClientFlags, name: string, object_path: string, get_proxy_type_func: DBusProxyTypeFunc | null, get_proxy_type_destroy_notify: GLib.DestroyNotify | null, cancellable: Cancellable | null): DBusObjectManagerClient;
+    static new_sync(connection: DBusConnection, flags: DBusObjectManagerClientFlags, name: string | null, object_path: string, get_proxy_type_func: DBusProxyTypeFunc | null, get_proxy_type_destroy_notify: GLib.DestroyNotify | null, cancellable: Cancellable | null): DBusObjectManagerClient;
+    // Members
+    get_connection(): DBusConnection;
+    get_flags(): DBusObjectManagerClientFlags;
+    get_name(): string;
+    get_name_owner(): string | null;
+    vfunc_interface_proxy_properties_changed(object_proxy: DBusObjectProxy, interface_proxy: DBusProxy, changed_properties: GLib.Variant, invalidated_properties: string): void;
+    vfunc_interface_proxy_signal(object_proxy: DBusObjectProxy, interface_proxy: DBusProxy, sender_name: string, signal_name: string, parameters: GLib.Variant): void;
+    static new(connection: DBusConnection, flags: DBusObjectManagerClientFlags, name: string, object_path: string, get_proxy_type_func: DBusProxyTypeFunc | null, get_proxy_type_destroy_notify: GLib.DestroyNotify | null, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    static new_for_bus(bus_type: BusType, flags: DBusObjectManagerClientFlags, name: string, object_path: string, get_proxy_type_func: DBusProxyTypeFunc | null, get_proxy_type_destroy_notify: GLib.DestroyNotify | null, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    // Implemented Members
+    init_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    init_finish(res: AsyncResult): boolean;
+    new_finish<T = GObject.Object>(res: AsyncResult): T;
+    vfunc_init_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    vfunc_init_finish(res: AsyncResult): boolean;
+    get_interface(object_path: string, interface_name: string): DBusInterface;
+    get_object(object_path: string): DBusObject;
+    get_object_path(): string;
+    get_objects(): GLib.List;
+    vfunc_get_interface(object_path: string, interface_name: string): DBusInterface;
+    vfunc_get_object(object_path: string): DBusObject;
+    vfunc_get_object_path(): string;
+    vfunc_get_objects(): GLib.List;
+    vfunc_interface_added(object: DBusObject, interface_: DBusInterface): void;
+    vfunc_interface_removed(object: DBusObject, interface_: DBusInterface): void;
+    vfunc_object_added(object: DBusObject): void;
+    vfunc_object_removed(object: DBusObject): void;
+    init(cancellable: Cancellable | null): boolean;
+    vfunc_init(cancellable: Cancellable | null): boolean;
 }
 export module DBusObjectManagerServer {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -1923,8 +1982,8 @@ export module DBusObjectManagerServer {
     }
 }
 export class DBusObjectManagerServer extends GObject.Object implements DBusObjectManager {
-    constructor(properties: Partial<DBusObjectManagerServer.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusObjectManagerServer.ConstructorProperties>);
+    constructor(properties?: Partial<DBusObjectManagerServer.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusObjectManagerServer.ConstructorProperties>, ...args: any[]): void;
     // Properties
     connection: DBusConnection;
     object_path: string;
@@ -1959,8 +2018,8 @@ export module DBusObjectProxy {
     }
 }
 export class DBusObjectProxy extends GObject.Object implements DBusObject {
-    constructor(properties: Partial<DBusObjectProxy.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusObjectProxy.ConstructorProperties>);
+    constructor(properties?: Partial<DBusObjectProxy.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusObjectProxy.ConstructorProperties>, ...args: any[]): void;
     // Properties
     g_connection: DBusConnection;
     g_object_path: string;
@@ -1985,8 +2044,8 @@ export module DBusObjectSkeleton {
     }
 }
 export class DBusObjectSkeleton extends GObject.Object implements DBusObject {
-    constructor(properties: Partial<DBusObjectSkeleton.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusObjectSkeleton.ConstructorProperties>);
+    constructor(properties?: Partial<DBusObjectSkeleton.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusObjectSkeleton.ConstructorProperties>, ...args: any[]): void;
     // Properties
     g_object_path: string;
     // Signals
@@ -2018,16 +2077,84 @@ export class DBusObjectSkeleton extends GObject.Object implements DBusObject {
 export module DBusProxy {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
         [key: string]: any;
+        g_bus_type: BusType;
+        g_connection: DBusConnection;
+        g_default_timeout: number;
+        g_flags: DBusProxyFlags;
+        g_interface_info: DBusInterfaceInfo;
+        g_interface_name: string;
+        g_name: string;
+        g_name_owner: string;
+        g_object_path: string;
     }
 }
-export class DBusProxy extends GObject.Object {
-    constructor(properties: Partial<DBusProxy.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusProxy.ConstructorProperties>);
+export class DBusProxy extends GObject.Object implements AsyncInitable, DBusInterface, Initable {
+    constructor(properties?: Partial<DBusProxy.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusProxy.ConstructorProperties>, ...args: any[]): void;
+    // Properties
+    g_bus_type: BusType;
+    g_connection: DBusConnection;
+    g_default_timeout: number;
+    g_flags: DBusProxyFlags;
+    g_interface_info: DBusInterfaceInfo;
+    g_interface_name: string;
+    g_name: string;
+    g_name_owner: string;
+    g_object_path: string;
+    // Signals
+    connect(id: string, callback: (...args: any[]) => any): number;
+    connect_after(id: string, callback: (...args: any[]) => any): number;
+    emit(id: string, ...args: any[]): void;
+    connect(signal: 'g-properties-changed', callback: (_source: this, changed_properties: GLib.Variant, invalidated_properties: string[]) => void): number;
+    connect_after(signal: 'g-properties-changed', callback: (_source: this, changed_properties: GLib.Variant, invalidated_properties: string[]) => void): number;
+    emit(signal: 'g-properties-changed', changed_properties: GLib.Variant, invalidated_properties: string[]): void;
+    connect(signal: 'g-signal', callback: (_source: this, sender_name: string | null, signal_name: string, parameters: GLib.Variant) => void): number;
+    connect_after(signal: 'g-signal', callback: (_source: this, sender_name: string | null, signal_name: string, parameters: GLib.Variant) => void): number;
+    emit(signal: 'g-signal', sender_name: string | null, signal_name: string, parameters: GLib.Variant): void;
     // Constructors
     static new_finish(res: AsyncResult): DBusProxy;
+    static new_finish(...args: never[]): never;
     static new_for_bus_finish(res: AsyncResult): DBusProxy;
     static new_for_bus_sync(bus_type: BusType, flags: DBusProxyFlags, info: DBusInterfaceInfo | null, name: string, object_path: string, interface_name: string, cancellable: Cancellable | null): DBusProxy;
     static new_sync(connection: DBusConnection, flags: DBusProxyFlags, info: DBusInterfaceInfo | null, name: string | null, object_path: string, interface_name: string, cancellable: Cancellable | null): DBusProxy;
+    // Members
+    call(method_name: string, parameters: GLib.Variant | null, flags: DBusCallFlags, timeout_msec: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    call_finish(res: AsyncResult): GLib.Variant;
+    call_sync(method_name: string, parameters: GLib.Variant | null, flags: DBusCallFlags, timeout_msec: number, cancellable: Cancellable | null): GLib.Variant;
+    call_with_unix_fd_list(method_name: string, parameters: GLib.Variant | null, flags: DBusCallFlags, timeout_msec: number, fd_list: UnixFDList | null, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    call_with_unix_fd_list_finish(res: AsyncResult): [GLib.Variant, UnixFDList | null];
+    call_with_unix_fd_list_sync(method_name: string, parameters: GLib.Variant | null, flags: DBusCallFlags, timeout_msec: number, fd_list: UnixFDList | null, cancellable: Cancellable | null): [GLib.Variant, UnixFDList | null];
+    get_cached_property(property_name: string): GLib.Variant | null;
+    get_cached_property_names(): string[] | null;
+    get_connection(): DBusConnection;
+    get_default_timeout(): number;
+    get_flags(): DBusProxyFlags;
+    get_interface_info(): DBusInterfaceInfo | null;
+    get_interface_name(): string;
+    get_name(): string;
+    get_name_owner(): string | null;
+    get_object_path(): string;
+    set_cached_property(property_name: string, value: GLib.Variant | null): void;
+    set_default_timeout(timeout_msec: number): void;
+    set_interface_info(info: DBusInterfaceInfo | null): void;
+    vfunc_g_properties_changed(changed_properties: GLib.Variant, invalidated_properties: string): void;
+    vfunc_g_signal(sender_name: string, signal_name: string, parameters: GLib.Variant): void;
+    static new(connection: DBusConnection, flags: DBusProxyFlags, info: DBusInterfaceInfo | null, name: string | null, object_path: string, interface_name: string, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    static new_for_bus(bus_type: BusType, flags: DBusProxyFlags, info: DBusInterfaceInfo | null, name: string, object_path: string, interface_name: string, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    // Implemented Members
+    init_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    init_finish(res: AsyncResult): boolean;
+    new_finish<T = GObject.Object>(res: AsyncResult): T;
+    vfunc_init_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    vfunc_init_finish(res: AsyncResult): boolean;
+    get_object(): DBusObject;
+    get_info(): DBusInterfaceInfo;
+    set_object(object: DBusObject | null): void;
+    vfunc_dup_object(): DBusObject;
+    vfunc_get_info(): DBusInterfaceInfo;
+    vfunc_set_object(object: DBusObject | null): void;
+    init(cancellable: Cancellable | null): boolean;
+    vfunc_init(cancellable: Cancellable | null): boolean;
 }
 export module DBusServer {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -2041,8 +2168,8 @@ export module DBusServer {
     }
 }
 export class DBusServer extends GObject.Object implements Initable {
-    constructor(properties: Partial<DBusServer.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DBusServer.ConstructorProperties>);
+    constructor(properties?: Partial<DBusServer.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DBusServer.ConstructorProperties>, ...args: any[]): void;
     // Properties
     active: boolean;
     address: string;
@@ -2078,8 +2205,8 @@ export module DataInputStream {
     }
 }
 export class DataInputStream extends BufferedInputStream implements Seekable {
-    constructor(properties: Partial<DataInputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DataInputStream.ConstructorProperties>);
+    constructor(properties?: Partial<DataInputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DataInputStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     byte_order: DataStreamByteOrder;
     newline_type: DataStreamNewlineType;
@@ -2090,13 +2217,12 @@ export class DataInputStream extends BufferedInputStream implements Seekable {
     get_byte_order(): DataStreamByteOrder;
     get_newline_type(): DataStreamNewlineType;
     read_byte(cancellable: Cancellable | null): number;
-    read_byte(...args: never[]): never;
     read_int16(cancellable: Cancellable | null): number;
     read_int32(cancellable: Cancellable | null): number;
     read_int64(cancellable: Cancellable | null): number;
-    read_line(cancellable: Cancellable | null): [number[] | null, number | null];
+    read_line(cancellable: Cancellable | null): [Uint8Array | null, number | null];
     read_line_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
-    read_line_finish(result: AsyncResult): [number[] | null, number | null];
+    read_line_finish(result: AsyncResult): [Uint8Array | null, number | null];
     read_line_finish_utf8(result: AsyncResult): [string | null, number | null];
     read_line_utf8(cancellable: Cancellable | null): [string | null, number | null];
     read_uint16(cancellable: Cancellable | null): number;
@@ -2118,8 +2244,8 @@ export module DataOutputStream {
     }
 }
 export class DataOutputStream extends FilterOutputStream implements Seekable {
-    constructor(properties: Partial<DataOutputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DataOutputStream.ConstructorProperties>);
+    constructor(properties?: Partial<DataOutputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DataOutputStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     byte_order: DataStreamByteOrder;
     // Constructors
@@ -2154,8 +2280,8 @@ export module DesktopAppInfo {
     }
 }
 export class DesktopAppInfo extends GObject.Object implements AppInfo {
-    constructor(properties: Partial<DesktopAppInfo.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<DesktopAppInfo.ConstructorProperties>);
+    constructor(properties?: Partial<DesktopAppInfo.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<DesktopAppInfo.ConstructorProperties>, ...args: any[]): void;
     // Properties
     filename: string;
     // Constructors
@@ -2175,11 +2301,11 @@ export class DesktopAppInfo extends GObject.Object implements AppInfo {
     get_show_in(desktop_env: string | null): boolean;
     get_startup_wm_class(): string;
     get_string(key: string): string;
-    get_string_list(key: string): [string[], number | null];
+    get_string_list(key: string): string[];
     has_key(key: string): boolean;
     launch_action(action_name: string, launch_context: AppLaunchContext | null): void;
-    launch_uris_as_manager(uris: GLib.List, launch_context: AppLaunchContext | null, spawn_flags: GLib.SpawnFlags, user_setup: GLib.SpawnChildSetupFunc | null, user_setup_data: any | null, pid_callback: DesktopAppLaunchCallback | null, pid_callback_data: any | null): boolean;
-    launch_uris_as_manager_with_fds(uris: GLib.List, launch_context: AppLaunchContext | null, spawn_flags: GLib.SpawnFlags, user_setup: GLib.SpawnChildSetupFunc | null, user_setup_data: any | null, pid_callback: DesktopAppLaunchCallback | null, pid_callback_data: any | null, stdin_fd: number, stdout_fd: number, stderr_fd: number): boolean;
+    launch_uris_as_manager(uris: GLib.List, launch_context: AppLaunchContext | null, spawn_flags: GLib.SpawnFlags): boolean;
+    launch_uris_as_manager_with_fds(uris: GLib.List, launch_context: AppLaunchContext | null, spawn_flags: GLib.SpawnFlags, stdin_fd: number, stdout_fd: number, stderr_fd: number): boolean;
     list_actions(): string[];
     static get_implementations(_interface: string): GLib.List;
     static search(search_string: string): string[][];
@@ -2244,8 +2370,8 @@ export module Emblem {
     }
 }
 export class Emblem extends GObject.Object implements Icon {
-    constructor(properties: Partial<Emblem.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Emblem.ConstructorProperties>);
+    constructor(properties?: Partial<Emblem.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Emblem.ConstructorProperties>, ...args: any[]): void;
     // Properties
     icon: GObject.Object;
     origin: EmblemOrigin;
@@ -2270,8 +2396,8 @@ export module EmblemedIcon {
     }
 }
 export class EmblemedIcon extends GObject.Object implements Icon {
-    constructor(properties: Partial<EmblemedIcon.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<EmblemedIcon.ConstructorProperties>);
+    constructor(properties?: Partial<EmblemedIcon.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<EmblemedIcon.ConstructorProperties>, ...args: any[]): void;
     // Properties
     gicon: Icon;
     // Constructors
@@ -2296,8 +2422,8 @@ export module FileEnumerator {
     }
 }
 export class FileEnumerator extends GObject.Object {
-    constructor(properties: Partial<FileEnumerator.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FileEnumerator.ConstructorProperties>);
+    constructor(properties?: Partial<FileEnumerator.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FileEnumerator.ConstructorProperties>, ...args: any[]): void;
     // Properties
     container: File;
     // Members
@@ -2326,8 +2452,8 @@ export module FileIOStream {
     }
 }
 export class FileIOStream extends IOStream implements Seekable {
-    constructor(properties: Partial<FileIOStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FileIOStream.ConstructorProperties>);
+    constructor(properties?: Partial<FileIOStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FileIOStream.ConstructorProperties>, ...args: any[]): void;
     // Members
     get_etag(): string;
     query_info(attributes: string, cancellable: Cancellable | null): FileInfo;
@@ -2356,8 +2482,8 @@ export module FileIcon {
     }
 }
 export class FileIcon extends GObject.Object implements Icon, LoadableIcon {
-    constructor(properties: Partial<FileIcon.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FileIcon.ConstructorProperties>);
+    constructor(properties?: Partial<FileIcon.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FileIcon.ConstructorProperties>, ...args: any[]): void;
     // Properties
     file: File;
     // Constructors
@@ -2384,8 +2510,8 @@ export module FileInfo {
     }
 }
 export class FileInfo extends GObject.Object {
-    constructor(properties: Partial<FileInfo.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FileInfo.ConstructorProperties>);
+    constructor(properties?: Partial<FileInfo.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FileInfo.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): FileInfo;
     // Members
@@ -2398,7 +2524,7 @@ export class FileInfo extends GObject.Object {
     get_attribute_data(attribute: string): [boolean, FileAttributeType | null, any | null, FileAttributeStatus | null];
     get_attribute_int32(attribute: string): number;
     get_attribute_int64(attribute: string): number;
-    get_attribute_object(attribute: string): GObject.Object;
+    get_attribute_object<T = GObject.Object>(attribute: string): T;
     get_attribute_status(attribute: string): FileAttributeStatus;
     get_attribute_string(attribute: string): string;
     get_attribute_stringv(attribute: string): string[];
@@ -2458,8 +2584,8 @@ export module FileInputStream {
     }
 }
 export class FileInputStream extends InputStream implements Seekable {
-    constructor(properties: Partial<FileInputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FileInputStream.ConstructorProperties>);
+    constructor(properties?: Partial<FileInputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FileInputStream.ConstructorProperties>, ...args: any[]): void;
     // Members
     query_info(attributes: string, cancellable: Cancellable | null): FileInfo;
     query_info_async(attributes: string, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
@@ -2487,8 +2613,8 @@ export module FileMonitor {
     }
 }
 export abstract class FileMonitor extends GObject.Object {
-    constructor(properties: Partial<FileMonitor.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FileMonitor.ConstructorProperties>);
+    constructor(properties?: Partial<FileMonitor.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FileMonitor.ConstructorProperties>, ...args: any[]): void;
     // Properties
     cancelled: boolean;
     rate_limit: number;
@@ -2513,8 +2639,8 @@ export module FileOutputStream {
     }
 }
 export class FileOutputStream extends OutputStream implements Seekable {
-    constructor(properties: Partial<FileOutputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FileOutputStream.ConstructorProperties>);
+    constructor(properties?: Partial<FileOutputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FileOutputStream.ConstructorProperties>, ...args: any[]): void;
     // Members
     get_etag(): string;
     query_info(attributes: string, cancellable: Cancellable | null): FileInfo;
@@ -2542,8 +2668,8 @@ export module FilenameCompleter {
     }
 }
 export class FilenameCompleter extends GObject.Object {
-    constructor(properties: Partial<FilenameCompleter.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FilenameCompleter.ConstructorProperties>);
+    constructor(properties?: Partial<FilenameCompleter.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FilenameCompleter.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -2567,8 +2693,8 @@ export module FilterInputStream {
     }
 }
 export abstract class FilterInputStream extends InputStream {
-    constructor(properties: Partial<FilterInputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FilterInputStream.ConstructorProperties>);
+    constructor(properties?: Partial<FilterInputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FilterInputStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     base_stream: InputStream;
     close_base_stream: boolean;
@@ -2585,8 +2711,8 @@ export module FilterOutputStream {
     }
 }
 export abstract class FilterOutputStream extends OutputStream {
-    constructor(properties: Partial<FilterOutputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<FilterOutputStream.ConstructorProperties>);
+    constructor(properties?: Partial<FilterOutputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<FilterOutputStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     base_stream: OutputStream;
     close_base_stream: boolean;
@@ -2601,8 +2727,8 @@ export module IOModule {
     }
 }
 export class IOModule extends GObject.TypeModule implements GObject.TypePlugin {
-    constructor(properties: Partial<IOModule.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<IOModule.ConstructorProperties>);
+    constructor(properties?: Partial<IOModule.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<IOModule.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](filename: string): IOModule;
     // Members
@@ -2625,8 +2751,8 @@ export module IOStream {
     }
 }
 export abstract class IOStream extends GObject.Object {
-    constructor(properties: Partial<IOStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<IOStream.ConstructorProperties>);
+    constructor(properties?: Partial<IOStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<IOStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     closed: boolean;
     input_stream: InputStream;
@@ -2667,8 +2793,8 @@ export module InetAddress {
     }
 }
 export class InetAddress extends GObject.Object {
-    constructor(properties: Partial<InetAddress.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<InetAddress.ConstructorProperties>);
+    constructor(properties?: Partial<InetAddress.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<InetAddress.ConstructorProperties>, ...args: any[]): void;
     // Properties
     bytes: any;
     family: SocketFamily;
@@ -2684,7 +2810,7 @@ export class InetAddress extends GObject.Object {
     is_site_local: boolean;
     // Constructors
     static new_any(family: SocketFamily): InetAddress;
-    static new_from_bytes(bytes: number[], family: SocketFamily): InetAddress;
+    static new_from_bytes(bytes: (Uint8Array | string), family: SocketFamily): InetAddress;
     static new_from_string(string: string): InetAddress;
     static new_loopback(family: SocketFamily): InetAddress;
     // Members
@@ -2713,8 +2839,8 @@ export module InetAddressMask {
     }
 }
 export class InetAddressMask extends GObject.Object implements Initable {
-    constructor(properties: Partial<InetAddressMask.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<InetAddressMask.ConstructorProperties>);
+    constructor(properties?: Partial<InetAddressMask.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<InetAddressMask.ConstructorProperties>, ...args: any[]): void;
     // Properties
     address: InetAddress;
     family: SocketFamily;
@@ -2743,8 +2869,8 @@ export module InetSocketAddress {
     }
 }
 export class InetSocketAddress extends SocketAddress implements SocketConnectable {
-    constructor(properties: Partial<InetSocketAddress.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<InetSocketAddress.ConstructorProperties>);
+    constructor(properties?: Partial<InetSocketAddress.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<InetSocketAddress.ConstructorProperties>, ...args: any[]): void;
     // Properties
     address: InetAddress;
     flowinfo: number;
@@ -2765,8 +2891,8 @@ export module InputStream {
     }
 }
 export abstract class InputStream extends GObject.Object {
-    constructor(properties: Partial<InputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<InputStream.ConstructorProperties>);
+    constructor(properties?: Partial<InputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<InputStream.ConstructorProperties>, ...args: any[]): void;
     // Members
     clear_pending(): void;
     close(cancellable: Cancellable | null): boolean;
@@ -2774,11 +2900,11 @@ export abstract class InputStream extends GObject.Object {
     close_finish(result: AsyncResult): boolean;
     has_pending(): boolean;
     is_closed(): boolean;
-    read(buffer: number[], cancellable: Cancellable | null): number;
-    read_all(buffer: number[], cancellable: Cancellable | null): [boolean, number];
-    read_all_async(buffer: number[], io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    read(buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
+    read_all(buffer: (Uint8Array | string), cancellable: Cancellable | null): [boolean, number];
+    read_all_async(buffer: (Uint8Array | string), io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     read_all_finish(result: AsyncResult): [boolean, number];
-    read_async(buffer: number[], io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    read_async(buffer: (Uint8Array | string), io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     read_bytes(count: number, cancellable: Cancellable | null): GLib.Bytes;
     read_bytes_async(count: number, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     read_bytes_finish(result: AsyncResult): GLib.Bytes;
@@ -2790,7 +2916,7 @@ export abstract class InputStream extends GObject.Object {
     vfunc_close_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_close_finish(result: AsyncResult): boolean;
     vfunc_close_fn(cancellable: Cancellable | null): boolean;
-    vfunc_read_async(buffer: number[] | null, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    vfunc_read_async(buffer: (Uint8Array | string) | null, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_read_finish(result: AsyncResult): number;
     vfunc_read_fn(buffer: any | null, count: number, cancellable: Cancellable | null): number;
     vfunc_skip(count: number, cancellable: Cancellable | null): number;
@@ -2803,27 +2929,28 @@ export module ListStore {
         item_type: GType;
     }
 }
-export class ListStore extends GObject.Object implements ListModel {
-    constructor(properties: Partial<ListStore.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ListStore.ConstructorProperties>);
+export class ListStore<A = GObject.Object> extends GObject.Object implements ListModel<A> {
+    constructor(properties?: Partial<ListStore.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ListStore.ConstructorProperties>, ...args: any[]): void;
     // Properties
     item_type: GType;
     // Constructors
     static ["new"](item_type: GType): ListStore;
     // Members
-    append(item: GObject.Object): void;
-    insert(position: number, item: GObject.Object): void;
-    insert_sorted(item: GObject.Object, compare_func: GLib.CompareDataFunc): number;
+    append(item: A): void;
+    insert(position: number, item: A): void;
+    insert_sorted(item: A, compare_func: GLib.CompareDataFunc): number;
     remove(position: number): void;
     remove_all(): void;
     sort(compare_func: GLib.CompareDataFunc): void;
-    splice(position: number, n_removals: number, additions: GObject.Object[]): void;
+    splice(position: number, n_removals: number, additions: A[]): void;
+    [Symbol.iterator]: () => IterableIterator<A>;
     // Implemented Members
     get_item_type(): GType;
     get_n_items(): number;
-    get_object(position: number): GObject.Object | null;
+    get_item<T = GObject.Object>(position: number): A | null;
     items_changed(position: number, removed: number, added: number): void;
-    vfunc_get_item(position: number): GObject.Object | null;
+    vfunc_get_item<T = GObject.Object>(position: number): A | null;
     vfunc_get_item_type(): GType;
     vfunc_get_n_items(): number;
 }
@@ -2833,24 +2960,24 @@ export module MemoryInputStream {
     }
 }
 export class MemoryInputStream extends InputStream implements PollableInputStream, Seekable {
-    constructor(properties: Partial<MemoryInputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<MemoryInputStream.ConstructorProperties>);
+    constructor(properties?: Partial<MemoryInputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<MemoryInputStream.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): MemoryInputStream;
-    static new_from_bytes(bytes: GLib.Bytes): MemoryInputStream;
-    static new_from_data(data: number[], destroy: GLib.DestroyNotify | null): MemoryInputStream;
+    static new_from_bytes(bytes: (GLib.Bytes | Uint8Array)): MemoryInputStream;
+    static new_from_data(data: (Uint8Array | string), destroy: GLib.DestroyNotify | null): MemoryInputStream;
     // Members
-    add_bytes(bytes: GLib.Bytes): void;
-    add_data(data: number[], destroy: GLib.DestroyNotify | null): void;
+    add_bytes(bytes: (GLib.Bytes | Uint8Array)): void;
+    add_data(data: (Uint8Array | string), destroy: GLib.DestroyNotify | null): void;
     // Implemented Members
     can_poll(): boolean;
     create_source(cancellable: Cancellable | null): GLib.Source;
     is_readable(): boolean;
-    read_nonblocking(buffer: number[], cancellable: Cancellable | null): number;
+    read_nonblocking(buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
     vfunc_can_poll(): boolean;
     vfunc_create_source(cancellable: Cancellable | null): GLib.Source;
     vfunc_is_readable(): boolean;
-    vfunc_read_nonblocking(buffer: number[] | null): number;
+    vfunc_read_nonblocking(buffer: (Uint8Array | string) | null): number;
     can_seek(): boolean;
     can_truncate(): boolean;
     seek(offset: number, type: GLib.SeekType, cancellable: Cancellable | null): boolean;
@@ -2871,8 +2998,8 @@ export module MemoryOutputStream {
     }
 }
 export class MemoryOutputStream extends OutputStream implements PollableOutputStream, Seekable {
-    constructor(properties: Partial<MemoryOutputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<MemoryOutputStream.ConstructorProperties>);
+    constructor(properties?: Partial<MemoryOutputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<MemoryOutputStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     data: any;
     data_size: number;
@@ -2891,12 +3018,12 @@ export class MemoryOutputStream extends OutputStream implements PollableOutputSt
     can_poll(): boolean;
     create_source(cancellable: Cancellable | null): GLib.Source;
     is_writable(): boolean;
-    write_nonblocking(buffer: number[], cancellable: Cancellable | null): number;
+    write_nonblocking(buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
     writev_nonblocking(vectors: OutputVector[], cancellable: Cancellable | null): [PollableReturn, number | null];
     vfunc_can_poll(): boolean;
     vfunc_create_source(cancellable: Cancellable | null): GLib.Source;
     vfunc_is_writable(): boolean;
-    vfunc_write_nonblocking(buffer: number[] | null): number;
+    vfunc_write_nonblocking(buffer: (Uint8Array | string) | null): number;
     vfunc_writev_nonblocking(vectors: OutputVector[]): [PollableReturn, number | null];
     can_seek(): boolean;
     can_truncate(): boolean;
@@ -2915,8 +3042,8 @@ export module Menu {
     }
 }
 export class Menu extends MenuModel {
-    constructor(properties: Partial<Menu.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Menu.ConstructorProperties>);
+    constructor(properties?: Partial<Menu.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Menu.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): Menu;
     // Members
@@ -2942,8 +3069,8 @@ export module MenuAttributeIter {
     }
 }
 export abstract class MenuAttributeIter extends GObject.Object {
-    constructor(properties: Partial<MenuAttributeIter.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<MenuAttributeIter.ConstructorProperties>);
+    constructor(properties?: Partial<MenuAttributeIter.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<MenuAttributeIter.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: MenuAttributeIterPrivate;
     // Members
@@ -2959,8 +3086,8 @@ export module MenuItem {
     }
 }
 export class MenuItem extends GObject.Object {
-    constructor(properties: Partial<MenuItem.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<MenuItem.ConstructorProperties>);
+    constructor(properties?: Partial<MenuItem.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<MenuItem.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](label: string | null, detailed_action: string | null): MenuItem;
     static new_from_model(model: MenuModel, item_index: number): MenuItem;
@@ -2984,8 +3111,8 @@ export module MenuLinkIter {
     }
 }
 export abstract class MenuLinkIter extends GObject.Object {
-    constructor(properties: Partial<MenuLinkIter.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<MenuLinkIter.ConstructorProperties>);
+    constructor(properties?: Partial<MenuLinkIter.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<MenuLinkIter.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: MenuLinkIterPrivate;
     // Members
@@ -3001,8 +3128,8 @@ export module MenuModel {
     }
 }
 export abstract class MenuModel extends GObject.Object {
-    constructor(properties: Partial<MenuModel.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<MenuModel.ConstructorProperties>);
+    constructor(properties?: Partial<MenuModel.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<MenuModel.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: MenuModelPrivate;
     // Signals
@@ -3032,13 +3159,82 @@ export abstract class MenuModel extends GObject.Object {
 export module MountOperation {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
         [key: string]: any;
+        anonymous: boolean;
+        choice: number;
+        domain: string;
+        is_tcrypt_hidden_volume: boolean;
+        is_tcrypt_system_volume: boolean;
+        password: string;
+        password_save: PasswordSave;
+        pim: number;
+        username: string;
     }
 }
 export class MountOperation extends GObject.Object {
-    constructor(properties: Partial<MountOperation.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<MountOperation.ConstructorProperties>);
+    constructor(properties?: Partial<MountOperation.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<MountOperation.ConstructorProperties>, ...args: any[]): void;
+    // Properties
+    anonymous: boolean;
+    choice: number;
+    domain: string;
+    is_tcrypt_hidden_volume: boolean;
+    is_tcrypt_system_volume: boolean;
+    password: string;
+    password_save: PasswordSave;
+    pim: number;
+    username: string;
+    // Fields
+    priv: MountOperationPrivate;
+    // Signals
+    connect(id: string, callback: (...args: any[]) => any): number;
+    connect_after(id: string, callback: (...args: any[]) => any): number;
+    emit(id: string, ...args: any[]): void;
+    connect(signal: 'aborted', callback: (_source: this) => void): number;
+    connect_after(signal: 'aborted', callback: (_source: this) => void): number;
+    emit(signal: 'aborted'): void;
+    connect(signal: 'ask-password', callback: (_source: this, message: string, default_user: string, default_domain: string, flags: AskPasswordFlags) => void): number;
+    connect_after(signal: 'ask-password', callback: (_source: this, message: string, default_user: string, default_domain: string, flags: AskPasswordFlags) => void): number;
+    emit(signal: 'ask-password', message: string, default_user: string, default_domain: string, flags: AskPasswordFlags): void;
+    connect(signal: 'ask-question', callback: (_source: this, message: string, choices: string[]) => void): number;
+    connect_after(signal: 'ask-question', callback: (_source: this, message: string, choices: string[]) => void): number;
+    emit(signal: 'ask-question', message: string, choices: string[]): void;
+    connect(signal: 'reply', callback: (_source: this, result: MountOperationResult) => void): number;
+    connect_after(signal: 'reply', callback: (_source: this, result: MountOperationResult) => void): number;
+    emit(signal: 'reply', result: MountOperationResult): void;
+    connect(signal: 'show-processes', callback: (_source: this, message: string, processes: GLib.Pid[], choices: string[]) => void): number;
+    connect_after(signal: 'show-processes', callback: (_source: this, message: string, processes: GLib.Pid[], choices: string[]) => void): number;
+    emit(signal: 'show-processes', message: string, processes: GLib.Pid[], choices: string[]): void;
+    connect(signal: 'show-unmount-progress', callback: (_source: this, message: string, time_left: number, bytes_left: number) => void): number;
+    connect_after(signal: 'show-unmount-progress', callback: (_source: this, message: string, time_left: number, bytes_left: number) => void): number;
+    emit(signal: 'show-unmount-progress', message: string, time_left: number, bytes_left: number): void;
     // Constructors
     static ["new"](): MountOperation;
+    // Members
+    get_anonymous(): boolean;
+    get_choice(): number;
+    get_domain(): string;
+    get_is_tcrypt_hidden_volume(): boolean;
+    get_is_tcrypt_system_volume(): boolean;
+    get_password(): string;
+    get_password_save(): PasswordSave;
+    get_pim(): number;
+    get_username(): string;
+    reply(result: MountOperationResult): void;
+    set_anonymous(anonymous: boolean): void;
+    set_choice(choice: number): void;
+    set_domain(domain: string): void;
+    set_is_tcrypt_hidden_volume(hidden_volume: boolean): void;
+    set_is_tcrypt_system_volume(system_volume: boolean): void;
+    set_password(password: string): void;
+    set_password_save(save: PasswordSave): void;
+    set_pim(pim: number): void;
+    set_username(username: string): void;
+    vfunc_aborted(): void;
+    vfunc_ask_password(message: string, default_user: string, default_domain: string, flags: AskPasswordFlags): void;
+    vfunc_ask_question(message: string, choices: string[]): void;
+    vfunc_reply(result: MountOperationResult): void;
+    vfunc_show_processes(message: string, processes: GLib.Pid[], choices: string[]): void;
+    vfunc_show_unmount_progress(message: string, time_left: number, bytes_left: number): void;
 }
 export module NativeVolumeMonitor {
     export interface ConstructorProperties extends VolumeMonitor.ConstructorProperties {
@@ -3046,8 +3242,8 @@ export module NativeVolumeMonitor {
     }
 }
 export abstract class NativeVolumeMonitor extends VolumeMonitor {
-    constructor(properties: Partial<NativeVolumeMonitor.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<NativeVolumeMonitor.ConstructorProperties>);
+    constructor(properties?: Partial<NativeVolumeMonitor.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<NativeVolumeMonitor.ConstructorProperties>, ...args: any[]): void;
 }
 export module NetworkAddress {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -3058,8 +3254,8 @@ export module NetworkAddress {
     }
 }
 export class NetworkAddress extends GObject.Object implements SocketConnectable {
-    constructor(properties: Partial<NetworkAddress.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<NetworkAddress.ConstructorProperties>);
+    constructor(properties?: Partial<NetworkAddress.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<NetworkAddress.ConstructorProperties>, ...args: any[]): void;
     // Properties
     hostname: string;
     port: number;
@@ -3091,8 +3287,8 @@ export module NetworkService {
     }
 }
 export class NetworkService extends GObject.Object implements SocketConnectable {
-    constructor(properties: Partial<NetworkService.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<NetworkService.ConstructorProperties>);
+    constructor(properties?: Partial<NetworkService.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<NetworkService.ConstructorProperties>, ...args: any[]): void;
     // Properties
     domain: string;
     protocol: string;
@@ -3120,16 +3316,16 @@ export module Notification {
     }
 }
 export class Notification extends GObject.Object {
-    constructor(properties: Partial<Notification.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Notification.ConstructorProperties>);
+    constructor(properties?: Partial<Notification.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Notification.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](title: string): Notification;
     // Members
     add_button(label: string, detailed_action: string): void;
-    add_button_with_target_value(label: string, action: string, target: GLib.Variant | null): void;
+    add_button_with_target(label: string, action: string, target: GLib.Variant | null): void;
     set_body(body: string | null): void;
     set_default_action(detailed_action: string): void;
-    set_default_action_and_target_value(action: string, target: GLib.Variant | null): void;
+    set_default_action_and_target(action: string, target: GLib.Variant | null): void;
     set_icon(icon: Icon): void;
     set_priority(priority: NotificationPriority): void;
     set_title(title: string): void;
@@ -3141,8 +3337,8 @@ export module OutputStream {
     }
 }
 export abstract class OutputStream extends GObject.Object {
-    constructor(properties: Partial<OutputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<OutputStream.ConstructorProperties>);
+    constructor(properties?: Partial<OutputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<OutputStream.ConstructorProperties>, ...args: any[]): void;
     // Members
     clear_pending(): void;
     close(cancellable: Cancellable | null): boolean;
@@ -3158,13 +3354,13 @@ export abstract class OutputStream extends GObject.Object {
     splice(source: InputStream, flags: OutputStreamSpliceFlags, cancellable: Cancellable | null): number;
     splice_async(source: InputStream, flags: OutputStreamSpliceFlags, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     splice_finish(result: AsyncResult): number;
-    write(buffer: number[], cancellable: Cancellable | null): number;
-    write_all(buffer: number[], cancellable: Cancellable | null): [boolean, number | null];
-    write_all_async(buffer: number[], io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    write(buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
+    write_all(buffer: (Uint8Array | string), cancellable: Cancellable | null): [boolean, number | null];
+    write_all_async(buffer: (Uint8Array | string), io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     write_all_finish(result: AsyncResult): [boolean, number | null];
-    write_async(buffer: number[], io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
-    write_bytes(bytes: GLib.Bytes, cancellable: Cancellable | null): number;
-    write_bytes_async(bytes: GLib.Bytes, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    write_async(buffer: (Uint8Array | string), io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    write_bytes(bytes: (GLib.Bytes | Uint8Array), cancellable: Cancellable | null): number;
+    write_bytes_async(bytes: (GLib.Bytes | Uint8Array), io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     write_bytes_finish(result: AsyncResult): number;
     write_finish(result: AsyncResult): number;
     writev(vectors: OutputVector[], cancellable: Cancellable | null): [boolean, number | null];
@@ -3182,9 +3378,9 @@ export abstract class OutputStream extends GObject.Object {
     vfunc_splice(source: InputStream, flags: OutputStreamSpliceFlags, cancellable: Cancellable | null): number;
     vfunc_splice_async(source: InputStream, flags: OutputStreamSpliceFlags, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_splice_finish(result: AsyncResult): number;
-    vfunc_write_async(buffer: number[] | null, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    vfunc_write_async(buffer: (Uint8Array | string) | null, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_write_finish(result: AsyncResult): number;
-    vfunc_write_fn(buffer: number[] | null, cancellable: Cancellable | null): number;
+    vfunc_write_fn(buffer: (Uint8Array | string) | null, cancellable: Cancellable | null): number;
     vfunc_writev_async(vectors: OutputVector[], io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_writev_finish(result: AsyncResult): [boolean, number | null];
     vfunc_writev_fn(vectors: OutputVector[], cancellable: Cancellable | null): [boolean, number | null];
@@ -3198,8 +3394,8 @@ export module Permission {
     }
 }
 export abstract class Permission extends GObject.Object {
-    constructor(properties: Partial<Permission.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Permission.ConstructorProperties>);
+    constructor(properties?: Partial<Permission.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Permission.ConstructorProperties>, ...args: any[]): void;
     // Properties
     allowed: boolean;
     can_acquire: boolean;
@@ -3236,8 +3432,8 @@ export module PropertyAction {
     }
 }
 export class PropertyAction extends GObject.Object implements Action {
-    constructor(properties: Partial<PropertyAction.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<PropertyAction.ConstructorProperties>);
+    constructor(properties?: Partial<PropertyAction.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<PropertyAction.ConstructorProperties>, ...args: any[]): void;
     // Properties
     enabled: boolean;
     invert_boolean: boolean;
@@ -3280,8 +3476,8 @@ export module ProxyAddress {
     }
 }
 export class ProxyAddress extends InetSocketAddress implements SocketConnectable {
-    constructor(properties: Partial<ProxyAddress.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ProxyAddress.ConstructorProperties>);
+    constructor(properties?: Partial<ProxyAddress.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ProxyAddress.ConstructorProperties>, ...args: any[]): void;
     // Properties
     destination_hostname: string;
     destination_port: number;
@@ -3312,8 +3508,8 @@ export module ProxyAddressEnumerator {
     }
 }
 export class ProxyAddressEnumerator extends SocketAddressEnumerator {
-    constructor(properties: Partial<ProxyAddressEnumerator.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ProxyAddressEnumerator.ConstructorProperties>);
+    constructor(properties?: Partial<ProxyAddressEnumerator.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ProxyAddressEnumerator.ConstructorProperties>, ...args: any[]): void;
     // Properties
     connectable: SocketConnectable;
     default_port: number;
@@ -3326,8 +3522,8 @@ export module Resolver {
     }
 }
 export abstract class Resolver extends GObject.Object {
-    constructor(properties: Partial<Resolver.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Resolver.ConstructorProperties>);
+    constructor(properties?: Partial<Resolver.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Resolver.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: ResolverPrivate;
     // Signals
@@ -3384,8 +3580,8 @@ export module Settings {
     }
 }
 export class Settings extends GObject.Object {
-    constructor(properties: Partial<Settings.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Settings.ConstructorProperties>);
+    constructor(properties?: Partial<Settings.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Settings.ConstructorProperties>, ...args: any[]): void;
     // Properties
     backend: SettingsBackend;
     delay_apply: boolean;
@@ -3473,8 +3669,8 @@ export module SettingsBackend {
     }
 }
 export abstract class SettingsBackend extends GObject.Object {
-    constructor(properties: Partial<SettingsBackend.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SettingsBackend.ConstructorProperties>);
+    constructor(properties?: Partial<SettingsBackend.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SettingsBackend.ConstructorProperties>, ...args: any[]): void;
     // Members
     changed(key: string, origin_tag: any | null): void;
     changed_tree(tree: GLib.Tree, origin_tag: any | null): void;
@@ -3505,8 +3701,8 @@ export module SimpleAction {
     }
 }
 export class SimpleAction extends GObject.Object implements Action {
-    constructor(properties: Partial<SimpleAction.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SimpleAction.ConstructorProperties>);
+    constructor(properties?: Partial<SimpleAction.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SimpleAction.ConstructorProperties>, ...args: any[]): void;
     // Properties
     enabled: boolean;
     name: string;
@@ -3554,12 +3750,12 @@ export module SimpleActionGroup {
     }
 }
 export class SimpleActionGroup extends GObject.Object implements ActionGroup, ActionMap {
-    constructor(properties: Partial<SimpleActionGroup.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SimpleActionGroup.ConstructorProperties>);
+    constructor(properties?: Partial<SimpleActionGroup.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SimpleActionGroup.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): SimpleActionGroup;
     // Members
-    add_entries(entries: ActionEntry[]): void;
+    add_entries(entries: ActionEntry[], user_data: any | null): void;
     insert(action: Action): void;
     lookup(action_name: string): Action;
     remove(action_name: string): void;
@@ -3593,7 +3789,7 @@ export class SimpleActionGroup extends GObject.Object implements ActionGroup, Ac
     vfunc_list_actions(): string[];
     vfunc_query_action(action_name: string): [boolean, boolean, GLib.VariantType | null, GLib.VariantType | null, GLib.Variant | null, GLib.Variant | null];
     add_action(action: Action): void;
-    add_action_entries(entries: ActionEntry[]): void;
+    add_action_entries(entries: ActionEntry[], user_data: any | null): void;
     lookup_action(action_name: string): Action;
     remove_action(action_name: string): void;
     vfunc_add_action(action: Action): void;
@@ -3606,8 +3802,8 @@ export module SimpleAsyncResult {
     }
 }
 export class SimpleAsyncResult extends GObject.Object implements AsyncResult {
-    constructor(properties: Partial<SimpleAsyncResult.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SimpleAsyncResult.ConstructorProperties>);
+    constructor(properties?: Partial<SimpleAsyncResult.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SimpleAsyncResult.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](source_object: GObject.Object | null, callback: AsyncReadyCallback | null, source_tag: any | null): SimpleAsyncResult;
     static new_from_error(source_object: GObject.Object | null, callback: AsyncReadyCallback | null, error: GLib.Error): SimpleAsyncResult;
@@ -3624,11 +3820,11 @@ export class SimpleAsyncResult extends GObject.Object implements AsyncResult {
     set_op_res_gssize(op_res: number): void;
     static is_valid(result: AsyncResult, source: GObject.Object | null, source_tag: any | null): boolean;
     // Implemented Members
-    get_source_object(): GObject.Object | null;
+    get_source_object<T = GObject.Object>(): T | null;
     get_user_data(): any | null;
     is_tagged(source_tag: any | null): boolean;
     legacy_propagate_error(): boolean;
-    vfunc_get_source_object(): GObject.Object | null;
+    vfunc_get_source_object<T = GObject.Object>(): T | null;
     vfunc_get_user_data(): any | null;
     vfunc_is_tagged(source_tag: any | null): boolean;
 }
@@ -3640,8 +3836,8 @@ export module SimpleIOStream {
     }
 }
 export class SimpleIOStream extends IOStream {
-    constructor(properties: Partial<SimpleIOStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SimpleIOStream.ConstructorProperties>);
+    constructor(properties?: Partial<SimpleIOStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SimpleIOStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     input_stream: InputStream;
     output_stream: OutputStream;
@@ -3654,8 +3850,8 @@ export module SimplePermission {
     }
 }
 export class SimplePermission extends Permission {
-    constructor(properties: Partial<SimplePermission.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SimplePermission.ConstructorProperties>);
+    constructor(properties?: Partial<SimplePermission.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SimplePermission.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](allowed: boolean): SimplePermission;
 }
@@ -3663,13 +3859,29 @@ export module SimpleProxyResolver {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
         [key: string]: any;
         default_proxy: string;
+        ignore_hosts: string[];
     }
 }
-export class SimpleProxyResolver extends GObject.Object {
-    constructor(properties: Partial<SimpleProxyResolver.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SimpleProxyResolver.ConstructorProperties>);
+export class SimpleProxyResolver extends GObject.Object implements ProxyResolver {
+    constructor(properties?: Partial<SimpleProxyResolver.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SimpleProxyResolver.ConstructorProperties>, ...args: any[]): void;
     // Properties
     default_proxy: string;
+    ignore_hosts: string[];
+    // Members
+    set_default_proxy(default_proxy: string): void;
+    set_ignore_hosts(ignore_hosts: string): void;
+    set_uri_proxy(uri_scheme: string, proxy: string): void;
+    static new(default_proxy: string | null, ignore_hosts: string | null): ProxyResolver;
+    // Implemented Members
+    is_supported(): boolean;
+    lookup(uri: string, cancellable: Cancellable | null): string[];
+    lookup_async(uri: string, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    lookup_finish(result: AsyncResult): string[];
+    vfunc_is_supported(): boolean;
+    vfunc_lookup(uri: string, cancellable: Cancellable | null): string[];
+    vfunc_lookup_async(uri: string, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    vfunc_lookup_finish(result: AsyncResult): string[];
 }
 export module Socket {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -3691,8 +3903,8 @@ export module Socket {
     }
 }
 export class Socket extends GObject.Object implements DatagramBased, Initable {
-    constructor(properties: Partial<Socket.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Socket.ConstructorProperties>);
+    constructor(properties?: Partial<Socket.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Socket.ConstructorProperties>, ...args: any[]): void;
     // Properties
     blocking: boolean;
     broadcast: boolean;
@@ -3749,19 +3961,19 @@ export class Socket extends GObject.Object implements DatagramBased, Initable {
     leave_multicast_group(group: InetAddress, source_specific: boolean, iface: string | null): boolean;
     leave_multicast_group_ssm(group: InetAddress, source_specific: InetAddress | null, iface: string | null): boolean;
     listen(): boolean;
-    receive(buffer: number[], cancellable: Cancellable | null): number;
-    receive_from(buffer: number[], cancellable: Cancellable | null): [number, SocketAddress | null];
+    receive(buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
+    receive_from(buffer: (Uint8Array | string), cancellable: Cancellable | null): [number, SocketAddress | null];
     receive_message(vectors: InputVector[], flags: SocketMsgFlags, cancellable: Cancellable | null): [number, SocketAddress | null, SocketControlMessage[] | null, SocketMsgFlags];
     receive_messages(messages: InputMessage[], flags: SocketMsgFlags, cancellable: Cancellable | null): number;
     receive_messages(...args: never[]): never;
-    receive_with_blocking(buffer: number[], blocking: boolean, cancellable: Cancellable | null): number;
-    send(buffer: number[], cancellable: Cancellable | null): number;
+    receive_with_blocking(buffer: (Uint8Array | string), blocking: boolean, cancellable: Cancellable | null): number;
+    send(buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
     send_message(address: SocketAddress | null, vectors: OutputVector[], messages: SocketControlMessage[] | null, flags: SocketMsgFlags, cancellable: Cancellable | null): number;
     send_message_with_timeout(address: SocketAddress | null, vectors: OutputVector[], messages: SocketControlMessage[] | null, flags: SocketMsgFlags, timeout_us: number, cancellable: Cancellable | null): [PollableReturn, number | null];
     send_messages(messages: OutputMessage[], flags: SocketMsgFlags, cancellable: Cancellable | null): number;
     send_messages(...args: never[]): never;
-    send_to(address: SocketAddress | null, buffer: number[], cancellable: Cancellable | null): number;
-    send_with_blocking(buffer: number[], blocking: boolean, cancellable: Cancellable | null): number;
+    send_to(address: SocketAddress | null, buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
+    send_with_blocking(buffer: (Uint8Array | string), blocking: boolean, cancellable: Cancellable | null): number;
     set_blocking(blocking: boolean): void;
     set_broadcast(broadcast: boolean): void;
     set_keepalive(keepalive: boolean): void;
@@ -3790,8 +4002,8 @@ export module SocketAddress {
     }
 }
 export abstract class SocketAddress extends GObject.Object implements SocketConnectable {
-    constructor(properties: Partial<SocketAddress.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SocketAddress.ConstructorProperties>);
+    constructor(properties?: Partial<SocketAddress.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SocketAddress.ConstructorProperties>, ...args: any[]): void;
     // Properties
     family: SocketFamily;
     // Constructors
@@ -3817,8 +4029,8 @@ export module SocketAddressEnumerator {
     }
 }
 export abstract class SocketAddressEnumerator extends GObject.Object {
-    constructor(properties: Partial<SocketAddressEnumerator.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SocketAddressEnumerator.ConstructorProperties>);
+    constructor(properties?: Partial<SocketAddressEnumerator.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SocketAddressEnumerator.ConstructorProperties>, ...args: any[]): void;
     // Members
     next(cancellable: Cancellable | null): SocketAddress;
     next_async(cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
@@ -3842,8 +4054,8 @@ export module SocketClient {
     }
 }
 export class SocketClient extends GObject.Object {
-    constructor(properties: Partial<SocketClient.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SocketClient.ConstructorProperties>);
+    constructor(properties?: Partial<SocketClient.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SocketClient.ConstructorProperties>, ...args: any[]): void;
     // Properties
     enable_proxy: boolean;
     family: SocketFamily;
@@ -3905,8 +4117,8 @@ export module SocketConnection {
     }
 }
 export class SocketConnection extends IOStream {
-    constructor(properties: Partial<SocketConnection.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SocketConnection.ConstructorProperties>);
+    constructor(properties?: Partial<SocketConnection.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SocketConnection.ConstructorProperties>, ...args: any[]): void;
     // Properties
     socket: Socket;
     // Fields
@@ -3929,8 +4141,8 @@ export module SocketControlMessage {
     }
 }
 export abstract class SocketControlMessage extends GObject.Object {
-    constructor(properties: Partial<SocketControlMessage.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SocketControlMessage.ConstructorProperties>);
+    constructor(properties?: Partial<SocketControlMessage.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SocketControlMessage.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: SocketControlMessagePrivate;
     // Members
@@ -3942,7 +4154,7 @@ export abstract class SocketControlMessage extends GObject.Object {
     vfunc_get_size(): number;
     vfunc_get_type(): number;
     vfunc_serialize(data: any): void;
-    static deserialize(level: number, type: number, data: number[]): SocketControlMessage;
+    static deserialize(level: number, type: number, data: (Uint8Array | string)): SocketControlMessage;
 }
 export module SocketListener {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -3951,8 +4163,8 @@ export module SocketListener {
     }
 }
 export class SocketListener extends GObject.Object {
-    constructor(properties: Partial<SocketListener.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SocketListener.ConstructorProperties>);
+    constructor(properties?: Partial<SocketListener.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SocketListener.ConstructorProperties>, ...args: any[]): void;
     // Properties
     listen_backlog: number;
     // Fields
@@ -3989,8 +4201,8 @@ export module SocketService {
     }
 }
 export class SocketService extends SocketListener {
-    constructor(properties: Partial<SocketService.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SocketService.ConstructorProperties>);
+    constructor(properties?: Partial<SocketService.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SocketService.ConstructorProperties>, ...args: any[]): void;
     // Properties
     active: boolean;
     // Fields
@@ -4014,14 +4226,46 @@ export class SocketService extends SocketListener {
 export module Subprocess {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
         [key: string]: any;
+        argv: string[];
+        flags: SubprocessFlags;
     }
 }
-export class Subprocess extends GObject.Object {
-    constructor(properties: Partial<Subprocess.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Subprocess.ConstructorProperties>);
+export class Subprocess extends GObject.Object implements Initable {
+    constructor(properties?: Partial<Subprocess.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Subprocess.ConstructorProperties>, ...args: any[]): void;
+    // Properties
+    argv: string[];
+    flags: SubprocessFlags;
     // Constructors
-    static newv(argv: string[], flags: SubprocessFlags): Subprocess;
-    static newv(...args: never[]): never;
+    static ["new"](argv: string[], flags: SubprocessFlags): Subprocess;
+    // Members
+    communicate(stdin_buf: (GLib.Bytes | Uint8Array) | null, cancellable: Cancellable | null): [boolean, GLib.Bytes | null, GLib.Bytes | null];
+    communicate_async(stdin_buf: (GLib.Bytes | Uint8Array) | null, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    communicate_finish(result: AsyncResult): [boolean, GLib.Bytes | null, GLib.Bytes | null];
+    communicate_utf8(stdin_buf: string | null, cancellable: Cancellable | null): [boolean, string | null, string | null];
+    communicate_utf8_async(stdin_buf: string | null, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    communicate_utf8_finish(result: AsyncResult): [boolean, string | null, string | null];
+    force_exit(): void;
+    get_exit_status(): number;
+    get_identifier(): string;
+    get_if_exited(): boolean;
+    get_if_signaled(): boolean;
+    get_status(): number;
+    get_stderr_pipe(): InputStream;
+    get_stdin_pipe(): OutputStream;
+    get_stdout_pipe(): InputStream;
+    get_successful(): boolean;
+    get_term_sig(): number;
+    send_signal(signal_num: number): void;
+    wait(cancellable: Cancellable | null): boolean;
+    wait_async(cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    wait_check(cancellable: Cancellable | null): boolean;
+    wait_check_async(cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    wait_check_finish(result: AsyncResult): boolean;
+    wait_finish(result: AsyncResult): boolean;
+    // Implemented Members
+    init(cancellable: Cancellable | null): boolean;
+    vfunc_init(cancellable: Cancellable | null): boolean;
 }
 export module SubprocessLauncher {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -4030,8 +4274,8 @@ export module SubprocessLauncher {
     }
 }
 export class SubprocessLauncher extends GObject.Object {
-    constructor(properties: Partial<SubprocessLauncher.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<SubprocessLauncher.ConstructorProperties>);
+    constructor(properties?: Partial<SubprocessLauncher.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<SubprocessLauncher.ConstructorProperties>, ...args: any[]): void;
     // Properties
     flags: SubprocessFlags;
     // Constructors
@@ -4059,12 +4303,12 @@ export module Task {
     }
 }
 export class Task extends GObject.Object implements AsyncResult {
-    constructor(properties: Partial<Task.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Task.ConstructorProperties>);
+    constructor(properties?: Partial<Task.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Task.ConstructorProperties>, ...args: any[]): void;
     // Properties
     completed: boolean;
     // Constructors
-    static ["new"](source_object: GObject.Object | null, cancellable: Cancellable | null, callback: AsyncReadyCallback | null, callback_data: any | null): Task;
+    static ["new"](source_object: GObject.Object | null, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): Task;
     // Members
     get_cancellable(): Cancellable;
     get_check_cancellable(): boolean;
@@ -4073,7 +4317,7 @@ export class Task extends GObject.Object implements AsyncResult {
     get_name(): string | null;
     get_priority(): number;
     get_return_on_cancel(): boolean;
-    get_source_object(): GObject.Object | null;
+    get_source_object<T = GObject.Object>(): T | null;
     get_source_tag(): any | null;
     get_task_data(): any | null;
     had_error(): boolean;
@@ -4092,12 +4336,12 @@ export class Task extends GObject.Object implements AsyncResult {
     set_source_tag(source_tag: any | null): void;
     set_task_data(task_data: any | null, task_data_destroy: GLib.DestroyNotify | null): void;
     static is_valid(result: AsyncResult, source_object: GObject.Object | null): boolean;
-    static report_error(source_object: GObject.Object | null, callback: AsyncReadyCallback | null, callback_data: any | null, source_tag: any | null, error: GLib.Error): void;
+    static report_error(source_object: GObject.Object | null, callback: AsyncReadyCallback | null, source_tag: any | null, error: GLib.Error): void;
     // Implemented Members
     get_user_data(): any | null;
     is_tagged(source_tag: any | null): boolean;
     legacy_propagate_error(): boolean;
-    vfunc_get_source_object(): GObject.Object | null;
+    vfunc_get_source_object<T = GObject.Object>(): T | null;
     vfunc_get_user_data(): any | null;
     vfunc_is_tagged(source_tag: any | null): boolean;
 }
@@ -4108,8 +4352,8 @@ export module TcpConnection {
     }
 }
 export class TcpConnection extends SocketConnection {
-    constructor(properties: Partial<TcpConnection.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<TcpConnection.ConstructorProperties>);
+    constructor(properties?: Partial<TcpConnection.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<TcpConnection.ConstructorProperties>, ...args: any[]): void;
     // Properties
     graceful_disconnect: boolean;
     // Fields
@@ -4125,8 +4369,8 @@ export module TcpWrapperConnection {
     }
 }
 export class TcpWrapperConnection extends TcpConnection {
-    constructor(properties: Partial<TcpWrapperConnection.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<TcpWrapperConnection.ConstructorProperties>);
+    constructor(properties?: Partial<TcpWrapperConnection.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<TcpWrapperConnection.ConstructorProperties>, ...args: any[]): void;
     // Properties
     base_io_stream: IOStream;
     // Fields
@@ -4143,8 +4387,8 @@ export module TestDBus {
     }
 }
 export class TestDBus extends GObject.Object {
-    constructor(properties: Partial<TestDBus.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<TestDBus.ConstructorProperties>);
+    constructor(properties?: Partial<TestDBus.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<TestDBus.ConstructorProperties>, ...args: any[]): void;
     // Properties
     flags: TestDBusFlags;
     // Constructors
@@ -4162,17 +4406,32 @@ export module ThemedIcon {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
         [key: string]: any;
         name: string;
+        names: string[];
+        use_default_fallbacks: boolean;
     }
 }
-export class ThemedIcon extends GObject.Object {
-    constructor(properties: Partial<ThemedIcon.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ThemedIcon.ConstructorProperties>);
+export class ThemedIcon extends GObject.Object implements Icon {
+    constructor(properties?: Partial<ThemedIcon.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ThemedIcon.ConstructorProperties>, ...args: any[]): void;
     // Properties
     name: string;
+    names: string[];
+    use_default_fallbacks: boolean;
     // Constructors
     static ["new"](iconname: string): ThemedIcon;
     static new_from_names(iconnames: string[]): ThemedIcon;
     static new_with_default_fallbacks(iconname: string): ThemedIcon;
+    // Members
+    append_name(iconname: string): void;
+    get_names(): string[];
+    prepend_name(iconname: string): void;
+    // Implemented Members
+    equal(icon2: Icon | null): boolean;
+    serialize(): GLib.Variant;
+    to_string(): string | null;
+    vfunc_equal(icon2: Icon | null): boolean;
+    vfunc_hash(): number;
+    vfunc_serialize(): GLib.Variant;
 }
 export module ThreadedSocketService {
     export interface ConstructorProperties extends SocketService.ConstructorProperties {
@@ -4181,8 +4440,8 @@ export module ThreadedSocketService {
     }
 }
 export class ThreadedSocketService extends SocketService {
-    constructor(properties: Partial<ThreadedSocketService.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ThreadedSocketService.ConstructorProperties>);
+    constructor(properties?: Partial<ThreadedSocketService.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ThreadedSocketService.ConstructorProperties>, ...args: any[]): void;
     // Properties
     max_threads: number;
     // Fields
@@ -4203,21 +4462,21 @@ export class ThreadedSocketService extends SocketService {
 export module TlsCertificate {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
         [key: string]: any;
-        certificate: number[];
+        certificate: Uint8Array;
         certificate_pem: string;
         issuer: TlsCertificate;
-        private_key: number[];
+        private_key: Uint8Array;
         private_key_pem: string;
     }
 }
 export abstract class TlsCertificate extends GObject.Object {
-    constructor(properties: Partial<TlsCertificate.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<TlsCertificate.ConstructorProperties>);
+    constructor(properties?: Partial<TlsCertificate.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<TlsCertificate.ConstructorProperties>, ...args: any[]): void;
     // Properties
-    certificate: number[];
+    certificate: Uint8Array;
     certificate_pem: string;
     issuer: TlsCertificate;
-    private_key: number[];
+    private_key: Uint8Array;
     private_key_pem: string;
     // Fields
     priv: TlsCertificatePrivate;
@@ -4235,11 +4494,36 @@ export abstract class TlsCertificate extends GObject.Object {
 export module TlsConnection {
     export interface ConstructorProperties extends IOStream.ConstructorProperties {
         [key: string]: any;
+        advertised_protocols: string[];
+        base_io_stream: IOStream;
+        certificate: TlsCertificate;
+        database: TlsDatabase;
+        interaction: TlsInteraction;
+        negotiated_protocol: string;
+        peer_certificate: TlsCertificate;
+        peer_certificate_errors: TlsCertificateFlags;
+        rehandshake_mode: TlsRehandshakeMode;
+        require_close_notify: boolean;
+        use_system_certdb: boolean;
     }
 }
 export abstract class TlsConnection extends IOStream {
-    constructor(properties: Partial<TlsConnection.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<TlsConnection.ConstructorProperties>);
+    constructor(properties?: Partial<TlsConnection.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<TlsConnection.ConstructorProperties>, ...args: any[]): void;
+    // Properties
+    advertised_protocols: string[];
+    base_io_stream: IOStream;
+    certificate: TlsCertificate;
+    database: TlsDatabase;
+    interaction: TlsInteraction;
+    negotiated_protocol: string;
+    peer_certificate: TlsCertificate;
+    peer_certificate_errors: TlsCertificateFlags;
+    rehandshake_mode: TlsRehandshakeMode;
+    require_close_notify: boolean;
+    use_system_certdb: boolean;
+    // Fields
+    priv: TlsConnectionPrivate;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -4247,6 +4531,31 @@ export abstract class TlsConnection extends IOStream {
     connect(signal: 'accept-certificate', callback: (_source: this, peer_cert: TlsCertificate, errors: TlsCertificateFlags) => boolean): number;
     connect_after(signal: 'accept-certificate', callback: (_source: this, peer_cert: TlsCertificate, errors: TlsCertificateFlags) => boolean): number;
     emit(signal: 'accept-certificate', peer_cert: TlsCertificate, errors: TlsCertificateFlags): void;
+    // Members
+    emit_accept_certificate(peer_cert: TlsCertificate, errors: TlsCertificateFlags): boolean;
+    get_certificate(): TlsCertificate;
+    get_database(): TlsDatabase;
+    get_interaction(): TlsInteraction;
+    get_negotiated_protocol(): string | null;
+    get_peer_certificate(): TlsCertificate;
+    get_peer_certificate_errors(): TlsCertificateFlags;
+    get_rehandshake_mode(): TlsRehandshakeMode;
+    get_require_close_notify(): boolean;
+    get_use_system_certdb(): boolean;
+    handshake(cancellable: Cancellable | null): boolean;
+    handshake_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    handshake_finish(result: AsyncResult): boolean;
+    set_advertised_protocols(protocols: string[] | null): void;
+    set_certificate(certificate: TlsCertificate): void;
+    set_database(database: TlsDatabase): void;
+    set_interaction(interaction: TlsInteraction | null): void;
+    set_rehandshake_mode(mode: TlsRehandshakeMode): void;
+    set_require_close_notify(require_close_notify: boolean): void;
+    set_use_system_certdb(use_system_certdb: boolean): void;
+    vfunc_accept_certificate(peer_cert: TlsCertificate, errors: TlsCertificateFlags): boolean;
+    vfunc_handshake(cancellable: Cancellable | null): boolean;
+    vfunc_handshake_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    vfunc_handshake_finish(result: AsyncResult): boolean;
 }
 export module TlsDatabase {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -4254,8 +4563,8 @@ export module TlsDatabase {
     }
 }
 export abstract class TlsDatabase extends GObject.Object {
-    constructor(properties: Partial<TlsDatabase.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<TlsDatabase.ConstructorProperties>);
+    constructor(properties?: Partial<TlsDatabase.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<TlsDatabase.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: TlsDatabasePrivate;
     // Members
@@ -4266,8 +4575,8 @@ export abstract class TlsDatabase extends GObject.Object {
     lookup_certificate_issuer(certificate: TlsCertificate, interaction: TlsInteraction | null, flags: TlsDatabaseLookupFlags, cancellable: Cancellable | null): TlsCertificate;
     lookup_certificate_issuer_async(certificate: TlsCertificate, interaction: TlsInteraction | null, flags: TlsDatabaseLookupFlags, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     lookup_certificate_issuer_finish(result: AsyncResult): TlsCertificate;
-    lookup_certificates_issued_by(issuer_raw_dn: number[], interaction: TlsInteraction | null, flags: TlsDatabaseLookupFlags, cancellable: Cancellable | null): GLib.List;
-    lookup_certificates_issued_by_async(issuer_raw_dn: number[], interaction: TlsInteraction | null, flags: TlsDatabaseLookupFlags, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    lookup_certificates_issued_by(issuer_raw_dn: (Uint8Array | string), interaction: TlsInteraction | null, flags: TlsDatabaseLookupFlags, cancellable: Cancellable | null): GLib.List;
+    lookup_certificates_issued_by_async(issuer_raw_dn: (Uint8Array | string), interaction: TlsInteraction | null, flags: TlsDatabaseLookupFlags, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     lookup_certificates_issued_by_finish(result: AsyncResult): GLib.List;
     verify_chain(chain: TlsCertificate, purpose: string, identity: SocketConnectable | null, interaction: TlsInteraction | null, flags: TlsDatabaseVerifyFlags, cancellable: Cancellable | null): TlsCertificateFlags;
     verify_chain_async(chain: TlsCertificate, purpose: string, identity: SocketConnectable | null, interaction: TlsInteraction | null, flags: TlsDatabaseVerifyFlags, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
@@ -4279,8 +4588,8 @@ export abstract class TlsDatabase extends GObject.Object {
     vfunc_lookup_certificate_issuer(certificate: TlsCertificate, interaction: TlsInteraction | null, flags: TlsDatabaseLookupFlags, cancellable: Cancellable | null): TlsCertificate;
     vfunc_lookup_certificate_issuer_async(certificate: TlsCertificate, interaction: TlsInteraction | null, flags: TlsDatabaseLookupFlags, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_lookup_certificate_issuer_finish(result: AsyncResult): TlsCertificate;
-    vfunc_lookup_certificates_issued_by(issuer_raw_dn: number[], interaction: TlsInteraction | null, flags: TlsDatabaseLookupFlags, cancellable: Cancellable | null): GLib.List;
-    vfunc_lookup_certificates_issued_by_async(issuer_raw_dn: number[], interaction: TlsInteraction | null, flags: TlsDatabaseLookupFlags, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    vfunc_lookup_certificates_issued_by(issuer_raw_dn: (Uint8Array | string), interaction: TlsInteraction | null, flags: TlsDatabaseLookupFlags, cancellable: Cancellable | null): GLib.List;
+    vfunc_lookup_certificates_issued_by_async(issuer_raw_dn: (Uint8Array | string), interaction: TlsInteraction | null, flags: TlsDatabaseLookupFlags, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_lookup_certificates_issued_by_finish(result: AsyncResult): GLib.List;
     vfunc_verify_chain(chain: TlsCertificate, purpose: string, identity: SocketConnectable | null, interaction: TlsInteraction | null, flags: TlsDatabaseVerifyFlags, cancellable: Cancellable | null): TlsCertificateFlags;
     vfunc_verify_chain_async(chain: TlsCertificate, purpose: string, identity: SocketConnectable | null, interaction: TlsInteraction | null, flags: TlsDatabaseVerifyFlags, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
@@ -4292,8 +4601,8 @@ export module TlsInteraction {
     }
 }
 export class TlsInteraction extends GObject.Object {
-    constructor(properties: Partial<TlsInteraction.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<TlsInteraction.ConstructorProperties>);
+    constructor(properties?: Partial<TlsInteraction.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<TlsInteraction.ConstructorProperties>, ...args: any[]): void;
     // Members
     ask_password(password: TlsPassword, cancellable: Cancellable | null): TlsInteractionResult;
     ask_password_async(password: TlsPassword, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
@@ -4319,8 +4628,8 @@ export module TlsPassword {
     }
 }
 export class TlsPassword extends GObject.Object {
-    constructor(properties: Partial<TlsPassword.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<TlsPassword.ConstructorProperties>);
+    constructor(properties?: Partial<TlsPassword.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<TlsPassword.ConstructorProperties>, ...args: any[]): void;
     // Properties
     description: string;
     flags: TlsPasswordFlags;
@@ -4336,12 +4645,12 @@ export class TlsPassword extends GObject.Object {
     get_warning(): string;
     set_description(description: string): void;
     set_flags(flags: TlsPasswordFlags): void;
-    set_value(value: number[]): void;
-    set_value_full(value: number[], destroy: GLib.DestroyNotify | null): void;
+    set_value(value: (Uint8Array | string)): void;
+    set_value_full(value: (Uint8Array | string), destroy: GLib.DestroyNotify | null): void;
     set_warning(warning: string): void;
     vfunc_get_default_warning(): string;
     vfunc_get_value(length: number | null): number;
-    vfunc_set_value(value: number[], destroy: GLib.DestroyNotify | null): void;
+    vfunc_set_value(value: (Uint8Array | string), destroy: GLib.DestroyNotify | null): void;
 }
 export module UnixConnection {
     export interface ConstructorProperties extends SocketConnection.ConstructorProperties {
@@ -4349,8 +4658,8 @@ export module UnixConnection {
     }
 }
 export class UnixConnection extends SocketConnection {
-    constructor(properties: Partial<UnixConnection.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<UnixConnection.ConstructorProperties>);
+    constructor(properties?: Partial<UnixConnection.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<UnixConnection.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: UnixConnectionPrivate | any;
     // Members
@@ -4370,8 +4679,8 @@ export module UnixCredentialsMessage {
     }
 }
 export class UnixCredentialsMessage extends SocketControlMessage {
-    constructor(properties: Partial<UnixCredentialsMessage.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<UnixCredentialsMessage.ConstructorProperties>);
+    constructor(properties?: Partial<UnixCredentialsMessage.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<UnixCredentialsMessage.ConstructorProperties>, ...args: any[]): void;
     // Properties
     credentials: Credentials;
     // Fields
@@ -4389,8 +4698,8 @@ export module UnixFDList {
     }
 }
 export class UnixFDList extends GObject.Object {
-    constructor(properties: Partial<UnixFDList.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<UnixFDList.ConstructorProperties>);
+    constructor(properties?: Partial<UnixFDList.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<UnixFDList.ConstructorProperties>, ...args: any[]): void;
     // Fields
     priv: UnixFDListPrivate;
     // Constructors
@@ -4400,8 +4709,8 @@ export class UnixFDList extends GObject.Object {
     append(fd: number): number;
     get(index_: number): number;
     get_length(): number;
-    peek_fds(): [number[], number | null];
-    steal_fds(): [number[], number | null];
+    peek_fds(): number[];
+    steal_fds(): number[];
 }
 export module UnixFDMessage {
     export interface ConstructorProperties extends SocketControlMessage.ConstructorProperties {
@@ -4410,8 +4719,8 @@ export module UnixFDMessage {
     }
 }
 export class UnixFDMessage extends SocketControlMessage {
-    constructor(properties: Partial<UnixFDMessage.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<UnixFDMessage.ConstructorProperties>);
+    constructor(properties?: Partial<UnixFDMessage.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<UnixFDMessage.ConstructorProperties>, ...args: any[]): void;
     // Properties
     fd_list: UnixFDList;
     // Fields
@@ -4422,7 +4731,7 @@ export class UnixFDMessage extends SocketControlMessage {
     // Members
     append_fd(fd: number): boolean;
     get_fd_list(): UnixFDList;
-    steal_fds(): [number[], number | null];
+    steal_fds(): number[];
 }
 export module UnixInputStream {
     export interface ConstructorProperties extends InputStream.ConstructorProperties {
@@ -4432,8 +4741,8 @@ export module UnixInputStream {
     }
 }
 export class UnixInputStream extends InputStream implements FileDescriptorBased, PollableInputStream {
-    constructor(properties: Partial<UnixInputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<UnixInputStream.ConstructorProperties>);
+    constructor(properties?: Partial<UnixInputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<UnixInputStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     close_fd: boolean;
     fd: number;
@@ -4448,11 +4757,11 @@ export class UnixInputStream extends InputStream implements FileDescriptorBased,
     can_poll(): boolean;
     create_source(cancellable: Cancellable | null): GLib.Source;
     is_readable(): boolean;
-    read_nonblocking(buffer: number[], cancellable: Cancellable | null): number;
+    read_nonblocking(buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
     vfunc_can_poll(): boolean;
     vfunc_create_source(cancellable: Cancellable | null): GLib.Source;
     vfunc_is_readable(): boolean;
-    vfunc_read_nonblocking(buffer: number[] | null): number;
+    vfunc_read_nonblocking(buffer: (Uint8Array | string) | null): number;
 }
 export module UnixMountMonitor {
     export interface ConstructorProperties extends GObject.Object.ConstructorProperties {
@@ -4460,8 +4769,8 @@ export module UnixMountMonitor {
     }
 }
 export class UnixMountMonitor extends GObject.Object {
-    constructor(properties: Partial<UnixMountMonitor.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<UnixMountMonitor.ConstructorProperties>);
+    constructor(properties?: Partial<UnixMountMonitor.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<UnixMountMonitor.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -4486,8 +4795,8 @@ export module UnixOutputStream {
     }
 }
 export class UnixOutputStream extends OutputStream implements FileDescriptorBased, PollableOutputStream {
-    constructor(properties: Partial<UnixOutputStream.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<UnixOutputStream.ConstructorProperties>);
+    constructor(properties?: Partial<UnixOutputStream.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<UnixOutputStream.ConstructorProperties>, ...args: any[]): void;
     // Properties
     close_fd: boolean;
     fd: number;
@@ -4502,12 +4811,12 @@ export class UnixOutputStream extends OutputStream implements FileDescriptorBase
     can_poll(): boolean;
     create_source(cancellable: Cancellable | null): GLib.Source;
     is_writable(): boolean;
-    write_nonblocking(buffer: number[], cancellable: Cancellable | null): number;
+    write_nonblocking(buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
     writev_nonblocking(vectors: OutputVector[], cancellable: Cancellable | null): [PollableReturn, number | null];
     vfunc_can_poll(): boolean;
     vfunc_create_source(cancellable: Cancellable | null): GLib.Source;
     vfunc_is_writable(): boolean;
-    vfunc_write_nonblocking(buffer: number[] | null): number;
+    vfunc_write_nonblocking(buffer: (Uint8Array | string) | null): number;
     vfunc_writev_nonblocking(vectors: OutputVector[]): [PollableReturn, number | null];
 }
 export module UnixSocketAddress {
@@ -4516,17 +4825,17 @@ export module UnixSocketAddress {
         "abstract": boolean;
         address_type: UnixSocketAddressType;
         path: string;
-        path_as_array: number[];
+        path_as_array: Uint8Array;
     }
 }
 export class UnixSocketAddress extends SocketAddress implements SocketConnectable {
-    constructor(properties: Partial<UnixSocketAddress.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<UnixSocketAddress.ConstructorProperties>);
+    constructor(properties?: Partial<UnixSocketAddress.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<UnixSocketAddress.ConstructorProperties>, ...args: any[]): void;
     // Properties
     "abstract": boolean;
     address_type: UnixSocketAddressType;
     path: string;
-    path_as_array: number[];
+    path_as_array: Uint8Array;
     // Constructors
     static ["new"](path: string): UnixSocketAddress;
     static new_abstract(path: number[]): UnixSocketAddress;
@@ -4544,15 +4853,15 @@ export module Vfs {
     }
 }
 export class Vfs extends GObject.Object {
-    constructor(properties: Partial<Vfs.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Vfs.ConstructorProperties>);
+    constructor(properties?: Partial<Vfs.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Vfs.ConstructorProperties>, ...args: any[]): void;
     // Members
     get_file_for_path(path: string): File;
     get_file_for_uri(uri: string): File;
     get_supported_uri_schemes(): string[];
     is_active(): boolean;
     parse_name(parse_name: string): File;
-    register_uri_scheme(scheme: string, uri_func: VfsFileLookupFunc | null, uri_data: any | null, uri_destroy: GLib.DestroyNotify | null, parse_name_func: VfsFileLookupFunc | null, parse_name_data: any | null, parse_name_destroy: GLib.DestroyNotify | null): boolean;
+    register_uri_scheme(scheme: string, uri_func: VfsFileLookupFunc | null, uri_destroy: GLib.DestroyNotify | null, parse_name_func: VfsFileLookupFunc | null, parse_name_destroy: GLib.DestroyNotify | null): boolean;
     unregister_uri_scheme(scheme: string): boolean;
     vfunc_add_writable_namespaces(list: FileAttributeInfoList): void;
     vfunc_get_file_for_path(path: string): File;
@@ -4573,8 +4882,8 @@ export module VolumeMonitor {
     }
 }
 export class VolumeMonitor extends GObject.Object {
-    constructor(properties: Partial<VolumeMonitor.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<VolumeMonitor.ConstructorProperties>);
+    constructor(properties?: Partial<VolumeMonitor.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<VolumeMonitor.ConstructorProperties>, ...args: any[]): void;
     // Signals
     connect(id: string, callback: (...args: any[]) => any): number;
     connect_after(id: string, callback: (...args: any[]) => any): number;
@@ -4650,8 +4959,8 @@ export module ZlibCompressor {
     }
 }
 export class ZlibCompressor extends GObject.Object implements Converter {
-    constructor(properties: Partial<ZlibCompressor.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ZlibCompressor.ConstructorProperties>);
+    constructor(properties?: Partial<ZlibCompressor.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ZlibCompressor.ConstructorProperties>, ...args: any[]): void;
     // Properties
     file_info: FileInfo;
     format: ZlibCompressorFormat;
@@ -4662,9 +4971,9 @@ export class ZlibCompressor extends GObject.Object implements Converter {
     get_file_info(): FileInfo;
     set_file_info(file_info: FileInfo | null): void;
     // Implemented Members
-    convert(inbuf: number[], outbuf: number[], flags: ConverterFlags): [ConverterResult, number, number];
+    convert(inbuf: (Uint8Array | string), outbuf: (Uint8Array | string), flags: ConverterFlags): [ConverterResult, number, number];
     reset(): void;
-    vfunc_convert(inbuf: number[] | null, outbuf: number[] | null, flags: ConverterFlags): [ConverterResult, number, number];
+    vfunc_convert(inbuf: (Uint8Array | string) | null, outbuf: (Uint8Array | string) | null, flags: ConverterFlags): [ConverterResult, number, number];
     vfunc_reset(): void;
 }
 export module ZlibDecompressor {
@@ -4675,8 +4984,8 @@ export module ZlibDecompressor {
     }
 }
 export class ZlibDecompressor extends GObject.Object implements Converter {
-    constructor(properties: Partial<ZlibDecompressor.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ZlibDecompressor.ConstructorProperties>);
+    constructor(properties?: Partial<ZlibDecompressor.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ZlibDecompressor.ConstructorProperties>, ...args: any[]): void;
     // Properties
     file_info: FileInfo;
     format: ZlibCompressorFormat;
@@ -4685,12 +4994,18 @@ export class ZlibDecompressor extends GObject.Object implements Converter {
     // Members
     get_file_info(): FileInfo;
     // Implemented Members
-    convert(inbuf: number[], outbuf: number[], flags: ConverterFlags): [ConverterResult, number, number];
+    convert(inbuf: (Uint8Array | string), outbuf: (Uint8Array | string), flags: ConverterFlags): [ConverterResult, number, number];
     reset(): void;
-    vfunc_convert(inbuf: number[] | null, outbuf: number[] | null, flags: ConverterFlags): [ConverterResult, number, number];
+    vfunc_convert(inbuf: (Uint8Array | string) | null, outbuf: (Uint8Array | string) | null, flags: ConverterFlags): [ConverterResult, number, number];
     vfunc_reset(): void;
 }
 export class ActionEntry {
+    constructor(properties?: {
+        name?: string;
+        parameter_type?: string;
+        state?: string;
+        padding?: number[];
+    });
     constructor(copy: ActionEntry);
     // Fields
     name: string;
@@ -4746,6 +5061,10 @@ export class DBusArgInfo {
     unref(): void;
 }
 export class DBusErrorEntry {
+    constructor(properties?: {
+        error_code?: number;
+        dbus_error_name?: string;
+    });
     constructor(copy: DBusErrorEntry);
     // Fields
     error_code: number;
@@ -4978,6 +5297,10 @@ export class InputStreamPrivate {
     constructor(copy: InputStreamPrivate);
 }
 export class InputVector {
+    constructor(properties?: {
+        buffer?: any;
+        size?: number;
+    });
     constructor(copy: InputVector);
     // Fields
     buffer: any;
@@ -5024,6 +5347,10 @@ export class OutputStreamPrivate {
     constructor(copy: OutputStreamPrivate);
 }
 export class OutputVector {
+    constructor(properties?: {
+        buffer?: any;
+        size?: number;
+    });
     constructor(copy: OutputVector);
     // Fields
     buffer: any;
@@ -5042,10 +5369,10 @@ export class ResolverPrivate {
     constructor(copy: ResolverPrivate);
 }
 export class Resource {
-    constructor(data: GLib.Bytes);
+    constructor(data: (GLib.Bytes | Uint8Array));
     constructor(copy: Resource);
     // Constructors
-    static new_from_data(data: GLib.Bytes): Resource;
+    static new_from_data(data: (GLib.Bytes | Uint8Array)): Resource;
     // Members
     _register(): void;
     _unregister(): void;
@@ -5217,11 +5544,12 @@ export class UnixSocketAddressPrivate {
     constructor(copy: UnixSocketAddressPrivate);
 }
 export interface ActionNamespace {
+    $gtype: GType;
     name_is_valid(action_name: string): boolean;
     parse_detailed_name(detailed_name: string): [boolean, string, GLib.Variant];
     print_detailed_name(action_name: string, target_value: GLib.Variant | null): string;
 }
-export interface Action  {
+export interface Action extends GObject.Object {
     // Properties
     enabled: boolean;
     name: string;
@@ -5248,7 +5576,10 @@ export interface Action  {
 }
 
 export const Action: ActionNamespace;
-export interface ActionGroup  {
+export interface ActionGroupNamespace {
+    $gtype: GType;
+}
+export interface ActionGroup extends GObject.Object {
     // Members
     action_added(action_name: string): void;
     action_enabled_changed(action_name: string, enabled: boolean): void;
@@ -5279,17 +5610,25 @@ export interface ActionGroup  {
     vfunc_list_actions(): string[];
     vfunc_query_action(action_name: string): [boolean, boolean, GLib.VariantType | null, GLib.VariantType | null, GLib.Variant | null, GLib.Variant | null];
 }
-export interface ActionMap  {
+
+export const ActionGroup: ActionGroupNamespace;
+export interface ActionMapNamespace {
+    $gtype: GType;
+}
+export interface ActionMap extends GObject.Object {
     // Members
     add_action(action: Action): void;
-    add_action_entries(entries: ActionEntry[]): void;
+    add_action_entries(entries: ActionEntry[], user_data: any | null): void;
     lookup_action(action_name: string): Action;
     remove_action(action_name: string): void;
     vfunc_add_action(action: Action): void;
     vfunc_lookup_action(action_name: string): Action;
     vfunc_remove_action(action_name: string): void;
 }
+
+export const ActionMap: ActionMapNamespace;
 export interface AppInfoNamespace {
+    $gtype: GType;
     create_from_commandline(commandline: string, application_name: string | null, flags: AppInfoCreateFlags): AppInfo;
     get_all(): GLib.List;
     get_all_for_type(content_type: string): GLib.List;
@@ -5302,7 +5641,7 @@ export interface AppInfoNamespace {
     launch_default_for_uri_finish(result: AsyncResult): boolean;
     reset_type_associations(content_type: string): void;
 }
-export interface AppInfo  {
+export interface AppInfo extends GObject.Object {
     // Members
     add_supports_type(content_type: string): boolean;
     can_delete(): boolean;
@@ -5358,45 +5697,64 @@ export interface AppInfo  {
 
 export const AppInfo: AppInfoNamespace;
 export interface AsyncInitableNamespace {
+    $gtype: GType;
     newv_async(object_type: GType, n_parameters: number, parameters: GObject.Parameter, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
 }
-export interface AsyncInitable  {
+export interface AsyncInitable extends GObject.Object {
     // Members
     init_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     init_finish(res: AsyncResult): boolean;
-    new_finish(res: AsyncResult): GObject.Object;
+    new_finish<T = GObject.Object>(res: AsyncResult): T;
     vfunc_init_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_init_finish(res: AsyncResult): boolean;
 }
 
 export const AsyncInitable: AsyncInitableNamespace;
-export interface AsyncResult  {
+export interface AsyncResultNamespace {
+    $gtype: GType;
+}
+export interface AsyncResult extends GObject.Object {
     // Members
-    get_source_object(): GObject.Object | null;
+    get_source_object<T = GObject.Object>(): T | null;
     get_user_data(): any | null;
     is_tagged(source_tag: any | null): boolean;
     legacy_propagate_error(): boolean;
-    vfunc_get_source_object(): GObject.Object | null;
+    vfunc_get_source_object<T = GObject.Object>(): T | null;
     vfunc_get_user_data(): any | null;
     vfunc_is_tagged(source_tag: any | null): boolean;
 }
-export interface Converter  {
+
+export const AsyncResult: AsyncResultNamespace;
+export interface ConverterNamespace {
+    $gtype: GType;
+}
+export interface Converter extends GObject.Object {
     // Members
-    convert(inbuf: number[], outbuf: number[], flags: ConverterFlags): [ConverterResult, number, number];
+    convert(inbuf: (Uint8Array | string), outbuf: (Uint8Array | string), flags: ConverterFlags): [ConverterResult, number, number];
     reset(): void;
-    vfunc_convert(inbuf: number[] | null, outbuf: number[] | null, flags: ConverterFlags): [ConverterResult, number, number];
+    vfunc_convert(inbuf: (Uint8Array | string) | null, outbuf: (Uint8Array | string) | null, flags: ConverterFlags): [ConverterResult, number, number];
     vfunc_reset(): void;
 }
-export interface DBusInterface  {
+
+export const Converter: ConverterNamespace;
+export interface DBusInterfaceNamespace {
+    $gtype: GType;
+}
+export interface DBusInterface extends GObject.Object {
     // Members
-    dup_object(): DBusObject;
+    get_object(): DBusObject;
     get_info(): DBusInterfaceInfo;
     set_object(object: DBusObject | null): void;
     vfunc_dup_object(): DBusObject;
     vfunc_get_info(): DBusInterfaceInfo;
     vfunc_set_object(object: DBusObject | null): void;
 }
-export interface DBusObject  {
+
+export const DBusInterface: DBusInterfaceNamespace;
+export interface DBusObjectNamespace {
+    $gtype: GType;
+}
+export interface DBusObject extends GObject.Object {
     // Members
     get_interface(interface_name: string): DBusInterface;
     get_interfaces(): GLib.List;
@@ -5407,7 +5765,12 @@ export interface DBusObject  {
     vfunc_interface_added(interface_: DBusInterface): void;
     vfunc_interface_removed(interface_: DBusInterface): void;
 }
-export interface DBusObjectManager  {
+
+export const DBusObject: DBusObjectNamespace;
+export interface DBusObjectManagerNamespace {
+    $gtype: GType;
+}
+export interface DBusObjectManager extends GObject.Object {
     // Members
     get_interface(object_path: string, interface_name: string): DBusInterface;
     get_object(object_path: string): DBusObject;
@@ -5422,7 +5785,12 @@ export interface DBusObjectManager  {
     vfunc_object_added(object: DBusObject): void;
     vfunc_object_removed(object: DBusObject): void;
 }
-export interface DatagramBased  {
+
+export const DBusObjectManager: DBusObjectManagerNamespace;
+export interface DatagramBasedNamespace {
+    $gtype: GType;
+}
+export interface DatagramBased extends GObject.Object {
     // Members
     condition_check(condition: GLib.IOCondition): GLib.IOCondition;
     condition_wait(condition: GLib.IOCondition, timeout: number, cancellable: Cancellable | null): boolean;
@@ -5435,12 +5803,22 @@ export interface DatagramBased  {
     vfunc_receive_messages(messages: InputMessage[], flags: number, timeout: number, cancellable: Cancellable | null): number;
     vfunc_send_messages(messages: OutputMessage[], flags: number, timeout: number, cancellable: Cancellable | null): number;
 }
-export interface DesktopAppInfoLookup  {
+
+export const DatagramBased: DatagramBasedNamespace;
+export interface DesktopAppInfoLookupNamespace {
+    $gtype: GType;
+}
+export interface DesktopAppInfoLookup extends GObject.Object {
     // Members
     get_default_for_uri_scheme(uri_scheme: string): AppInfo;
     vfunc_get_default_for_uri_scheme(uri_scheme: string): AppInfo;
 }
-export interface Drive  {
+
+export const DesktopAppInfoLookup: DesktopAppInfoLookupNamespace;
+export interface DriveNamespace {
+    $gtype: GType;
+}
+export interface Drive extends GObject.Object {
     // Members
     can_eject(): boolean;
     can_poll_for_media(): boolean;
@@ -5503,10 +5881,13 @@ export interface Drive  {
     vfunc_stop_button(): void;
     vfunc_stop_finish(result: AsyncResult): boolean;
 }
+
+export const Drive: DriveNamespace;
 export interface DtlsClientConnectionNamespace {
+    $gtype: GType;
     ["new"](base_socket: DatagramBased, server_identity: SocketConnectable | null): DtlsClientConnection;
 }
-export interface DtlsClientConnection  {
+export interface DtlsClientConnection extends DatagramBased {
     // Properties
     accepted_cas: GLib.List;
     server_identity: SocketConnectable;
@@ -5520,18 +5901,70 @@ export interface DtlsClientConnection  {
 }
 
 export const DtlsClientConnection: DtlsClientConnectionNamespace;
-export interface DtlsConnection  {
+export interface DtlsConnectionNamespace {
+    $gtype: GType;
 }
+export interface DtlsConnection extends DatagramBased {
+    // Properties
+    advertised_protocols: string[];
+    base_socket: DatagramBased;
+    certificate: TlsCertificate;
+    database: TlsDatabase;
+    interaction: TlsInteraction;
+    negotiated_protocol: string;
+    peer_certificate: TlsCertificate;
+    peer_certificate_errors: TlsCertificateFlags;
+    rehandshake_mode: TlsRehandshakeMode;
+    require_close_notify: boolean;
+    // Members
+    close(cancellable: Cancellable | null): boolean;
+    close_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    close_finish(result: AsyncResult): boolean;
+    emit_accept_certificate(peer_cert: TlsCertificate, errors: TlsCertificateFlags): boolean;
+    get_certificate(): TlsCertificate;
+    get_database(): TlsDatabase;
+    get_interaction(): TlsInteraction;
+    get_negotiated_protocol(): string | null;
+    get_peer_certificate(): TlsCertificate;
+    get_peer_certificate_errors(): TlsCertificateFlags;
+    get_rehandshake_mode(): TlsRehandshakeMode;
+    get_require_close_notify(): boolean;
+    handshake(cancellable: Cancellable | null): boolean;
+    handshake_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    handshake_finish(result: AsyncResult): boolean;
+    set_advertised_protocols(protocols: string[] | null): void;
+    set_certificate(certificate: TlsCertificate): void;
+    set_database(database: TlsDatabase): void;
+    set_interaction(interaction: TlsInteraction | null): void;
+    set_rehandshake_mode(mode: TlsRehandshakeMode): void;
+    set_require_close_notify(require_close_notify: boolean): void;
+    shutdown(shutdown_read: boolean, shutdown_write: boolean, cancellable: Cancellable | null): boolean;
+    shutdown_async(shutdown_read: boolean, shutdown_write: boolean, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    shutdown_finish(result: AsyncResult): boolean;
+    vfunc_accept_certificate(peer_cert: TlsCertificate, errors: TlsCertificateFlags): boolean;
+    vfunc_get_negotiated_protocol(): string | null;
+    vfunc_handshake(cancellable: Cancellable | null): boolean;
+    vfunc_handshake_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    vfunc_handshake_finish(result: AsyncResult): boolean;
+    vfunc_set_advertised_protocols(protocols: string[] | null): void;
+    vfunc_shutdown(shutdown_read: boolean, shutdown_write: boolean, cancellable: Cancellable | null): boolean;
+    vfunc_shutdown_async(shutdown_read: boolean, shutdown_write: boolean, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    vfunc_shutdown_finish(result: AsyncResult): boolean;
+}
+
+export const DtlsConnection: DtlsConnectionNamespace;
 export interface DtlsServerConnectionNamespace {
+    $gtype: GType;
     ["new"](base_socket: DatagramBased, certificate: TlsCertificate | null): DtlsServerConnection;
 }
-export interface DtlsServerConnection  {
+export interface DtlsServerConnection extends DatagramBased {
     // Properties
     authentication_mode: TlsAuthenticationMode;
 }
 
 export const DtlsServerConnection: DtlsServerConnectionNamespace;
 export interface FileNamespace {
+    $gtype: GType;
     new_for_commandline_arg(arg: string): File;
     new_for_commandline_arg_and_cwd(arg: string, cwd: string): File;
     new_for_path(path: string): File;
@@ -5539,13 +5972,13 @@ export interface FileNamespace {
     new_tmp(tmpl: string | null): [File, FileIOStream];
     parse_name(parse_name: string): File;
 }
-export interface File  {
+export interface File extends GObject.Object {
     // Members
     append_to(flags: FileCreateFlags, cancellable: Cancellable | null): FileOutputStream;
     append_to_async(flags: FileCreateFlags, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     append_to_finish(res: AsyncResult): FileOutputStream;
-    copy(destination: File, flags: FileCopyFlags, cancellable: Cancellable | null, progress_callback: FileProgressCallback | null, progress_callback_data: any | null): boolean;
-    copy_async(destination: File, flags: FileCopyFlags, io_priority: number, cancellable: Cancellable | null, progress_callback: FileProgressCallback | null, progress_callback_data: any | null, callback: AsyncReadyCallback | null): void;
+    copy(destination: File, flags: FileCopyFlags, cancellable: Cancellable | null, progress_callback: FileProgressCallback | null): boolean;
+    copy_async(destination: File, flags: FileCopyFlags, io_priority: number, cancellable: Cancellable | null): void;
     copy_attributes(destination: File, flags: FileCopyFlags, cancellable: Cancellable | null): boolean;
     copy_finish(res: AsyncResult): boolean;
     create(flags: FileCreateFlags, cancellable: Cancellable | null): FileOutputStream;
@@ -5586,10 +6019,10 @@ export interface File  {
     load_bytes(cancellable: Cancellable | null): [GLib.Bytes, string | null];
     load_bytes_async(cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     load_bytes_finish(result: AsyncResult): [GLib.Bytes, string | null];
-    load_contents(cancellable: Cancellable | null): [boolean, number[], string | null];
+    load_contents(cancellable: Cancellable | null): [boolean, Uint8Array, string | null];
     load_contents_async(cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
-    load_contents_finish(res: AsyncResult): [boolean, number[], string | null];
-    load_partial_contents_finish(res: AsyncResult): [boolean, number[], string | null];
+    load_contents_finish(res: AsyncResult): [boolean, Uint8Array, string | null];
+    load_partial_contents_finish(res: AsyncResult): [boolean, Uint8Array, string | null];
     make_directory(cancellable: Cancellable | null): boolean;
     make_directory_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     make_directory_finish(result: AsyncResult): boolean;
@@ -5603,7 +6036,7 @@ export interface File  {
     mount_enclosing_volume_finish(result: AsyncResult): boolean;
     mount_mountable(flags: MountMountFlags, mount_operation: MountOperation | null, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     mount_mountable_finish(result: AsyncResult): File;
-    move(destination: File, flags: FileCopyFlags, cancellable: Cancellable | null, progress_callback: FileProgressCallback | null, progress_callback_data: any | null): boolean;
+    move(destination: File, flags: FileCopyFlags, cancellable: Cancellable | null, progress_callback: FileProgressCallback | null): boolean;
     open_readwrite(cancellable: Cancellable | null): FileIOStream;
     open_readwrite_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     open_readwrite_finish(res: AsyncResult): FileIOStream;
@@ -5628,9 +6061,9 @@ export interface File  {
     read_finish(res: AsyncResult): FileInputStream;
     replace(etag: string | null, make_backup: boolean, flags: FileCreateFlags, cancellable: Cancellable | null): FileOutputStream;
     replace_async(etag: string | null, make_backup: boolean, flags: FileCreateFlags, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
-    replace_contents(contents: number[], etag: string | null, make_backup: boolean, flags: FileCreateFlags, cancellable: Cancellable | null): [boolean, string | null];
-    replace_contents_async(contents: number[], etag: string | null, make_backup: boolean, flags: FileCreateFlags, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
-    replace_contents_bytes_async(contents: GLib.Bytes, etag: string | null, make_backup: boolean, flags: FileCreateFlags, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    replace_contents(contents: (Uint8Array | string), etag: string | null, make_backup: boolean, flags: FileCreateFlags, cancellable: Cancellable | null): [boolean, string | null];
+    replace_contents_async(contents: (Uint8Array | string), etag: string | null, make_backup: boolean, flags: FileCreateFlags, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
+    replace_contents_bytes_async(contents: (GLib.Bytes | Uint8Array), etag: string | null, make_backup: boolean, flags: FileCreateFlags, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     replace_contents_finish(res: AsyncResult): [boolean, string | null];
     replace_finish(res: AsyncResult): FileOutputStream;
     replace_readwrite(etag: string | null, make_backup: boolean, flags: FileCreateFlags, cancellable: Cancellable | null): FileIOStream;
@@ -5665,8 +6098,8 @@ export interface File  {
     vfunc_append_to(flags: FileCreateFlags, cancellable: Cancellable | null): FileOutputStream;
     vfunc_append_to_async(flags: FileCreateFlags, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_append_to_finish(res: AsyncResult): FileOutputStream;
-    vfunc_copy(destination: File, flags: FileCopyFlags, cancellable: Cancellable | null, progress_callback: FileProgressCallback | null, progress_callback_data: any | null): boolean;
-    vfunc_copy_async(destination: File, flags: FileCopyFlags, io_priority: number, cancellable: Cancellable | null, progress_callback: FileProgressCallback | null, progress_callback_data: any | null, callback: AsyncReadyCallback | null): void;
+    vfunc_copy(destination: File, flags: FileCopyFlags, cancellable: Cancellable | null, progress_callback: FileProgressCallback | null): boolean;
+    vfunc_copy_async(destination: File, flags: FileCopyFlags, io_priority: number, cancellable: Cancellable | null): void;
     vfunc_copy_finish(res: AsyncResult): boolean;
     vfunc_create(flags: FileCreateFlags, cancellable: Cancellable | null): FileOutputStream;
     vfunc_create_async(flags: FileCreateFlags, io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
@@ -5711,7 +6144,7 @@ export interface File  {
     vfunc_mount_enclosing_volume_finish(result: AsyncResult): boolean;
     vfunc_mount_mountable(flags: MountMountFlags, mount_operation: MountOperation | null, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_mount_mountable_finish(result: AsyncResult): this;
-    vfunc_move(destination: File, flags: FileCopyFlags, cancellable: Cancellable | null, progress_callback: FileProgressCallback | null, progress_callback_data: any | null): boolean;
+    vfunc_move(destination: File, flags: FileCopyFlags, cancellable: Cancellable | null, progress_callback: FileProgressCallback | null): boolean;
     vfunc_open_readwrite(cancellable: Cancellable | null): FileIOStream;
     vfunc_open_readwrite_async(io_priority: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_open_readwrite_finish(res: AsyncResult): FileIOStream;
@@ -5757,17 +6190,23 @@ export interface File  {
 }
 
 export const File: FileNamespace;
-export interface FileDescriptorBased  {
+export interface FileDescriptorBasedNamespace {
+    $gtype: GType;
+}
+export interface FileDescriptorBased extends GObject.Object {
     // Members
     get_fd(): number;
     vfunc_get_fd(): number;
 }
+
+export const FileDescriptorBased: FileDescriptorBasedNamespace;
 export interface IconNamespace {
+    $gtype: GType;
     deserialize(value: GLib.Variant): Icon;
     hash(icon: any): number;
     new_for_string(str: string): Icon;
 }
-export interface Icon  {
+export interface Icon extends GObject.Object {
     // Members
     equal(icon2: Icon | null): boolean;
     serialize(): GLib.Variant;
@@ -5778,22 +6217,37 @@ export interface Icon  {
 }
 
 export const Icon: IconNamespace;
-export interface Initable  {
+export interface InitableNamespace {
+    $gtype: GType;
+    newv<T = GObject.Object>(object_type: GType, parameters: GObject.Parameter[], cancellable: Cancellable | null): T;
+    newv(...args: never[]): never;
+}
+export interface Initable extends GObject.Object {
     // Members
     init(cancellable: Cancellable | null): boolean;
     vfunc_init(cancellable: Cancellable | null): boolean;
 }
-export interface ListModel  {
+
+export const Initable: InitableNamespace;
+export interface ListModelNamespace {
+    $gtype: GType;
+}
+export interface ListModel<A = GObject.Object> extends GObject.Object {
     // Members
     get_item_type(): GType;
     get_n_items(): number;
-    get_object(position: number): GObject.Object | null;
+    get_item<T = GObject.Object>(position: number): A | null;
     items_changed(position: number, removed: number, added: number): void;
-    vfunc_get_item(position: number): GObject.Object | null;
+    vfunc_get_item<T = GObject.Object>(position: number): A | null;
     vfunc_get_item_type(): GType;
     vfunc_get_n_items(): number;
 }
-export interface LoadableIcon  {
+
+export const ListModel: ListModelNamespace;
+export interface LoadableIconNamespace {
+    $gtype: GType;
+}
+export interface LoadableIcon extends Icon {
     // Members
     load(size: number, cancellable: Cancellable | null): [InputStream, string | null];
     load_async(size: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
@@ -5802,7 +6256,12 @@ export interface LoadableIcon  {
     vfunc_load_async(size: number, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     vfunc_load_finish(res: AsyncResult): [InputStream, string | null];
 }
-export interface Mount  {
+
+export const LoadableIcon: LoadableIconNamespace;
+export interface MountNamespace {
+    $gtype: GType;
+}
+export interface Mount extends GObject.Object {
     // Members
     can_eject(): boolean;
     can_unmount(): boolean;
@@ -5859,10 +6318,13 @@ export interface Mount  {
     vfunc_unmount_with_operation_finish(result: AsyncResult): boolean;
     vfunc_unmounted(): void;
 }
+
+export const Mount: MountNamespace;
 export interface NetworkMonitorNamespace {
+    $gtype: GType;
     get_default(): NetworkMonitor;
 }
-export interface NetworkMonitor  {
+export interface NetworkMonitor extends Initable {
     // Properties
     connectivity: NetworkConnectivity;
     network_available: boolean;
@@ -5881,36 +6343,48 @@ export interface NetworkMonitor  {
 }
 
 export const NetworkMonitor: NetworkMonitorNamespace;
-export interface PollableInputStream  {
+export interface PollableInputStreamNamespace {
+    $gtype: GType;
+}
+export interface PollableInputStream extends InputStream {
     // Members
     can_poll(): boolean;
     create_source(cancellable: Cancellable | null): GLib.Source;
     is_readable(): boolean;
-    read_nonblocking(buffer: number[], cancellable: Cancellable | null): number;
+    read_nonblocking(buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
     vfunc_can_poll(): boolean;
     vfunc_create_source(cancellable: Cancellable | null): GLib.Source;
     vfunc_is_readable(): boolean;
-    vfunc_read_nonblocking(buffer: number[] | null): number;
+    vfunc_read_nonblocking(buffer: (Uint8Array | string) | null): number;
 }
-export interface PollableOutputStream  {
+
+export const PollableInputStream: PollableInputStreamNamespace;
+export interface PollableOutputStreamNamespace {
+    $gtype: GType;
+}
+export interface PollableOutputStream extends OutputStream {
     // Members
     can_poll(): boolean;
     create_source(cancellable: Cancellable | null): GLib.Source;
     is_writable(): boolean;
-    write_nonblocking(buffer: number[], cancellable: Cancellable | null): number;
+    write_nonblocking(buffer: (Uint8Array | string), cancellable: Cancellable | null): number;
     writev_nonblocking(vectors: OutputVector[], cancellable: Cancellable | null): [PollableReturn, number | null];
     vfunc_can_poll(): boolean;
     vfunc_create_source(cancellable: Cancellable | null): GLib.Source;
     vfunc_is_writable(): boolean;
-    vfunc_write_nonblocking(buffer: number[] | null): number;
+    vfunc_write_nonblocking(buffer: (Uint8Array | string) | null): number;
     vfunc_writev_nonblocking(vectors: OutputVector[]): [PollableReturn, number | null];
 }
+
+export const PollableOutputStream: PollableOutputStreamNamespace;
 export interface ProxyNamespace {
+    $gtype: GType;
     get_default_for_protocol(protocol: string): Proxy;
 }
-export interface Proxy  {
+export interface Proxy extends GObject.Object {
     // Members
     connect(connection: IOStream, proxy_address: ProxyAddress, cancellable: Cancellable | null): IOStream;
+    connect(...args: never[]): never;
     connect_async(connection: IOStream, proxy_address: ProxyAddress, cancellable: Cancellable | null, callback: AsyncReadyCallback | null): void;
     connect_finish(result: AsyncResult): IOStream;
     supports_hostname(): boolean;
@@ -5922,9 +6396,10 @@ export interface Proxy  {
 
 export const Proxy: ProxyNamespace;
 export interface ProxyResolverNamespace {
+    $gtype: GType;
     get_default(): ProxyResolver;
 }
-export interface ProxyResolver  {
+export interface ProxyResolver extends GObject.Object {
     // Members
     is_supported(): boolean;
     lookup(uri: string, cancellable: Cancellable | null): string[];
@@ -5937,14 +6412,22 @@ export interface ProxyResolver  {
 }
 
 export const ProxyResolver: ProxyResolverNamespace;
-export interface RemoteActionGroup  {
+export interface RemoteActionGroupNamespace {
+    $gtype: GType;
+}
+export interface RemoteActionGroup extends ActionGroup {
     // Members
     activate_action_full(action_name: string, parameter: GLib.Variant | null, platform_data: GLib.Variant): void;
     change_action_state_full(action_name: string, value: GLib.Variant, platform_data: GLib.Variant): void;
     vfunc_activate_action_full(action_name: string, parameter: GLib.Variant | null, platform_data: GLib.Variant): void;
     vfunc_change_action_state_full(action_name: string, value: GLib.Variant, platform_data: GLib.Variant): void;
 }
-export interface Seekable  {
+
+export const RemoteActionGroup: RemoteActionGroupNamespace;
+export interface SeekableNamespace {
+    $gtype: GType;
+}
+export interface Seekable extends GObject.Object {
     // Members
     can_seek(): boolean;
     can_truncate(): boolean;
@@ -5957,7 +6440,12 @@ export interface Seekable  {
     vfunc_tell(): number;
     vfunc_truncate_fn(offset: number, cancellable: Cancellable | null): boolean;
 }
-export interface SocketConnectable  {
+
+export const Seekable: SeekableNamespace;
+export interface SocketConnectableNamespace {
+    $gtype: GType;
+}
+export interface SocketConnectable extends GObject.Object {
     // Members
     enumerate(): SocketAddressEnumerator;
     proxy_enumerate(): SocketAddressEnumerator;
@@ -5966,10 +6454,13 @@ export interface SocketConnectable  {
     vfunc_proxy_enumerate(): SocketAddressEnumerator;
     vfunc_to_string(): string;
 }
+
+export const SocketConnectable: SocketConnectableNamespace;
 export interface TlsBackendNamespace {
+    $gtype: GType;
     get_default(): TlsBackend;
 }
-export interface TlsBackend  {
+export interface TlsBackend extends GObject.Object {
     // Members
     get_certificate_type(): GType;
     get_client_connection_type(): GType;
@@ -5988,9 +6479,10 @@ export interface TlsBackend  {
 
 export const TlsBackend: TlsBackendNamespace;
 export interface TlsClientConnectionNamespace {
+    $gtype: GType;
     ["new"](base_io_stream: IOStream, server_identity: SocketConnectable | null): TlsClientConnection;
 }
-export interface TlsClientConnection  {
+export interface TlsClientConnection extends TlsConnection {
     // Properties
     accepted_cas: GLib.List;
     server_identity: SocketConnectable;
@@ -6010,24 +6502,29 @@ export interface TlsClientConnection  {
 
 export const TlsClientConnection: TlsClientConnectionNamespace;
 export interface TlsFileDatabaseNamespace {
+    $gtype: GType;
     ["new"](anchors: string): TlsFileDatabase;
 }
-export interface TlsFileDatabase  {
+export interface TlsFileDatabase extends TlsDatabase {
     // Properties
     anchors: string;
 }
 
 export const TlsFileDatabase: TlsFileDatabaseNamespace;
 export interface TlsServerConnectionNamespace {
+    $gtype: GType;
     ["new"](base_io_stream: IOStream, certificate: TlsCertificate | null): TlsServerConnection;
 }
-export interface TlsServerConnection  {
+export interface TlsServerConnection extends TlsConnection {
     // Properties
     authentication_mode: TlsAuthenticationMode;
 }
 
 export const TlsServerConnection: TlsServerConnectionNamespace;
-export interface Volume  {
+export interface VolumeNamespace {
+    $gtype: GType;
+}
+export interface Volume extends GObject.Object {
     // Members
     can_eject(): boolean;
     can_mount(): boolean;
@@ -6070,6 +6567,8 @@ export interface Volume  {
     vfunc_removed(): void;
     vfunc_should_automount(): boolean;
 }
+
+export const Volume: VolumeNamespace;
 export interface SettingsSchema {
     _realGetKey: typeof SettingsSchema.prototype.get_key;
 }
@@ -6080,53 +6579,49 @@ export interface Settings {
     _children: string[];
     _realMethods: typeof Settings.prototype;
 }
-  
+
 export interface DBus {
     readonly session: DBusConnection;
     readonly system: DBusConnection;
-  
+
     // Namespace some functions
     get: typeof bus_get;
     get_finish: typeof bus_get_finish;
     get_sync: typeof bus_get_sync;
-  
+
     own_name: typeof bus_own_name;
     own_name_on_connection: typeof bus_own_name_on_connection;
     unown_name: typeof bus_unown_name;
-  
+
     watch_name: typeof bus_watch_name;
     watch_name_on_connection: typeof bus_watch_name_on_connection;
     unwatch_name: typeof bus_unwatch_name;
 }
-  
+
 export let DBus: DBus;
-  
+
 export interface DBusConnection {
-    watch_name(name, flags, appeared, vanished): ReturnType<typeof bus_watch_name_on_connection>;
-    unwatch_name(id): ReturnType<typeof bus_unwatch_name>;
-    own_name(name, flags, acquired, lost): ReturnType<typeof bus_own_name_on_connection>;
-    unown_name(id): ReturnType<typeof bus_unown_name>;
+    watch_name(name: any, flags: any, appeared: any, vanished: any): ReturnType<typeof bus_watch_name_on_connection>;
+    unwatch_name(id: any): ReturnType<typeof bus_unwatch_name>;
+    own_name(name: any, flags: any, acquired: any, lost: any): ReturnType<typeof bus_own_name_on_connection>;
+    unown_name(id: any): ReturnType<typeof bus_unown_name>;
 }
-  
+
 export interface DBusProxy {
-    connectSignal();
-    disconnectSignal();
+    connectSignal(): any;
+    disconnectSignal(): any;
 }
-  
+
 export module DBusProxy {
-    function makeProxyWrapper();
+    function makeProxyWrapper(): any;
 }
-  
+
 export interface DBusExportedObject {
-    wrapJSObject();
+    wrapJSObject(): any;
 }
-  
+
 export let DBusExportedObject: DBusExportedObject;
-  
-export interface ListStore<T = any> {
-  [Symbol.iterator]: () => IterableIterator<T>;
-}
-  
-export function _promisify();
-  
+
+export function _promisify(): any;
+
 export let _LocalFilePrototype: File;

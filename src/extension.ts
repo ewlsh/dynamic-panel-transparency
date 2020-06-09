@@ -1,29 +1,30 @@
-/** @type {Module} */
-const module = {};
-
 const Mainloop = imports.mainloop;
 
-const { main: Main } = imports.ui;
+import * as st from 'st';
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Main = imports.ui.main as {
+    panel: st.Bin
+};
 
-const {
-    compat: Compat,
-    events: { EventManager },
-    intellifade: { Intellifader },
-    settings: Settings,
-    theming: { Themer, load_panel_theme },
-    transitions: { TransitionManager }
-} = Me.imports;
+import * as Compat from './compat';
+import { EventManager } from './events';
+import { Intellifader } from './intellifade';
+import * as Settings from './settings';
+import {Themer, load_panel_theme} from './theming';
+import { TransitionManager } from './transitions';
 
-/** @type {DynamicPanel[]} */
-let panels = [];
+let panels = [] as DynamicPanel[];
 
 class DynamicPanel {
+    actor: st.Bin;
+    themer: Themer;
+    transitions: TransitionManager;
+    intellifader: Intellifader;
+
     /**
-     * @param {any} panelActor
+     * @param {st.Bin} panelActor
      */
-    constructor(panelActor) {
+    constructor(panelActor: st.Bin) {
         this.actor = panelActor;
 
         /* Initialize Utilities */
@@ -42,6 +43,8 @@ class DynamicPanel {
         this.intellifader.cleanup();
     }
 }
+
+export type { DynamicPanel };
 
 /* Initialize */
 function init() { }
@@ -99,7 +102,7 @@ function disable() {
 /**
  * @param {DynamicPanel} panel
  */
-function modify_panel(panel) {
+function modify_panel(panel: DynamicPanel) {
     const Theming = panel.themer;
 
     /* Get Rid of the Panel's CSS Background */
@@ -145,5 +148,3 @@ function unmodify_panel() {
         Theming.remove_text_color();
     });
 }
-
-module.exports = { DynamicPanel, init, enable, disable };

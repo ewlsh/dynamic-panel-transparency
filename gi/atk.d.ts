@@ -407,10 +407,10 @@ export module GObjectAccessible {
     }
 }
 export class GObjectAccessible extends Object {
-    constructor(properties: Partial<GObjectAccessible.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<GObjectAccessible.ConstructorProperties>);
+    constructor(properties?: Partial<GObjectAccessible.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<GObjectAccessible.ConstructorProperties>, ...args: any[]): void;
     // Members
-    get_object(): GObject.Object;
+    get_object<T = GObject.Object>(): T;
     static for_object(obj: GObject.Object): Object;
 }
 export module Hyperlink {
@@ -423,8 +423,8 @@ export module Hyperlink {
     }
 }
 export class Hyperlink extends GObject.Object implements Action {
-    constructor(properties: Partial<Hyperlink.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Hyperlink.ConstructorProperties>);
+    constructor(properties?: Partial<Hyperlink.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Hyperlink.ConstructorProperties>, ...args: any[]): void;
     // Properties
     end_index: number;
     number_of_anchors: number;
@@ -477,8 +477,8 @@ export module Misc {
     }
 }
 export class Misc extends GObject.Object {
-    constructor(properties: Partial<Misc.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Misc.ConstructorProperties>);
+    constructor(properties?: Partial<Misc.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Misc.ConstructorProperties>, ...args: any[]): void;
     // Members
     threads_enter(): void;
     threads_leave(): void;
@@ -492,8 +492,8 @@ export module NoOpObject {
     }
 }
 export class NoOpObject extends Object implements Action, Component, Document, EditableText, Hypertext, Image, Selection, Table, TableCell, Text, Value, Window {
-    constructor(properties: Partial<NoOpObject.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<NoOpObject.ConstructorProperties>);
+    constructor(properties?: Partial<NoOpObject.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<NoOpObject.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](obj: GObject.Object): NoOpObject;
     // Implemented Members
@@ -751,9 +751,9 @@ export class NoOpObject extends Object implements Action, Component, Document, E
     get_minimum_increment(): GObject.Value;
     get_minimum_value(): GObject.Value;
     get_range(): Range | null;
-    get_sub_ranges(): string[];
+    get_sub_ranges(): GLib.SList;
     get_value_and_text(): [number, string | null];
-    set_current_value(value: GObject.Value): boolean;
+    set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     set_value(new_value: number): void;
     vfunc_get_current_value(): GObject.Value;
     vfunc_get_increment(): number;
@@ -761,9 +761,9 @@ export class NoOpObject extends Object implements Action, Component, Document, E
     vfunc_get_minimum_increment(): GObject.Value;
     vfunc_get_minimum_value(): GObject.Value;
     vfunc_get_range(): Range | null;
-    vfunc_get_sub_ranges(): string[];
+    vfunc_get_sub_ranges(): GLib.SList;
     vfunc_get_value_and_text(): [number, string | null];
-    vfunc_set_current_value(value: GObject.Value): boolean;
+    vfunc_set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     vfunc_set_value(new_value: number): void;
 }
 export module NoOpObjectFactory {
@@ -772,8 +772,8 @@ export module NoOpObjectFactory {
     }
 }
 export class NoOpObjectFactory extends ObjectFactory {
-    constructor(properties: Partial<NoOpObjectFactory.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<NoOpObjectFactory.ConstructorProperties>);
+    constructor(properties?: Partial<NoOpObjectFactory.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<NoOpObjectFactory.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): NoOpObjectFactory;
 }
@@ -798,8 +798,8 @@ export module Object {
     }
 }
 export class Object extends GObject.Object {
-    constructor(properties: Partial<Object.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Object.ConstructorProperties>);
+    constructor(properties?: Partial<Object.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Object.ConstructorProperties>, ...args: any[]): void;
     // Properties
     accessible_component_layer: number;
     accessible_component_mdi_zorder: number;
@@ -901,8 +901,8 @@ export module ObjectFactory {
     }
 }
 export class ObjectFactory extends GObject.Object {
-    constructor(properties: Partial<ObjectFactory.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<ObjectFactory.ConstructorProperties>);
+    constructor(properties?: Partial<ObjectFactory.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<ObjectFactory.ConstructorProperties>, ...args: any[]): void;
     // Members
     create_accessible(obj: GObject.Object): Object;
     get_accessible_type(): GType;
@@ -915,8 +915,8 @@ export module Plug {
     }
 }
 export class Plug extends Object implements Component {
-    constructor(properties: Partial<Plug.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Plug.ConstructorProperties>);
+    constructor(properties?: Partial<Plug.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Plug.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): Plug;
     // Members
@@ -962,8 +962,8 @@ export module Registry {
     }
 }
 export class Registry extends GObject.Object {
-    constructor(properties: Partial<Registry.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Registry.ConstructorProperties>);
+    constructor(properties?: Partial<Registry.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Registry.ConstructorProperties>, ...args: any[]): void;
     // Fields
     factory_type_registry: GLib.HashTable;
     factory_singleton_cache: GLib.HashTable;
@@ -980,8 +980,8 @@ export module Relation {
     }
 }
 export class Relation extends GObject.Object {
-    constructor(properties: Partial<Relation.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Relation.ConstructorProperties>);
+    constructor(properties?: Partial<Relation.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Relation.ConstructorProperties>, ...args: any[]): void;
     // Properties
     relation_type: RelationType;
     target: GObject.ValueArray;
@@ -1001,8 +1001,8 @@ export module RelationSet {
     }
 }
 export class RelationSet extends GObject.Object {
-    constructor(properties: Partial<RelationSet.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<RelationSet.ConstructorProperties>);
+    constructor(properties?: Partial<RelationSet.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<RelationSet.ConstructorProperties>, ...args: any[]): void;
     // Fields
     relations: any[];
     // Constructors
@@ -1023,8 +1023,8 @@ export module Socket {
     }
 }
 export class Socket extends Object implements Component {
-    constructor(properties: Partial<Socket.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Socket.ConstructorProperties>);
+    constructor(properties?: Partial<Socket.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Socket.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): Socket;
     // Members
@@ -1070,8 +1070,8 @@ export module StateSet {
     }
 }
 export class StateSet extends GObject.Object {
-    constructor(properties: Partial<StateSet.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<StateSet.ConstructorProperties>);
+    constructor(properties?: Partial<StateSet.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<StateSet.ConstructorProperties>, ...args: any[]): void;
     // Constructors
     static ["new"](): StateSet;
     // Members
@@ -1092,10 +1092,14 @@ export module Util {
     }
 }
 export class Util extends GObject.Object {
-    constructor(properties: Partial<Util.ConstructorProperties>, ...args: any[]);
-    _init(properties: Partial<Util.ConstructorProperties>);
+    constructor(properties?: Partial<Util.ConstructorProperties>, ...args: any[]);
+    _init(properties?: Partial<Util.ConstructorProperties>, ...args: any[]): void;
 }
 export class Attribute {
+    constructor(properties?: {
+        name?: string;
+        value?: string;
+    });
     constructor(copy: Attribute);
     // Fields
     name: string;
@@ -1109,6 +1113,15 @@ export class Implementor {
     ref_accessible(): Object;
 }
 export class KeyEventStruct {
+    constructor(properties?: {
+        type?: number;
+        state?: number;
+        keyval?: number;
+        length?: number;
+        string?: string;
+        keycode?: number;
+        timestamp?: number;
+    });
     constructor(copy: KeyEventStruct);
     // Fields
     type: number;
@@ -1120,6 +1133,11 @@ export class KeyEventStruct {
     timestamp: number;
 }
 export class PropertyValues {
+    constructor(properties?: {
+        property_name?: string;
+        old_value?: GObject.Value;
+        new_value?: GObject.Value;
+    });
     constructor(copy: PropertyValues);
     // Fields
     property_name: string;
@@ -1139,6 +1157,12 @@ export class Range {
     get_upper_limit(): number;
 }
 export class Rectangle {
+    constructor(properties?: {
+        x?: number;
+        y?: number;
+        width?: number;
+        height?: number;
+    });
     constructor(copy: Rectangle);
     // Fields
     x: number;
@@ -1147,6 +1171,12 @@ export class Rectangle {
     height: number;
 }
 export class TextRange {
+    constructor(properties?: {
+        bounds?: TextRectangle;
+        start_offset?: number;
+        end_offset?: number;
+        content?: string;
+    });
     constructor(copy: TextRange);
     // Fields
     bounds: TextRectangle;
@@ -1155,6 +1185,12 @@ export class TextRange {
     content: string;
 }
 export class TextRectangle {
+    constructor(properties?: {
+        x?: number;
+        y?: number;
+        width?: number;
+        height?: number;
+    });
     constructor(copy: TextRectangle);
     // Fields
     x: number;
@@ -1162,7 +1198,10 @@ export class TextRectangle {
     width: number;
     height: number;
 }
-export interface Action  {
+export interface ActionNamespace {
+    $gtype: GType;
+}
+export interface Action extends GObject.Object {
     // Members
     do_action(i: number): boolean;
     get_description(i: number): string | null;
@@ -1179,7 +1218,12 @@ export interface Action  {
     vfunc_get_name(i: number): string | null;
     vfunc_set_description(i: number, desc: string): boolean;
 }
-export interface Component  {
+
+export const Action: ActionNamespace;
+export interface ComponentNamespace {
+    $gtype: GType;
+}
+export interface Component extends GObject.Object {
     // Members
     contains(x: number, y: number, coord_type: CoordType): boolean;
     get_alpha(): number;
@@ -1213,7 +1257,12 @@ export interface Component  {
     vfunc_set_position(x: number, y: number, coord_type: CoordType): boolean;
     vfunc_set_size(width: number, height: number): boolean;
 }
-export interface Document  {
+
+export const Component: ComponentNamespace;
+export interface DocumentNamespace {
+    $gtype: GType;
+}
+export interface Document extends GObject.Object {
     // Members
     get_attribute_value(attribute_name: string): string | null;
     get_attributes(): AttributeSet;
@@ -1232,7 +1281,12 @@ export interface Document  {
     vfunc_get_page_count(): number;
     vfunc_set_document_attribute(attribute_name: string, attribute_value: string): boolean;
 }
-export interface EditableText  {
+
+export const Document: DocumentNamespace;
+export interface EditableTextNamespace {
+    $gtype: GType;
+}
+export interface EditableText extends GObject.Object {
     // Members
     copy_text(start_pos: number, end_pos: number): void;
     cut_text(start_pos: number, end_pos: number): void;
@@ -1249,12 +1303,22 @@ export interface EditableText  {
     vfunc_set_run_attributes(attrib_set: AttributeSet, start_offset: number, end_offset: number): boolean;
     vfunc_set_text_contents(string: string): void;
 }
-export interface HyperlinkImpl  {
+
+export const EditableText: EditableTextNamespace;
+export interface HyperlinkImplNamespace {
+    $gtype: GType;
+}
+export interface HyperlinkImpl extends GObject.Object {
     // Members
     get_hyperlink(): Hyperlink;
     vfunc_get_hyperlink(): Hyperlink;
 }
-export interface Hypertext  {
+
+export const HyperlinkImpl: HyperlinkImplNamespace;
+export interface HypertextNamespace {
+    $gtype: GType;
+}
+export interface Hypertext extends GObject.Object {
     // Members
     get_link(link_index: number): Hyperlink;
     get_link_index(char_index: number): number;
@@ -1264,7 +1328,12 @@ export interface Hypertext  {
     vfunc_get_n_links(): number;
     vfunc_link_selected(link_index: number): void;
 }
-export interface Image  {
+
+export const Hypertext: HypertextNamespace;
+export interface ImageNamespace {
+    $gtype: GType;
+}
+export interface Image extends GObject.Object {
     // Members
     get_image_description(): string;
     get_image_locale(): string | null;
@@ -1277,9 +1346,19 @@ export interface Image  {
     vfunc_get_image_size(): [number | null, number | null];
     vfunc_set_image_description(description: string): boolean;
 }
-export interface ImplementorIface  {
+
+export const Image: ImageNamespace;
+export interface ImplementorIfaceNamespace {
+    $gtype: GType;
 }
-export interface Selection  {
+export interface ImplementorIface extends GObject.Object {
+}
+
+export const ImplementorIface: ImplementorIfaceNamespace;
+export interface SelectionNamespace {
+    $gtype: GType;
+}
+export interface Selection extends GObject.Object {
     // Members
     add_selection(i: number): boolean;
     clear_selection(): boolean;
@@ -1297,7 +1376,12 @@ export interface Selection  {
     vfunc_select_all_selection(): boolean;
     vfunc_selection_changed(): void;
 }
-export interface StreamableContent  {
+
+export const Selection: SelectionNamespace;
+export interface StreamableContentNamespace {
+    $gtype: GType;
+}
+export interface StreamableContent extends GObject.Object {
     // Members
     get_mime_type(i: number): string;
     get_n_mime_types(): number;
@@ -1308,7 +1392,12 @@ export interface StreamableContent  {
     vfunc_get_stream(mime_type: string): GLib.IOChannel;
     vfunc_get_uri(mime_type: string): string | null;
 }
-export interface Table  {
+
+export const StreamableContent: StreamableContentNamespace;
+export interface TableNamespace {
+    $gtype: GType;
+}
+export interface Table extends GObject.Object {
     // Members
     add_column_selection(column: number): boolean;
     add_row_selection(row: number): boolean;
@@ -1376,7 +1465,12 @@ export interface Table  {
     vfunc_set_row_header(row: number, header: Object): void;
     vfunc_set_summary(accessible: Object): void;
 }
-export interface TableCell  {
+
+export const Table: TableNamespace;
+export interface TableCellNamespace {
+    $gtype: GType;
+}
+export interface TableCell extends Object {
     // Members
     get_column_header_cells(): Object[];
     get_column_span(): number;
@@ -1393,10 +1487,13 @@ export interface TableCell  {
     vfunc_get_row_span(): number;
     vfunc_get_table(): Object;
 }
+
+export const TableCell: TableCellNamespace;
 export interface TextNamespace {
+    $gtype: GType;
     free_ranges(ranges: TextRange[]): void;
 }
-export interface Text  {
+export interface Text extends GObject.Object {
     // Members
     add_selection(start_offset: number, end_offset: number): boolean;
     get_bounded_ranges(rect: TextRectangle, coord_type: CoordType, x_clip_type: TextClipType, y_clip_type: TextClipType): TextRange[];
@@ -1449,7 +1546,10 @@ export interface Text  {
 }
 
 export const Text: TextNamespace;
-export interface Value  {
+export interface ValueNamespace {
+    $gtype: GType;
+}
+export interface Value extends GObject.Object {
     // Members
     get_current_value(): GObject.Value;
     get_increment(): number;
@@ -1457,9 +1557,9 @@ export interface Value  {
     get_minimum_increment(): GObject.Value;
     get_minimum_value(): GObject.Value;
     get_range(): Range | null;
-    get_sub_ranges(): string[];
+    get_sub_ranges(): GLib.SList;
     get_value_and_text(): [number, string | null];
-    set_current_value(value: GObject.Value): boolean;
+    set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     set_value(new_value: number): void;
     vfunc_get_current_value(): GObject.Value;
     vfunc_get_increment(): number;
@@ -1467,14 +1567,21 @@ export interface Value  {
     vfunc_get_minimum_increment(): GObject.Value;
     vfunc_get_minimum_value(): GObject.Value;
     vfunc_get_range(): Range | null;
-    vfunc_get_sub_ranges(): string[];
+    vfunc_get_sub_ranges(): GLib.SList;
     vfunc_get_value_and_text(): [number, string | null];
-    vfunc_set_current_value(value: GObject.Value): boolean;
+    vfunc_set_current_value(value: (GObject.Value | string | boolean | number)): boolean;
     vfunc_set_value(new_value: number): void;
 }
-export interface Window  {
+
+export const Value: ValueNamespace;
+export interface WindowNamespace {
+    $gtype: GType;
+}
+export interface Window extends Object {
 }
 
-export type AttributeSet = string[];
+export const Window: WindowNamespace;
+
+export type AttributeSet = GLib.SList;
 
 export type State = number;

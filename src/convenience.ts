@@ -1,6 +1,3 @@
-/** @type {Module} */
-const module = {};
-
 /*
   Copyright (c) 2011-2012, Giovanni Campagna <scampa.giovanni@gmail.com>
 
@@ -41,7 +38,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
  * Initialize Gettext to load translations from extensionsdir/locale.
  * If @domain is not provided, it will be taken from metadata['gettext-domain']
  */
-function initTranslations(domain) {
+export function initTranslations(domain: string) {
     let extension = ExtensionUtils.getCurrentExtension();
 
     domain = domain || extension.metadata['gettext-domain'];
@@ -67,7 +64,7 @@ function initTranslations(domain) {
  * in extensionsdir/schemas. If @schema is not provided, it is taken from
  * metadata['settings-schema'].
  */
-function getSettings(schema) {
+export function getSettings(schema: string) {
     let schemaObj = getSchemaObj(schema);
 
     return new Gio.Settings({ settings_schema: schemaObj });
@@ -80,7 +77,7 @@ function getSettings(schema) {
  *
  * @returns {import("gio").SettingsSchema} A GSettingsSchema found based on the given schema path.
  */
-function getSchemaObj(schema, defaultSource = false) {
+export function getSchemaObj(schema: string, defaultSource = false) {
     let extension = ExtensionUtils.getCurrentExtension();
 
     schema = schema || extension.metadata['settings-schema'];
@@ -109,5 +106,3 @@ function getSchemaObj(schema, defaultSource = false) {
 
     return schemaObj;
 }
-
-module.exports = { initTranslations, getSettings, getSchemaObj };

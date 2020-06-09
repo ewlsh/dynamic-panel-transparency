@@ -1,10 +1,11 @@
-/** @type {Module} */
-const module = {};
+import type * as clutter from 'clutter';
+import type * as gdk from 'gdk';
+import type * as shell from 'shell';
 
 const { GLib, Gio } = imports.gi;
 
 /* This import can't be a constant as it requires lazy initialization. */
-let Meta = null;
+let Meta = null as null | any;
 
 /* Gnome Versioning */
 const MAJOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[0], 10);
@@ -21,7 +22,7 @@ const PERMISSIONS_MODE = parseInt('0744', 8);
  * @returns {Object} The current shell version.
  *
  */
-function get_shell_version() {
+export function get_shell_version() {
     return { major: MAJOR_VERSION, minor: MINOR_VERSION };
 }
 
@@ -37,7 +38,7 @@ function get_shell_version() {
  * @returns {Number} 'value' or the minimum or maximum.
  *
  */
-function clamp(value, min, max) {
+export function clamp(value: number, min: number, max: number) {
     return Math.min(Math.max(value, min), max);
 }
 
@@ -50,7 +51,7 @@ function clamp(value, min, max) {
  * @returns {Boolean} Whether 'window' is a valid window to watch.
  *
  */
-function is_valid(window) {
+export function is_valid(window: shell.EmbeddedWindow) {
     if (!Meta) {
         Meta = imports.gi.Meta;
     }
@@ -77,7 +78,7 @@ function is_valid(window) {
  * @returns {Object} GFile for the path or null if the path is not valid.
  *
  */
-function get_file(file_path) {
+export function get_file(file_path: string) {
     try {
         return Gio.file_new_for_path(file_path);
     } catch (error) {
@@ -96,7 +97,7 @@ function get_file(file_path) {
  * @returns {Boolean} Whether the file write was a success.
  *
  */
-function write_to_file(file_path, text) {
+export function write_to_file(file_path: string, text: string) {
     try {
         let file = get_file(file_path);
         let parent = file.get_parent();
@@ -121,7 +122,7 @@ function write_to_file(file_path, text) {
  * @returns {Boolean} Whether the file deletion was a success.
  *
  */
-function remove_file(file_path) {
+export function remove_file(file_path: string) {
     try {
         let file = get_file(file_path);
         let result = file.delete(null);
@@ -142,7 +143,7 @@ function remove_file(file_path) {
  * @returns {{ red: number; green: number; blue: number;}} Converted RGB color.
  *
  */
-function gdk_to_css_color(color) {
+export function gdk_to_css_color(color: gdk.RGBA) {
     let red = Math.round(clamp((color.red * 255), 0, 255));
     let green = Math.round(clamp((color.green * 255), 0, 255));
     let blue = Math.round(clamp((color.blue * 255), 0, 255));
@@ -153,21 +154,21 @@ function gdk_to_css_color(color) {
 /**
  * Converts a ClutterColor into a JS/CSS color object.
  *
- * @param {Object} color - ClutterColor to convert.
+ * @param {clutter.Color} color - ClutterColor to convert.
  * @param {Boolean} [alpha = false] - Whether to transfer the alpha value.
  *
  * @returns {Object} Converted RGB(A) color.
  *
  */
-function clutter_to_native_color(color, alpha = false) {
-    let output = { red: color.red, green: color.green, blue: color.blue };
+export function clutter_to_native_color(color: clutter.Color, alpha = false) {
+    let output = { red: color.red, green: color.green, blue: color.blue } as NativeColor;
     if (alpha) {
         output.alpha = color.alpha;
     }
     return output;
 }
 
-/** @typedef {{red:number; green: number; blue: number; alpha?: number;}} NativeColor */
+type NativeColor = {red:number; green: number; blue: number; alpha?: number;};
 
 /**
  * Converts a tuple from a GVariant (typically) into a JS/CSS color object.
@@ -177,9 +178,8 @@ function clutter_to_native_color(color, alpha = false) {
  * @returns {NativeColor} Converted RGB(A) color.
  *
  */
-function tuple_to_native_color(tuple) {
-    /** @type {NativeColor} */
-    let color = { red: tuple[0], green: tuple[1], blue: tuple[2] };
+export function tuple_to_native_color(tuple: [number, number, number] | [number, number, number, number]) {
+    let color = { red: tuple[0], green: tuple[1], blue: tuple[2] } as NativeColor;
     if (tuple.length === 4) {
         color.alpha = tuple[3];
     }
@@ -196,7 +196,7 @@ function tuple_to_native_color(tuple) {
  * @returns {boolean} Whether the two colors are equal.
  *
  */
-function match_colors(a, b, alpha = false) {
+export function match_colors(a: NativeColor, b: NativeColor, alpha = false) {
     let result = (a.red === b.red);
     result = result && (a.green === b.green);
     result = result && (a.blue === b.blue);
@@ -212,11 +212,11 @@ function match_colors(a, b, alpha = false) {
  * @param {object} type - Object to freeze.
  * @param {boolean} [recursive = false] - Whether to recursively traverse the object's children.
  */
-function deep_freeze(type, recursive = false) {
+export function deep_freeze(type: any, recursive = false) {
     /**
     * @param {object} obj
     */
-    function freeze_children(obj) {
+    function freeze_children(obj: any) {
         Object.keys(obj).forEach(function(value) {
             if (typeof (value) === 'object' && !Object.isFrozen(value)) {
                 Object.freeze(value);
@@ -235,13 +235,11 @@ function deep_freeze(type, recursive = false) {
 /**
  * Prevents any arguments from passing on.
  *
- * @param {Object} method - Method to call.
+ * @param {Function} method - Method to call.
  *
  */
-function strip_args(method) {
+export function strip_args(method: Function) {
     return function() {
         method.call(this);
     };
 }
-
-module.exports = { get_shell_version, clamp, is_valid, match_colors, remove_file, get_file, write_to_file, gdk_to_css_color, clutter_to_native_color, tuple_to_native_color, deep_freeze, strip_args };
