@@ -1,0 +1,88 @@
+.dpt-panel {
+  background-color: transparent; }
+  .dpt-panel-transition-duration {
+    transition-duration: 1575ms; }
+  .dpt-panel.panel-text-color .panel-button {
+    color: white;
+    text-shadow: 0px 3px 5px black;
+    transition-property: color, text-shadow;
+    transition-delay: 1575ms; }
+  .dpt-panel.panel-icon-color .system-status-icon {
+    color: white;
+    icon-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+    transition-property: color, text-shadow;
+    transition-delay: 1575ms; }
+  .dpt-panel.panel-arrow-color .popup-menu-arrow {
+    color: white;
+    icon-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+    transition-property: color, text-shadow;
+    transition-delay: 1575ms; }
+  .dpt-panel-light.panel-text-color .panel-button {
+    color: black;
+    text-shadow: none;
+    transition-property: color, text-shadow;
+    transition-delay: 1575ms; }
+  .dpt-panel-light.panel-icon-color .system-status-icon {
+    color: black;
+    icon-shadow: none;
+    transition-property: color, text-shadow;
+    transition-delay: 1575ms; }
+  .dpt-panel-light.panel-arrow-color .popup-menu-arrow {
+    color: black;
+    icon-shadow: none;
+    transition-property: color, text-shadow;
+    transition-delay: 1575ms; }
+
+.dpt-panel-maximized {
+  background-color: black; }
+  .dpt-panel-maximized .panel-corner {
+    -panel-corner-background-color: black; }
+
+.dpt-panel-unmaximized-dark {
+  background-color: rgba(0, 0, 0, 0.25); }
+  .dpt-panel-unmaximized-dark .panel-corner {
+    -panel-corner-background-color: rgba(0, 0, 0, 0.25); }
+  .dpt-panel-unmaximized-dark-0 {
+    background-color: rgba(0, 0, 0, 0); }
+    .dpt-panel-unmaximized-dark-0 .panel-corner {
+      -panel-corner-background-color: rgba(0, 0, 0, 0); }
+  .dpt-panel-unmaximized-dark-1 {
+    background-color: rgba(0, 0, 0, 0.15); }
+    .dpt-panel-unmaximized-dark-1 .panel-corner {
+      -panel-corner-background-color: rgba(0, 0, 0, 0.15); }
+  .dpt-panel-unmaximized-dark-2 {
+    background-color: rgba(0, 0, 0, 0.25); }
+    .dpt-panel-unmaximized-dark-2 .panel-corner {
+      -panel-corner-background-color: rgba(0, 0, 0, 0.25); }
+  .dpt-panel-unmaximized-dark-3 {
+    background-color: rgba(0, 0, 0, 0.4); }
+    .dpt-panel-unmaximized-dark-3 .panel-corner {
+      -panel-corner-background-color: rgba(0, 0, 0, 0.4); }
+  .dpt-panel-unmaximized-dark-4 {
+    background-color: rgba(0, 0, 0, 0.6); }
+    .dpt-panel-unmaximized-dark-4 .panel-corner {
+      -panel-corner-background-color: rgba(0, 0, 0, 0.6); }
+.dpt-panel-unmaximized-light {
+  background-color: rgba(255, 255, 255, 0.25); }
+  .dpt-panel-unmaximized-light .panel-corner {
+    -panel-corner-background-color: rgba(255, 255, 255, 0.25); }
+  .dpt-panel-unmaximized-light-0 {
+    background-color: rgba(255, 255, 255, 0); }
+    .dpt-panel-unmaximized-light-0 .panel-corner {
+      -panel-corner-background-color: rgba(255, 255, 255, 0); }
+  .dpt-panel-unmaximized-light-1 {
+    background-color: rgba(255, 255, 255, 0.15); }
+    .dpt-panel-unmaximized-light-1 .panel-corner {
+      -panel-corner-background-color: rgba(255, 255, 255, 0.15); }
+  .dpt-panel-unmaximized-light-2 {
+    background-color: rgba(255, 255, 255, 0.25); }
+    .dpt-panel-unmaximized-light-2 .panel-corner {
+      -panel-corner-background-color: rgba(255, 255, 255, 0.25); }
+  .dpt-panel-unmaximized-light-3 {
+    background-color: rgba(255, 255, 255, 0.4); }
+    .dpt-panel-unmaximized-light-3 .panel-corner {
+      -panel-corner-background-color: rgba(255, 255, 255, 0.4); }
+  .dpt-panel-unmaximized-light-4 {
+    background-color: rgba(255, 255, 255, 0.6); }
+    .dpt-panel-unmaximized-light-4 .panel-corner {
+      -panel-corner-background-color: rgba(255, 255, 255, 0.6); }

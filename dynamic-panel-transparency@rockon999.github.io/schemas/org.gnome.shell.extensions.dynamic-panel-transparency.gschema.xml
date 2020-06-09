@@ -15,6 +15,11 @@
       <summary>Unmaximized Opacity</summary>
       <description>The opacity of the panel when there are no maximized windows [0-255].</description>
     </key>
+    <key name="use-wallpaper" type="b">
+      <default>true</default>
+      <summary>Use Wallpaper</summary>
+      <description>Use Wallpaper...</description>
+    </key>
     <key name="hide-corners" type="b">
       <default>true</default>
       <summary>Hide Corners</summary>

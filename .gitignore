@@ -3,6 +3,7 @@ styles/
 .vscode/
 .buildconfig
 *.json
+~tsconfig.json
 *~
 *.dpt.css
 .goutputstream*

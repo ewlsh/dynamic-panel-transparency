@@ -1,7 +1,7 @@
-/* exported get_shell_version, is_undef, clamp, is_valid, match_colors, remove_file, get_file, write_to_file, gdk_to_css_color, clutter_to_native_color, tuple_to_native_color, deep_freeze, strip_args */
+/** @type {Module} */
+const module = {};
 
-const GLib = imports.gi.GLib;
-const Gio = imports.gi.Gio;
+const { GLib, Gio } = imports.gi;
 
 /* This import can't be a constant as it requires lazy initialization. */
 let Meta = null;
@@ -137,9 +137,9 @@ function remove_file(file_path) {
 /**
  * Converts a GdkColor into a JS/CSS color object.
  *
- * @param {Object} color - GdkColor to convert.
+ * @param {import("gdk").RGBA} color - GdkColor to convert.
  *
- * @returns {Object} Converted RGB color.
+ * @returns {{ red: number; green: number; blue: number;}} Converted RGB color.
  *
  */
 function gdk_to_css_color(color) {
@@ -167,16 +167,18 @@ function clutter_to_native_color(color, alpha = false) {
     return output;
 }
 
+/** @typedef {{red:number; green: number; blue: number; alpha?: number;}} NativeColor */
+
 /**
  * Converts a tuple from a GVariant (typically) into a JS/CSS color object.
  *
- * @param {Object} color - Tuple to convert.
- * @param {Boolean} [alpha = false] - Whether to transfer the alpha value.
+ * @param {[number, number, number] | [number, number, number, number]} tuple - Tuple to convert.
  *
- * @returns {Object} Converted RGB(A) color.
+ * @returns {NativeColor} Converted RGB(A) color.
  *
  */
 function tuple_to_native_color(tuple) {
+    /** @type {NativeColor} */
     let color = { red: tuple[0], green: tuple[1], blue: tuple[2] };
     if (tuple.length === 4) {
         color.alpha = tuple[3];
@@ -187,11 +189,11 @@ function tuple_to_native_color(tuple) {
 /**
  * Compares two colors for equivalency.
  *
- * @param {Object} a - First color.
- * @param {Object} a - Second color.
- * @param {Boolean} [alpha = false] - Whether to check the alpha value.
+ * @param {NativeColor} a - First color.
+ * @param {NativeColor} b - Second color.
+ * @param {boolean} [alpha = false] - Whether to check the alpha value.
  *
- * @returns {Boolean} Whether the two colors are equal.
+ * @returns {boolean} Whether the two colors are equal.
  *
  */
 function match_colors(a, b, alpha = false) {
@@ -207,15 +209,18 @@ function match_colors(a, b, alpha = false) {
 /**
  * Freezes an Object's and its children.
  *
- * @param {Object} type - Object to freeze.
- * @param {Boolean} [recursive = false] - Whether to recursively traverse the object's children.
- *
+ * @param {object} type - Object to freeze.
+ * @param {boolean} [recursive = false] - Whether to recursively traverse the object's children.
  */
 function deep_freeze(type, recursive = false) {
-    const freeze_children = function(obj) {
-        Object.keys(obj).forEach(function(value, index, arr) {
+    /**
+    * @param {object} obj
+    */
+    function freeze_children(obj) {
+        Object.keys(obj).forEach(function(value) {
             if (typeof (value) === 'object' && !Object.isFrozen(value)) {
                 Object.freeze(value);
+
                 if (recursive) {
                     freeze_children(value);
                 }
@@ -238,3 +243,5 @@ function strip_args(method) {
         method.call(this);
     };
 }
+
+module.exports = { get_shell_version, clamp, is_valid, match_colors, remove_file, get_file, write_to_file, gdk_to_css_color, clutter_to_native_color, tuple_to_native_color, deep_freeze, strip_args };

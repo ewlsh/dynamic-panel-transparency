@@ -1,4 +1,5 @@
-/* exported initTranslations, getSettings, getSchemaObj */
+/** @type {Module} */
+const module = {};
 
 /*
   Copyright (c) 2011-2012, Giovanni Campagna <scampa.giovanni@gmail.com>
@@ -35,7 +36,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 
 /**
  * initTranslations:
- * @domain: (optional): the gettext domain to use
+ * @param {string} [domain] the gettext domain to use
  *
  * Initialize Gettext to load translations from extensionsdir/locale.
  * If @domain is not provided, it will be taken from metadata['gettext-domain']
@@ -46,7 +47,7 @@ function initTranslations(domain) {
     domain = domain || extension.metadata['gettext-domain'];
 
     // check if this extension was built with "make zip-file", and thus
-    // has the locale files in a subfolder
+    // has the locale files in a sub-folder
     // otherwise assume that extension has been installed in the
     // same prefix as gnome-shell
     let localeDir = extension.dir.get_child('locale');
@@ -60,7 +61,7 @@ function initTranslations(domain) {
 
 /**
  * getSettings:
- * @schema: (optional): the GSettings schema id
+ * @param {string} [schema] the GSettings schema id
  *
  * Builds and return a GSettings schema for @schema, using schema files
  * in extensionsdir/schemas. If @schema is not provided, it is taken from
@@ -73,11 +74,11 @@ function getSettings(schema) {
 }
 
 /**
- * Seperated from getSettings to allow for custom paths.
+ * Separated from getSettings to allow for custom paths.
  *
  * @param {string} schema - the GSettings schema id (default from extension.metadata)
  *
- * @returns {Object} A GSettingsSchema found based on the given schema path.
+ * @returns {import("gio").SettingsSchema} A GSettingsSchema found based on the given schema path.
  */
 function getSchemaObj(schema, defaultSource = false) {
     let extension = ExtensionUtils.getCurrentExtension();
@@ -87,7 +88,7 @@ function getSchemaObj(schema, defaultSource = false) {
     const GioSSS = Gio.SettingsSchemaSource;
 
     // check if this extension was built with "make zip-file", and thus
-    // has the schema files in a subfolder
+    // has the schema files in a sub-folder
     // otherwise assume that extension has been installed in the
     // same prefix as gnome-shell (and therefore schemas are available
     // in the standard folders)
@@ -108,3 +109,5 @@ function getSchemaObj(schema, defaultSource = false) {
 
     return schemaObj;
 }
+
+module.exports = { initTranslations, getSettings, getSchemaObj };

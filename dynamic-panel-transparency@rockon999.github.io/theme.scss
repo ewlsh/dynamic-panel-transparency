@@ -1,0 +1,183 @@
+.dpt-panel {
+  &-transition-duration {
+    transition-duration: 1575ms;
+  }
+
+  background-color: transparent;
+
+  &.panel-text-color .panel-button {
+    color: rgb(255, 255, 255);
+    text-shadow: 0px 3px 5px rgba(0, 0, 0, 1);
+    transition-property: color, text-shadow;
+    transition-delay: 1575ms;
+  }
+
+  &.panel-icon-color .system-status-icon {
+    color: rgb(255, 255, 255);
+    icon-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+    transition-property: color, text-shadow;
+    transition-delay: 1575ms;
+  }
+
+  &.panel-arrow-color .popup-menu-arrow {
+    color: rgb(255, 255, 255);
+    icon-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+    transition-property: color, text-shadow;
+    transition-delay: 1575ms;
+  }
+
+  &-light {
+    &.panel-text-color .panel-button {
+      color: rgb(0, 0, 0);
+      text-shadow: none;
+      transition-property: color, text-shadow;
+      transition-delay: 1575ms;
+    }
+
+    &.panel-icon-color .system-status-icon {
+      color: rgb(0, 0, 0);
+      icon-shadow: none;
+      transition-property: color, text-shadow;
+      transition-delay: 1575ms;
+    }
+
+    &.panel-arrow-color .popup-menu-arrow {
+      color: rgb(0, 0, 0);
+      icon-shadow: none;
+      transition-property: color, text-shadow;
+      transition-delay: 1575ms;
+    }
+  }
+}
+
+.dpt-panel-maximized {
+  $background-color: rgba(0, 0, 0, 1);
+
+  background-color: $background-color;
+
+  .panel-corner {
+    -panel-corner-background-color: $background-color;
+  }
+}
+
+.dpt-panel-unmaximized {
+  &-dark {
+    $background-color: rgba(0, 0, 0, 0.25);
+
+    background-color: $background-color;
+
+    .panel-corner {
+      -panel-corner-background-color: $background-color;
+    }
+
+    &-0 {
+      $background-color-0: rgba(0, 0, 0, 0);
+
+      background-color: $background-color-0;
+
+      .panel-corner {
+        -panel-corner-background-color: $background-color-0;
+      }
+    }
+
+    &-1 {
+      $background-color-1: rgba(0, 0, 0, 0.15);
+
+      background-color: $background-color-1;
+
+      .panel-corner {
+        -panel-corner-background-color: $background-color-1;
+      }
+    }
+
+    &-2 {
+      $background-color-2: rgba(0, 0, 0, 0.25);
+
+      background-color: $background-color-2;
+
+      .panel-corner {
+        -panel-corner-background-color: $background-color-2;
+      }
+    }
+
+    &-3 {
+      $background-color-3: rgba(0, 0, 0, 0.4);
+
+      background-color: $background-color-3;
+
+      .panel-corner {
+        -panel-corner-background-color: $background-color-3;
+      }
+    }
+
+    &-4 {
+      $background-color-4: rgba(0, 0, 0, 0.6);
+
+      background-color: $background-color-4;
+
+      .panel-corner {
+        -panel-corner-background-color: $background-color-4;
+      }
+    }
+  }
+
+  &-light {
+    $background-color: rgba(255, 255, 255, 0.25);
+
+    background-color: $background-color;
+
+    .panel-corner {
+      -panel-corner-background-color: $background-color;
+    }
+
+    &-0 {
+      $background-color-0: rgba(255, 255, 255, 0);
+
+      background-color: $background-color-0;
+
+      .panel-corner {
+        -panel-corner-background-color: $background-color-0;
+      }
+    }
+
+    &-1 {
+      $background-color-1: rgba(255, 255, 255, 0.15);
+
+      background-color: $background-color-1;
+
+      .panel-corner {
+        -panel-corner-background-color: $background-color-1;
+      }
+    }
+
+    &-2 {
+      $background-color-2: rgba(255, 255, 255, 0.25);
+
+      background-color: $background-color-2;
+
+      .panel-corner {
+        -panel-corner-background-color: $background-color-2;
+      }
+    }
+
+    &-3 {
+      $background-color-3: rgba(255, 255, 255, 0.4);
+
+      background-color: $background-color-3;
+
+      .panel-corner {
+        -panel-corner-background-color: $background-color-3;
+      }
+    }
+
+    &-4 {
+      $background-color-4: rgba(255, 255, 255, 0.6);
+
+      background-color: $background-color-4;
+
+      .panel-corner {
+        -panel-corner-background-color: $background-color-4;
+      }
+    }
+  }
+}
