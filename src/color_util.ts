@@ -20,7 +20,6 @@ export function getBackgroundColorInfo(
     acutance_variance: number;
   }) => void
 ) {
-  log('getting info...');
   const cache = imports.ui.background.getBackgroundCache();
   const source = cache.getBackgroundSource(
     imports.ui.main.layoutManager,
@@ -66,8 +65,6 @@ export function getBackgroundColorInfo(
 
   id = background.connect('bg-changed', handler);
 
-  log('backgrounded:');
-  log(`${Object.keys(background)}`);
   analyze();
 }
 
@@ -125,7 +122,6 @@ export function get_background_color_information(
 
   let pixels = source.get_pixels();
 
-  log('got pixels!');
   const size = width * height;
 
   let mean_squares = 0;
@@ -237,6 +233,6 @@ export function get_background_color_information(
   let acutance_variance = mean_squares - mean_acutance * mean_acutance;
 
   mean_acutance /= (width - 2) * (height - 2);
-  log('calculated');
+
   return { mean_luminance, luminance_variance, mean_acutance, acutance_variance };
 }

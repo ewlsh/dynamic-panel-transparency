@@ -2,7 +2,7 @@
 # Copied from Dash to Dock, with modifications.
 
 UUID = dynamic-panel-transparency@rockon999.github.io
-SRC_MODULES = extension.ts main.ts inject.ts dock.ts dash.ts stylesheet.css
+SRC_MODULES = extension.ts main.ts inject.ts dock.ts dash.ts stylesheet.css theme.scss
 BASE_MODULES = metadata.json COPYING README.md
 EXTRA_MODULES = src/prefs.ui
 TOLOCALIZE =  _build/prefs.js
@@ -91,7 +91,12 @@ setup-build:
 	cp $(BASE_MODULES) $(EXTRA_MODULES) _build
 	mkdir -p _build/schemas
 
-_build: all setup-build compile
+sass:
+	sass src/theme.scss _compiled/theme.css
+	cp _compiled/theme.css _build/theme.css
+
+_build: all setup-build compile sass
+	cp src/stylesheet.css _build/stylesheet.css
 	cp _compiled/src/prefs.js _build/prefs.js
 	cp schemas/*.xml _build/schemas/
 	cp schemas/gschemas.compiled _build/schemas/

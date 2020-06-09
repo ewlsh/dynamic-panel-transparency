@@ -7,10 +7,11 @@ const Mainloop = imports.mainloop;
 const Main = imports.ui.main;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Settings = Me.imports.settings;
-const Util = Me.imports.util;
+
 import {Themer, load_panel_theme} from './theming';
 import { TransitionManager } from './transitions';
+import * as Settings from './settings';
+import * as Util from './util';
 
 /* How often the asynchronous loop should run in milliseconds... */
 const ASYNC_UPDATE_FREQUENCY = 200; // ms

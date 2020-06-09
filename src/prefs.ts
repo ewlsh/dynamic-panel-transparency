@@ -14,12 +14,12 @@ import type {
     Box,
 } from 'gtk';
 
+import * as Util from './util';
+import * as Convenience from './convenience';
+
 const { GLib, Gdk, Gtk } = imports.gi;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-
-const Convenience = Me.imports.convenience;
-const Util = Me.imports.util;
 
 const Gettext = imports.gettext.domain('dynamic-panel-transparency');
 const _ = Gettext.gettext;

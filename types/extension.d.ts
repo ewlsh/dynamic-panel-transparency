@@ -1,10 +1,3 @@
-declare interface ImportMap {
-    extension: any;
-    settings: any;
-    convenience: any;
-    util: any;
-}
-
 declare interface Extension {
   extensionState: any;
   metadata: { [key: string]: any };
@@ -14,7 +7,7 @@ declare interface Extension {
 }
 
 declare interface CurrentExtension extends Extension {
-  imports: ImportMap;
+  imports: {};
 }
 
 declare interface GiImports {

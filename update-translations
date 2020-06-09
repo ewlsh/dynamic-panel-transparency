@@ -2,12 +2,12 @@
 
 cd dynamic-panel-transparency@rockon999.github.io
 
-xgettext -k_ -kN_ -o dynamic-panel-transparency.pot src/prefs.ts src/prefs.ui
+xgettext -k_ -kN_ -o ./po/dynamic-panel-transparency.pot src/prefs.ts src/prefs.ui
 
 cd locale
 
 for subdir in */ ; do
-    msgmerge -U "$subdir/LC_MESSAGES/dynamic-panel-transparency.po" "../dynamic-panel-transparency.pot"
+    msgmerge -U "$subdir/LC_MESSAGES/dynamic-panel-transparency.po" "../po/dynamic-panel-transparency.pot"
     msgfmt "$subdir/LC_MESSAGES/dynamic-panel-transparency.po" -o "$subdir/LC_MESSAGES/dynamic-panel-transparency.mo"
 done
 

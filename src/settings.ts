@@ -1,10 +1,9 @@
 import type * as gio from 'gio';
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Params = imports.misc.params;
+import * as Util from './util';
+import * as Convenience from './convenience';
 
-const Convenience = Me.imports.convenience;
-const Util = Me.imports.util;
+const Params = imports.misc.params;
 
 const { GLib, Gio } = imports.gi;
 
