@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-20 20:10-0400\n"
+"POT-Creation-Date: 2020-06-09 15:57-0500\n"
 "PO-Revision-Date: 2017-11-18 20:01+0100\n"
 "Last-Translator: Слободан Терзић  <slobodan.terzic@zoho.eu>\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
@@ -19,166 +19,136 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: prefs.js/preferences/main.js:111
-msgid "default"
-msgstr "porazumevana"
-
-#: prefs.js/preferences/main.js:499 prefs.js/ui/prefs.ui:1328
-msgid "App Tweaks"
-msgstr "Štelovanje aplikacija"
-
-#: prefs.js/preferences/main.js:734
-msgid "Add a Custom WM_CLASS"
-msgstr "Dodaj prilagođenu WM_CLASS"
-
-#: prefs.js/ui/prefs.ui:11
+#: src/prefs.ui:11
 msgid "Classy transparency for your panel."
 msgstr "Elegantna transparentnost vašeg panela."
 
-#: prefs.js/ui/prefs.ui:13
+#: src/prefs.ui:13
 msgid "Website"
 msgstr "Domaća stranica"
 
-#: prefs.js/ui/prefs.ui:107
+#: src/prefs.ui:107
 msgid "Shell Restart Required."
 msgstr "Neophodno je ponovno pokretanje školjke"
 
 #. Meant to ask the user if they would like to restart right now or later in a yes/no format.
-#: prefs.js/ui/prefs.ui:108
+#: src/prefs.ui:108
 msgid ""
 "A shell restart is required to view some of your changes. Do you want to "
 "restart now?"
 msgstr "Neophodno je ponovo pokrenuti školjku. Želite li da to učinim odmah?"
 
 #. How long the transition will take.
-#: prefs.js/ui/prefs.ui:188
+#: src/prefs.ui:168
 msgid "Transition Speed"
 msgstr "Brzina prelaza"
 
-#: prefs.js/ui/prefs.ui:218 prefs.js/ui/prefs.ui:246
+#: src/prefs.ui:198 src/prefs.ui:226
 msgid "Overrides 'gtk-enable-animations'."
 msgstr "Premošćuje „gtk-enable-animations“."
 
 #. Whether the panel transitions should happen with the overview transitions or after.
-#: prefs.js/ui/prefs.ui:231
+#: src/prefs.ui:211
 msgid "Transition with the overview"
 msgstr "Prelaz pri pregledu"
 
 #. Whether the panel should transition when a window touches it or only when a window is actually maximized.
-#: prefs.js/ui/prefs.ui:259
+#: src/prefs.ui:239
 msgid "Transition when windows touch the panel"
 msgstr "Prelaz kada prozor dotakne panel"
 
-#: prefs.js/ui/prefs.ui:276
+#: src/prefs.ui:256
 msgid "Transitions"
 msgstr "Prelazi"
 
 #. Allows the user to set their own text color.
-#: prefs.js/ui/prefs.ui:333
+#: src/prefs.ui:313
 msgid "Enable custom text coloring"
 msgstr "Prilagođeno bojenje teksta"
 
 #. The main color to be used.
-#: prefs.js/ui/prefs.ui:360 prefs.js/ui/prefs.ui:375
+#: src/prefs.ui:340 src/prefs.ui:355
 msgid "Primary Color"
 msgstr "Primarna boja"
 
 #. Another color for special functions.
-#: prefs.js/ui/prefs.ui:389 prefs.js/ui/prefs.ui:403
+#: src/prefs.ui:369 src/prefs.ui:383
 msgid "Secondary Color"
 msgstr "Sekundarna boja"
 
-#: prefs.js/ui/prefs.ui:423
+#: src/prefs.ui:403
 msgid "Use when a window is maximized"
 msgstr "Kada je prozor maksimizovan"
 
-#: prefs.js/ui/prefs.ui:446
+#: src/prefs.ui:426
 msgid "Use when the overview is visible"
 msgstr "Kada je vidljiv pregled"
 
-#: prefs.js/ui/prefs.ui:514
+#: src/prefs.ui:486
 msgid "Enable text shadowing"
 msgstr "Senčenje teksta"
 
-#: prefs.js/ui/prefs.ui:554 prefs.js/ui/prefs.ui:615 prefs.js/ui/prefs.ui:753
-#: prefs.js/ui/prefs.ui:814
-msgid "Shadow Color"
-msgstr "Boja senke"
-
-#: prefs.js/ui/prefs.ui:628 prefs.js/ui/prefs.ui:827
-msgid "Radius"
-msgstr "Radijus"
-
-#: prefs.js/ui/prefs.ui:641 prefs.js/ui/prefs.ui:840
-msgid "Horizontal Offset"
-msgstr "Horizontalno odstupanje"
-
-#: prefs.js/ui/prefs.ui:654 prefs.js/ui/prefs.ui:853
-msgid "Vertical Offset"
-msgstr "Vertikalno odstupanje"
-
-#: prefs.js/ui/prefs.ui:713
+#: src/prefs.ui:537
 msgid "Enable icon shadowing"
 msgstr "Senčenje ikone"
 
-#: prefs.js/ui/prefs.ui:899
+#: src/prefs.ui:583
 msgid "Foreground"
 msgstr "Prvi plan"
 
 #. Opacity of the panel when no window is maximized.
-#: prefs.js/ui/prefs.ui:961
+#: src/prefs.ui:645
 msgid "Unmaximized Opacity"
 msgstr "Neprozirnost nemaksimizovanog"
 
 #. Opacity of the panel when a window is maximized.
-#: prefs.js/ui/prefs.ui:1008 prefs.js/ui/app-prefs.ui:117
+#: src/prefs.ui:692
 msgid "Maximized Opacity"
 msgstr "Neprozirnost maksimizovanog"
 
 #. Allows the user to set their own opacity.
-#: prefs.js/ui/prefs.ui:1030
+#: src/prefs.ui:714
 msgid "Enable custom opacity"
 msgstr "Prilagođena neprozirnost"
 
 #. The panel's background color.
-#: prefs.js/ui/prefs.ui:1097 prefs.js/ui/prefs.ui:1112
-#: prefs.js/ui/app-prefs.ui:91
+#: src/prefs.ui:781 src/prefs.ui:796
 msgid "Panel Color"
 msgstr "Boja panela"
 
 #. Allows the user to set their own background color for the panel.
-#: prefs.js/ui/prefs.ui:1133
+#: src/prefs.ui:817
 msgid "Enable custom panel color"
 msgstr "Prilagođena boja panela"
 
 #. Removes any extra styling certain themes may have. Fixes theme issues.
-#: prefs.js/ui/prefs.ui:1197
+#: src/prefs.ui:881
 msgid "Remove excess panel styling"
 msgstr "Ukloni prekomerno stilizovanje panela"
 
-#: prefs.js/ui/prefs.ui:1210
+#: src/prefs.ui:894
 msgid "(Fixes theme incompatibilities.)"
 msgstr "(popravlja nesaglasnosti u temi)"
 
 #. Hides the panel corners.
-#: prefs.js/ui/prefs.ui:1238
+#: src/prefs.ui:922
 msgid "Hide corners"
 msgstr "Skriveni ćoškovi"
 
-#: prefs.js/ui/prefs.ui:1266
+#: src/prefs.ui:950
 msgid "Background"
 msgstr "Pozadina"
 
-#: prefs.js/ui/prefs.ui:1368
+#: src/prefs.ui:990
 msgid "About"
 msgstr "O proširenju"
 
 #. Adds a 'custom' app tweak. Only visible on the App Tweaks page.
-#: prefs.js/ui/prefs.ui:1396
+#: src/prefs.ui:1018
 msgid "Advanced..."
 msgstr "Napredno..."
 
-#: prefs.js/ui/prefs.ui:1432
+#: src/prefs.ui:1074
 msgid ""
 "A WM_CLASS is a code that identifies a window. Use this setting if the "
 "window you want custom settings for is not part of an application. You can "
@@ -190,18 +160,36 @@ msgstr ""
 "dobiti komandom „xprop WM_CLASS“. Unesite drugi rezultat dobijen tom "
 "naredbom, bez navodnika."
 
-#: prefs.js/ui/prefs.ui:1481
+#: src/prefs.ui:1123
 msgid "WM_CLASS cannot be blank."
 msgstr "WM_CLASS ne može biti prazna."
 
-#: prefs.js/ui/app-prefs.ui:51
-msgid "Enable background app tweaks"
-msgstr "Uključi štelovanje pozadinske aplikacije"
+#~ msgid "default"
+#~ msgstr "porazumevana"
 
-#: prefs.js/ui/app-prefs.ui:130
-msgid "Theme Source"
-msgstr "Osnova teme"
+#~ msgid "App Tweaks"
+#~ msgstr "Štelovanje aplikacija"
 
-#: prefs.js/ui/app-prefs.ui:190
-msgid "Always trigger the panel."
-msgstr "Uvek okini panel."
+#~ msgid "Add a Custom WM_CLASS"
+#~ msgstr "Dodaj prilagođenu WM_CLASS"
+
+#~ msgid "Shadow Color"
+#~ msgstr "Boja senke"
+
+#~ msgid "Radius"
+#~ msgstr "Radijus"
+
+#~ msgid "Horizontal Offset"
+#~ msgstr "Horizontalno odstupanje"
+
+#~ msgid "Vertical Offset"
+#~ msgstr "Vertikalno odstupanje"
+
+#~ msgid "Enable background app tweaks"
+#~ msgstr "Uključi štelovanje pozadinske aplikacije"
+
+#~ msgid "Theme Source"
+#~ msgstr "Osnova teme"
+
+#~ msgid "Always trigger the panel."
+#~ msgstr "Uvek okini panel."
