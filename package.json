@@ -1,0 +1,9 @@
+{
+    "name": "dynamic-panel-transparency",
+    "main": "./src/extension.ts",
+    "devDependencies": {
+        "rollup": "^2.15.0",
+        "sass": "^1.26.8",
+        "typescript": "^3.9.5"
+    }
+}

@@ -1,0 +1,234 @@
+# Dynamic Panel Transparency Translation File
+# Copyright (c) 2017
+# This file is distributed under the same license as the dynamic-panel-transparency package.
+#
+# Evan Welsh <contact@evanwelsh.com>, 2017.
+# Jonatan Hatakeyama Zeidler <jonatan_zeidler@gmx.de>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: Dynamic Panel Transparany GNOME Shell Extension\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-06-09 15:57-0500\n"
+"PO-Revision-Date: 2016-09-19 20:09+0200\n"
+"Last-Translator: Jonatan Hatakeyama Zeidler <jonatan_zeidler@gmx.de>\n"
+"Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: src/prefs.ui:11
+msgid "Classy transparency for your panel."
+msgstr "Elegante Transparenz für die obere Leiste."
+
+#: src/prefs.ui:13
+msgid "Website"
+msgstr "Webseite"
+
+#: src/prefs.ui:107
+msgid "Shell Restart Required."
+msgstr "Neustart der GNOME Shell erforderlich."
+
+#. Meant to ask the user if they would like to restart right now or later in a yes/no format.
+#: src/prefs.ui:108
+msgid ""
+"A shell restart is required to view some of your changes. Do you want to "
+"restart now?"
+msgstr ""
+"Ein Neustart der GNOME Shell ist erforderlich, um einige der Änderungen "
+"anzuwenden. Die GNOME Shell jetzt neustarten?"
+
+#. How long the transition will take.
+#: src/prefs.ui:168
+msgid "Transition Speed"
+msgstr "Übergangszeit"
+
+#: src/prefs.ui:198 src/prefs.ui:226
+msgid "Overrides 'gtk-enable-animations'."
+msgstr "Überschreibt 'gtk-enable-animations'."
+
+#. Whether the panel transitions should happen with the overview transitions or after.
+#: src/prefs.ui:211
+msgid "Transition with the overview"
+msgstr ""
+
+#. Whether the panel should transition when a window touches it or only when a window is actually maximized.
+#: src/prefs.ui:239
+msgid "Transition when windows touch the panel"
+msgstr ""
+
+#: src/prefs.ui:256
+msgid "Transitions"
+msgstr "Übergang"
+
+#. Allows the user to set their own text color.
+#: src/prefs.ui:313
+msgid "Enable custom text coloring"
+msgstr "Angepasste Textfarbe aktivieren"
+
+#. The main color to be used.
+#: src/prefs.ui:340 src/prefs.ui:355
+msgid "Primary Color"
+msgstr "Hauptfarbe"
+
+#. Another color for special functions.
+#: src/prefs.ui:369 src/prefs.ui:383
+msgid "Secondary Color"
+msgstr "Zweitfarbe"
+
+#: src/prefs.ui:403
+msgid "Use when a window is maximized"
+msgstr "Nutzen, wenn ein Fenster maximiert ist"
+
+#: src/prefs.ui:426
+msgid "Use when the overview is visible"
+msgstr "Nutzen, wenn ein Fenster sichtbar ist"
+
+#: src/prefs.ui:486
+msgid "Enable text shadowing"
+msgstr "Textschatten aktivieren"
+
+#: src/prefs.ui:537
+msgid "Enable icon shadowing"
+msgstr "Symbolschatten aktivieren"
+
+#: src/prefs.ui:583
+msgid "Foreground"
+msgstr "Vordergrund"
+
+#. Opacity of the panel when no window is maximized.
+#: src/prefs.ui:645
+msgid "Unmaximized Opacity"
+msgstr "Deckkraft nicht maximiert"
+
+#. Opacity of the panel when a window is maximized.
+#: src/prefs.ui:692
+msgid "Maximized Opacity"
+msgstr "Deckkraft maximiert"
+
+#. Allows the user to set their own opacity.
+#: src/prefs.ui:714
+msgid "Enable custom opacity"
+msgstr "Angepasste Deckkraft aktivieren"
+
+#. The panel's background color.
+#: src/prefs.ui:781 src/prefs.ui:796
+msgid "Panel Color"
+msgstr "Hintergrundfarbe"
+
+#. Allows the user to set their own background color for the panel.
+#: src/prefs.ui:817
+msgid "Enable custom panel color"
+msgstr "Angepasste Hintergrundfarbe aktivieren"
+
+#. Removes any extra styling certain themes may have. Fixes theme issues.
+#: src/prefs.ui:881
+msgid "Remove excess panel styling"
+msgstr "Entfernt übertriebene Gestaltung der oberen Leiste"
+
+#: src/prefs.ui:894
+msgid "(Fixes theme incompatibilities.)"
+msgstr "(Behebt Themeninkompatibilitäten.)"
+
+#. Hides the panel corners.
+#: src/prefs.ui:922
+msgid "Hide corners"
+msgstr "Ecken deaktivieren"
+
+#: src/prefs.ui:950
+msgid "Background"
+msgstr "Hintergrund"
+
+#: src/prefs.ui:990
+msgid "About"
+msgstr "Info"
+
+#. Adds a 'custom' app tweak. Only visible on the App Tweaks page.
+#: src/prefs.ui:1018
+msgid "Advanced..."
+msgstr "Fortgeschritten …"
+
+#: src/prefs.ui:1074
+msgid ""
+"A WM_CLASS is a code that identifies a window. Use this setting if the "
+"window you want custom settings for is not part of an application. You can "
+"find a window's WM_CLASS with the command 'xprop WM_CLASS'. Enter the second "
+"result from 'xprop WM_CLASS' below without quotation marks."
+msgstr ""
+"Eine WM_CLASS ist ein Code zur Identifizierung von Fenstern. Diese "
+"Einstellung ist nützlich, wenn das Fenster nicht Teil einer gelisteten "
+"Anwendung ist. Die WM_CLASS eines Fensters kann mit dem Befehl 'xprop "
+"WM_CLASS' herausgefunden werden. Bitte den zweiten Treffer des Befehls hier "
+"eintragen (Ohne Anführungsstriche)."
+
+#: src/prefs.ui:1123
+msgid "WM_CLASS cannot be blank."
+msgstr "WM_CLASS darf nicht leer sein."
+
+#~ msgid "default"
+#~ msgstr "Vorgabe"
+
+#~ msgid "App Tweaks"
+#~ msgstr "Anwendungsoptimierung"
+
+#~ msgid "Add a Custom WM_CLASS"
+#~ msgstr "Angepasste WM_CLASS hinzufügen\t"
+
+#~ msgid "Shadow Color"
+#~ msgstr "Schattenfarbe"
+
+#~ msgid "Radius"
+#~ msgstr "Radius"
+
+#~ msgid "Horizontal Offset"
+#~ msgstr "Horizontaler Versatz"
+
+#~ msgid "Vertical Offset"
+#~ msgstr "Vertikaler Versatz"
+
+#~ msgid "Enable background app tweaks"
+#~ msgstr "Anwendungsoptimierung aktivieren"
+
+#~ msgid "Theme Source"
+#~ msgstr "Themenquelle"
+
+#~ msgid "Always trigger the panel."
+#~ msgstr "Obere Leiste immer anpassen"
+
+#~ msgid "Force animation"
+#~ msgstr "Animation erzwingen"
+
+#~ msgid "Transition Style"
+#~ msgstr "Übergangsstil"
+
+#~ msgid "Linear (default)"
+#~ msgstr "Linear (Vorgabe)"
+
+#~ msgid "Sine"
+#~ msgstr "Sinus\t"
+
+#~ msgid "Quadratic"
+#~ msgstr "Quadratisch"
+
+#~ msgid "Cubic"
+#~ msgstr "Kubisch"
+
+#~ msgid "Quartic"
+#~ msgstr "Biquadratisch"
+
+#~ msgid "Quintic"
+#~ msgstr "Polynom fünften Grades"
+
+#~ msgid "Exponential"
+#~ msgstr "Exponentiell"
+
+#~ msgid "Circle"
+#~ msgstr "Kreisförmig"
+
+#~ msgid "Elastic"
+#~ msgstr "Elastisch"
+
+#~ msgid "Bounce"
+#~ msgstr "Prellend"

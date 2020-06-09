@@ -1,0 +1,195 @@
+# Dynamic Panel Transparency Translation File
+# Copyright (c) 2017
+# This file is distributed under the same license as the dynamic-panel-transparency package.
+#
+# Evan Welsh <contact@evanwelsh.com>, 2017.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-06-09 15:57-0500\n"
+"PO-Revision-Date: 2017-11-18 20:00+0100\n"
+"Last-Translator: Слободан Терзић  <slobodan.terzic@zoho.eu>\n"
+"Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
+"Language: sr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.4\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: src/prefs.ui:11
+msgid "Classy transparency for your panel."
+msgstr "Елегантна транспарентност вашег панела."
+
+#: src/prefs.ui:13
+msgid "Website"
+msgstr "Домаћа страница"
+
+#: src/prefs.ui:107
+msgid "Shell Restart Required."
+msgstr "Неопходно је поновно покретање шкољке"
+
+#. Meant to ask the user if they would like to restart right now or later in a yes/no format.
+#: src/prefs.ui:108
+msgid ""
+"A shell restart is required to view some of your changes. Do you want to "
+"restart now?"
+msgstr "Неопходно је поново покренути шкољку. Желите ли да то учиним одмах?"
+
+#. How long the transition will take.
+#: src/prefs.ui:168
+msgid "Transition Speed"
+msgstr "Брзина прелаза"
+
+#: src/prefs.ui:198 src/prefs.ui:226
+msgid "Overrides 'gtk-enable-animations'."
+msgstr "Премошћује „gtk-enable-animations“."
+
+#. Whether the panel transitions should happen with the overview transitions or after.
+#: src/prefs.ui:211
+msgid "Transition with the overview"
+msgstr "Прелаз при прегледу"
+
+#. Whether the panel should transition when a window touches it or only when a window is actually maximized.
+#: src/prefs.ui:239
+msgid "Transition when windows touch the panel"
+msgstr "Прелаз када прозор дотакне панел"
+
+#: src/prefs.ui:256
+msgid "Transitions"
+msgstr "Прелази"
+
+#. Allows the user to set their own text color.
+#: src/prefs.ui:313
+msgid "Enable custom text coloring"
+msgstr "Прилагођено бојење текста"
+
+#. The main color to be used.
+#: src/prefs.ui:340 src/prefs.ui:355
+msgid "Primary Color"
+msgstr "Примарна боја"
+
+#. Another color for special functions.
+#: src/prefs.ui:369 src/prefs.ui:383
+msgid "Secondary Color"
+msgstr "Секундарна боја"
+
+#: src/prefs.ui:403
+msgid "Use when a window is maximized"
+msgstr "Када је прозор максимизован"
+
+#: src/prefs.ui:426
+msgid "Use when the overview is visible"
+msgstr "Када је видљив преглед"
+
+#: src/prefs.ui:486
+msgid "Enable text shadowing"
+msgstr "Сенчење текста"
+
+#: src/prefs.ui:537
+msgid "Enable icon shadowing"
+msgstr "Сенчење иконе"
+
+#: src/prefs.ui:583
+msgid "Foreground"
+msgstr "Први план"
+
+#. Opacity of the panel when no window is maximized.
+#: src/prefs.ui:645
+msgid "Unmaximized Opacity"
+msgstr "Непрозирност немаксимизованог"
+
+#. Opacity of the panel when a window is maximized.
+#: src/prefs.ui:692
+msgid "Maximized Opacity"
+msgstr "Непрозирност максимизованог"
+
+#. Allows the user to set their own opacity.
+#: src/prefs.ui:714
+msgid "Enable custom opacity"
+msgstr "Прилагођена непрозирност"
+
+#. The panel's background color.
+#: src/prefs.ui:781 src/prefs.ui:796
+msgid "Panel Color"
+msgstr "Боја панела"
+
+#. Allows the user to set their own background color for the panel.
+#: src/prefs.ui:817
+msgid "Enable custom panel color"
+msgstr "Прилагођена боја панела"
+
+#. Removes any extra styling certain themes may have. Fixes theme issues.
+#: src/prefs.ui:881
+msgid "Remove excess panel styling"
+msgstr "Уклони прекомерно стилизовање панела"
+
+#: src/prefs.ui:894
+msgid "(Fixes theme incompatibilities.)"
+msgstr "(поправља несагласности у теми)"
+
+#. Hides the panel corners.
+#: src/prefs.ui:922
+msgid "Hide corners"
+msgstr "Скривени ћошкови"
+
+#: src/prefs.ui:950
+msgid "Background"
+msgstr "Позадина"
+
+#: src/prefs.ui:990
+msgid "About"
+msgstr "О проширењу"
+
+#. Adds a 'custom' app tweak. Only visible on the App Tweaks page.
+#: src/prefs.ui:1018
+msgid "Advanced..."
+msgstr "Напредно..."
+
+#: src/prefs.ui:1074
+msgid ""
+"A WM_CLASS is a code that identifies a window. Use this setting if the "
+"window you want custom settings for is not part of an application. You can "
+"find a window's WM_CLASS with the command 'xprop WM_CLASS'. Enter the second "
+"result from 'xprop WM_CLASS' below without quotation marks."
+msgstr ""
+"WM_CLASS је код који идентификује прозор. Користите ово подешавање уколико "
+"прозор чију поставку желите није део апликације. WM_CLASS прозора можете "
+"добити командом „xprop WM_CLASS“. Унесите други резултат добијен том "
+"наредбом, без наводника."
+
+#: src/prefs.ui:1123
+msgid "WM_CLASS cannot be blank."
+msgstr "WM_CLASS не може бити празна."
+
+#~ msgid "default"
+#~ msgstr "поразумевана"
+
+#~ msgid "App Tweaks"
+#~ msgstr "Штеловање апликација"
+
+#~ msgid "Add a Custom WM_CLASS"
+#~ msgstr "Додај прилагођену WM_CLASS"
+
+#~ msgid "Shadow Color"
+#~ msgstr "Боја сенке"
+
+#~ msgid "Radius"
+#~ msgstr "Радијус"
+
+#~ msgid "Horizontal Offset"
+#~ msgstr "Хоризонтално одступање"
+
+#~ msgid "Vertical Offset"
+#~ msgstr "Вертикално одступање"
+
+#~ msgid "Enable background app tweaks"
+#~ msgstr "Укључи штеловање позадинске апликације"
+
+#~ msgid "Theme Source"
+#~ msgstr "Основа теме"
+
+#~ msgid "Always trigger the panel."
+#~ msgstr "Увек окини панел."

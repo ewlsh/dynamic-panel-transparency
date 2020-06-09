@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "checkJs": true,
+        "allowJs": true,
+        "noImplicitAny": true,
+        "resolveJsonModule": true,
+        "moduleResolution": "node",
+        "baseUrl": "./",
+        "outDir": "./_compiled",
+        "target": "ES2017",
+        "lib": [
+            "ES2017",
+            "ES2019.Object"
+        ],
+        "paths": {
+            "*": [
+                "gi/*"
+            ]
+        }
+    },
+    "include": [
+        "./src/*.ts",
+        "./types/*.d.ts"
+    ]
+}
