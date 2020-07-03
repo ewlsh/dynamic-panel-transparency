@@ -30,26 +30,6 @@
       <summary>Panel Color</summary>
       <description>The background color of the panel.</description>
     </key>
-    <key name="current-user-theme" type="s">
-      <default>"Adwaita"</default>
-      <summary>Current User Theme</summary>
-      <description>The name of the current theme that this extension has analyzed.</description>
-    </key>
-    <key name="force-theme-update" type="b">
-      <default>false</default>
-      <summary>Force Theme Update</summary>
-      <description>If true the extension will always update theme data on the next startup.</description>
-    </key>
-    <key name="panel-theme-color" type="(iii)">
-      <default>(0,0,0)</default>
-      <summary>Panel Theme Color</summary>
-      <description>The background color of the panel as described by the user's theme.</description>
-    </key>
-    <key name="theme-opacity" type="i">
-      <default>255</default>
-      <summary>Panel Theme Opacity</summary>
-      <description>The background opacity of the panel as described by the user's theme.</description>
-    </key>
     <key name="enable-opacity" type="b">
       <default>false</default>
       <summary>Enable custom opacities</summary>
@@ -119,26 +99,6 @@
       <default>false</default>
       <summary>Remove incompatible theming</summary>
       <description>Whether certain usually incompatible theme styles should be removed.</description>
-    </key>
-    <key name="app-overrides" type="as">
-      <default>[]</default>
-      <summary>Overrides settings for each app.</summary>
-      <description>Contains a list of the ids for all apps with custom settings.</description>
-    </key>
-    <key name="window-overrides" type="as">
-      <default>[]</default>
-      <summary>Overrides settings for a WM_CLASS.</summary>
-      <description>Contains a list of the WM_CLASS for all apps with custom settings.</description>
-    </key>
-    <key name="trigger-apps" type="as">
-      <default>[]</default>
-      <summary>Apps that will always trigger the panel when focused.</summary>
-      <description>List of app ids that trigger the panel when a window of the app is in focus.</description>
-    </key>
-    <key name="trigger-windows" type="as">
-      <default>[]</default>
-      <summary>Windows that will always trigger the panel when focused.</summary>
-      <description>List of windows that triggers the panel when a window of the app is open.</description>
     </key>
     <key name="transition-type" type="i">
       <default>1</default>

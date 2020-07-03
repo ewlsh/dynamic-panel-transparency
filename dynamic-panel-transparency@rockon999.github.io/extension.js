@@ -23,13 +23,8 @@ const Transitions = Me.imports.transitions;
 
 const SETTINGS_DELAY = 3000;
 
-const USER_THEME_SCHEMA = 'org.gnome.shell.extensions.user-theme';
-
 /* Only way to prevent multiple runs apparently. Hacky-ness. */
 let modified = false;
-
-/* User theme extension settings... */
-let theme_settings = null;
 
 /* Initialize */
 function init() { }
@@ -43,113 +38,15 @@ function enable() {
     Theming.init();
     Intellifade.init();
 
-    try {
-        let schemaObj = Convenience.getSchemaObj(USER_THEME_SCHEMA, true);
+    /* Modify the panel. */
+    modify_panel();
 
-        if (schemaObj) {
-            theme_settings = new Gio.Settings({
-                settings_schema: schemaObj
-            });
-        }
-    } catch (error) {
-        log('[Dynamic Panel Transparency] Failed to find the user theme extension.');
-    }
+    /* Start the event loop. */
+    Events.init();
 
-    if (!theme_settings) {
-        idle_enable(false);
-    } else {
-        /* Is our data current? */
-        let theme_name = theme_settings.get_string('name');
-        theme_name = theme_name === '' ? 'Adwaita' : theme_name;
+    /* Simulate window changes. */
+    Intellifade.forceSyncCheck();
 
-        let current = Settings.get_current_user_theme();
-
-        if (current !== theme_name || Settings.force_theme_update()) {
-            /* Wait for the theme extension to initialize and enable. */
-            idle_enable(true, theme_settings);
-        } else {
-            /* Start the plugin. We have our data. */
-            log('[Dynamic Panel Transparency] Using theme data for: ' + Settings._settings.get_string('current-user-theme'));
-
-            let theme_color = Settings.get_panel_theme_color();
-            let opacity = Settings.get_theme_opacity();
-
-            Theming.set_theme_background_color(theme_color);
-            Theming.set_theme_opacity(opacity);
-
-            /* Modify the panel. */
-            modify_panel();
-
-            /* Start the event loop. */
-            Events.init();
-
-            /* Simulate window changes. */
-            Intellifade.forceSyncCheck();
-        }
-    }
-}
-
-function idle_enable(update, theme_settings = null) {
-    /* Delay the extension so we can retreive the theme background color (why are user themes an extension?). */
-    Mainloop.idle_add((function() {
-        let extension = imports.misc.extensionUtils.getCurrentExtension();
-
-        if (modified) {
-            log('[Dynamic Panel Transparency] Attempted to run modifications multiple times.');
-            return false;
-        }
-
-        if (!extension || (extension && typeof (extension.extensionState) !== 'undefined' && extension.extensionState === ExtensionSystem.ExtensionState.DISABLED)) {
-            log('[Dynamic Panel Transparency] Tried to modify the panel while disabled.');
-            return false;
-        }
-
-        modified = true;
-
-        let background = null;
-
-        if (update) {
-            log('[Dynamic Panel Transparency] Updating user theme data.');
-
-            let theme = Main.panel.get_theme_node();
-
-            let image_background = Theming.get_background_image_color(theme);
-            let theme_background = theme.get_background_color();
-
-            background = (image_background !== null ? image_background : theme_background);
-
-            let theme_name = theme_settings.get_string('name');
-            theme_name = theme_name === '' ? 'Adwaita' : theme_name;
-
-            /* The Settings convenience object wasn't built to handle setting, so we use the internal object... */
-            Settings._settings.set_string('current-user-theme', theme_name);
-            Settings._settings.set_value('panel-theme-color', new GLib.Variant('(iii)', [background.red, background.green, background.blue]));
-            Settings._settings.set_value('theme-opacity', new GLib.Variant('i', background.alpha));
-            Settings._settings.set_value('force-theme-update', new GLib.Variant('b', false));
-            log('[Dynamic Panel Transparency] Detected shell theme style: rgba(' + background.red + ', ' + background.green + ', ' + background.blue + ', ' + background.alpha + ')');
-        } else {
-            let color = Settings.get_panel_theme_color();
-            let opacity = Settings.get_theme_opacity();
-
-            background = { red: color.red, blue: color.blue, green: color.green, alpha: opacity };
-        }
-
-        log('[Dynamic Panel Transparency] Using theme data for: ' + Settings.get_current_user_theme());
-
-        Theming.set_theme_background_color(Util.clutter_to_native_color(background));
-        Theming.set_theme_opacity(background.alpha);
-
-        /* Modify the panel. */
-        modify_panel();
-
-        /* Start the event loop. */
-        Events.init();
-
-        /* Simulate window changes. */
-        Intellifade.forceSyncCheck();
-
-        return false;
-    }).bind(this));
 }
 
 function disable() {
@@ -183,18 +80,6 @@ function disable() {
 }
 
 function modify_panel() {
-    /* Initial Coloring */
-
-    let theme_color = Theming.get_theme_background_color();
-
-    /* Update the corners. */
-
-    Theming.set_corner_color({
-        red: theme_color.red,
-        green: theme_color.green,
-        blue: theme_color.blue
-    });
-
     /* Get Rid of the Panel's CSS Background */
     Theming.initialize_background_styles();
 
@@ -438,28 +323,6 @@ function initialize_settings() {
                 }).bind(this));
                 /* Legacy Handler */
             }).bind(this)
-    });
-    Settings.add({
-        key: 'panel-theme-color',
-        name: 'panel_theme_color',
-        type: '(iii)',
-        parser: Util.tuple_to_native_color
-    });
-    Settings.add({
-        key: 'theme-opacity',
-        name: 'theme_opacity',
-        type: 'i',
-    });
-    Settings.add({
-        key: 'force-theme-update',
-        name: 'force_theme_update',
-        type: 'b',
-        getter: 'force_theme_update'
-    });
-    Settings.add({
-        key: 'current-user-theme',
-        name: 'current_user_theme',
-        type: 's',
     });
     Settings.add({
         key: 'trigger-apps',
@@ -718,25 +581,6 @@ function initialize_settings() {
         name: 'transition_windows_touch',
         getter: 'transition_when_windows_touch_panel',
         type: 'b'
-    });
-
-    /* App-Specific Settings */
-
-    Settings.add_app_setting({
-        key: 'enable-background-tweaks',
-        name: 'enable_background_tweaks',
-        type: 'b'
-    });
-    Settings.add_app_override({
-        key: 'maximized-opacity',
-        name: 'maximized_opacity',
-        type: 'i'
-    });
-    Settings.add_app_override({
-        key: 'panel-color',
-        name: 'panel_color',
-        type: '(iii)',
-        parser: Util.tuple_to_native_color
     });
 
     /* After we've given Settings the necessary information... let's bind it. */

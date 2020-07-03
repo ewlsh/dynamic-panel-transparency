@@ -69,30 +69,21 @@ function minimum_fade_in() {
  *
  */
 function fade_in() {
-    let custom = Settings.get_panel_color({ app_info: true });
-
     if (!Settings.remove_panel_styling()) {
         Theming.reapply_panel_styling();
         Theming.reapply_panel_background_image();
     }
 
-    if (custom.app_info !== null && Settings.check_overrides() && (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info])) {
-        let prefix = custom.app_info.split('.').join('-');
+    if (Settings.enable_custom_background_color()) {
+        Theming.set_maximized_background_color('custom');
 
-        Theming.set_maximized_background_color('tweak-' + prefix);
-        Theming.remove_background_color({
-            exclude: 'tweak-' + prefix
-        });
-    } else if (Settings.enable_custom_background_color()) {
-        Theming.set_maximized_background_color();
-        Theming.remove_background_color({
-            exclude_base: true
-        });
+        Theming.remove_unmaximized_background_color();
+        Theming.remove_unmaximized_background_color('custom');
     } else {
-        Theming.set_maximized_background_color(Settings.get_current_user_theme());
-        Theming.remove_background_color({
-            exclude: Settings.get_current_user_theme(),
-        });
+        Theming.set_maximized_background_color();
+
+        Theming.remove_unmaximized_background_color();
+        Theming.remove_unmaximized_background_color('custom');
     }
 
     if (!Settings.get_hide_corners()) {
@@ -139,17 +130,15 @@ function fade_out() {
     Theming.strip_panel_styling();
 
     if (Settings.enable_custom_background_color()) {
-        Theming.set_unmaximized_background_color();
-        Theming.remove_background_color({
-            exclude_base: true,
-            exclude_unmaximized_variant_only: true
-        });
+        Theming.set_unmaximized_background_color('custom');
+
+        Theming.remove_maximized_background_color();
+        Theming.remove_maximized_background_color('custom');
     } else {
-        Theming.set_unmaximized_background_color(Settings.get_current_user_theme());
-        Theming.remove_background_color({
-            exclude: Settings.get_current_user_theme(),
-            exclude_unmaximized_variant_only: true
-        });
+        Theming.set_unmaximized_background_color();
+
+        Theming.remove_maximized_background_color();
+        Theming.remove_maximized_background_color('custom');
     }
 
     // TODO: Figure out how to write the panel corners in pure CSS.

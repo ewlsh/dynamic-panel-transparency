@@ -1,4 +1,4 @@
-/* exported init, cleanup, remove_maximized_background_color, remove_unmaximized_background_color, set_maximized_background_color, set_unmaximized_background_color, remove_background_color, set_theme_background_color, set_theme_opacity, get_theme_opacity, get_theme_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
+/* exported init, cleanup, remove_maximized_background_color, remove_unmaximized_background_color, set_maximized_background_color, set_unmaximized_background_color, remove_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
 
 const St = imports.gi.St;
 
@@ -73,41 +73,6 @@ function cleanup() {
     this.styles = null;
 }
 
-/**
- * Sets the theme background color.
- *
- * @param {Color} color - Object representing an RGBA color.
- */
-function set_theme_background_color(color) {
-    this.theme_background_color = color;
-}
-
-/**
- * Gets the theme opacity.
- *
- * @returns {Number} alpha - Alpha value ranging from 0-255.
- */
-function get_theme_opacity() {
-    return this.theme_opacity;
-}
-
-/**
- * Gets the theme background color.
- *
- * @returns {Object} color - Object representing an RGBA color.
- */
-function get_theme_background_color() {
-    return this.theme_background_color;
-}
-
-/**
- * Sets the theme opacity.
- *
- * @param {Number} alpha - Alpha value ranging from 0-255.
- */
-function set_theme_opacity(alpha) {
-    this.theme_opacity = alpha;
-}
 /**
  * Registers a shadow stylesheet for text in the panel.
  *
@@ -352,26 +317,15 @@ function get_background_image_color(theme) {
  * @returns {Object} Object containing an RGBA color value.
  */
 function get_background_color() {
-    let custom = Settings.get_panel_color({ app_info: true });
-
-    if (custom.app_info !== null && Settings.check_overrides()) {
-        if (Settings.window_settings_manager['enable_background_tweaks'][custom.app_info] || Settings.app_settings_manager['enable_background_tweaks'][custom.app_info]) {
-            return custom.value;
-        } else {
-            if (!Settings.enable_custom_background_color()) {
-                return this.theme_background_color;
-            }
-
-            let original = Settings.get_panel_color({ app_settings: false });
-            return original;
-        }
-    }
-
     if (!Settings.enable_custom_background_color()) {
-        return this.theme_background_color;
-    } else {
-        return custom.value;
+        return {
+            red: 0,
+            blue: 0,
+            green: 0
+        };
     }
+
+    return Settings.get_panel_color();
 }
 
 /**
@@ -382,27 +336,12 @@ function get_background_color() {
  * @returns {Number} Alpha value from 0-255.
  */
 function get_maximized_opacity() {
-    let maximized_opacity = Settings.get_maximized_opacity({ app_info: true });
-
-    /* 1) Make sure we want a custom opacity. */
-    /* 2) If custom.app_info !== null that means the setting is overriden. */
-    if (maximized_opacity.app_info !== null && Settings.check_overrides()) {
-        if (Settings.window_settings_manager['enable_background_tweaks'][maximized_opacity.app_info] || Settings.app_settings_manager['enable_background_tweaks'][maximized_opacity.app_info]) {
-            return maximized_opacity.value;
-        }
-    }
+    let maximized_opacity = Settings.get_maximized_opacity();
 
     if (!Settings.enable_custom_opacity()) {
-        if (this.theme_opacity >= THEME_OPACITY_THRESHOLD) {
-            return this.theme_opacity;
-        } else if (this.theme_opacity === 0) {
-            /* Get the default value if the theme already added transparency */
-            return Settings.get_maximized_opacity({ default: true });
-        } else {
-            return THEME_OPACITY_THRESHOLD;
-        }
+        return 255;
     } else {
-        return maximized_opacity.value;
+        return maximized_opacity;
     }
 }
 
@@ -416,7 +355,7 @@ function get_unmaximized_opacity() {
     if (Settings.enable_custom_opacity()) {
         return Settings.get_unmaximized_opacity();
     } else {
-        return Settings.get_unmaximized_opacity({ default: true });
+        return 50;
     }
 }
 
@@ -602,31 +541,12 @@ function average_color(source, width, height) {
 /* Backend24 (3.24+) Specific Functions (Not backwards compatible) */
 
 function initialize_background_styles() {
-    register_background_color(get_theme_background_color(), Settings.get_current_user_theme());
-    register_background_color(Settings.get_panel_color());
-
-    let tweaked_apps = Object.keys(Settings.app_settings_manager['enable_background_tweaks']);
-    let tweaked_windows = Object.keys(Settings.window_settings_manager['enable_background_tweaks']);
-
-    for (let key of tweaked_apps) {
-        let prefix = key.split('.').join('-');
-
-        if (Settings.app_settings_manager['maximized_opacity'][key]) {
-            register_background_color(Util.tuple_to_native_color(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks', Settings.window_settings_manager['maximized_opacity'][key]);
-        } else {
-            register_background_color(Util.tuple_to_native_color(Settings.app_settings_manager['panel_color'][key]), prefix, 'tweaks');
-        }
-    }
-
-    for (let key of tweaked_windows) {
-        let prefix = key.split('.').join('-');
-
-        if (Settings.window_settings_manager['maximized_opacity'][key]) {
-            register_background_color(Util.tuple_to_native_color(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks', Settings.window_settings_manager['maximized_opacity'][key]);
-        } else {
-            register_background_color(Util.tuple_to_native_color(Settings.window_settings_manager['panel_color'][key]), prefix, 'tweaks');
-        }
-    }
+    register_background_color(Settings.get_panel_color(), 'custom');
+    register_background_color({
+        red: 0,
+        green: 0,
+        blue: 0
+    });
 }
 
 function cleanup_background_styles() {
@@ -639,26 +559,17 @@ function register_background_style(style) {
     }
 }
 
-function register_background_color(bg_color, prefix, tweak_name, maximized_opacity, unmaximized_opacity) {
+function register_background_color(bg_color, prefix) {
     let suffix = (prefix ? '-' + prefix : '');
 
-    if (prefix === '') {
-        prefix = '-default-';
-    } else if (prefix) {
+    if (prefix) {
         prefix = '-' + prefix + '-';
     } else {
         prefix = '-';
     }
 
-    if (tweak_name) {
-        tweak_name = tweak_name + '/';
-        prefix = '-tweak' + prefix;
-    } else {
-        tweak_name = '';
-    }
-
-    maximized_opacity = Util.clamp(((maximized_opacity ? maximized_opacity : get_maximized_opacity()) / SCALE_FACTOR), 0, 1).toFixed(2);
-    unmaximized_opacity = Util.clamp(((unmaximized_opacity ? unmaximized_opacity : get_unmaximized_opacity()) / SCALE_FACTOR), 0, 1).toFixed(2);
+    let maximized_opacity = Util.clamp(get_maximized_opacity() / SCALE_FACTOR, 0, 1).toFixed(2);
+    let unmaximized_opacity = Util.clamp(get_unmaximized_opacity() / SCALE_FACTOR, 0, 1).toFixed(2);
 
     let maximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + maximized_opacity + ')';
     let unmaximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + unmaximized_opacity + ')';
@@ -666,7 +577,7 @@ function register_background_color(bg_color, prefix, tweak_name, maximized_opaci
     register_background_style('dpt-panel' + prefix + 'maximized');
     register_background_style('dpt-panel' + prefix + 'unmaximized');
 
-    let file_prefix = 'background/' + tweak_name + 'panel';
+    let file_prefix = 'background/panel';
 
     let panel = apply_stylesheet_css('.dpt-panel' + prefix + 'unmaximized { background-color: ' + unmaximized_bg_color_css + '; }\n.dpt-panel' + prefix + 'maximized { background-color: ' + maximized_bg_color_css + '; }', file_prefix + suffix);
 
@@ -717,34 +628,12 @@ function remove_maximized_background_color(prefix) {
     Panel.remove_style_class_name('dpt-panel' + prefix + 'maximized');
 }
 
-function remove_background_color(params) {
-    params = Params.parse(params, {
-        exclude: null,
-        exclude_maximized_variant_only: false,
-        exclude_unmaximized_variant_only: false,
-        exclude_base: false
-    });
+function remove_background_color() {
+    remove_unmaximized_background_color('custom');
+    remove_unmaximized_background_color();
 
-    let prefix = null;
-
-    if (params.exclude) {
-        prefix = '-' + params.exclude + '-';
-    } else if (params.exclude_base) {
-        prefix = '-';
-    }
-
-    let excluded_maximized_style = (prefix === null ? null : 'dpt-panel' + prefix) + 'maximized';
-    let excluded_unmaximized_style = (prefix === null ? null : 'dpt-panel' + prefix) + 'unmaximized';
-
-    for (let style of this.background_styles) {
-        let a = params.exclude_maximized_variant_only && style !== excluded_maximized_style;
-        let b = params.exclude_unmaximized_variant_only && style !== excluded_unmaximized_style;
-        let c = !params.exclude_maximized_variant_only && !params.exclude_unmaximized_variant_only && style !== excluded_maximized_style && style !== excluded_unmaximized_style;
-
-        if (c || a || b) {
-            Panel.remove_style_class_name(style);
-        }
-    }
+    remove_maximized_background_color('custom');
+    remove_maximized_background_color();
 }
 
 function update_transition_css() {
