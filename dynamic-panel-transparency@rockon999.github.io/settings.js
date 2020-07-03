@@ -1,4 +1,4 @@
-/* exported init, cleanup, add, add_app_setting, add_app_override, check_overrides, check_triggers, bind, unbind */
+/* exported init, cleanup, add, bind, unbind */
 
 const Lang = imports.lang;
 
@@ -18,9 +18,6 @@ const Gio = imports.gi.Gio;
 const WINDOW_OVERRIDES_SCHEMA_PATH = '/org/gnome/shell/extensions/dynamic-panel-transparency/windowOverrides/';
 const APP_OVERRIDES_SCHEMA_PATH = '/org/gnome/shell/extensions/dynamic-panel-transparency/appOverrides/';
 const OVERRIDES_SCHEMA_ID = 'org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides';
-
-const SETTINGS_WINDOW_OVERRIDES = 'window-overrides';
-const SETTINGS_APP_OVERRIDES = 'app-overrides';
 
 const GNOME_BACKGROUND_SCHEMA = 'org.gnome.desktop.wm.keybindings';
 const SETTINGS_SHOW_DESKTOP = 'show-desktop';
@@ -61,8 +58,6 @@ function init() {
 
     this.settingsBoundIds = [];
 
-    this._app_overrides = this._settings.get_strv(SETTINGS_APP_OVERRIDES);
-    this._window_overrides = this._settings.get_strv(SETTINGS_WINDOW_OVERRIDES);
     this._show_desktop = null;
 
     if (this._background_settings) {
@@ -80,26 +75,6 @@ function init() {
             this._enable_animations = this._interface_settings.get_boolean(SETTINGS_ENABLE_ANIMATIONS);
         }).bind(this)));
     }
-
-    this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_APP_OVERRIDES, (function() {
-        this._app_overrides = this._settings.get_strv(SETTINGS_APP_OVERRIDES);
-        this.app_settings_manager.unbind();
-        this.app_settings_manager = new AppSettingsManager(this._app_keys, this.get_app_overrides(), APP_OVERRIDES_SCHEMA_PATH);
-    }).bind(this)));
-
-    this.settingsBoundIds.push(this._settings.connect('changed::' + SETTINGS_WINDOW_OVERRIDES, (function() {
-        this._window_overrides = this._settings.get_strv(SETTINGS_WINDOW_OVERRIDES);
-        this.window_settings_manager.unbind();
-        this.window_settings_manager = new AppSettingsManager(this._app_keys, this.get_window_overrides(), WINDOW_OVERRIDES_SCHEMA_PATH);
-    }).bind(this)));
-
-    this.get_app_overrides = function() {
-        return this._app_overrides;
-    };
-
-    this.get_window_overrides = function() {
-        return this._window_overrides;
-    };
 
     this.gs_show_desktop = function() {
         return this._show_desktop;
@@ -121,9 +96,6 @@ function cleanup() {
     }
 
     this._keys = null;
-    this._app_keys = null;
-    this._overriden_keys = null;
-    this._app_overrides = null;
     this.settingsBoundIds = null;
     this._settings = null;
 }
@@ -149,43 +121,8 @@ function add(params) {
     this._keys.push(key);
 }
 
-function add_app_setting(params) {
-    let key = {
-        key: params.key,
-        name: params.name,
-        type: params.type,
-        parser: null,
-        getter: null,
-        handler: null,
-    };
-
-    if (typeof(params.getter) !== 'undefined')
-        key.getter = params.getter;
-    if (typeof(params.handler)!== 'undefined')
-        key.handler = params.handler;
-    if (typeof(params.parser)!== 'undefined')
-        key.parser = params.parser;
-
-    this._app_keys[params.key] = key;
-}
-
-function add_app_override(params) {
-    add_app_setting(params);
-    this._overriden_keys.push(params.key);
-}
-
-function check_overrides() {
-    return (this.get_app_overrides().length > 0) || (this.get_window_overrides().length > 0);
-}
-
-function check_triggers() {
-    return (this.get_trigger_apps().length > 0) || (this.get_trigger_windows().length > 0);
-}
-
 function bind() {
     this.settings_manager = new SettingsManager(this._settings, this._keys);
-    this.app_settings_manager = new AppSettingsManager(this._app_keys, this.get_app_overrides(), APP_OVERRIDES_SCHEMA_PATH);
-    this.window_settings_manager = new AppSettingsManager(this._app_keys, this.get_window_overrides(), WINDOW_OVERRIDES_SCHEMA_PATH);
 
     for (let i = 0; i < this._keys.length; ++i) {
         let setting = this._keys[i];
@@ -211,82 +148,9 @@ function bind() {
             return input;
         });
 
-        let getter = function(params) {
-            params = Params.parse(params, { app_settings: true, app_info: false, default: false });
-
-            if (params.app_info) {
-                if (params.default) {
-                    return { value: parser(this._settings.get_default_value(setting.key).unpack()), app_info: null };
-                }
-                return { value: parser(this.settings_manager[setting.name]), app_info: null };
-            }
-
-            if (params.default) {
-                return parser(this._settings.get_default_value(setting.key).unpack());
-            }
-
+        let getter = function() {
             return parser(this.settings_manager[setting.name]);
         };
-
-        /* Add function */
-
-        if (this._overriden_keys.indexOf(setting.key) !== -1) {
-            getter = function(params) {
-                params = Params.parse(params, { app_settings: true, app_info: false, default: false });
-
-                if (params.app_info && params.default) {
-                    return { value: parser(this._settings.get_default_value(setting.key).unpack()), app_info: null };
-                }
-
-                if (params.default) {
-                    return this._settings.get_default_value(setting.key).unpack();
-                }
-
-                let maximized_window = Intellifade.get_current_maximized_window();
-
-                if (maximized_window && this.check_overrides() && params.app_settings) {
-                    if (this.window_settings_manager[setting.name]) {
-                        let value = this.window_settings_manager[setting.name][maximized_window.get_wm_class()];
-                        if (value) {
-                            let window_setting = this._app_keys[setting.key];
-                            let window_parser = (window_setting && window_setting.parser !== null) ? window_setting.parser : function(input) {
-                                return input;
-                            };
-                            if (value) {
-                                let result = window_parser(value, parser(this.settings_manager[setting.name]), maximized_window.get_wm_class(), true);
-                                if (params.app_info) {
-                                    return { value: result, app_info: maximized_window.get_wm_class() };
-                                }
-                                return result;
-                            }
-                        }
-                    }
-                    if (Intellifade._wm_tracker && this.app_settings_manager[setting.name]) {
-                        let shell_app = Intellifade._wm_tracker.get_window_app(maximized_window);
-                        if (shell_app && shell_app.get_id()) {
-                            let app_id = shell_app.get_id();
-                            let app_setting = this._app_keys[setting.key];
-                            let app_parser = ((app_setting && app_setting.parser !== null) ? app_setting.parser : function(input) {
-                                return input;
-                            });
-                            let value = this.app_settings_manager[setting.name][app_id];
-
-                            if (value) {
-                                let result = app_parser(value, parser(this.settings_manager[setting.name]), app_id);
-                                if (params.app_info) {
-                                    return { value: result, app_info: app_id };
-                                }
-                                return result;
-                            }
-                        }
-                    }
-                }
-                if (params.app_info) {
-                    return { value: parser(this.settings_manager[setting.name]), app_info: null };
-                }
-                return parser(this.settings_manager[setting.name]);
-            };
-        }
 
         if (!setting.getter) {
             this['get_' + setting.name] = getter;
@@ -297,8 +161,6 @@ function bind() {
 }
 
 function unbind() {
-    this.app_settings_manager.unbind();
-
     for (let i = 0; i < this.settingsBoundIds.length; ++i) {
         this._settings.disconnect(this.settingsBoundIds[i]);
     }
