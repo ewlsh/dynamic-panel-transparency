@@ -11,7 +11,6 @@ const Main = imports.ui.main;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const Compat = Me.imports.compat;
 const Convenience = Me.imports.convenience;
 const Extension = Me.imports.extension;
 const Intellifade = Me.imports.intellifade;
@@ -235,7 +234,7 @@ function _userThemeChanged() {
 
         log('[Dynamic Panel Transparency] Updating user theme data.');
 
-        let theme = Compat.getActorOf(Main.panel).get_theme_node();
+        let theme = Main.panel.get_theme_node();
 
         /* Store user theme values. */
         let background = null;
