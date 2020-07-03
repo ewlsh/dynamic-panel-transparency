@@ -12,7 +12,6 @@ const Main = imports.ui.main;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const Compat = Me.imports.compat;
 const Convenience = Me.imports.convenience;
 const Events = Me.imports.events;
 const Intellifade = Me.imports.intellifade;
@@ -112,7 +111,7 @@ function idle_enable(update, theme_settings = null) {
         if (update) {
             log('[Dynamic Panel Transparency] Updating user theme data.');
 
-            let theme = Compat.getActorOf(Main.panel).get_theme_node();
+            let theme = Main.panel.get_theme_node();
 
             let image_background = Theming.get_background_image_color(theme);
             let theme_background = theme.get_background_color();
@@ -279,7 +278,7 @@ function initialize_settings() {
         handler: (
             /* Update the backend24 transition CSS. */
             function() {
-                Compat.getActorOf(Main.panel).remove_style_class_name('dpt-panel-transition-duration');
+                Main.panel.remove_style_class_name('dpt-panel-transition-duration');
 
                 let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
 
