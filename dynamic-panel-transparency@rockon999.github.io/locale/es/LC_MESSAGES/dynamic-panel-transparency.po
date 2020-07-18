@@ -4,13 +4,14 @@
 #
 # Evan Welsh <contact@evanwelsh.com>, 2017.
 # Alonso Lara <alonso.lara.plana@gmail.com>, 2017.
+# Óscar Fernández <oscfdezdz@tuta.io>, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-09-29 15:41-0400\n"
-"PO-Revision-Date: 2017-03-04 13:48+0100\n"
-"Last-Translator: Alonso Lara <alonso.lara.plana@gmail.com>\n"
+"PO-Revision-Date: 2020-07-18 18:05+0200\n"
+"Last-Translator: Óscar Fernández <oscfdezdz@tuta.io>\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -62,12 +63,12 @@ msgstr "Sobreescribe 'gtk-enable-animations'."
 #. Whether the panel transitions should happen with the overview transitions or after.
 #: prefs.js/ui/prefs.ui:231
 msgid "Transition with the overview"
-msgstr ""
+msgstr "Transición con la vista general"
 
 #. Whether the panel should transition when a window touches it or only when a window is actually maximized.
 #: prefs.js/ui/prefs.ui:259
 msgid "Transition when windows touch the panel"
-msgstr ""
+msgstr "Transición cuando las ventanas tocan el panel"
 
 #: prefs.js/ui/prefs.ui:276
 msgid "Transitions"
@@ -205,39 +206,3 @@ msgstr "Fuente del tema"
 #: prefs.js/ui/app-prefs.ui:190
 msgid "Always trigger the panel."
 msgstr "Desencadenar siempre el panel"
-
-#~ msgid "Force animation"
-#~ msgstr "Forzar animación"
-
-#~ msgid "Transition Style"
-#~ msgstr "Estilo de transición"
-
-#~ msgid "Linear (default)"
-#~ msgstr "Lineal (por defecto)"
-
-#~ msgid "Sine"
-#~ msgstr "Senoidal"
-
-#~ msgid "Quadratic"
-#~ msgstr "Cuadrática"
-
-#~ msgid "Cubic"
-#~ msgstr "Cúbica"
-
-#~ msgid "Quartic"
-#~ msgstr "Cuártica"
-
-#~ msgid "Quintic"
-#~ msgstr "Quíntica"
-
-#~ msgid "Exponential"
-#~ msgstr "Exponencial"
-
-#~ msgid "Circle"
-#~ msgstr "Circular"
-
-#~ msgid "Elastic"
-#~ msgstr "Elástica"
-
-#~ msgid "Bounce"
-#~ msgstr "Rebotar"
