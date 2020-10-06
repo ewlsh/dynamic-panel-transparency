@@ -126,6 +126,8 @@ function unmodify_panel() {
     Theming.reapply_panel_styling();
     Theming.reapply_panel_background_image();
 
+    Theming.remove_panel_transparency();
+
     /* Remove shadowing */
     if (Theming.has_text_shadow()) {
         Theming.remove_text_shadow();

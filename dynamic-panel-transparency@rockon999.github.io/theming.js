@@ -317,6 +317,22 @@ function get_unmaximized_opacity() {
 }
 
 /**
+ * Applies the style class 'panel-transparency' which makes the panel fully transparent.
+ *
+ */
+function apply_panel_transparency() {
+    Panel.add_style_class_name('panel-transparency');
+}
+
+/**
+ * Applies the style class 'panel-transparency' which makes the panel fully transparent.
+ *
+ */
+function remove_panel_transparency() {
+    Panel.remove_style_class_name('panel-transparency');
+}
+
+/**
  * Applies the style class 'panel-effect-transparency' and removes the basic CSS preventing this extension's transitions.
  *
  */
