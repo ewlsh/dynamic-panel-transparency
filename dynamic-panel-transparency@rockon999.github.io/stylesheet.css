@@ -1,5 +1,9 @@
 /* Used to remove odd effects when full transparency is needed. */
 
+.panel-transparency {
+  background-color: rgba(0, 0, 0, 0);
+}
+
 .panel-effect-transparency {
   box-shadow: none;
   border: none;
