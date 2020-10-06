@@ -115,6 +115,8 @@ function fade_in() {
 
             return true;
         }).bind(this));
+    } else {
+        update_corner_alpha();
     }
 
     this.status.set_transparent(false);
@@ -171,6 +173,8 @@ function fade_out() {
             }
             return true;
         }).bind(this));
+    } else {
+        update_corner_alpha();
     }
 
     /* Keep the status up to date */
@@ -217,6 +221,8 @@ function blank_fade_out() {
             }
             return true;
         }).bind(this));
+    } else {
+        update_corner_alpha();
     }
 }
 
