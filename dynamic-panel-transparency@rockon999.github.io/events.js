@@ -35,8 +35,6 @@ const Transitions = Me.imports.transitions;
  *
  */
 function init() {
-    this.windows = [];
-
     this._wm_tracker = Shell.WindowTracker.get_default();
 
     this._overviewHidingSig = Main.overview.connect('hiding', Util.strip_args(Intellifade.syncCheck).bind(this));
@@ -108,12 +106,12 @@ function cleanup() {
 
     disconnect(this._wm_tracker, this._appFocusedSig);
 
-    for (let window_actor of this.windows) {
-        if (!window_actor.is_destroyed()) {
-            if (typeof (window_actor._dpt_signals) !== 'undefined') {
-                for (let signalId of window_actor._dpt_signals) {
-                    disconnect(window_actor, signalId);
-                }
+    let windows = global.get_window_actors();
+
+    for (let window_actor of windows) {
+        if (typeof (window_actor._dpt_signals) !== 'undefined') {
+            for (let signalId of window_actor._dpt_signals) {
+                disconnect(window_actor, signalId);
             }
         }
 
@@ -130,8 +128,6 @@ function cleanup() {
     this._windowActorAddedSig = null;
 
     this._wm_tracker = null;
-
-    this.windows = null;
 }
 
 /* Event Handlers */
@@ -176,11 +172,6 @@ function _windowActorRemoved(container, window_actor) {
 
     delete window_actor._dpt_signals;
 
-    let index = this.windows.indexOf(window_actor);
-    if (index !== -1) {
-        this.windows.splice(index, 1);
-    }
-
     Intellifade.asyncCheck();
 }
 
@@ -198,7 +189,6 @@ function _windowActorAdded(window_group, window_actor, force = true) {
             Intellifade.asyncCheck();
         }).bind(this));
         window_actor._dpt_signals = [ac_wId, v_wId];
-        this.windows.push(window_actor);
 
         Intellifade.asyncCheck();
     }
