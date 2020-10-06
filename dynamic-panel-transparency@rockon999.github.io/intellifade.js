@@ -103,23 +103,10 @@ function _updateBounds() {
 
     this.scale_factor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
 
-    const box = Main.layoutManager.panelBox;
-
-    if ('get_anchor_point' in box) {
-        let [, anchor_y] = box.get_anchor_point();
-
-        if (anchor_y <= 0) {
-            this.panel_bounds.y = -anchor_y;
-            this.panel_bounds.is_top = false;
-
-            return;
-        }
-    }
-
     let [, pivot_y] = Main.layoutManager.panelBox.get_pivot_point();
 
     // Adjust for bottom panel.
-    if (pivot_y <= 0) {
+    if (pivot_y < 0) {
         this.panel_bounds.y = -pivot_y;
         this.panel_bounds.is_top = false;
     }
