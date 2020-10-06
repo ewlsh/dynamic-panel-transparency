@@ -236,11 +236,7 @@ function register_style(style) {
  */
 // TODO: Gnome needs CSS styling for the corners.
 function set_corner_color(color) {
-    let panel_color = { red: 0, green: 0, blue: 0 };
-
-    if (typeof (Settings.get_panel_color) !== 'undefined' && Settings.get_panel_color !== null) {
-        panel_color = get_background_color();
-    }
+    let panel_color = get_background_color();
 
     color = Params.parse(color, {
         red: panel_color.red,
