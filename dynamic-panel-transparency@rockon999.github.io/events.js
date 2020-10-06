@@ -175,6 +175,8 @@ function _windowActorRemoved(container, window_actor) {
     Intellifade.asyncCheck();
 }
 
+const { major, minor } = Util.get_shell_version();
+
 /**
  * Called whenever a window is created in the shell.
  *
@@ -182,9 +184,19 @@ function _windowActorRemoved(container, window_actor) {
 function _windowActorAdded(window_group, window_actor, force = true) {
     if (window_actor && (force || typeof (window_actor._dpt_tracking) === 'undefined')) {
         window_actor._dpt_tracking = true;
-        const ac_wId = window_actor.connect('allocation-changed', (function() {
-            Intellifade.asyncCheck();
-        }).bind(this));
+
+        let ac_wId = -1;
+
+        if (major >= 40 || minor > 36) {
+            ac_wId = window_actor.connect('notify::allocation', (function() {
+                Intellifade.asyncCheck();
+            }).bind(this));
+        } else {
+            ac_wId = window_actor.connect('allocation-changed', (function() {
+                Intellifade.asyncCheck();
+            }).bind(this));
+        }
+
         const v_wId = window_actor.connect('notify::visible', (function() {
             Intellifade.asyncCheck();
         }).bind(this));
