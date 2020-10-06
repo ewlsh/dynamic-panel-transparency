@@ -74,6 +74,8 @@ function fade_in() {
         Theming.reapply_panel_background_image();
     }
 
+    Theming.remove_panel_transparency();
+
     if (Settings.enable_custom_background_color()) {
         Theming.set_maximized_background_color('custom');
 
@@ -143,6 +145,8 @@ function fade_out() {
         Theming.remove_maximized_background_color('custom');
     }
 
+    Theming.remove_panel_transparency();
+
     // TODO: Figure out how to write the panel corners in pure CSS.
     if (!Settings.get_hide_corners()) {
         let speed = St.Settings.get().slow_down_factor * Settings.get_transition_speed();
@@ -187,14 +191,16 @@ function fade_out() {
  *
  */
 function blank_fade_out() {
+    this.status.set_transparent(true);
+    this.status.set_blank(true);
+
     /* Completely remove every possible background style... */
     Theming.remove_background_color();
 
     Theming.strip_panel_background_image();
     Theming.strip_panel_styling();
 
-    this.status.set_transparent(true);
-    this.status.set_blank(true);
+    Theming.apply_panel_transparency();
 
     // TODO: These corners...
     if (!Settings.get_hide_corners()) {
