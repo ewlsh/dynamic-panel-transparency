@@ -277,7 +277,7 @@ function _userThemeChanged() {
 function _windowActorAdded(window_group, window_actor, force = true) {
     if (window_actor && (force || typeof (window_actor._dpt_tracking) === 'undefined')) {
         window_actor._dpt_tracking = true;
-        const ac_wId = window_actor.connect('allocation-changed', (function() {
+        const ac_wId = window_actor.connect('notify::allocation', (function() {
             Intellifade.asyncCheck();
         }).bind(this));
         const v_wId = window_actor.connect('notify::visible', (function() {
