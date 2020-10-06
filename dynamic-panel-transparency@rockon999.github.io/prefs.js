@@ -77,7 +77,7 @@ function buildPrefsWidget() {
     /* Setup Translation */
     builder.set_translation_domain(Me.metadata['gettext-domain']);
     /* Get UI File */
-    builder.add_from_file(Me.path + '/prefs.js/ui/prefs.ui');
+    builder.add_from_file(Me.path + '/prefs.ui');
 
     /* Main Widget (Grid) */
     let main_widget = builder.get_object('main_box');
