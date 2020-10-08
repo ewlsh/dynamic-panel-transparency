@@ -1,7 +1,5 @@
 /* exported init, buildPrefsWidget */
 
-const Lang = imports.lang;
-
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gdk = imports.gi.Gdk;

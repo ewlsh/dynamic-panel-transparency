@@ -1,6 +1,5 @@
 /* exported init, enable, disable */
 
-const Lang = imports.lang;
 const Mainloop = imports.mainloop;
 
 const GLib = imports.gi.GLib;
