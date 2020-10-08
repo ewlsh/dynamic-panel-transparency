@@ -1,7 +1,6 @@
 /* exported init, cleanup, lock, unlock, get_animation_status, get_transparency_status, minimum_fade_in, update_transition_type */
 /* exported fade_in, fade_out, blank_fade_out */
 
-const Lang = imports.lang;
 const Mainloop = imports.mainloop;
 
 const St = imports.gi.St;
@@ -14,6 +13,29 @@ const Theming = Me.imports.theming;
 const Equations = imports.tweener.equations;
 
 const CORNER_UPDATE_FREQUENCY = 30;
+
+class TransparencyStatus {
+    constructor() {
+        this.transparent = false;
+        this.blank = false;
+    }
+
+    is_transparent() {
+        return this.transparent;
+    }
+
+    is_blank() {
+        return this.blank;
+    }
+
+    set_transparent(transparent) {
+        this.transparent = transparent;
+    }
+
+    set_blank(blank) {
+        this.blank = blank;
+    }
+};
 
 /**
  * Intialize.
@@ -250,23 +272,3 @@ function update_corner_alpha(alpha = null) {
         alpha: alpha
     });
 }
-
-const TransparencyStatus = new Lang.Class({
-    Name: 'DynamicPanelTransparency_TransparencyStatus',
-    _init: function() {
-        this.transparent = false;
-        this.blank = false;
-    },
-    is_transparent: function() {
-        return this.transparent;
-    },
-    is_blank: function() {
-        return this.blank;
-    },
-    set_transparent: function(transparent) {
-        this.transparent = transparent;
-    },
-    set_blank: function(blank) {
-        this.blank = blank;
-    }
-});

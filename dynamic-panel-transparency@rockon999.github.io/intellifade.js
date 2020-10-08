@@ -2,7 +2,6 @@
 
 const GLib = imports.gi.GLib;
 const Mainloop = imports.mainloop;
-const Lang = imports.lang;
 
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;

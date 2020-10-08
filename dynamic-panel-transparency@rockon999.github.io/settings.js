@@ -1,7 +1,5 @@
 /* exported init, cleanup, add, bind, unbind */
 
-const Lang = imports.lang;
-
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Params = imports.misc.params;
 
@@ -111,11 +109,11 @@ function add(params) {
         handler: null
     };
 
-    if (typeof(params.getter) !== 'undefined')
+    if (typeof (params.getter) !== 'undefined')
         key.getter = params.getter;
-    if (typeof(params.handler)!== 'undefined')
+    if (typeof (params.handler) !== 'undefined')
         key.handler = params.handler;
-    if (typeof(params.parser) !== 'undefined')
+    if (typeof (params.parser) !== 'undefined')
         key.parser = params.parser;
 
     this._keys.push(key);
@@ -167,9 +165,8 @@ function unbind() {
 }
 
 /* Basic class to hold settings values */
-const SettingsManager = new Lang.Class({
-    Name: 'DynamicPanelTransparency_SettingsManager',
-    _init: function(settings, params) {
+class SettingsManager {
+    constructor(settings, params) {
 
         this.values = [];
         this.settings = settings;
@@ -186,8 +183,9 @@ const SettingsManager = new Lang.Class({
                 this[setting.name] = this.settings.get_value(setting.key).unpack();
             }
         }
-    },
-    update: function(setting) {
+    }
+
+    update(setting) {
         if (this.settings.list_keys().indexOf(setting.key) === -1)
             return;
 
@@ -199,11 +197,10 @@ const SettingsManager = new Lang.Class({
             this[setting.name] = this.settings.get_value(setting.key).unpack();
         }
     }
-});
+}
 
-const AppSettingsManager = new Lang.Class({
-    Name: 'DynamicPanelTransparency_AppSettingsManager',
-    _init: function(params, apps, path) {
+class AppSettingsManager {
+    constructor(params, apps, path) {
         this.values = [];
         this.settings = {};
         this.settingsBoundIds = {};
@@ -249,8 +246,9 @@ const AppSettingsManager = new Lang.Class({
                 }
             }
         }
-    },
-    update: function(setting, app_id) {
+    }
+
+    update(setting, app_id) {
         if (!setting || this.settings[app_id].list_keys().indexOf(setting.key) === -1)
             return;
         let variant = GLib.VariantType.new(setting.type);
@@ -261,12 +259,13 @@ const AppSettingsManager = new Lang.Class({
         } else {
             this[setting.name][app_id] = this.settings[app_id].get_value(setting.key).unpack();
         }
-    },
-    unbind: function() {
+    }
+
+    unbind() {
         for (let app_id of Object.keys(this.settings)) {
             for (let id of this.settingsBoundIds[app_id]) {
                 this.settings[app_id].disconnect(id);
             }
         }
     }
-});
+}
