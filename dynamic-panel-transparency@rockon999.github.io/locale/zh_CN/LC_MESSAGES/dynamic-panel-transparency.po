@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-06 09:37-0500\n"
+"POT-Creation-Date: 2021-04-03 11:20-0700\n"
 "PO-Revision-Date: 2016-10-01 15:53+0800\n"
 "Last-Translator: Dingzhong Chen <wsxy162@gmail.com>\n"
 "Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
@@ -20,147 +20,147 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.7\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: prefs.js:91
+#: prefs.js:89
 msgid "default"
 msgstr "默认"
 
-#: prefs.ui:11
+#: prefs.ui:7
 msgid "Classy transparency for your panel."
 msgstr "给你的面板加上优雅的透明感。"
 
-#: prefs.ui:13
+#: prefs.ui:9
 msgid "Website"
 msgstr "网站"
 
-#: prefs.ui:107
+#: prefs.ui:72
 msgid "Shell Restart Required."
 msgstr "需要重启 Shell。"
 
 #. Meant to ask the user if they would like to restart right now or later in a yes/no format.
-#: prefs.ui:108
+#: prefs.ui:73
 msgid ""
 "A shell restart is required to view some of your changes. Do you want to "
 "restart now?"
 msgstr "为了观看你的一些更改的效果需要重启 shell。想现在就重启吗？"
 
 #. How long the transition will take.
-#: prefs.ui:184
+#: prefs.ui:134
 msgid "Transition Speed"
 msgstr "切换速度"
 
-#: prefs.ui:214 prefs.ui:242
+#: prefs.ui:160 prefs.ui:183
 msgid "Overrides 'gtk-enable-animations'."
 msgstr "改写 'gtk-enable-animations'。"
 
 #. Whether the panel transitions should happen with the overview transitions or after.
-#: prefs.ui:227
+#: prefs.ui:171
 msgid "Transition with the overview"
 msgstr ""
 
 #. Whether the panel should transition when a window touches it or only when a window is actually maximized.
-#: prefs.ui:255
+#: prefs.ui:194
 msgid "Transition when windows touch the panel"
 msgstr ""
 
-#: prefs.ui:272
+#: prefs.ui:210
 msgid "Transitions"
 msgstr "切换"
 
 #. Allows the user to set their own text color.
-#: prefs.ui:331
+#: prefs.ui:257
 msgid "Enable custom text coloring"
 msgstr "启用自定义文字颜色"
 
 #. The main color to be used.
-#: prefs.ui:358 prefs.ui:373
+#: prefs.ui:281 prefs.ui:294
 msgid "Primary Color"
 msgstr "主色"
 
 #. Another color for special functions.
-#: prefs.ui:387 prefs.ui:401
+#: prefs.ui:307 prefs.ui:319
 msgid "Secondary Color"
 msgstr "副色"
 
-#: prefs.ui:421
+#: prefs.ui:334
 msgid "Use when a window is maximized"
 msgstr "窗口最大化时使用"
 
-#: prefs.ui:444
+#: prefs.ui:352
 msgid "Use when the overview is visible"
 msgstr "概览视图时使用"
 
-#: prefs.ui:512
+#: prefs.ui:409
 msgid "Enable text shadowing"
 msgstr "启用文字阴影"
 
-#: prefs.ui:552 prefs.ui:613 prefs.ui:751 prefs.ui:812
+#: prefs.ui:442 prefs.ui:496 prefs.ui:609 prefs.ui:663
 msgid "Shadow Color"
 msgstr "阴影颜色"
 
-#: prefs.ui:626 prefs.ui:825
+#: prefs.ui:508 prefs.ui:675
 msgid "Radius"
 msgstr "半径"
 
-#: prefs.ui:639 prefs.ui:838
+#: prefs.ui:520 prefs.ui:687
 msgid "Horizontal Offset"
 msgstr "水平偏移"
 
-#: prefs.ui:652 prefs.ui:851
+#: prefs.ui:532 prefs.ui:699
 msgid "Vertical Offset"
 msgstr "垂直偏移"
 
-#: prefs.ui:711
+#: prefs.ui:576
 msgid "Enable icon shadowing"
 msgstr "启用图标阴影"
 
-#: prefs.ui:897
+#: prefs.ui:734
 msgid "Foreground"
 msgstr "前景"
 
 #. Opacity of the panel when no window is maximized.
-#: prefs.ui:961
+#: prefs.ui:785
 msgid "Unmaximized Opacity"
 msgstr "非最大化的不透明度"
 
 #. Opacity of the panel when a window is maximized.
-#: prefs.ui:1008
+#: prefs.ui:829
 msgid "Maximized Opacity"
 msgstr "最大化的不透明度"
 
 #. Allows the user to set their own opacity.
-#: prefs.ui:1030
+#: prefs.ui:850
 msgid "Enable custom opacity"
 msgstr "启用自定义不透明度"
 
 #. The panel's background color.
-#: prefs.ui:1097 prefs.ui:1112
+#: prefs.ui:902 prefs.ui:915
 msgid "Panel Color"
 msgstr "面板颜色"
 
 #. Allows the user to set their own background color for the panel.
-#: prefs.ui:1133
+#: prefs.ui:935
 msgid "Enable custom panel color"
 msgstr "启用自定义面板颜色"
 
 #. Removes any extra styling certain themes may have. Fixes theme issues.
-#: prefs.ui:1197
+#: prefs.ui:983
 msgid "Remove excess panel styling"
 msgstr "移除过度的面板修饰风格"
 
-#: prefs.ui:1210
+#: prefs.ui:990
 msgid "(Fixes theme incompatibilities.)"
 msgstr "(修复主题的不兼容性。)"
 
 #. Hides the panel corners.
-#: prefs.ui:1238
+#: prefs.ui:1008
 msgid "Hide corners"
 msgstr "隐藏圆角"
 
-#: prefs.ui:1266
+#: prefs.ui:1027
 msgid "Background"
 msgstr "背景"
 
-#: prefs.ui:1306
+#: prefs.ui:1037
 msgid "About"
 msgstr "关于"
 

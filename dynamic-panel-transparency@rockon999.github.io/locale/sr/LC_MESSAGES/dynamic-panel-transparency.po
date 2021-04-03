@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-06 09:37-0500\n"
+"POT-Creation-Date: 2021-04-03 11:20-0700\n"
 "PO-Revision-Date: 2017-11-18 20:00+0100\n"
 "Last-Translator: Слободан Терзић  <slobodan.terzic@zoho.eu>\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
@@ -19,147 +19,147 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: prefs.js:91
+#: prefs.js:89
 msgid "default"
 msgstr "поразумевана"
 
-#: prefs.ui:11
+#: prefs.ui:7
 msgid "Classy transparency for your panel."
 msgstr "Елегантна транспарентност вашег панела."
 
-#: prefs.ui:13
+#: prefs.ui:9
 msgid "Website"
 msgstr "Домаћа страница"
 
-#: prefs.ui:107
+#: prefs.ui:72
 msgid "Shell Restart Required."
 msgstr "Неопходно је поновно покретање шкољке"
 
 #. Meant to ask the user if they would like to restart right now or later in a yes/no format.
-#: prefs.ui:108
+#: prefs.ui:73
 msgid ""
 "A shell restart is required to view some of your changes. Do you want to "
 "restart now?"
 msgstr "Неопходно је поново покренути шкољку. Желите ли да то учиним одмах?"
 
 #. How long the transition will take.
-#: prefs.ui:184
+#: prefs.ui:134
 msgid "Transition Speed"
 msgstr "Брзина прелаза"
 
-#: prefs.ui:214 prefs.ui:242
+#: prefs.ui:160 prefs.ui:183
 msgid "Overrides 'gtk-enable-animations'."
 msgstr "Премошћује „gtk-enable-animations“."
 
 #. Whether the panel transitions should happen with the overview transitions or after.
-#: prefs.ui:227
+#: prefs.ui:171
 msgid "Transition with the overview"
 msgstr "Прелаз при прегледу"
 
 #. Whether the panel should transition when a window touches it or only when a window is actually maximized.
-#: prefs.ui:255
+#: prefs.ui:194
 msgid "Transition when windows touch the panel"
 msgstr "Прелаз када прозор дотакне панел"
 
-#: prefs.ui:272
+#: prefs.ui:210
 msgid "Transitions"
 msgstr "Прелази"
 
 #. Allows the user to set their own text color.
-#: prefs.ui:331
+#: prefs.ui:257
 msgid "Enable custom text coloring"
 msgstr "Прилагођено бојење текста"
 
 #. The main color to be used.
-#: prefs.ui:358 prefs.ui:373
+#: prefs.ui:281 prefs.ui:294
 msgid "Primary Color"
 msgstr "Примарна боја"
 
 #. Another color for special functions.
-#: prefs.ui:387 prefs.ui:401
+#: prefs.ui:307 prefs.ui:319
 msgid "Secondary Color"
 msgstr "Секундарна боја"
 
-#: prefs.ui:421
+#: prefs.ui:334
 msgid "Use when a window is maximized"
 msgstr "Када је прозор максимизован"
 
-#: prefs.ui:444
+#: prefs.ui:352
 msgid "Use when the overview is visible"
 msgstr "Када је видљив преглед"
 
-#: prefs.ui:512
+#: prefs.ui:409
 msgid "Enable text shadowing"
 msgstr "Сенчење текста"
 
-#: prefs.ui:552 prefs.ui:613 prefs.ui:751 prefs.ui:812
+#: prefs.ui:442 prefs.ui:496 prefs.ui:609 prefs.ui:663
 msgid "Shadow Color"
 msgstr "Боја сенке"
 
-#: prefs.ui:626 prefs.ui:825
+#: prefs.ui:508 prefs.ui:675
 msgid "Radius"
 msgstr "Радијус"
 
-#: prefs.ui:639 prefs.ui:838
+#: prefs.ui:520 prefs.ui:687
 msgid "Horizontal Offset"
 msgstr "Хоризонтално одступање"
 
-#: prefs.ui:652 prefs.ui:851
+#: prefs.ui:532 prefs.ui:699
 msgid "Vertical Offset"
 msgstr "Вертикално одступање"
 
-#: prefs.ui:711
+#: prefs.ui:576
 msgid "Enable icon shadowing"
 msgstr "Сенчење иконе"
 
-#: prefs.ui:897
+#: prefs.ui:734
 msgid "Foreground"
 msgstr "Први план"
 
 #. Opacity of the panel when no window is maximized.
-#: prefs.ui:961
+#: prefs.ui:785
 msgid "Unmaximized Opacity"
 msgstr "Непрозирност немаксимизованог"
 
 #. Opacity of the panel when a window is maximized.
-#: prefs.ui:1008
+#: prefs.ui:829
 msgid "Maximized Opacity"
 msgstr "Непрозирност максимизованог"
 
 #. Allows the user to set their own opacity.
-#: prefs.ui:1030
+#: prefs.ui:850
 msgid "Enable custom opacity"
 msgstr "Прилагођена непрозирност"
 
 #. The panel's background color.
-#: prefs.ui:1097 prefs.ui:1112
+#: prefs.ui:902 prefs.ui:915
 msgid "Panel Color"
 msgstr "Боја панела"
 
 #. Allows the user to set their own background color for the panel.
-#: prefs.ui:1133
+#: prefs.ui:935
 msgid "Enable custom panel color"
 msgstr "Прилагођена боја панела"
 
 #. Removes any extra styling certain themes may have. Fixes theme issues.
-#: prefs.ui:1197
+#: prefs.ui:983
 msgid "Remove excess panel styling"
 msgstr "Уклони прекомерно стилизовање панела"
 
-#: prefs.ui:1210
+#: prefs.ui:990
 msgid "(Fixes theme incompatibilities.)"
 msgstr "(поправља несагласности у теми)"
 
 #. Hides the panel corners.
-#: prefs.ui:1238
+#: prefs.ui:1008
 msgid "Hide corners"
 msgstr "Скривени ћошкови"
 
-#: prefs.ui:1266
+#: prefs.ui:1027
 msgid "Background"
 msgstr "Позадина"
 
-#: prefs.ui:1306
+#: prefs.ui:1037
 msgid "About"
 msgstr "О проширењу"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-06 09:37-0500\n"
+"POT-Creation-Date: 2021-04-03 11:20-0700\n"
 "PO-Revision-Date: 2016-12-21 12:48+0300\n"
 "Last-Translator: Mosaab Alzoubi <moceap@hotmail.com>\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
@@ -19,147 +19,147 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: prefs.js:91
+#: prefs.js:89
 msgid "default"
 msgstr "الافتراضي"
 
-#: prefs.ui:11
+#: prefs.ui:7
 msgid "Classy transparency for your panel."
 msgstr "شفافية أنيقة لشريطك."
 
-#: prefs.ui:13
+#: prefs.ui:9
 msgid "Website"
 msgstr "الموقع"
 
-#: prefs.ui:107
+#: prefs.ui:72
 msgid "Shell Restart Required."
 msgstr "إعادة تشغيل غنوم ضرورية."
 
 #. Meant to ask the user if they would like to restart right now or later in a yes/no format.
-#: prefs.ui:108
+#: prefs.ui:73
 msgid ""
 "A shell restart is required to view some of your changes. Do you want to "
 "restart now?"
 msgstr "يجب إعادة تشغيل غنوم لتأخذ التغييرات مجراها. هل ترغب بذلك الآن؟"
 
 #. How long the transition will take.
-#: prefs.ui:184
+#: prefs.ui:134
 msgid "Transition Speed"
 msgstr "سرعة التلاشي"
 
-#: prefs.ui:214 prefs.ui:242
+#: prefs.ui:160 prefs.ui:183
 msgid "Overrides 'gtk-enable-animations'."
 msgstr "أبطل 'gtk-enable-animations'."
 
 #. Whether the panel transitions should happen with the overview transitions or after.
-#: prefs.ui:227
+#: prefs.ui:171
 msgid "Transition with the overview"
 msgstr ""
 
 #. Whether the panel should transition when a window touches it or only when a window is actually maximized.
-#: prefs.ui:255
+#: prefs.ui:194
 msgid "Transition when windows touch the panel"
 msgstr ""
 
-#: prefs.ui:272
+#: prefs.ui:210
 msgid "Transitions"
 msgstr "التلاشيات"
 
 #. Allows the user to set their own text color.
-#: prefs.ui:331
+#: prefs.ui:257
 msgid "Enable custom text coloring"
 msgstr "تفعيل اللون المخصص للنصوص"
 
 #. The main color to be used.
-#: prefs.ui:358 prefs.ui:373
+#: prefs.ui:281 prefs.ui:294
 msgid "Primary Color"
 msgstr "اللون الأساسي"
 
 #. Another color for special functions.
-#: prefs.ui:387 prefs.ui:401
+#: prefs.ui:307 prefs.ui:319
 msgid "Secondary Color"
 msgstr "اللون الثانوي"
 
-#: prefs.ui:421
+#: prefs.ui:334
 msgid "Use when a window is maximized"
 msgstr "الاستعمال عند تكبير النافذة"
 
-#: prefs.ui:444
+#: prefs.ui:352
 msgid "Use when the overview is visible"
 msgstr "الاستعمال في نمط الاستعراض"
 
-#: prefs.ui:512
+#: prefs.ui:409
 msgid "Enable text shadowing"
 msgstr "تفعيل ظل النص"
 
-#: prefs.ui:552 prefs.ui:613 prefs.ui:751 prefs.ui:812
+#: prefs.ui:442 prefs.ui:496 prefs.ui:609 prefs.ui:663
 msgid "Shadow Color"
 msgstr "لون الظل"
 
-#: prefs.ui:626 prefs.ui:825
+#: prefs.ui:508 prefs.ui:675
 msgid "Radius"
 msgstr "نصف قطري"
 
-#: prefs.ui:639 prefs.ui:838
+#: prefs.ui:520 prefs.ui:687
 msgid "Horizontal Offset"
 msgstr "التوازن الأفقي"
 
-#: prefs.ui:652 prefs.ui:851
+#: prefs.ui:532 prefs.ui:699
 msgid "Vertical Offset"
 msgstr "التوازن العمودي"
 
-#: prefs.ui:711
+#: prefs.ui:576
 msgid "Enable icon shadowing"
 msgstr "تفعيل ظل الرمز"
 
-#: prefs.ui:897
+#: prefs.ui:734
 msgid "Foreground"
 msgstr "المقدمة"
 
 #. Opacity of the panel when no window is maximized.
-#: prefs.ui:961
+#: prefs.ui:785
 msgid "Unmaximized Opacity"
 msgstr "إلغاء الشفافية في حالة عدم التكبير"
 
 #. Opacity of the panel when a window is maximized.
-#: prefs.ui:1008
+#: prefs.ui:829
 msgid "Maximized Opacity"
 msgstr "إلغاء الشفافية في حالة التكبير"
 
 #. Allows the user to set their own opacity.
-#: prefs.ui:1030
+#: prefs.ui:850
 msgid "Enable custom opacity"
 msgstr "تفعيل إلغاء شفافية مخصص"
 
 #. The panel's background color.
-#: prefs.ui:1097 prefs.ui:1112
+#: prefs.ui:902 prefs.ui:915
 msgid "Panel Color"
 msgstr "لون الشريط"
 
 #. Allows the user to set their own background color for the panel.
-#: prefs.ui:1133
+#: prefs.ui:935
 msgid "Enable custom panel color"
 msgstr "تفعيل لون خاص للشريط"
 
 #. Removes any extra styling certain themes may have. Fixes theme issues.
-#: prefs.ui:1197
+#: prefs.ui:983
 msgid "Remove excess panel styling"
 msgstr "أزل زوائد نمط الشريط"
 
-#: prefs.ui:1210
+#: prefs.ui:990
 msgid "(Fixes theme incompatibilities.)"
 msgstr "(أصلح التكاملات مع السمة.)"
 
 #. Hides the panel corners.
-#: prefs.ui:1238
+#: prefs.ui:1008
 msgid "Hide corners"
 msgstr "أخف الزوايا"
 
-#: prefs.ui:1266
+#: prefs.ui:1027
 msgid "Background"
 msgstr "الخلفية"
 
-#: prefs.ui:1306
+#: prefs.ui:1037
 msgid "About"
 msgstr "حول"
 
