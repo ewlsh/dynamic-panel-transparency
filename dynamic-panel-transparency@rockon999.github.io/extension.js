@@ -182,8 +182,7 @@ function initialize_settings() {
                         return false;
                     }
 
-                    /* Get Rid of the Panel's CSS Background */
-                    // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
+                    /* Get Rid of the Panel's CSS */
                     Theming.update_transition_css();
 
                     Intellifade.forceSyncCheck();
@@ -222,11 +221,6 @@ function initialize_settings() {
                     }
 
                     /* Get Rid of the Panel's CSS Background */
-                    // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
-
-                    Theming.set_maximized_background_color((Math.random() * 100).toFixed(0));
-                    Theming.remove_background_color();
-                    Theming.set_unmaximized_background_color((Math.random() * 100).toFixed(0));
                     Theming.remove_background_color();
 
                     Intellifade.forceSyncCheck();
@@ -268,13 +262,6 @@ function initialize_settings() {
                     }
 
                     /* Get Rid of the Panel's CSS Background */
-                    // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
-
-                    Theming.set_maximized_background_color((Math.random() * 100).toFixed(0));
-                    Theming.remove_background_color();
-                    Theming.set_unmaximized_background_color((Math.random() * 100).toFixed(0));
-                    Theming.remove_background_color();
-
                     Intellifade.forceSyncCheck();
 
                     return false;
@@ -304,18 +291,13 @@ function initialize_settings() {
                         Theming.stylesheets.splice(i, 1);
                     }
                 }
-                Theming.register_background_color(Settings.get_panel_color());
+                Theming.register_background_color(Settings.get_panel_color(), 'custom');
                 const id = this.panel_color_update_id = Mainloop.timeout_add(SETTINGS_DELAY, (function() { // eslint-disable-line no-magic-numbers
                     if (id !== this.panel_color_update_id) {
                         return false;
                     }
 
                     /* Get Rid of the Panel's CSS Background */
-                    // TODO: Figure out why it takes applying wierd "fake" style classes to get the real ones working...
-
-                    Theming.set_maximized_background_color((Math.random() * 100).toFixed(0));
-                    Theming.remove_background_color();
-                    Theming.set_unmaximized_background_color((Math.random() * 100).toFixed(0));
                     Theming.remove_background_color();
 
                     Intellifade.forceSyncCheck();

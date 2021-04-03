@@ -88,9 +88,9 @@ function buildPrefsWidget() {
         /* Add default marking. */
         speed_scale.add_mark(settings.get_default_value(SETTINGS_TRANSITION_SPEED).unpack(), Gtk.PositionType.BOTTOM, _("default"));
         /* Add formatting */
-        speed_scale.connect('format-value', (function(scale, value) {
+        speed_scale.set_format_value_func((scale, value) => {
             return value + 'ms';
-        }).bind(this));
+        });
         speed_scale.connect('value-changed', (function(widget) {
             settings.set_value(SETTINGS_TRANSITION_SPEED, new GLib.Variant('i', widget.adjustment.get_value()));
         }).bind(this));
@@ -313,9 +313,9 @@ function buildPrefsWidget() {
         /* Init value. */
         maximum_scale.adjustment.set_value(settings.get_int(SETTINGS_MAXIMIZED_OPACITY));
         /* Add formatting */
-        maximum_scale.connect('format-value', (function(scale, value) {
+        maximum_scale.set_format_value_func((scale, value) => {
             return (((value / SCALE_FACTOR) * 100).toFixed(0) + '%'); // eslint-disable-line no-magic-numbers
-        }).bind(this));
+        });
         maximum_scale.connect('value-changed', (function(widget) {
             settings.set_value(SETTINGS_MAXIMIZED_OPACITY, new GLib.Variant('i', widget.adjustment.get_value()));
         }).bind(this));
@@ -325,9 +325,9 @@ function buildPrefsWidget() {
         /* Init value. */
         minimum_scale.adjustment.set_value(settings.get_int(SETTINGS_UNMAXIMIZED_OPACITY));
         /* Add formatting */
-        minimum_scale.connect('format-value', (function(scale, value) {
+        minimum_scale.set_format_value_func((scale, value) => {
             return ((value / SCALE_FACTOR) * 100).toFixed(0) + '%'; // eslint-disable-line no-magic-numbers
-        }).bind(this));
+        });
         minimum_scale.connect('value-changed', (function(widget) {
             settings.set_value(SETTINGS_UNMAXIMIZED_OPACITY, new GLib.Variant('i', widget.adjustment.get_value()));
         }).bind(this));
@@ -357,87 +357,14 @@ function buildPrefsWidget() {
         }).bind(this));
     }
 
-    /* Util function to find UI elements in a GTK dialog. */
-    function find(container, names, level = 0) {
-        let target = null;
-        container.forall(function(child) {
-            if (child.get_name() === names[level]) {
-                if (++level === names.length) {
-                    target = child;
-                } else {
-                    target = find(child, names, level);
-                }
-            }
-        });
-        return target;
-    }
+    let about_button = builder.get_object('about_button');
+    let about_dialog = builder.get_object('about_dialog');
+    about_dialog.set_version('v' + Me.metadata['version']);
+    about_button.connect('clicked', () => {
+        about_dialog.set_transient_for(main_widget.get_root());
+        about_dialog.set_modal(true);
+        about_dialog.present();
+    });
 
-    /* Setup About Tab */
-    {
-        /* Find the stack */
-        let about_dialog = builder.get_object('about_dialog');
-        about_dialog.set_version('v' + Me.metadata['version']);
-
-        let contents = about_dialog.get_child();
-
-        let stack = find(contents, ['box', 'stack']);
-
-        /* Find the license page. */
-        let license_page = find(stack, ['license_page']);
-
-        /* Get rid of that pesky license page. */
-        stack.remove(license_page);
-
-        /* Strip the dialog of its content. */
-        about_dialog.remove(contents);
-
-        /* Link the stack switcher (I hate header bars sometimes.) */
-        let stack_switcher = builder.get_object('about_switcher');
-        stack_switcher.set_stack(stack);
-
-        /* Transfer the contents. */
-        let about_box = builder.get_object('about_box');
-        about_box.add(contents);
-
-        /* Add some space to the about page. Was a little cramped... */
-        let found_box = find(stack, ['page_vbox', 'hbox']);
-        if (found_box === null) {
-            found_box = find(stack, ['page_vbox']);
-        }
-
-        if (found_box !== null) {
-            let website_label = find(found_box, ['website_label']);
-
-            if (website_label !== null) {
-                found_box.remove(website_label);
-
-                let new_label = Gtk.LinkButton.new_with_label('https://github.com/ewlsh/dynamic-panel-transparency', gtk30_('Website'));
-
-                new_label.set_margin_top(WEBSITE_LABEL_TOP_MARGIN);
-                new_label.set_margin_bottom(WEBSITE_LABEL_BOTTOM_MARGIN);
-                found_box.add(new_label);
-            }
-        }
-    }
-
-    let widget_parent = main_widget.get_toplevel();
-
-    /* Fix revealer sizing issues. */
-    widget_parent.connect('realize', (function() {
-        /* We have to regrab this object as it isn't in this scope. */
-        let text_color_revealer = builder.get_object('text_color_revealer');
-        text_color_revealer.set_reveal_child(settings.get_boolean(SETTINGS_ENABLE_TEXT_COLOR));
-        let background_color_revealer = builder.get_object('background_color_revealer');
-        background_color_revealer.set_reveal_child(settings.get_boolean(SETTINGS_ENABLE_BACKGROUND_COLOR));
-        let opacity_revealer = builder.get_object('opacity_revealer');
-        opacity_revealer.set_reveal_child(settings.get_boolean(SETTINGS_ENABLE_OPACITY));
-        let text_shadow_revealer = builder.get_object('text_shadow_revealer');
-        text_shadow_revealer.set_reveal_child(settings.get_boolean(SETTINGS_TEXT_SHADOW));
-        let icon_shadow_revealer = builder.get_object('icon_shadow_revealer');
-        icon_shadow_revealer.set_reveal_child(settings.get_boolean(SETTINGS_ICON_SHADOW));
-    }).bind(this));
-
-    /* Return main widget. */
-    main_widget.show_all();
     return main_widget;
 }

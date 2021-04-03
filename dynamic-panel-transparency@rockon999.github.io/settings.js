@@ -13,8 +13,6 @@ const Gio = imports.gi.Gio;
 /* settings.js takes a key and watches for it to change in Gio.Settings & creates a getter for it. */
 /* Also can parse, handle, etc. a setting. */
 
-const WINDOW_OVERRIDES_SCHEMA_PATH = '/org/gnome/shell/extensions/dynamic-panel-transparency/windowOverrides/';
-const APP_OVERRIDES_SCHEMA_PATH = '/org/gnome/shell/extensions/dynamic-panel-transparency/appOverrides/';
 const OVERRIDES_SCHEMA_ID = 'org.gnome.shell.extensions.dynamic-panel-transparency.appOverrides';
 
 const GNOME_BACKGROUND_SCHEMA = 'org.gnome.desktop.wm.keybindings';
