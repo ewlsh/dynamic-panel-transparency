@@ -106,12 +106,20 @@ function modify_panel() {
     /* Register text color styling. */
     let [text, icon, arrow] = Theming.register_text_color(Settings.get_text_color()); // eslint-disable-line no-unused-vars
     let [maximized_text, maximized_icon, maximized_arrow] = Theming.register_text_color(Settings.get_maximized_text_color(), 'maximized'); // eslint-disable-line no-unused-vars
-
     if (Settings.get_enable_text_color()) {
         if (text !== null) {
             Theming.set_text_color();
         } else {
             log('[Dynamic Panel Transparency] Failed to enabled text coloring.');
+        }
+    }
+
+
+    if (Settings.get_hide_corners()) {
+        if (hide_corners !== null) {
+            Theming.add_hide_corners();
+        } else {
+            log('[Dynamic Panel Transparency] Failed to enable hide corners.');
         }
     }
 }
@@ -154,7 +162,11 @@ function initialize_settings() {
         name: 'hide_corners',
         type: 'b',
         handler: (function() {
-            Transitions.update_corner_alpha();
+            if (Settings.get_hide_corners()) {
+                Theming.add_hide_corners();
+            } else {
+                Theming.remove_hide_corners();
+            }
         }.bind(this))
     });
     Settings.add({
