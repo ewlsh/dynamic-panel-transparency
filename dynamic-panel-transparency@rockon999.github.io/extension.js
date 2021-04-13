@@ -221,7 +221,7 @@ function initialize_settings() {
 
                 for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                     let stylesheet = Theming.stylesheets[i];
-                    if (stylesheet.indexOf('background') !== -1 && stylesheet.indexOf('panel-') !== -1) {
+                    if (stylesheet.indexOf('background') !== -1 && stylesheet.indexOf('panel-') !== -1 && stylesheet.indexOf('panel-hide-corners') == -1) {
                         theme.unload_stylesheet(Util.get_file(stylesheet));
                         Util.remove_file(stylesheet);
                         Theming.stylesheets.splice(i, 1);
@@ -262,7 +262,7 @@ function initialize_settings() {
 
                 for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                     let stylesheet = Theming.stylesheets[i];
-                    if (stylesheet.indexOf('background') !== -1 && stylesheet.indexOf('panel-') !== -1) {
+                    if (stylesheet.indexOf('background') !== -1 && stylesheet.indexOf('panel-') !== -1 && stylesheet.indexOf('panel-hide-corners') == -1) {
                         theme.unload_stylesheet(Util.get_file(stylesheet));
                         Util.remove_file(stylesheet);
                         Theming.stylesheets.splice(i, 1);
@@ -300,7 +300,7 @@ function initialize_settings() {
 
                 for (let i = Theming.stylesheets.length - 1; i >= 0; i--) {
                     let stylesheet = Theming.stylesheets[i];
-                    if (stylesheet.indexOf('background') !== -1 && stylesheet.indexOf('panel.dpt.css') !== -1) {
+                    if (stylesheet.indexOf('background') !== -1 && stylesheet.indexOf('panel.dpt.css') !== -1 && stylesheet.indexOf('panel-hide-corners') == -1) {
                         theme.unload_stylesheet(Util.get_file(stylesheet));
                         Util.remove_file(stylesheet);
                         Theming.stylesheets.splice(i, 1);
