@@ -106,7 +106,6 @@ function modify_panel() {
     /* Register text color styling. */
     let [text, icon, arrow] = Theming.register_text_color(Settings.get_text_color()); // eslint-disable-line no-unused-vars
     let [maximized_text, maximized_icon, maximized_arrow] = Theming.register_text_color(Settings.get_maximized_text_color(), 'maximized'); // eslint-disable-line no-unused-vars
-    
     if (Settings.get_enable_text_color()) {
         if (text !== null) {
             Theming.set_text_color();
