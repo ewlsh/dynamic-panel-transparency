@@ -114,7 +114,6 @@ function modify_panel() {
         }
     }
 
-    let hide_corners = Theming.register_hide_corners();
 
     if (Settings.get_hide_corners()) {
         if (hide_corners !== null) {
