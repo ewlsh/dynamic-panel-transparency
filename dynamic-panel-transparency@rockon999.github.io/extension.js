@@ -116,19 +116,11 @@ function modify_panel() {
 
 
     if (Settings.get_hide_corners()) {
-        if (hide_corners !== null) {
-            Theming.add_hide_corners();
-        } else {
-            log('[Dynamic Panel Transparency] Failed to enable hide corners.');
-        }
+        Theming.add_hide_corners();
     }
 }
 
 function unmodify_panel() {
-
-    /* Remove corner styling */
-    Theming.clear_corner_color();
-
     /* Remove Our Styling */
     Theming.reapply_panel_styling();
     Theming.reapply_panel_background_image();

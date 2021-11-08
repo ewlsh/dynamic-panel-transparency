@@ -110,39 +110,6 @@ function fade_in() {
         Theming.remove_unmaximized_background_color('custom');
     }
 
-    if (!Settings.get_hide_corners()) {
-        let speed = St.Settings.get().slow_down_factor * Settings.get_transition_speed();
-
-        let maximized = Settings.get_maximized_opacity();
-        let unmaximized = !this.status.is_transparent() ? maximized : Settings.get_unmaximized_opacity();
-
-        this.status.set_transparent(false);
-        this.status.set_blank(false);
-
-        let count = 0;
-
-        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), (function() {
-            if (id === this.corner_timeout_id && !this.status.is_transparent()) {
-                count++;
-
-                let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), unmaximized, maximized - unmaximized, speed);
-
-                update_corner_alpha(alpha);
-
-                if (count > CORNER_UPDATE_FREQUENCY) {
-                    update_corner_alpha(maximized);
-                    return false;
-                }
-            } else {
-                return false;
-            }
-
-            return true;
-        }).bind(this));
-    } else {
-        update_corner_alpha();
-    }
-
     this.status.set_transparent(false);
     this.status.set_blank(false);
 }
@@ -169,38 +136,9 @@ function fade_out() {
 
     Theming.remove_panel_transparency();
 
-    // TODO: Figure out how to write the panel corners in pure CSS.
-    if (!Settings.get_hide_corners()) {
-        let speed = St.Settings.get().slow_down_factor * Settings.get_transition_speed();
-
-        let unmaximized = Settings.get_unmaximized_opacity();
-        let maximized = this.status.is_transparent() ? unmaximized : Settings.get_maximized_opacity();
-
-        /* Keep the status up to date */
-        this.status.set_transparent(true);
-        this.status.set_blank(false);
-
-        let count = 0;
-
-        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), (function() {
-            if (id === this.corner_timeout_id && this.status.is_transparent()) {
-                count++;
-
-                let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), maximized, unmaximized - maximized, speed);
-
-                update_corner_alpha(alpha);
-
-                if (count > CORNER_UPDATE_FREQUENCY) {
-                    update_corner_alpha(unmaximized);
-                    return false;
-                }
-            } else {
-                return false;
-            }
-            return true;
-        }).bind(this));
-    } else {
-        update_corner_alpha();
+    if (Settings.get_hide_corners()) {
+        Theming.remove_hide_corners();
+        Theming.add_hide_corners();
     }
 
     /* Keep the status up to date */
@@ -223,52 +161,4 @@ function blank_fade_out() {
     Theming.strip_panel_styling();
 
     Theming.apply_panel_transparency();
-
-    // TODO: These corners...
-    if (!Settings.get_hide_corners()) {
-        let speed = St.Settings.get().slow_down_factor * Settings.get_transition_speed();
-
-        let maximized = Settings.get_maximized_opacity();
-
-        let count = 0;
-
-        const id = this.corner_timeout_id = Mainloop.timeout_add(Math.floor(speed / CORNER_UPDATE_FREQUENCY), (function() {
-            if (id === this.corner_timeout_id && this.status.is_transparent()) {
-                count++;
-
-                let alpha = Equations.linear(Math.floor(count * (speed / CORNER_UPDATE_FREQUENCY)), maximized, -maximized, speed);
-
-                update_corner_alpha(alpha);
-
-                if (count > CORNER_UPDATE_FREQUENCY) {
-                    update_corner_alpha(0);
-                    return false;
-                }
-            } else {
-                return false;
-            }
-            return true;
-        }).bind(this));
-    } else {
-        update_corner_alpha();
-    }
-}
-
-/**
- * Updates the alpha value of the corners' coloring. Slightly awkward overlap is unavoidable.
- *
- * @param {Number} alpha - Alpha value ranging from 0-255.
- */
-function update_corner_alpha(alpha = null) {
-    if (alpha === null) {
-        if (Settings.get_hide_corners()) {
-            alpha = 0;
-        } else {
-            alpha = this.status.is_transparent() ? Theming.get_unmaximized_opacity() : Theming.get_maximized_opacity();
-        }
-    }
-
-    Theming.set_corner_color({
-        alpha: alpha
-    });
 }

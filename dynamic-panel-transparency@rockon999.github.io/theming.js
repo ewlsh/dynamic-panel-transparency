@@ -1,4 +1,4 @@
-/* exported init, cleanup, add_hide_corners, remove_hide_corners, remove_maximized_background_color, remove_unmaximized_background_color, set_maximized_background_color, set_unmaximized_background_color, remove_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, set_corner_color, clear_corner_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
+/* exported init, cleanup, add_hide_corners, remove_hide_corners, remove_maximized_background_color, remove_unmaximized_background_color, set_maximized_background_color, set_unmaximized_background_color, remove_background_color, register_text_shadow, add_text_shadow, register_icon_shadow, add_icon_shadow, has_text_shadow, has_icon_shadow, remove_text_shadow, remove_icon_shadow, register_text_color, set_text_color, remove_text_color, set_panel_color, get_background_image_color, get_background_color, get_maximized_opacity, get_unmaximized_opacity, strip_panel_styling, reapply_panel_styling, strip_panel_background_image, reapply_panel_background_image, strip_panel_background, reapply_panel_background, set_background_alpha */
 
 const St = imports.gi.St;
 
@@ -245,44 +245,6 @@ function register_style(style) {
 }
 
 /**
- * Set's the panel corners' actors to a specific background color.
- *
- * @param {Color} color [color={}] - Object containing an RGBA color value.
- */
-// TODO: Gnome needs CSS styling for the corners.
-function set_corner_color(color) {
-    let panel_color = get_background_color();
-
-    color = Params.parse(color, {
-        red: panel_color.red,
-        green: panel_color.green,
-        blue: panel_color.blue,
-        alpha: 0
-    });
-
-    let opacity = Util.clamp(color.alpha / SCALE_FACTOR, 0, 1).toFixed(2);
-
-    /* I strongly dislike using a deprecated method (set_style)
-     * but this is a hold over from the older extension code and
-     * the only way to keep per-app coloring working with corners. */
-    let coloring = '-panel-corner-background-color: rgba(' + color.red + ', ' + color.green + ', ' + color.blue + ', ' + opacity + ');' +
-        '' + '-panel-corner-border-color: transparent;';
-
-    // TODO: Update this code. We're using @deprecated code.
-    Panel._leftCorner.set_style(coloring);
-    Panel._rightCorner.set_style(coloring);
-}
-
-/**
- * Removes any corner styling this extension has applied.
- *
- */
-function clear_corner_color() {
-    Panel._leftCorner.set_style(null);
-    Panel._rightCorner.set_style(null);
-}
-
-/**
  * Returns the user's desired panel color from Settings. Handles theme detection again.
  * DEPENDENCY: Settings
  *
@@ -392,7 +354,7 @@ function apply_stylesheet_css(css, name) {
 
     /* Write to the file. */
     if (!Util.write_to_file(file_name, css)) {
-        log('[Dynamic Panel Transparency] Could not access: ' + file_name + '');
+        log(`[Dynamic Panel Transparency] Could not access: ${file_name}`);
         log('[Dynamic Panel Transparency] The extension will not function until access is granted.');
         return null;
     }
@@ -402,7 +364,7 @@ function apply_stylesheet_css(css, name) {
     if (theme.load_stylesheet(Util.get_file(file_name))) {
         this.stylesheets.push(file_name);
     } else {
-        log('[Dynamic Panel Transparency] Error Loading Temporary Stylesheet: ' + name);
+        log(`[Dynamic Panel Transparency] Error Loading Temporary Stylesheet: ${name}`);
         return null;
     }
 
@@ -412,6 +374,8 @@ function apply_stylesheet_css(css, name) {
 /* Backend24 (3.24+) Specific Functions (Not backwards compatible) */
 
 function initialize_background_styles() {
+    Panel.add_style_class_name('dpt');
+
     register_background_color(Settings.get_panel_color(), 'custom');
     register_background_color({
         red: 0,
@@ -421,6 +385,8 @@ function initialize_background_styles() {
 }
 
 function cleanup_background_styles() {
+    Panel.remove_style_class_name('dpt');
+
     remove_background_color();
 }
 
@@ -434,23 +400,44 @@ function register_background_color(bg_color, prefix) {
     let suffix = (prefix ? '-' + prefix : '');
 
     if (prefix) {
-        prefix = '-' + prefix + '-';
+        prefix = `-${prefix}-`;
     } else {
         prefix = '-';
     }
 
-    let maximized_opacity = Util.clamp(get_maximized_opacity() / SCALE_FACTOR, 0, 1).toFixed(2);
-    let unmaximized_opacity = Util.clamp(get_unmaximized_opacity() / SCALE_FACTOR, 0, 1).toFixed(2);
+    const maximized_opacity = Util.clamp(get_maximized_opacity() / SCALE_FACTOR, 0, 1).toFixed(2);
+    const unmaximized_opacity = Util.clamp(get_unmaximized_opacity() / SCALE_FACTOR, 0, 1).toFixed(2);
 
-    let maximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + maximized_opacity + ')';
-    let unmaximized_bg_color_css = 'rgba(' + bg_color.red + ', ' + bg_color.green + ', ' + bg_color.blue + ', ' + unmaximized_opacity + ')';
+    const rgb = [bg_color.red, bg_color.green, bg_color.blue].join(', ');
+    const maximized_bg_color_css = `rgba(${rgb}, ${maximized_opacity})`;
+    const unmaximized_bg_color_css = `rgba(${rgb}, ${unmaximized_opacity})`;
+    const maximized_corner_color_css = `rgb(${rgb})`;
+    const unmaximized_corner_color_css = `rgb(${rgb})`;
 
     register_background_style('dpt-panel' + prefix + 'maximized');
     register_background_style('dpt-panel' + prefix + 'unmaximized');
 
-    let file_prefix = 'background/panel';
+    const file_prefix = 'background/panel';
 
-    let panel = apply_stylesheet_css('.dpt-panel' + prefix + 'unmaximized { background-color: ' + unmaximized_bg_color_css + '; }\n.dpt-panel' + prefix + 'maximized { background-color: ' + maximized_bg_color_css + '; }', file_prefix + suffix);
+    const panel = apply_stylesheet_css(
+        `
+    .dpt-panel${prefix}unmaximized {
+        background-color: ${unmaximized_bg_color_css};
+    }
+
+    .dpt.dpt-panel${prefix}unmaximized .panel-corner {
+        -panel-corner-background-color: ${unmaximized_corner_color_css};
+        -panel-corner-opacity: ${unmaximized_opacity};
+    }
+
+    .dpt-panel${prefix}maximized {
+        background-color: ${maximized_bg_color_css};
+    }
+
+    .dpt.dpt-panel${prefix}maximized .panel-corner {
+        -panel-corner-background-color: ${maximized_corner_color_css};
+        -panel-corner-opacity: ${maximized_opacity};
+    }`, file_prefix + suffix);
 
     return panel;
 }
@@ -462,21 +449,17 @@ function set_unmaximized_background_color(prefix) {
         prefix = '-';
     }
 
-    let style = 'dpt-panel' + prefix + 'unmaximized';
-
-    Panel.add_style_class_name(style);
+    Panel.add_style_class_name(`dpt-panel${prefix}unmaximized`);
 }
 
 function set_maximized_background_color(prefix) {
     if (prefix) {
-        prefix = '-' + prefix + '-';
+        prefix = `-${prefix}-`;
     } else {
         prefix = '-';
     }
 
-    let style = 'dpt-panel' + prefix + 'maximized';
-
-    Panel.add_style_class_name(style);
+    Panel.add_style_class_name(`dpt-panel${prefix}maximized`);
 }
 
 function remove_unmaximized_background_color(prefix) {
@@ -486,17 +469,17 @@ function remove_unmaximized_background_color(prefix) {
         prefix = '-';
     }
 
-    Panel.remove_style_class_name('dpt-panel' + prefix + 'unmaximized');
+    Panel.remove_style_class_name(`dpt-panel${prefix}unmaximized`);
 }
 
 function remove_maximized_background_color(prefix) {
     if (prefix) {
-        prefix = '-' + prefix + '-';
+        prefix = `-${prefix}-`;
     } else {
         prefix = '-';
     }
 
-    Panel.remove_style_class_name('dpt-panel' + prefix + 'maximized');
+    Panel.remove_style_class_name(`dpt-panel${prefix}maximized`);
 }
 
 function remove_background_color() {
@@ -508,9 +491,12 @@ function remove_background_color() {
 }
 
 function update_transition_css() {
-    let duration_css = Settings.get_transition_speed();
+    const duration_css = Settings.get_transition_speed();
 
-    let stylesheet = apply_stylesheet_css('.dpt-panel-transition-duration { transition-duration: ' + duration_css + 'ms; }', 'transitions/panel-transition-duration');
+    const stylesheet = apply_stylesheet_css(
+        `.dpt-panel-transition-duration {
+            transition-duration: ${duration_css}ms;
+        }`, 'transitions/panel-transition-duration');
 
     Panel.add_style_class_name('dpt-panel-transition-duration');
 
