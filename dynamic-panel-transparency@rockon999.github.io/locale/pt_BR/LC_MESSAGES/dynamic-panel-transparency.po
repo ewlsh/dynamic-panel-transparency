@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-03 11:20-0700\n"
+"POT-Creation-Date: 2021-11-11 09:28-0800\n"
 "PO-Revision-Date: 2016-09-29 15:09-0300\n"
 "Last-Translator: Fábio Nogueira <fnogueira@gnome.org>\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Generator: Poedit 1.8.9\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: prefs.js:89
+#: prefs.js:122
 msgid "default"
 msgstr "padrão"
 

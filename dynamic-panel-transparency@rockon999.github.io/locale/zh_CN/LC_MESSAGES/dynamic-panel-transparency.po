@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-03 11:20-0700\n"
+"POT-Creation-Date: 2021-11-11 09:28-0800\n"
 "PO-Revision-Date: 2016-10-01 15:53+0800\n"
 "Last-Translator: Dingzhong Chen <wsxy162@gmail.com>\n"
 "Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.7\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: prefs.js:89
+#: prefs.js:122
 msgid "default"
 msgstr "默认"
 

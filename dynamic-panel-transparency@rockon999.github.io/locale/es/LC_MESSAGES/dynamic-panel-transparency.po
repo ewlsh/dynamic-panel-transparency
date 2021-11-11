@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-29 15:41-0400\n"
+"POT-Creation-Date: 2021-11-11 09:28-0800\n"
 "PO-Revision-Date: 2021-04-27 12:48+0200\n"
 "Last-Translator: Óscar Fernández <oscfdezdz@tuta.io>\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.2\n"
 
-#: prefs.js:89
+#: prefs.js:122
 msgid "default"
 msgstr "por defecto"
 
@@ -165,30 +165,26 @@ msgstr "Fondo"
 msgid "About"
 msgstr "Acerca de"
 
-#: prefs.js/ui/prefs.ui:1432
-msgid ""
-"A WM_CLASS is a code that identifies a window. Use this setting if the "
-"window you want custom settings for is not part of an application. You can "
-"find a window's WM_CLASS with the command 'xprop WM_CLASS'. Enter the second "
-"result from 'xprop WM_CLASS' below without quotation marks."
-msgstr ""
-"Un WM_CLASS es un código que identifica una ventana. Use este ajuste si la "
-"ventana que desea personalizar no es parte de una aplicación. Puede "
-"localizar el WM_CLASS de una ventana mediante el comando 'xprop WM_CLASS'. "
-"Introduzca el segundo resultado de 'xprop WM_CLASS' sin comillas."
+#~ msgid ""
+#~ "A WM_CLASS is a code that identifies a window. Use this setting if the "
+#~ "window you want custom settings for is not part of an application. You "
+#~ "can find a window's WM_CLASS with the command 'xprop WM_CLASS'. Enter the "
+#~ "second result from 'xprop WM_CLASS' below without quotation marks."
+#~ msgstr ""
+#~ "Un WM_CLASS es un código que identifica una ventana. Use este ajuste si "
+#~ "la ventana que desea personalizar no es parte de una aplicación. Puede "
+#~ "localizar el WM_CLASS de una ventana mediante el comando 'xprop "
+#~ "WM_CLASS'. Introduzca el segundo resultado de 'xprop WM_CLASS' sin "
+#~ "comillas."
 
-#: prefs.js/ui/prefs.ui:1481
-msgid "WM_CLASS cannot be blank."
-msgstr "WM_CLASS no puede estar en blanco."
+#~ msgid "WM_CLASS cannot be blank."
+#~ msgstr "WM_CLASS no puede estar en blanco."
 
-#: prefs.js/ui/app-prefs.ui:51
-msgid "Enable background app tweaks"
-msgstr "Activar ajustes de la aplicación de fondo"
+#~ msgid "Enable background app tweaks"
+#~ msgstr "Activar ajustes de la aplicación de fondo"
 
-#: prefs.js/ui/app-prefs.ui:130
-msgid "Theme Source"
-msgstr "Fuente del tema"
+#~ msgid "Theme Source"
+#~ msgstr "Fuente del tema"
 
-#: prefs.js/ui/app-prefs.ui:190
-msgid "Always trigger the panel."
-msgstr "Desplegar siempre el panel."
+#~ msgid "Always trigger the panel."
+#~ msgstr "Desplegar siempre el panel."

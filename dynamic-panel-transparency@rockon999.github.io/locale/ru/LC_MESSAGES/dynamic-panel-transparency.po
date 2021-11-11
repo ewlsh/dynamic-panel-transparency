@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNOME Shell Extension Dynamic Panel Transparency\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-03 11:20-0700\n"
+"POT-Creation-Date: 2021-11-11 09:28-0800\n"
 "PO-Revision-Date: 2016-03-07 12:21+0300\n"
 "Last-Translator: Alexey Varfolomeev <varlesh@gmail.com>\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: prefs.js:89
+#: prefs.js:122
 msgid "default"
 msgstr "по-умолчанию"
 
