@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "@gi-types/gjs-environment": "^1.0.0",
+    "@gi-types/shell0": "^0.1.0",
+    "typescript": "^4.4.4"
+  }
+}

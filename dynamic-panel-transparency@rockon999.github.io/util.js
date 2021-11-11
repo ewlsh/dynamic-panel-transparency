@@ -1,17 +1,16 @@
-/* exported get_shell_version, is_undef, clamp, is_valid, match_colors, remove_file, get_file, write_to_file, gdk_to_css_color, clutter_to_native_color, tuple_to_native_color, deep_freeze, strip_args */
-
-const GLib = imports.gi.GLib;
-const Gio = imports.gi.Gio;
+import GLib from 'gi://GLib';
+import Gio from 'gi://Gio';
+import { Config } from './shell.js';
 
 /* This import can't be a constant as it requires lazy initialization. */
 let Meta = null;
 
 /* Gnome Versioning */
-const MAJOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[0], 10);
-const MINOR_VERSION = parseInt(imports.misc.config.PACKAGE_VERSION.split('.')[1], 10);
+const MAJOR_VERSION = Number.parseInt(Config.PACKAGE_VERSION.split('.')[0], 10);
+const MINOR_VERSION = Number.parseInt(Config.PACKAGE_VERSION.split('.')[1], 10);
 
 /* Permission setting for created files. */
-const PERMISSIONS_MODE = parseInt('0744', 8);
+const PERMISSIONS_MODE = Number.parseInt('0744', 8);
 
 /* Utility Variable Access */
 
@@ -66,7 +65,7 @@ function is_valid(window) {
 
     let type = window.get_window_type();
 
-    return (windowTypes.indexOf(type) !== -1);
+    return windowTypes.indexOf(type) !== -1;
 }
 
 /**
@@ -102,7 +101,13 @@ function write_to_file(file_path, text) {
         let parent = file.get_parent();
 
         if (GLib.mkdir_with_parents(parent.get_path(), PERMISSIONS_MODE) === 0) {
-            let success = file.replace_contents(text, null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null);
+            let success = file.replace_contents(
+                text,
+                null,
+                false,
+                Gio.FileCreateFlags.REPLACE_DESTINATION,
+                null
+            );
             return success[0];
         }
     } catch (error) {
@@ -135,22 +140,6 @@ function remove_file(file_path) {
 }
 
 /**
- * Converts a GdkColor into a JS/CSS color object.
- *
- * @param {Object} color - GdkColor to convert.
- *
- * @returns {Object} Converted RGB color.
- *
- */
-function gdk_to_css_color(color) {
-    let red = Math.round(clamp((color.red * 255), 0, 255));
-    let green = Math.round(clamp((color.green * 255), 0, 255));
-    let blue = Math.round(clamp((color.blue * 255), 0, 255));
-
-    return { 'red': red, 'green': green, 'blue': blue };
-}
-
-/**
  * Converts a ClutterColor into a JS/CSS color object.
  *
  * @param {Object} color - ClutterColor to convert.
@@ -170,10 +159,9 @@ function clutter_to_native_color(color, alpha = false) {
 /**
  * Converts a tuple from a GVariant (typically) into a JS/CSS color object.
  *
- * @param {Object} color - Tuple to convert.
- * @param {Boolean} [alpha = false] - Whether to transfer the alpha value.
+ * @param {[number, number, number] | [number, number, number, number]} tuple - Tuple to convert.
  *
- * @returns {Object} Converted RGB(A) color.
+ * @returns {import('./theming.js').Color} Converted RGB(A) color.
  *
  */
 function tuple_to_native_color(tuple) {
@@ -195,11 +183,11 @@ function tuple_to_native_color(tuple) {
  *
  */
 function match_colors(a, b, alpha = false) {
-    let result = (a.red === b.red);
-    result = result && (a.green === b.green);
-    result = result && (a.blue === b.blue);
+    let result = a.red === b.red;
+    result = result && a.green === b.green;
+    result = result && a.blue === b.blue;
     if (alpha) {
-        result = result && (a.alpha === b.alpha);
+        result = result && a.alpha === b.alpha;
     }
     return result;
 }
@@ -212,9 +200,9 @@ function match_colors(a, b, alpha = false) {
  *
  */
 function deep_freeze(type, recursive = false) {
-    const freeze_children = function(obj) {
-        Object.keys(obj).forEach(function(value, index, arr) {
-            if (typeof (value) === 'object' && !Object.isFrozen(value)) {
+    const freeze_children = function (obj) {
+        Object.keys(obj).forEach(function (value, index, arr) {
+            if (typeof value === 'object' && !Object.isFrozen(value)) {
                 Object.freeze(value);
                 if (recursive) {
                     freeze_children(value);
@@ -227,14 +215,15 @@ function deep_freeze(type, recursive = false) {
     freeze_children(type);
 }
 
-/**
- * Prevents any arguments from passing on.
- *
- * @param {Object} method - Method to call.
- *
- */
-function strip_args(method) {
-    return function() {
-        method.call(this);
-    };
-}
+export {
+    get_shell_version,
+    clamp,
+    is_valid,
+    match_colors,
+    remove_file,
+    get_file,
+    write_to_file,
+    clutter_to_native_color,
+    tuple_to_native_color,
+    deep_freeze,
+};

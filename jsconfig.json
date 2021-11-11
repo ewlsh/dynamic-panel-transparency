@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "target": "es2019",
+        "lib": [
+            "es2019"
+        ],
+        "module": "ES2020",
+        "moduleResolution": "node",
+        "checkJs": true,
+        "types": [
+            "@gi-types/gjs-environment"
+        ],
+        "allowSyntheticDefaultImports": true
+    },
+    "include": [
+        "./dynamic-panel-transparency@rockon999.github.io/*.js",
+        "./shell.d.ts",
+        "./imports.d.ts"
+    ]
+}

@@ -2,7 +2,6 @@ old_files/
 styles/
 .vscode/
 .buildconfig
-*.json
 *~
 *.dpt.css
 .goutputstream*
