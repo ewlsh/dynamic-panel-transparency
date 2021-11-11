@@ -4,13 +4,14 @@
 #
 # Evan Welsh <contact@evanwelsh.com>, 2017.
 # Alexey Varfolomeev <varlesh@gmail.com>, 2016.
+# vantu5z <vantu5z@mail.ru>, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: GNOME Shell Extension Dynamic Panel Transparency\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-11 09:28-0800\n"
-"PO-Revision-Date: 2016-03-07 12:21+0300\n"
-"Last-Translator: Alexey Varfolomeev <varlesh@gmail.com>\n"
+"POT-Creation-Date: 2021-11-11 09:31-0800\n"
+"PO-Revision-Date: 2020-01-12 16:06+0300\n"
+"Last-Translator: vantu5z <vantu5z@mail.ru>\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -26,15 +27,15 @@ msgstr "по-умолчанию"
 
 #: prefs.ui:7
 msgid "Classy transparency for your panel."
-msgstr ""
+msgstr "Настройка прозрачности панели."
 
 #: prefs.ui:9
 msgid "Website"
-msgstr ""
+msgstr "Веб-сайт"
 
 #: prefs.ui:72
 msgid "Shell Restart Required."
-msgstr ""
+msgstr "Необходим перезапуск Shell"
 
 #. Meant to ask the user if they would like to restart right now or later in a yes/no format.
 #: prefs.ui:73
@@ -42,6 +43,8 @@ msgid ""
 "A shell restart is required to view some of your changes. Do you want to "
 "restart now?"
 msgstr ""
+"Необходимо перезапустить Shell для применения изменений. Хотите "
+"перезапустить сейчас?"
 
 #. How long the transition will take.
 #: prefs.ui:134
@@ -55,12 +58,12 @@ msgstr "Переопределение 'gtk-enable-animations'."
 #. Whether the panel transitions should happen with the overview transitions or after.
 #: prefs.ui:171
 msgid "Transition with the overview"
-msgstr ""
+msgstr "Переход в режиме Обзор"
 
 #. Whether the panel should transition when a window touches it or only when a window is actually maximized.
 #: prefs.ui:194
 msgid "Transition when windows touch the panel"
-msgstr ""
+msgstr "Переход при косании панели окном"
 
 #: prefs.ui:210
 msgid "Transitions"
@@ -69,25 +72,25 @@ msgstr "Скорость перехода"
 #. Allows the user to set their own text color.
 #: prefs.ui:257
 msgid "Enable custom text coloring"
-msgstr ""
+msgstr "Настроить цвет текста"
 
 #. The main color to be used.
 #: prefs.ui:281 prefs.ui:294
 msgid "Primary Color"
-msgstr "Цвет панели"
+msgstr "Основной цвет"
 
 #. Another color for special functions.
 #: prefs.ui:307 prefs.ui:319
 msgid "Secondary Color"
-msgstr ""
+msgstr "Дополнительный цвет"
 
 #: prefs.ui:334
 msgid "Use when a window is maximized"
-msgstr ""
+msgstr "Использовать при развёрнутом окне"
 
 #: prefs.ui:352
 msgid "Use when the overview is visible"
-msgstr ""
+msgstr "Использовать в режиме Обзор"
 
 #: prefs.ui:409
 msgid "Enable text shadowing"
@@ -95,42 +98,42 @@ msgstr "Добавить тень для текста"
 
 #: prefs.ui:442 prefs.ui:496 prefs.ui:609 prefs.ui:663
 msgid "Shadow Color"
-msgstr "Цвет панели"
+msgstr "Цвет тени"
 
 #: prefs.ui:508 prefs.ui:675
 msgid "Radius"
-msgstr ""
+msgstr "Радиус"
 
 #: prefs.ui:520 prefs.ui:687
 msgid "Horizontal Offset"
-msgstr ""
+msgstr "По горизонтали"
 
 #: prefs.ui:532 prefs.ui:699
 msgid "Vertical Offset"
-msgstr ""
+msgstr "По вертикали"
 
 #: prefs.ui:576
 msgid "Enable icon shadowing"
-msgstr ""
+msgstr "Добавить тень для значков"
 
 #: prefs.ui:734
 msgid "Foreground"
-msgstr ""
+msgstr "Текст и тени"
 
 #. Opacity of the panel when no window is maximized.
 #: prefs.ui:785
 msgid "Unmaximized Opacity"
-msgstr "Максимум прозрачности"
+msgstr "Минимальная прозрачность"
 
 #. Opacity of the panel when a window is maximized.
 #: prefs.ui:829
 msgid "Maximized Opacity"
-msgstr "Максимум прозрачности"
+msgstr "Максимальная прозрачность"
 
 #. Allows the user to set their own opacity.
 #: prefs.ui:850
 msgid "Enable custom opacity"
-msgstr ""
+msgstr "Настроить прозрачность"
 
 #. The panel's background color.
 #: prefs.ui:902 prefs.ui:915
@@ -140,16 +143,16 @@ msgstr "Цвет панели"
 #. Allows the user to set their own background color for the panel.
 #: prefs.ui:935
 msgid "Enable custom panel color"
-msgstr ""
+msgstr "Настроить цвет панели"
 
 #. Removes any extra styling certain themes may have. Fixes theme issues.
 #: prefs.ui:983
 msgid "Remove excess panel styling"
-msgstr ""
+msgstr "Удалить лишние стили"
 
 #: prefs.ui:990
 msgid "(Fixes theme incompatibilities.)"
-msgstr ""
+msgstr "(Исправляет несовместимость с темой)"
 
 #. Hides the panel corners.
 #: prefs.ui:1008
@@ -158,11 +161,34 @@ msgstr "Скрыть углы"
 
 #: prefs.ui:1027
 msgid "Background"
-msgstr ""
+msgstr "Фон"
 
 #: prefs.ui:1037
 msgid "About"
-msgstr ""
+msgstr "О приложении"
+
+#~ msgid "App Tweaks"
+#~ msgstr "Расширенные настройки"
+
+#~ msgid "Add a Custom WM_CLASS"
+#~ msgstr "Добавить пользовательский WM_CLASS"
+
+#~ msgid "Advanced..."
+#~ msgstr "Дополнительно..."
+
+#~ msgid ""
+#~ "A WM_CLASS is a code that identifies a window. Use this setting if the "
+#~ "window you want custom settings for is not part of an application. You "
+#~ "can find a window's WM_CLASS with the command 'xprop WM_CLASS'. Enter the "
+#~ "second result from 'xprop WM_CLASS' below without quotation marks."
+#~ msgstr ""
+#~ "WM_CLASS - это код, который определяет окно. Используйте этот параметр, "
+#~ "если окно, которое необходимо настроить не является частью приложения. "
+#~ "Получить WM_CLASS для окна можно с помощью команды 'xprop WM_CLASS'. "
+#~ "Введите второй результат вывода 'xprop WM_CLASS' ниже без кавычек."
+
+#~ msgid "WM_CLASS cannot be blank."
+#~ msgstr "WM_CLASS не может быть пустым"
 
 #~ msgid "Theme Source"
 #~ msgstr "Исходная тема"
