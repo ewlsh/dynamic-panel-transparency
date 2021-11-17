@@ -11,7 +11,7 @@ const ASYNC_UPDATE_FREQUENCY = 200; // ms
 
 export class Intellifader {
     /**
-     * @param {import('./main.js').DptExtension} extension
+     * @param {import('./extension.js').DptExtension} extension
      */
     constructor(extension) {
         this.extension = extension;

@@ -9,7 +9,6 @@ const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
 
 const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
 
 const Gettext = imports.gettext.domain('dynamic-panel-transparency');
 const _ = Gettext.gettext;
@@ -90,7 +89,11 @@ const WEBSITE_LABEL_TOP_MARGIN = 20;
 /* Color Scaling Factor (Byte to Decimal) */
 const SCALE_FACTOR = 255.9999999;
 
-function init() {
+let Me;
+
+function init(metadata) {
+    Me = metadata;
+
     ExtensionUtils.initTranslations();
 }
 

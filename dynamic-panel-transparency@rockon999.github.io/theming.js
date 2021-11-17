@@ -17,7 +17,7 @@ const SCALE_FACTOR = 255.9999999;
 
 export class Theming {
     /**
-     * @param {import('./main.js').DptExtension} extension
+     * @param {import('./extension.js').DptExtension} extension
      */
     constructor(extension) {
         this.extension = extension;

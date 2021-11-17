@@ -23,7 +23,7 @@ class TransparencyStatus {
 
 export class Transitions {
     /**
-     * @param {import('./main.js').DptExtension} extension
+     * @param {import('./extension.js').DptExtension} extension
      */
     constructor(extension) {
         this.extension = extension;

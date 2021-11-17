@@ -14,7 +14,7 @@ import { main } from './shell.js';
 
 export class Events {
     /**
-     * @param {import('./main.js').DptExtension} extension
+     * @param {import('./extension.js').DptExtension} extension
      */
     constructor(extension) {
         this.extension = extension;

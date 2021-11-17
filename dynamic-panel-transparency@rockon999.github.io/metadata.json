@@ -2,9 +2,9 @@
   "description": "This extension fades your top panel to nothingness when there are no maximized windows present. Never again will the panel be abruptly darkened!",
   "name": "Dynamic Panel Transparency",
   "shell-version": [
-    "40",
-    "41"
+    "42"
   ],
+  "module": "extension.js",
   "uuid": "dynamic-panel-transparency@rockon999.github.io",
   "settings-schema": "org.gnome.shell.extensions.dynamic-panel-transparency",
   "version": 35,
