@@ -3,7 +3,8 @@
   "name": "Dynamic Panel Transparency",
   "shell-version": [
     "40",
-    "41"
+    "41",
+    "42"
   ],
   "uuid": "dynamic-panel-transparency@rockon999.github.io",
   "settings-schema": "org.gnome.shell.extensions.dynamic-panel-transparency",
