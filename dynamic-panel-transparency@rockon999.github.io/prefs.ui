@@ -998,23 +998,6 @@ narzb
                         </layout>
                       </object>
                     </child>
-                    <child>
-                      <object class="GtkCheckButton" id="hide_corners_check">
-                        <property name="halign">start</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="can_focus">0</property>
-                            <property name="margin-start">3</property>
-                            <property name="label" translatable="yes" comments="Hides the panel corners.">Hide corners</property>
-                            <property name="single_line_mode">1</property>
-                          </object>
-                        </child>
-                        <layout>
-                          <property name="column">0</property>
-                          <property name="row">1</property>
-                        </layout>
-                      </object>
-                    </child>
                   </object>
                 </child>
               </object>

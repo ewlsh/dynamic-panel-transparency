@@ -176,21 +176,6 @@ export class Theming {
     }
 
     /**
-     * Adds the currently registered hide corners stylesheet to the corners of the panel.
-     *
-     */
-    add_hide_corners() {
-        this.panel.add_style_class_name('dpt-panel-hide-corners');
-    }
-    /**
-     * Unhides corners; deregistering the stylesheet and removing the css.
-     *
-     */
-    remove_hide_corners() {
-        this.panel.remove_style_class_name('dpt-panel-hide-corners');
-    }
-
-    /**
      * Removes any icon shadowing; deregistering the stylesheet and removing the css.
      *
      */

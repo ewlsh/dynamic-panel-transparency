@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-11 09:28-0800\n"
+"POT-Creation-Date: 2023-03-17 13:31-0700\n"
 "PO-Revision-Date: 2016-10-01 15:53+0800\n"
 "Last-Translator: Dingzhong Chen <wsxy162@gmail.com>\n"
 "Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.7\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: prefs.js:122
+#: prefs.js:121
 msgid "default"
 msgstr "默认"
 
@@ -151,18 +151,16 @@ msgstr "移除过度的面板修饰风格"
 msgid "(Fixes theme incompatibilities.)"
 msgstr "(修复主题的不兼容性。)"
 
-#. Hides the panel corners.
-#: prefs.ui:1008
-msgid "Hide corners"
-msgstr "隐藏圆角"
-
-#: prefs.ui:1027
+#: prefs.ui:1010
 msgid "Background"
 msgstr "背景"
 
-#: prefs.ui:1037
+#: prefs.ui:1020
 msgid "About"
 msgstr "关于"
+
+#~ msgid "Hide corners"
+#~ msgstr "隐藏圆角"
 
 #~ msgid "App Tweaks"
 #~ msgstr "应用优化"

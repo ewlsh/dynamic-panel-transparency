@@ -4,11 +4,6 @@
   background-color: rgba(0, 0, 0, 0);
 }
 
-.dpt .panel-corner {
-  -panel-corner-border-color: transparent;
-  -panel-corner-border-width: 0;
-}
-
 .panel-effect-transparency {
   box-shadow: none;
   border: none;
@@ -23,9 +18,4 @@
 .panel-background-image-transparency {
   border-image: none;
   background-image: none;
-}
-
-/* Prevents overlapping of corners + top bar when using transparency */
-.dpt.dpt-panel-hide-corners .panel-corner {
-  -panel-corner-opacity: 0;
 }

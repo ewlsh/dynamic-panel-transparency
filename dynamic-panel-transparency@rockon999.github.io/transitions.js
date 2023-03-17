@@ -29,8 +29,6 @@ export class Transitions {
         this.extension = extension;
         /* Objects to track where the transparency is and where it's going. */
         this.status = new TransparencyStatus();
-
-        this.corner_timeout_id = 0;
     }
 
     /**
@@ -39,8 +37,6 @@ export class Transitions {
      */
     cleanup() {
         this.status = null;
-
-        this.corner_timeout_id = null;
     }
 
     /**
@@ -124,11 +120,6 @@ export class Transitions {
         }
 
         theming.remove_panel_transparency();
-
-        if (settings.get_hide_corners()) {
-            theming.remove_hide_corners();
-            theming.add_hide_corners();
-        }
 
         /* Keep the status up to date */
         this.status.set_transparent(true);

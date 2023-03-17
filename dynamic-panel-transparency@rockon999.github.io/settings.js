@@ -109,10 +109,6 @@ export class Settings {
         );
     }
 
-    get_hide_corners() {
-        return this._settings.get_boolean('hide-corners');
-    }
-
     get_transition_speed() {
         return this._settings.get_int('transition-speed');
     }

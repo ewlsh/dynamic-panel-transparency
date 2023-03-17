@@ -52,7 +52,6 @@ const SETTINGS_ENABLE_MAXIMIZED_TEXT_COLOR = 'enable-maximized-text-color';
 const SETTINGS_ENABLE_OPACITY = 'enable-opacity';
 const SETTINGS_ENABLE_OVERVIEW_TEXT_COLOR = 'enable-overview-text-color';
 const SETTINGS_ENABLE_TEXT_COLOR = 'enable-text-color';
-const SETTINGS_HIDE_CORNERS = 'hide-corners';
 const SETTINGS_ICON_SHADOW = 'icon-shadow';
 const SETTINGS_ICON_SHADOW_COLOR = 'icon-shadow-color';
 const SETTINGS_ICON_SHADOW_POSITION = 'icon-shadow-position';
@@ -547,19 +546,6 @@ function buildPrefsWidget() {
                 let rgb = [color.red, color.green, color.blue];
 
                 settings.set_value(SETTINGS_PANEL_COLOR, new GLib.Variant('ai', rgb));
-            }.bind(this)
-        );
-
-        let hide_corners = builder.get_object('hide_corners_check');
-        hide_corners.set_active(settings.get_boolean(SETTINGS_HIDE_CORNERS));
-
-        hide_corners.connect(
-            'toggled',
-            function (widget) {
-                settings.set_value(
-                    SETTINGS_HIDE_CORNERS,
-                    new GLib.Variant('b', widget.get_active())
-                );
             }.bind(this)
         );
     }

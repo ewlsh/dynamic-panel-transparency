@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-11 09:28-0800\n"
+"POT-Creation-Date: 2023-03-17 13:31-0700\n"
 "PO-Revision-Date: 2017-11-18 20:00+0100\n"
 "Last-Translator: Слободан Терзић  <slobodan.terzic@zoho.eu>\n"
 "Language-Team: Evan Welsh <contact@evanwelsh.com>\n"
@@ -16,10 +16,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: prefs.js:122
+#: prefs.js:121
 msgid "default"
 msgstr "поразумевана"
 
@@ -150,18 +150,16 @@ msgstr "Уклони прекомерно стилизовање панела"
 msgid "(Fixes theme incompatibilities.)"
 msgstr "(поправља несагласности у теми)"
 
-#. Hides the panel corners.
-#: prefs.ui:1008
-msgid "Hide corners"
-msgstr "Скривени ћошкови"
-
-#: prefs.ui:1027
+#: prefs.ui:1010
 msgid "Background"
 msgstr "Позадина"
 
-#: prefs.ui:1037
+#: prefs.ui:1020
 msgid "About"
 msgstr "О проширењу"
+
+#~ msgid "Hide corners"
+#~ msgstr "Скривени ћошкови"
 
 #~ msgid "App Tweaks"
 #~ msgstr "Штеловање апликација"

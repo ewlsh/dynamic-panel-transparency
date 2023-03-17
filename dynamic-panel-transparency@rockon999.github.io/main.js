@@ -110,10 +110,6 @@ export class DptExtension {
                 log('[Dynamic Panel Transparency] Failed to enabled text coloring.');
             }
         }
-
-        if (settings.get_hide_corners()) {
-            theming.add_hide_corners();
-        }
     }
 
     unmodify_panel() {
@@ -146,13 +142,6 @@ export class DptExtension {
         const { settings, theming, intellifader } = this;
 
         /* Register settings... */
-        settings.on('hide-corners', () => {
-            if (settings.get_hide_corners()) {
-                theming.add_hide_corners();
-            } else {
-                theming.remove_hide_corners();
-            }
-        });
         settings.on('transition-speed', () => {
             main.panel.remove_style_class_name('dpt-panel-transition-duration');
 
